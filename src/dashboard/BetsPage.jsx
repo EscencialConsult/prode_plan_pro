@@ -60,8 +60,8 @@ function BetCard({bet,predsMap,onPredict}){
   const mc=bet.partidos?.length||0
   const anyPred=bet.partidos?.some(p=>predsMap?.[p.id])
   const {user}=useAuth()
-  const esJefe=user?.tipo_usuario==='jefe'
-  const canPredict=(open&&(bet.tipo!=='grupos'||(esJefe&&String(bet.areas_ids||'').split(',').map(x=>x.trim()).includes(String(user?.area_id)))))
+  const miAreaParticipa=String(bet.areas_ids||'').split(',').map(x=>x.trim()).includes(String(user?.area_id))
+  const canPredict=(open&&(bet.tipo!=='grupos'||miAreaParticipa))
 
   return(
     <div style={{...CARD_BASE,borderRadius:18,padding:'1.4rem 1.5rem',border:`1px solid ${live?'rgba(224,50,82,.25)':open?'rgba(27,138,90,.18)':'#f0eadb'}`,transition:'transform .2s,box-shadow .2s'}}
@@ -137,6 +137,7 @@ function BetCard({bet,predsMap,onPredict}){
 /* ══ PAGE ══ */
 export default function BetsPage(){
   const {bets,predictions,loading,savePrediction}=useBets()
+  const {user}=useAuth()
   const [filter,setFilter]=useState('todas')
   const [activeBet,setActiveBet]=useState(null)
   const [toast,setToast]=useState(null)
@@ -155,6 +156,11 @@ const filtered = bets.filter(b => {
   // Guardar predicciones una por una (funciona pero es más lento)
   async function handlePredict(betId,preds){
     try{
+      // Detectar si esta apuesta es de tipo "grupos" para incluir area_id en el payload
+      const bet = bets.find(b => b.id === betId)
+      const esGrupal = bet?.tipo === 'grupos'
+      const areaUsuario = user?.area_id || null
+
       for(const p of preds){
         const payload = {
           apuesta_id: betId,
@@ -163,6 +169,7 @@ const filtered = bets.filter(b => {
           pred_visitante: p.pred_visitante,
         }
         if (p.pred_clasificado) payload.pred_clasificado = p.pred_clasificado
+        if (esGrupal) payload.area_id = areaUsuario
         await savePrediction(payload)
       }
       setActiveBet(null)

@@ -178,13 +178,18 @@ export default function DashboardPage() {
   // ✅ FUNCIÓN PARA GUARDAR PREDICCIONES (con batches de 3 en paralelo)
   const handleSubmitPredictions = async (betId, matchPredictions) => {
     setIsSubmitting(true)
-    
+
     try {
       const BATCH_SIZE = 3
-      
+
+      // Detectar si esta apuesta es de tipo "grupos" para incluir area_id en el payload
+      const bet = bets.find(b => b.id === betId)
+      const esGrupal = bet?.tipo === 'grupos'
+      const areaUsuario = user?.area_id || null
+
       for (let i = 0; i < matchPredictions.length; i += BATCH_SIZE) {
         const batch = matchPredictions.slice(i, i + BATCH_SIZE)
-        
+
         await Promise.all(
           batch.map(async (p) => {
             const payload = {
@@ -194,11 +199,12 @@ export default function DashboardPage() {
               pred_visitante: p.pred_visitante,
             }
             if (p.pred_clasificado) payload.pred_clasificado = p.pred_clasificado
+            if (esGrupal) payload.area_id = areaUsuario
             return savePrediction(payload)
           })
         )
       }
-      
+
       // Cerrar modal después de guardar exitosamente
       setSelectedBet(null)
       setIsSubmitting(false)

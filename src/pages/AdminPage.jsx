@@ -75,10 +75,13 @@ useEffect(() => {
 
 useEffect(() => {
   if (tab === 'Usuarios') {
-      loadPendingUsers()
-      if (isPro) loadAreas()
-    }
-  }, [tab, isPro])
+    loadPendingUsers()
+    if (isPro) loadAreas()
+  }
+  if (tab === 'Areas') {
+    loadAreasAll()
+  }
+}, [tab, isPro])
 
   /* ── Funciones: Áreas ─────────────────────────────────── */
   async function loadAreas() {
@@ -131,8 +134,8 @@ useEffect(() => {
   }
 
   async function confirmApprove(id) {
-    if (isPro && (!approvingUser.tipo_usuario || !approvingUser.area_id)) {
-      return alert('Debés seleccionar el rol y el área del usuario.')
+    if (isPro && !approvingUser.area_id) {
+      return alert('Debés seleccionar el área del usuario.')
     }
     
     setApprovingInProgress(true)
@@ -140,7 +143,7 @@ useEffect(() => {
     try {
       await sheetsApi.usuarios.aprobar(
         id,
-        isPro ? approvingUser.tipo_usuario : '',
+        '',
         isPro ? approvingUser.area_id : ''
       )
       setApprovingUser(null)
@@ -211,6 +214,168 @@ if (initialLoading) {
   closeBet={closeBet}
   finalizeBet={finalizeBet}
 />
+        )}
+
+        {/* TAB: Áreas */}
+        {tab === 'Areas' && (
+          <div className="animate-fade-in space-y-6">
+            {/* Crear nueva área */}
+            <div
+              className="rounded-2xl p-6"
+              style={{
+                background: '#fff',
+                border: '1px solid #f0eadb',
+                boxShadow: '0 4px 16px rgba(12,24,43,.06)',
+              }}
+            >
+              <h3 className="font-display text-xl mb-4" style={{ color: '#0a1226' }}>
+                Crear nueva área
+              </h3>
+              <form onSubmit={handleCreateArea} className="space-y-3">
+                <div>
+                  <label className="text-[11px] font-body font-bold uppercase tracking-[0.15em] mb-2 block" style={{ color: '#c99f16' }}>
+                    Nombre del área *
+                  </label>
+                  <input
+                    type="text"
+                    value={newArea.nombre}
+                    onChange={e => setNewArea({ ...newArea, nombre: e.target.value })}
+                    placeholder="Ej: Recursos Humanos"
+                    className="w-full px-4 py-3 rounded-xl font-body text-sm outline-none"
+                    style={{ background: '#fff', border: '1px solid #e8dfd0', color: '#0c182b' }}
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-body font-bold uppercase tracking-[0.15em] mb-2 block" style={{ color: '#c99f16' }}>
+                    Descripción (opcional)
+                  </label>
+                  <textarea
+                    value={newArea.descripcion}
+                    onChange={e => setNewArea({ ...newArea, descripcion: e.target.value })}
+                    placeholder="Descripción breve del área"
+                    rows={2}
+                    className="w-full px-4 py-3 rounded-xl font-body text-sm outline-none resize-none"
+                    style={{ background: '#fff', border: '1px solid #e8dfd0', color: '#0c182b' }}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={savingArea || !newArea.nombre.trim()}
+                  className="px-6 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all disabled:opacity-40"
+                  style={{
+                    background: 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
+                    color: '#0a1226',
+                  }}
+                >
+                  {savingArea ? 'Guardando...' : 'Crear área'}
+                </button>
+              </form>
+            </div>
+
+            {/* Lista de áreas existentes */}
+            <div
+              className="rounded-2xl p-6"
+              style={{
+                background: '#fff',
+                border: '1px solid #f0eadb',
+                boxShadow: '0 4px 16px rgba(12,24,43,.06)',
+              }}
+            >
+              <h3 className="font-display text-xl mb-4" style={{ color: '#0a1226' }}>
+                Áreas existentes ({areasAll.length})
+              </h3>
+              {loadingAreas ? (
+                <p className="text-sm font-body" style={{ color: '#5f6e8a' }}>Cargando...</p>
+              ) : areasAll.length === 0 ? (
+                <p className="text-sm font-body" style={{ color: '#5f6e8a' }}>
+                  Todavía no hay áreas creadas.
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  {areasAll.map(a => (
+                    <div
+                      key={a.id}
+                      className="flex items-center justify-between gap-3 p-4 rounded-xl"
+                      style={{
+                        background: a.activa ? 'rgba(235,195,43,0.05)' : 'rgba(95,110,138,0.04)',
+                        border: `1px solid ${a.activa ? 'rgba(235,195,43,0.15)' : 'rgba(95,110,138,0.15)'}`,
+                      }}
+                    >
+                      {editingArea?.id === a.id ? (
+                        <div className="flex-1 space-y-2">
+                          <input
+                            type="text"
+                            value={editingArea.nombre}
+                            onChange={e => setEditingArea({ ...editingArea, nombre: e.target.value })}
+                            className="w-full px-3 py-2 rounded-lg text-sm"
+                            style={{ background: '#fff', border: '1px solid #e8dfd0', color: '#0c182b' }}
+                          />
+                          <textarea
+                            value={editingArea.descripcion || ''}
+                            onChange={e => setEditingArea({ ...editingArea, descripcion: e.target.value })}
+                            rows={2}
+                            className="w-full px-3 py-2 rounded-lg text-sm resize-none"
+                            style={{ background: '#fff', border: '1px solid #e8dfd0', color: '#0c182b' }}
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              onClick={handleSaveEdit}
+                              disabled={savingArea}
+                              className="px-4 py-1.5 rounded-lg text-xs font-bold"
+                              style={{ background: '#ebc32b', color: '#0a1226' }}
+                            >
+                              Guardar
+                            </button>
+                            <button
+                              onClick={() => setEditingArea(null)}
+                              className="px-4 py-1.5 rounded-lg text-xs"
+                              style={{ background: 'transparent', border: '1px solid #e8dfd0', color: '#5f6e8a' }}
+                            >
+                              Cancelar
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="flex-1">
+                            <p className="font-body font-bold text-sm" style={{ color: a.activa ? '#0a1226' : '#9aa5b8' }}>
+                              {a.nombre}
+                              {!a.activa && <span className="ml-2 text-xs font-normal">(inactiva)</span>}
+                            </p>
+                            {a.descripcion && (
+                              <p className="text-xs font-body mt-1" style={{ color: '#5f6e8a' }}>
+                                {a.descripcion}
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex gap-2 flex-shrink-0">
+                            <button
+                              onClick={() => setEditingArea({ id: a.id, nombre: a.nombre, descripcion: a.descripcion || '' })}
+                              className="px-3 py-1.5 rounded-lg text-xs font-body"
+                              style={{ background: 'transparent', border: '1px solid rgba(12,24,43,.2)', color: '#5f6e8a' }}
+                            >
+                              Editar
+                            </button>
+                            <button
+                              onClick={() => handleToggleArea(a, a.activa)}
+                              className="px-3 py-1.5 rounded-lg text-xs font-body"
+                              style={{
+                                background: 'transparent',
+                                border: `1px solid ${a.activa ? 'rgba(224,50,82,.35)' : 'rgba(16,185,129,.35)'}`,
+                                color: a.activa ? '#e03252' : '#10b981',
+                              }}
+                            >
+                              {a.activa ? 'Desactivar' : 'Reactivar'}
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         )}
 
         {/* TAB 3: Usuarios */}
@@ -369,7 +534,7 @@ if (initialLoading) {
                   {!isApproving && !isRejecting && (
                     <div className="flex gap-2 flex-shrink-0">
                       <button
-                        onClick={() => setApprovingUser({ id: u.id, tipo_usuario: '', area_id: '' })}
+                        onClick={() => setApprovingUser({ id: u.id, area_id: '' })}
                         className="px-5 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all"
                         style={{
                           background: 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
@@ -497,52 +662,6 @@ if (initialLoading) {
                       border: '1.5px solid rgba(235,195,43,0.15)',
                     }}
                   >
-                    {/* Selector de rol — solo Plan_pro */}
-                    {isPro && (
-                      <div>
-                        <p className="text-[11px] font-body font-bold uppercase tracking-[0.15em] mb-3 flex items-center gap-2"
-                          style={{ color: '#c99f16' }}>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                            <circle cx="8.5" cy="7" r="4" />
-                            <polyline points="17 11 19 13 23 9" />
-                          </svg>
-                          Rol del usuario
-                        </p>
-                        <div className="grid sm:grid-cols-2 gap-3">
-                          {[
-                            { val: 'general', label: 'Participante', desc: 'Solo observa y participa', icon: '👤' },
-                            { val: 'jefe', label: 'Jefe de Área', desc: 'Gestiona su área', icon: '⭐' },
-                          ].map(opt => {
-                            const isActive = approvingUser.tipo_usuario === opt.val
-                            return (
-                              <button
-                                key={opt.val}
-                                type="button"
-                                onClick={() => setApprovingUser({ ...approvingUser, tipo_usuario: opt.val })}
-                                className="px-4 py-4 rounded-xl text-left transition-all"
-                                style={{
-                                  background: isActive ? 'rgba(235,195,43,0.1)' : '#fff',
-                                  border: `1.5px solid ${isActive ? '#ebc32b' : '#f0eadb'}`,
-                                  color: isActive ? '#c99f16' : '#5f6e8a',
-                                  boxShadow: isActive ? '0 2px 8px rgba(235,195,43,0.15)' : '0 1px 0 rgba(10,18,38,0.03)',
-                                }}
-                              >
-                                <div className="flex items-center gap-3 mb-2">
-                                  <span className="text-xl">{opt.icon}</span>
-                                  <p className="font-body font-bold text-sm" style={{ color: isActive ? '#0a1226' : '#5f6e8a' }}>
-                                    {opt.label}
-                                  </p>
-                                </div>
-                                <p className="font-body text-[11px]" style={{ color: '#5f6e8a' }}>
-                                  {opt.desc}
-                                </p>
-                              </button>
-                            )
-                          })}
-                        </div>
-                      </div>
-                    )}
 
                     {/* Selector de área — solo Plan_pro */}
                     {isPro && (
@@ -641,7 +760,7 @@ if (initialLoading) {
                       </button>
                       <button
                         onClick={() => confirmApprove(u.id)}
-                        disabled={approvingInProgress || (isPro && (!approvingUser.tipo_usuario || !approvingUser.area_id))}
+                        disabled={approvingInProgress || (isPro && !approvingUser.area_id)}
                         className="px-6 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed relative overflow-hidden"
                         style={{
                           background: approvingInProgress 

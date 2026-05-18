@@ -17,6 +17,10 @@ export default function AdminTabs({
       count: activeBetsCount,
     },
     {
+      key: 'Areas',
+      label: 'Áreas',
+    },
+    {
       key: 'Usuarios',
       label: 'Usuarios',
       count: pendingCount,

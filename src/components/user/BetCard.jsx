@@ -105,31 +105,17 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
   const remaining = timeLeft(bet.fecha_cierre)
   const isClosingSoon = open && remaining !== 'Cerrada' && !remaining.includes('d')
 
-  /* ── NUEVO: Lógica de grupal / rol del usuario ─────── */
+  /* ── Lógica de grupal ─────── */
   const esGrupal = bet.tipo === 'grupos'
-  const esJefe = user?.tipo_usuario === 'jefe'
   const areaUsuario = user?.area_id
   const areasParticipantes = bet.areas_ids
     ? String(bet.areas_ids).split(',').map(id => id.trim())
     : []
   const miAreaParticipa = areaUsuario && areasParticipantes.includes(String(areaUsuario))
-  const soyReferente = esGrupal && esJefe && miAreaParticipa
-
-  // Buscar el nombre del jefe (cargador) mirando alguna predicción del área
-  const primeraPredGrupal = bet.partidos?.map(p => predictionsMap?.[p.id]).find(
-    pred => pred && pred.es_grupal
-  )
-  const nombreJefe = primeraPredGrupal?.cargada_por_nombre || ''
-
-  // ¿Soy general en una grupal que no cargó nada aún?
-  const soyGeneralSinPrediccion = esGrupal && !esJefe && miAreaParticipa && !hasAnyPrediction
 
   // Texto del botón según contexto
   let actionLabel = null
-  if (esGrupal && !esJefe && miAreaParticipa) {
-    // General en grupal → cambia el label
-    actionLabel = hasAnyPrediction ? 'Ver predicciones del área' : 'Ver apuesta'
-  } else if (!open) {
+  if (!open) {
     actionLabel = hasAnyPrediction ? 'Ver mi predicción' : null
   } else {
     actionLabel = hasAnyPrediction ? 'Editar predicción' : 'Apostar'
@@ -187,64 +173,8 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
               </Pill>
             ))}
 
-            {/* Badge de "SOS REFERENTE" si sos jefe en una grupal que te incluye */}
-            {soyReferente && (
-              <Pill
-                color="#10b981"
-                bg="rgba(16,185,129,0.12)"
-                border="rgba(16,185,129,0.4)"
-                icon={
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="12 2 15 8.5 22 9.3 17 14 18.5 21 12 17.8 5.5 21 7 14 2 9.3 9 8.5" />
-                  </svg>
-                }
-              >
-                Sos referente
-              </Pill>
-            )}
           </div>
         </div>
-
-        {/* NUEVO: Warning cuando el general está esperando que su jefe cargue */}
-        {soyGeneralSinPrediccion && open && (
-          <div
-            className="flex items-start gap-2.5 mb-4 px-3 py-2.5 rounded-lg"
-            style={{
-              background: 'rgba(244,180,42,0.08)',
-              border: '1px solid rgba(244,180,42,0.25)',
-            }}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--color-warn)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
-              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-              <line x1="12" y1="9" x2="12" y2="13" />
-              <line x1="12" y1="17" x2="12.01" y2="17" />
-            </svg>
-            <p className="text-xs font-body text-[var(--color-warn)] leading-relaxed">
-              Tu referente todavía no cargó las predicciones del área. Recordáselo antes de que cierre la apuesta.
-            </p>
-          </div>
-        )}
-
-        {/* NUEVO: Info sutil cuando el general SÍ tiene predicciones del jefe */}
-        {esGrupal && !esJefe && miAreaParticipa && hasAnyPrediction && nombreJefe && (
-          <div
-            className="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg"
-            style={{
-              background: 'rgba(34,217,223,0.06)',
-              border: '1px solid rgba(34,217,223,0.2)',
-            }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-            <p className="text-xs font-body text-[var(--color-text-muted)]">
-              Predicciones cargadas por <span className="text-[var(--color-accent)] font-semibold">{nombreJefe}</span>
-            </p>
-          </div>
-        )}
 
         {/* Countdown destacado (solo si está abierta) */}
         {open && (
@@ -395,15 +325,15 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
             disabled={!open && !hasAnyPrediction}
             className="w-full font-body font-bold text-sm py-3 rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
-              background: open && (!esGrupal || esJefe)
+              background: open && (!esGrupal || miAreaParticipa)
                 ? 'linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-bright) 100%)'
                 : 'transparent',
-              color: open && (!esGrupal || esJefe) ? '#020F27' : 'var(--color-accent)',
-              border: open && (!esGrupal || esJefe) ? 'none' : '1px solid rgba(34,217,223,0.4)',
-              boxShadow: open && (!esGrupal || esJefe) ? '0 6px 20px rgba(34,217,223,0.3)' : 'none',
+              color: open && (!esGrupal || miAreaParticipa) ? '#020F27' : 'var(--color-accent)',
+              border: open && (!esGrupal || miAreaParticipa) ? 'none' : '1px solid rgba(34,217,223,0.4)',
+              boxShadow: open && (!esGrupal || miAreaParticipa) ? '0 6px 20px rgba(34,217,223,0.3)' : 'none',
             }}
             onMouseEnter={e => {
-              if (open && (!esGrupal || esJefe)) {
+              if (open && (!esGrupal || miAreaParticipa)) {
                 e.currentTarget.style.boxShadow = '0 8px 28px rgba(34,217,223,0.5)'
                 e.currentTarget.style.transform = 'translateY(-1px)'
               } else {
@@ -411,7 +341,7 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
               }
             }}
             onMouseLeave={e => {
-              if (open && (!esGrupal || esJefe)) {
+              if (open && (!esGrupal || miAreaParticipa)) {
                 e.currentTarget.style.boxShadow = '0 6px 20px rgba(34,217,223,0.3)'
                 e.currentTarget.style.transform = 'translateY(0)'
               } else {
