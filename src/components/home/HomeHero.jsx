@@ -67,7 +67,7 @@ export default function HomeHero() {
                 </span>
                 <span className="hidden sm:flex items-center gap-2 text-xs font-body font-semibold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,.55)' }}>
                   <span className="h-px w-6" style={{ background: 'rgba(235,195,43,.45)' }} />
-                  Escencial LATAM
+                  SOGEFI GROUP
                 </span>
               </div>
 
