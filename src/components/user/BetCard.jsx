@@ -105,13 +105,10 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
   const remaining = timeLeft(bet.fecha_cierre)
   const isClosingSoon = open && remaining !== 'Cerrada' && !remaining.includes('d')
 
-  /* ── Lógica de grupal ─────── */
+  /* ── Lógica de grupal (todas las áreas compiten) ─────── */
   const esGrupal = bet.tipo === 'grupos'
   const areaUsuario = user?.area_id
-  const areasParticipantes = bet.areas_ids
-    ? String(bet.areas_ids).split(',').map(id => id.trim())
-    : []
-  const miAreaParticipa = areaUsuario && areasParticipantes.includes(String(areaUsuario))
+  const puedeApostarGrupal = !esGrupal || !!areaUsuario
 
   // Texto del botón según contexto
   let actionLabel = null
@@ -325,15 +322,15 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
             disabled={!open && !hasAnyPrediction}
             className="w-full font-body font-bold text-sm py-3 rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
-              background: open && (!esGrupal || miAreaParticipa)
+              background: open && puedeApostarGrupal
                 ? 'linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-bright) 100%)'
                 : 'transparent',
-              color: open && (!esGrupal || miAreaParticipa) ? '#020F27' : 'var(--color-accent)',
-              border: open && (!esGrupal || miAreaParticipa) ? 'none' : '1px solid rgba(34,217,223,0.4)',
-              boxShadow: open && (!esGrupal || miAreaParticipa) ? '0 6px 20px rgba(34,217,223,0.3)' : 'none',
+              color: open && puedeApostarGrupal ? '#020F27' : 'var(--color-accent)',
+              border: open && puedeApostarGrupal ? 'none' : '1px solid rgba(34,217,223,0.4)',
+              boxShadow: open && puedeApostarGrupal ? '0 6px 20px rgba(34,217,223,0.3)' : 'none',
             }}
             onMouseEnter={e => {
-              if (open && (!esGrupal || miAreaParticipa)) {
+              if (open && puedeApostarGrupal) {
                 e.currentTarget.style.boxShadow = '0 8px 28px rgba(34,217,223,0.5)'
                 e.currentTarget.style.transform = 'translateY(-1px)'
               } else {
@@ -341,7 +338,7 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
               }
             }}
             onMouseLeave={e => {
-              if (open && (!esGrupal || miAreaParticipa)) {
+              if (open && puedeApostarGrupal) {
                 e.currentTarget.style.boxShadow = '0 6px 20px rgba(34,217,223,0.3)'
                 e.currentTarget.style.transform = 'translateY(0)'
               } else {

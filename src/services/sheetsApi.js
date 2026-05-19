@@ -642,7 +642,17 @@ const partidos = {
       message: 'La sincronización corre automáticamente cada 5 minutos desde el sheet Mundial2026.',
     }
   },
+
+  // Devuelve los partidos que están en uso en alguna apuesta activa
+  // (abierta o cerrada). Usado por el panel admin para deshabilitar
+  // visualmente los partidos que no se pueden volver a usar.
+  bloqueados: async () => {
+    const { data, error } = await supabase.rpc('partidos_bloqueados', { p_partido_ids: null })
+    checkError(error, 'partidos.bloqueados')
+    return { ok: true, partidos: data || [] }
+  },
 }
+
 
 // ── predicciones ──────────────────────────────────────────
 const predicciones = {
@@ -708,33 +718,85 @@ const predicciones = {
   tabla: async (apuesta_id, opciones = {}) => {
     const limit = Math.min(parseInt(opciones.limit) || 50, 200)
 
-    // 1) Obtener título de la apuesta
+    // 1) Obtener título y tipo de la apuesta
     const { data: apuesta } = await supabase
-      .from('apuestas').select('titulo').eq('id', apuesta_id).single()
+      .from('apuestas').select('titulo, tipo').eq('id', apuesta_id).single()
 
-    // 2) Obtener todo el ranking ordenado por posición
-    const { data: ranking, error } = await supabase
-      .from('ranking_apuestas')
-      .select('*')
-      .eq('apuesta_id', apuesta_id)
-      .order('posicion', { ascending: true })
+    const esGrupal = apuesta?.tipo === 'grupos'
+
+    // 2) Obtener ranking de la vista correcta según el tipo
+    let ranking, error
+
+    if (esGrupal) {
+      // Apuesta tipo "grupos": ranking por áreas (suma de puntos)
+      const res = await supabase
+        .from('ranking_apuestas_grupales')
+        .select('*')
+        .eq('apuesta_id', apuesta_id)
+        .order('posicion', { ascending: true })
+      ranking = res.data
+      error = res.error
+    } else {
+      // Apuesta tipo "libre": ranking individual
+      const res = await supabase
+        .from('ranking_apuestas')
+        .select('*')
+        .eq('apuesta_id', apuesta_id)
+        .order('posicion', { ascending: true })
+      ranking = res.data
+      error = res.error
+    }
     checkError(error, 'predicciones.tabla')
 
-    const rankingArr = ranking || []
+    let rankingArr = ranking || []
+
+    // 3) Normalizar el ranking grupal a la estructura que espera el frontend
+    // El frontend lee { user_id, nombre, puntos_totales, posicion, ... }
+    // En grupal: mapeamos area_id → user_id, area_nombre → nombre
+    if (esGrupal) {
+      rankingArr = rankingArr.map(r => ({
+        user_id: r.area_id,
+        nombre: r.area_nombre,
+        email: '',
+        puntos_totales: r.puntos_totales,
+        posicion: r.posicion,
+        aciertos_exactos: r.aciertos_exactos,
+        aciertos_diferencia: r.aciertos_diferencia,
+        aciertos_resultado: r.aciertos_resultado,
+        aciertos_clasificado: r.aciertos_clasificado,
+        predicciones: r.predicciones,
+        miembros_participantes: r.miembros_participantes,
+        apuesta_id: r.apuesta_id,
+        es_grupal: true,
+      }))
+    }
+
     const top = rankingArr.slice(0, limit)
 
-    // 3) Mi posición
+    // 4) Mi posición (en grupales: la posición del área del usuario)
     const { data: { user } } = await supabase.auth.getUser()
     let miPosicion = null
     if (user) {
-      const mia = rankingArr.find(r => r.user_id === user.id)
-      if (mia) miPosicion = mia
+      if (esGrupal) {
+        // Buscar el área del usuario actual
+        const { data: miUsuario } = await supabase
+          .from('usuarios').select('area_id').eq('id', user.id).single()
+        if (miUsuario?.area_id) {
+          const mia = rankingArr.find(r => r.user_id === miUsuario.area_id)
+          if (mia) miPosicion = mia
+        }
+      } else {
+        const mia = rankingArr.find(r => r.user_id === user.id)
+        if (mia) miPosicion = mia
+      }
     }
     const estaEnTop = miPosicion ? Number(miPosicion.posicion) <= limit : false
 
     return {
       ok: true,
       apuesta_titulo: apuesta?.titulo || '',
+      apuesta_tipo: apuesta?.tipo || 'libre',
+      es_grupal: esGrupal,
       total: rankingArr.length,
       limit,
       tabla: top,

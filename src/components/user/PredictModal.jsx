@@ -32,15 +32,15 @@ export default function PredictModal({ bet, onSubmit, onClose, loading }) {
 
   const esApuestaGrupos = bet?.tipo === 'grupos' || bet?.type === 'grupos'
   const areaUsuario = user?.area_id
-  const areasParticipantes = bet?.areas_ids ? String(bet.areas_ids).split(',').map(id => id.trim()) : []
-  const miAreaParticipa = areaUsuario && areasParticipantes.includes(String(areaUsuario))
-  const estaBloqueado = esApuestaGrupos && !miAreaParticipa
+
+  // En apuestas grupales, el usuario necesita tener área asignada
+  const estaBloqueado = esApuestaGrupos && !areaUsuario
 
   let razonBloqueo = null
   if (estaBloqueado) {
     razonBloqueo = {
-      titulo: 'Tu área no participa en esta apuesta',
-      detalle: 'Esta apuesta grupal está reservada a otras áreas de la empresa. Podés ver los partidos pero no cargar predicciones.',
+      titulo: 'No tenés un área asignada',
+      detalle: 'Para participar en apuestas grupales necesitás tener un área asignada. Contactá al administrador para que te asigne una.',
     }
   }
 

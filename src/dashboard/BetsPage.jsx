@@ -21,7 +21,11 @@ function timeLeft(d){const diff=new Date(d)-Date.now();if(diff<=0)return'Cerrada
 const CARD_BASE={background:'#fff',border:'1px solid #f0eadb',borderRadius:16,boxShadow:'0 1px 0 rgba(12,24,43,.04)'}
 const MUTED={fontSize:'.78rem',color:'#5f6e8a'}
 
-function isOpen(b){return b.estado==='abierta'}
+function isOpen(b){
+  if (b.estado !== 'abierta') return false
+  if (!b.fecha_cierre) return true
+  return new Date(b.fecha_cierre) > new Date()
+}
 const FILTERS=[
   {key:'todas', label:'Todas'},
   {key:'activas', label:'Activas'},
@@ -60,8 +64,7 @@ function BetCard({bet,predsMap,onPredict}){
   const mc=bet.partidos?.length||0
   const anyPred=bet.partidos?.some(p=>predsMap?.[p.id])
   const {user}=useAuth()
-  const miAreaParticipa=String(bet.areas_ids||'').split(',').map(x=>x.trim()).includes(String(user?.area_id))
-  const canPredict=(open&&(bet.tipo!=='grupos'||miAreaParticipa))
+  const canPredict=(open&&(bet.tipo!=='grupos'||!!user?.area_id))
 
   return(
     <div style={{...CARD_BASE,borderRadius:18,padding:'1.4rem 1.5rem',border:`1px solid ${live?'rgba(224,50,82,.25)':open?'rgba(27,138,90,.18)':'#f0eadb'}`,transition:'transform .2s,box-shadow .2s'}}
@@ -146,11 +149,13 @@ export default function BetsPage(){
   function showToast(msg,ok=true){setToast({msg,ok});setTimeout(()=>setToast(null),3200)}
 
 const filtered = bets.filter(b => {
-  // Mostrar solo apuestas con estado "abierta"
-  if (filter === 'activas') return b.estado === 'abierta'
-  if (filter === 'cerradas') return b.estado === 'cerrada' || b.estado === 'finalizada'
-  // "Todas" muestra solo abiertas
-  return b.estado === 'abierta'
+  // "Todas" muestra todas las apuestas (sin filtro)
+  if (filter === 'todas') return true
+  // "Activas" muestra las que siguen abiertas (estado abierta Y dentro de plazo)
+  if (filter === 'activas') return isOpen(b)
+  // "Cerradas" muestra las que ya no están abiertas para apostar
+  if (filter === 'cerradas') return !isOpen(b)
+  return true
 })
 
   // Guardar predicciones una por una (funciona pero es más lento)

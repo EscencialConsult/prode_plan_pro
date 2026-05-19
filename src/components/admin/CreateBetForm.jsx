@@ -5,7 +5,7 @@ import { useToast } from '../../hooks/useToast.jsx'
 import { fmtFecha, inputLocalAIsoUtc } from '../../utils/index.js'
 
 /* ── Constantes ─────────────────────────────────────────── */
-const INITIAL = { titulo: '', type: 'libre', premio: '', fecha_cierre: '', partidos_ids: [], areas_ids: [] }
+const INITIAL = { titulo: '', type: 'libre', premio: '', fecha_cierre: '', partidos_ids: [] }
 
 const ORDEN_FASES = ['grupos', '16avos', 'octavos', 'cuartos', 'semis', '3er_puesto', 'final']
 const LABEL_FASE = {
@@ -118,9 +118,19 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
   const [busqueda, setBusqueda] = useState('')
   const [errorFecha, setErrorFecha] = useState('')
   const [primerPartido, setPrimerPartido] = useState(null)
+  const [partidosBloqueados, setPartidosBloqueados] = useState([])
 
   useEffect(() => {
     sheetsApi.areas.listar(true).then(res => setAreas(res.areas || [])).catch(console.error)
+  }, [])
+
+  useEffect(() => {
+    sheetsApi.partidos.bloqueados()
+      .then(res => setPartidosBloqueados(res.partidos || []))
+      .catch(err => {
+        console.warn('No se pudieron cargar partidos bloqueados:', err)
+        setPartidosBloqueados([])
+      })
   }, [])
 
   const partidosDisponibles = useMemo(
@@ -267,13 +277,8 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
         fecha_cierre: inputLocalAIsoUtc(form.fecha_cierre),
         partidos_ids: form.partidos_ids.join(',')
       }
-      if (isPro && form.type === 'grupos') {
-        if (form.areas_ids.length < 2) { 
-          toast.error('Para apuestas por áreas seleccioná al menos 2 áreas.')
-          return 
-        }
-        payload.areas_ids = form.areas_ids.join(',')
-      }
+      // En apuestas grupales, no se envían areas_ids:
+      // todas las áreas activas compiten automáticamente.
       await onSubmit(payload)
       toast.success('Apuesta creada exitosamente')
       setForm(INITIAL)
@@ -471,30 +476,34 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
                   {gr.partidos.map(m => {
                     const checked = form.partidos_ids.includes(m.id)
                     const yaTermino = partidoYaTerminado(m)
+                    const bloqueoInfo = partidosBloqueados.find(b => b.partido_id === m.id)
+                    const estaBloqueado = !!bloqueoInfo
+                    const noDisponible = yaTermino || estaBloqueado
                     
                     return (
                       <label
                         key={m.id}
+                        title={estaBloqueado ? `Ya en uso en: "${bloqueoInfo.apuesta_titulo}" (${bloqueoInfo.apuesta_tipo})` : ''}
                         className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-all"
                         style={{
                           background: checked ? 'rgba(235,195,43,0.08)' : '#fff',
                           borderBottom: '1px solid #f5f5f5',
-                          opacity: yaTermino ? 0.5 : 1,
-                          cursor: yaTermino ? 'not-allowed' : 'pointer',
+                          opacity: noDisponible ? 0.5 : 1,
+                          cursor: noDisponible ? 'not-allowed' : 'pointer',
                         }}
                         onMouseEnter={e => { 
-                          if (!checked && !yaTermino) e.currentTarget.style.background = 'rgba(235,195,43,0.04)' 
+                          if (!checked && !noDisponible) e.currentTarget.style.background = 'rgba(235,195,43,0.04)' 
                         }}
                         onMouseLeave={e => { 
-                          if (!checked && !yaTermino) e.currentTarget.style.background = '#fff' 
+                          if (!checked && !noDisponible) e.currentTarget.style.background = '#fff' 
                         }}
                       >
                         {/* Checkbox */}
                         <input
                           type="checkbox"
                           checked={checked}
-                          onChange={() => !yaTermino && toggleMatch(m.id)}
-                          disabled={yaTermino}
+                          onChange={() => !noDisponible && toggleMatch(m.id)}
+                          disabled={noDisponible}
                           className="hidden"
                         />
                         <span className="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center transition-all"
@@ -581,28 +590,25 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
         </div>
       )}
 
-      {/* Áreas — solo Plan Pro y tipo grupos */}
+      {/* Info: en apuestas grupales, todas las áreas compiten automáticamente */}
       {isPro && form.type === 'grupos' && (
-        <div className="flex flex-col gap-3 p-4 rounded-xl"
+        <div className="flex items-start gap-3 p-4 rounded-xl"
           style={{ border: '1.5px solid rgba(235,195,43,.2)', background: 'rgba(235,195,43,.04)' }}>
-          <span className="font-body font-bold text-xs uppercase tracking-widest" style={{ color: '#c99f16' }}>
-            Áreas participantes (Mínimo 2)
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {areas.map(a => {
-              const active = form.areas_ids.includes(a.id)
-              return (
-                <FilterChip key={a.id} active={active}
-                  onClick={() => setForm(p => ({
-                    ...p,
-                    areas_ids: active
-                      ? p.areas_ids.filter(id => id !== a.id)
-                      : [...p.areas_ids, a.id]
-                  }))}>
-                  {a.nombre}
-                </FilterChip>
-              )
-            })}
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c99f16" strokeWidth="2"
+            strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }}>
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
+          </svg>
+          <div style={{ flex: 1 }}>
+            <p className="font-body font-bold text-xs uppercase tracking-widest mb-1" style={{ color: '#c99f16' }}>
+              Apuesta por áreas
+            </p>
+            <p className="font-body text-sm" style={{ color: '#5f6e8a', lineHeight: 1.5 }}>
+              Todas las áreas activas de la empresa competirán automáticamente.
+              Cada miembro puede cargar sus predicciones y sus puntos suman al área.
+              El ranking mostrará el área ganadora.
+            </p>
           </div>
         </div>
       )}
