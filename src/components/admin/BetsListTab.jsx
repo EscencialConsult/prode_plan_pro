@@ -111,7 +111,7 @@ function BetRow({ bet, onClose, onFinalize }) {
 
 export default function BetsListTab({ bets, loading, closeBet, finalizeBet }) {
   const openBets = bets.filter(b => isBetOpen(b))
-  const closedBets = bets.filter(b => b.estado === 'cerrada' && !isBetOpen(b))
+  const closedBets = bets.filter(b => (b.estado === 'cerrada' || b.estado === 'abierta') && !isBetOpen(b))
   const finishedBets = bets.filter(b => b.estado === 'finalizada')
 
   async function handleClose(id) {
