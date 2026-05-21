@@ -25,6 +25,10 @@ export default function AdminTabs({
       label: 'Usuarios',
       count: pendingCount,
     },
+    {
+      key: 'UsuariosActivos',
+      label: 'Usuarios Activos',
+    },
   ]
 
   return (
