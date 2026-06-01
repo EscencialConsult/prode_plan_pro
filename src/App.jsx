@@ -19,6 +19,7 @@ import ManualPage          from './dashboard/ManualPage.jsx'
 import ManualUser          from './pages/ManualUser.jsx'
 import RankingPageUser     from './pages/RankingPageUser.jsx'
 import RankingWrapper      from './pages/RankingWrapper.jsx'
+import CambiarPasswordPage from './pages/CambiarPasswordPage.jsx'
 
 export default function App() {
   return (
@@ -42,6 +43,7 @@ export default function App() {
               <Route path="/mis-predicciones" element={<MisPrediccionesPage />} />
               <Route path="/manual"           element={<ManualUser />} />
               <Route path="/ranking"          element={<RankingWrapper />} />
+              <Route path="/cambiar-password" element={<CambiarPasswordPage />} />
             </Route>
 
             {/* Solo admin */}

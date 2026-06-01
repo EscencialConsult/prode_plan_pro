@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
       return null
     }
   })
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError]     = useState(null)
 
   // Sincronizar el estado del user con la sesión real de Supabase.
@@ -34,36 +34,41 @@ export function AuthProvider({ children }) {
 
     async function sincronizarSesion() {
       const supabase = sheetsApi._supabase
-      const { data: { session } } = await supabase.auth.getSession()
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
 
-      if (cancelado) return
+        if (cancelado) return
 
-      if (!session) {
-        // No hay sesión: limpiar todo
-        setUser(null)
-        sessionStorage.removeItem(USER_KEY)
-        return
-      }
+        if (!session) {
+          // No hay sesión: limpiar todo
+          setUser(null)
+          sessionStorage.removeItem(USER_KEY)
+          return
+        }
 
-      // Hay sesión válida. Si no tenemos el perfil en memoria, traerlo.
-      const stored = sessionStorage.getItem(USER_KEY)
-      if (!stored) {
-        try {
-          const { data: perfil } = await supabase
-            .from('usuarios').select('*').eq('id', session.user.id).single()
-          if (perfil && !cancelado) {
-            const userData = { ...perfil, user_id: perfil.id }
-            setUser(userData)
-            sessionStorage.setItem(USER_KEY, JSON.stringify(userData))
-          }
-        } catch (e) {
-          // Si falla (ej: usuario eliminado), forzar logout
-          await supabase.auth.signOut()
-          if (!cancelado) {
-            setUser(null)
-            sessionStorage.removeItem(USER_KEY)
+        // Hay sesión válida. Si no tenemos el perfil en memoria, traerlo.
+        const stored = sessionStorage.getItem(USER_KEY)
+        if (!stored) {
+          try {
+            const { data: perfil } = await supabase
+              .from('usuarios').select('*').eq('id', session.user.id).single()
+            if (perfil && !cancelado) {
+              const userData = { ...perfil, user_id: perfil.id }
+              setUser(userData)
+              sessionStorage.setItem(USER_KEY, JSON.stringify(userData))
+            }
+          } catch (e) {
+            // Si falla (ej: usuario eliminado), forzar logout
+            await supabase.auth.signOut()
+            if (!cancelado) {
+              setUser(null)
+              sessionStorage.removeItem(USER_KEY)
+            }
           }
         }
+      } finally {
+        // Señalar que la validación de sesión terminó
+        if (!cancelado) setLoading(false)
       }
     }
 
@@ -129,6 +134,14 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
+  // Cambio de contraseña de un usuario logueado (sin email).
+  // Pass-through puro: NO toca el `loading` compartido para no
+  // re-renderizar ProtectedRoute ni desmontar la pantalla actual.
+  // La pantalla que lo llama maneja su propio estado de carga.
+  const cambiarPassword = useCallback(async (currentPassword, newPassword) => {
+    return await sheetsApi.auth.cambiarPassword(currentPassword, newPassword)
+  }, [])
+
 const isAdmin = !!(
     user?.rol === 'admin' ||
     user?.role === 'admin' ||
@@ -150,6 +163,7 @@ const isAdmin = !!(
       login,
       logout,
       register,
+      cambiarPassword,
       isAdmin,
       isPlanBasic,
       isPro,

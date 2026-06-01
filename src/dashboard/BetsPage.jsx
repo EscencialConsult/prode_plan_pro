@@ -15,6 +15,7 @@ import AppShell from './AppShell.jsx'
 import { useBets } from '../hooks/useBets.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import PredictModal from '../components/user/PredictModal.jsx'
+import sheetsApi from '../services/sheetsApi.js'
 
 /* ── helpers ── */
 function timeLeft(d){const diff=new Date(d)-Date.now();if(diff<=0)return'Cerrada';const h=Math.floor(diff/3600000);const m=Math.floor((diff%3600000)/60000);if(h>=24)return`${Math.floor(h/24)}d ${h%24}h`;if(h>0)return`${h}h ${m}m`;return`${m}m`}
@@ -139,12 +140,13 @@ function BetCard({bet,predsMap,onPredict}){
 
 /* ══ PAGE ══ */
 export default function BetsPage(){
-  const {bets,predictions,loading,savePrediction}=useBets()
+  const {bets,predictions,loading,loadMyPredictions}=useBets()
   const {user}=useAuth()
   const [filter,setFilter]=useState('todas')
   const [activeBet,setActiveBet]=useState(null)
   const [toast,setToast]=useState(null)
   const [showPuntos, setShowPuntos] = useState(false)
+  const [saving, setSaving] = useState(false)
 
   function showToast(msg,ok=true){setToast({msg,ok});setTimeout(()=>setToast(null),3200)}
 
@@ -158,30 +160,48 @@ const filtered = bets.filter(b => {
   return true
 })
 
-  // Guardar predicciones una por una (funciona pero es más lento)
+  // Guardar predicciones en lote transaccional
   async function handlePredict(betId,preds){
     try{
-      // Detectar si esta apuesta es de tipo "grupos" para incluir area_id en el payload
+      setSaving(true)
       const bet = bets.find(b => b.id === betId)
       const esGrupal = bet?.tipo === 'grupos'
       const areaUsuario = user?.area_id || null
 
-      for(const p of preds){
+      const predictionsPayload = preds.map(p => {
         const payload = {
-          apuesta_id: betId,
           partido_id: p.partido_id,
-          pred_local: p.pred_local,
-          pred_visitante: p.pred_visitante,
+          pred_local: parseInt(p.pred_local, 10),
+          pred_visitante: parseInt(p.pred_visitante, 10),
         }
-        if (p.pred_clasificado) payload.pred_clasificado = p.pred_clasificado
-        if (esGrupal) payload.area_id = areaUsuario
-        await savePrediction(payload)
-      }
+        if (p.pred_clasificado) {
+          payload.pred_clasificado = p.pred_clasificado
+        }
+        return payload
+      })
+
+      await sheetsApi.predicciones.guardarBatch({
+        apuesta_id: betId,
+        predicciones: predictionsPayload,
+        area_id: esGrupal ? areaUsuario : null,
+      })
+
+      // Limpiar borrador local de manera segura
+      try {
+        localStorage.removeItem(`bet-${betId}-draft`)
+      } catch (e) {}
+
+      // Recargar TODAS las predicciones (sin filtrar por apuesta) para que
+      // las demás BetCards sigan mostrando sus datos correctamente.
+      await loadMyPredictions()
+
       setActiveBet(null)
       showToast('Predicciones guardadas exitosamente',true)
     }catch(err){
       console.error('Error guardando:', err)
       showToast(err.message||'Error al guardar',false)
+    }finally{
+      setSaving(false)
     }
   }
 
@@ -350,7 +370,13 @@ const filtered = bets.filter(b => {
 
       {/* ✅ Modal de predicción - ARREGLADO onClose */}
       {activeBet&&(
-        <PredictModal bet={activeBet} onSubmit={(id,preds)=>handlePredict(id,preds)} onClose={()=>setActiveBet(null)} loading={loading}/>
+        <PredictModal
+          bet={activeBet}
+          predictions={predictions}
+          onSubmit={(id,preds)=>handlePredict(id,preds)}
+          onClose={()=>setActiveBet(null)}
+          loading={saving}
+        />
       )}
     </AppShell>
   )

@@ -16,6 +16,9 @@ const FIXTURE_CACHE_VERSION = '1'
 const FIXTURE_CACHE_TTL = 5 * 60 * 1000 // 5 minutos en cache before refetch
 
 export function useFixtureSWR(filters = {}) {
+  // Memoizar filtros usando un string para evitar recreación infinita por nueva referencia de objeto {}
+  const filterStr = JSON.stringify(filters)
+
   // Estado del fixture
   const [fixture, setFixture] = useState(() => {
     // PASO 1: Lee del localStorage al inicializar (síncrono)
@@ -37,6 +40,12 @@ export function useFixtureSWR(filters = {}) {
   const [isValidating, setIsValidating] = useState(false)
   const [error, setError] = useState(null)
   const fetchControllerRef = useRef(null)
+
+  // Ref para acceder al valor actual de fixture sin disparar dependencias
+  const fixtureRef = useRef(fixture)
+  useEffect(() => {
+    fixtureRef.current = fixture
+  }, [fixture])
 
   // Función para guardar en localStorage
   const saveToCache = useCallback((data) => {
@@ -67,8 +76,9 @@ export function useFixtureSWR(filters = {}) {
       setIsValidating(true)
       setError(null)
 
-      // Hacer fetch al backend
-      const response = await sheetsApi.partidos.listar(filters)
+      // Hacer fetch al backend con filtros estables
+      const activeFilters = JSON.parse(filterStr)
+      const response = await sheetsApi.partidos.listar(activeFilters)
       
       if (!response.ok) {
         throw new Error(response.error || 'Error al traer partidos')
@@ -77,7 +87,7 @@ export function useFixtureSWR(filters = {}) {
       const freshData = response.partidos || []
 
       // PASO 3: Comparar con lo actual
-      const currentStr = JSON.stringify(fixture || [])
+      const currentStr = JSON.stringify(fixtureRef.current || [])
       const freshStr = JSON.stringify(freshData)
 
       if (currentStr !== freshStr) {
@@ -97,7 +107,7 @@ export function useFixtureSWR(filters = {}) {
     } finally {
       setIsValidating(false)
     }
-  }, [fixture, filters, saveToCache])
+  }, [filterStr, saveToCache])
 
   // PASO 2: Fetch en background cuando monta o cuando cambian los filtros
   useEffect(() => {
@@ -168,6 +178,12 @@ export function useSWR(key, fetcher, options = {}) {
   const lastFetchRef = useRef(0)
   const lastFocusRef = useRef(0)
 
+  // Ref para acceder a data sin disparar dependencias de revalidate
+  const dataRef = useRef(data)
+  useEffect(() => {
+    dataRef.current = data
+  }, [data])
+
   const saveToCache = useCallback((value) => {
     if (cacheKey) {
       try {
@@ -205,7 +221,7 @@ export function useSWR(key, fetcher, options = {}) {
       const value = freshData.data || freshData
 
       // Comparar y actualizar solo si cambió
-      const currentStr = JSON.stringify(data)
+      const currentStr = JSON.stringify(dataRef.current)
       const freshStr = JSON.stringify(value)
 
       if (currentStr !== freshStr) {
@@ -223,7 +239,7 @@ export function useSWR(key, fetcher, options = {}) {
     } finally {
       setIsValidating(false)
     }
-  }, [fetcher, data, saveToCache, dedupingInterval, onSuccess, onError])
+  }, [fetcher, saveToCache, dedupingInterval, onSuccess, onError])
 
   // Fetch inicial
   useEffect(() => {

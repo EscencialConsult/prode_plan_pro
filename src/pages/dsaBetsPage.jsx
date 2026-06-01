@@ -3,6 +3,7 @@ import AppShell from '../dashboard/AppShell.jsx'
 import BetCard from '../components/user/BetCard.jsx'
 import PredictModal from '../components/user/PredictModal.jsx'
 import { useBets } from '../hooks/useBets.jsx'
+import { useToast } from '../hooks/useToast.jsx'
 
 const FILTERS = ['todas', 'activas', 'cerradas']
 
@@ -10,6 +11,7 @@ export default function BetsPage() {
   const { bets, predictions, loading, savePrediction } = useBets()
   const [filter, setFilter]     = useState('todas')
   const [activeBet, setActiveBet] = useState(null)
+  const { toast } = useToast()
 
   const filtered = bets.filter(b => {
     if (filter === 'activas')  return b.estado === 'abierta'
@@ -28,9 +30,9 @@ export default function BetsPage() {
         }))
       )
       setActiveBet(null)
-      alert('Tus predicciones se han guardado con éxito.')
+      toast.success('Tus predicciones se guardaron con éxito')
     } catch (err) {
-      alert(err.message || 'No se pudieron guardar las predicciones')
+      toast.error(err.message || 'No se pudieron guardar las predicciones')
     }
   }
 

@@ -4,11 +4,14 @@ import { useBets } from '../hooks/useBets.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { formatDate, isBetOpen } from '../utils/index.js'
 import sheetsApi from '../services/sheetsApi.js'
+import { useToast, useConfirm } from '../hooks/useToast.jsx'
 
 import AdminHeader from '../components/admin/AdminHeader.jsx'
 import AdminTabs from '../components/admin/AdminTabs.jsx'
 import CreateBetTab from '../components/admin/CreateBetTab.jsx'
 import BetsListTab from '../components/admin/BetsListTab.jsx'
+import ActiveUsersTab from '../components/admin/ActiveUsersTab.jsx'
+import AreasTab from '../components/admin/AreasTab.jsx'
 import Loading from '../hooks/Loading.jsx'
 
 /* ── Helpers ────────────────────────────────────────────── */
@@ -34,6 +37,8 @@ export default function AdminPage() {
     autoLoadPredictions: false 
   })
   const { isPro } = useAuth()
+  const { toast } = useToast()
+  const confirm   = useConfirm()
 
   // ✅ Estado de loading inicial
   const [initialLoading, setInitialLoading] = useState(true)
@@ -49,9 +54,19 @@ export default function AdminPage() {
   const [rejectingUser, setRejectingUser] = useState(null)
   const [rejectingInProgress, setRejectingInProgress] = useState(false)
 
+  const [pendingPage, setPendingPage] = useState(0)
+  const [pendingTotal, setPendingTotal] = useState(0)
+  const [pendingSearch, setPendingSearch] = useState('')
+  const [pendingPageSize] = useState(25)
+
   /* ── Usuarios activos ─────────────────────────────────── */
   const [activeUsers, setActiveUsers] = useState([])
   const [loadingActiveUsers, setLoadingActiveUsers] = useState(false)
+
+  const [activePage, setActivePage] = useState(0)
+  const [activeTotal, setActiveTotal] = useState(0)
+  const [activeSearch, setActiveSearch] = useState('')
+  const [activePageSize] = useState(25)
 
   /* ── Áreas ────────────────────────────────────────────── */
   const [areasAll, setAreasAll] = useState([])
@@ -79,11 +94,15 @@ useEffect(() => {
 
 useEffect(() => {
   if (tab === 'Usuarios') {
-    loadPendingUsers()
+    setPendingPage(0)
+    setPendingSearch('')
+    loadPendingUsers(0, '')
     if (isPro) loadAreas()
   }
   if (tab === 'UsuariosActivos') {
-    loadActiveUsers()
+    setActivePage(0)
+    setActiveSearch('')
+    loadActiveUsers(0, '')
     if (isPro) loadAreas()
   }
   if (tab === 'Areas') {
@@ -100,57 +119,90 @@ useEffect(() => {
   async function loadAreasAll() {
     setLoadingAreas(true)
     try { const r = await sheetsApi.areas.listar(false); setAreasAll(r.areas || []) }
-    catch (e) { alert('Error cargando áreas: ' + e.message) }
+    catch (e) { toast.error('Error cargando áreas: ' + e.message) }
     finally { setLoadingAreas(false) }
   }
 
   async function handleCreateArea(e) {
     e.preventDefault()
-    if (!newArea.nombre.trim()) return alert('El nombre del área es obligatorio.')
+    if (!newArea.nombre.trim()) { toast.info('El nombre del área es obligatorio.'); return }
     setSavingArea(true)
     try {
       await sheetsApi.areas.crear({ nombre: newArea.nombre.trim(), descripcion: newArea.descripcion.trim() })
       setNewArea({ nombre: '', descripcion: '' })
       await loadAreasAll()
-    } catch (e) { alert('Error creando área: ' + e.message) }
+      toast.success('Área creada correctamente')
+    } catch (e) { toast.error('Error creando área: ' + e.message) }
     finally { setSavingArea(false) }
   }
 
   async function handleSaveEdit() {
-    if (!editingArea.nombre.trim()) return alert('El nombre no puede estar vacío.')
+    if (!editingArea.nombre.trim()) { toast.info('El nombre no puede estar vacío.'); return }
     setSavingArea(true)
     try {
       await sheetsApi.areas.editar({ area_id: editingArea.id, nombre: editingArea.nombre.trim(), descripcion: editingArea.descripcion?.trim() || '' })
       setEditingArea(null)
       await loadAreasAll()
-    } catch (e) { alert('Error guardando cambios: ' + e.message) }
+      toast.success('Cambios guardados')
+    } catch (e) { toast.error('Error guardando cambios: ' + e.message) }
     finally { setSavingArea(false) }
   }
 
   async function handleToggleArea(area, currentlyActive) {
-    if (!window.confirm(`¿Seguro que querés ${currentlyActive ? 'desactivar' : 'reactivar'} el área "${area.nombre}"?`)) return
+    const ok = await confirm({
+      titulo: currentlyActive ? `¿Desactivar área "${area.nombre}"?` : `¿Reactivar área "${area.nombre}"?`,
+      mensaje: currentlyActive ? 'Los usuarios de esta área ya no estarán asociados.' : 'El área volverá a estar disponible.',
+      confirmarTxt: currentlyActive ? 'Sí, desactivar' : 'Sí, reactivar',
+      tipo: currentlyActive ? 'warning' : 'info',
+    })
+    if (!ok) return
     try { await sheetsApi.areas.toggle_activa(area.id); await loadAreasAll() }
-    catch (e) { alert('Error: ' + e.message) }
+    catch (e) { toast.error('Error: ' + e.message) }
   }
 
   /* ── Funciones: Usuarios ──────────────────────────────── */
-  async function loadPendingUsers() {
+  async function loadPendingUsers(page = pendingPage, search = pendingSearch) {
     setLoadingUsers(true)
-    try { const r = await sheetsApi.usuarios.listar('pendiente'); setPendingUsers(r.usuarios || []) }
-    catch (e) { alert('Error cargando usuarios: ' + e.message) }
+    try {
+      const r = await sheetsApi.usuarios.listar({
+        estado: 'pendiente',
+        page: page,
+        pageSize: pendingPageSize,
+        search: search
+      })
+      setPendingUsers(r.usuarios || [])
+      setPendingTotal(r.total || 0)
+    }
+    catch (e) { toast.error('Error cargando usuarios: ' + e.message) }
     finally { setLoadingUsers(false) }
   }
 
-  async function loadActiveUsers() {
+  async function loadActiveUsers(page = activePage, search = activeSearch) {
     setLoadingActiveUsers(true)
-    try { const r = await sheetsApi.usuarios.listar('activo'); setActiveUsers(r.usuarios || []) }
-    catch (e) { alert('Error cargando usuarios activos: ' + e.message) }
+    try {
+      const r = await sheetsApi.usuarios.listar({
+        estado: 'activo',
+        page: page,
+        pageSize: activePageSize,
+        search: search
+      })
+      setActiveUsers(r.usuarios || [])
+      setActiveTotal(r.total || 0)
+    }
+    catch (e) { toast.error('Error cargando usuarios activos: ' + e.message) }
     finally { setLoadingActiveUsers(false) }
   }
 
   async function confirmApprove(id) {
+    const tipoUsuario = approvingUser.tipo_usuario || 'general'
+    
     if (isPro && !approvingUser.area_id) {
-      return alert('Debés seleccionar el área del usuario.')
+      toast.info(
+        tipoUsuario === 'jefe'
+          ? 'Un jefe de área requiere área asignada.'
+          : 'Debés seleccionar el área del usuario.'
+      )
+      return
     }
     
     setApprovingInProgress(true)
@@ -158,14 +210,25 @@ useEffect(() => {
     try {
       await sheetsApi.usuarios.aprobar(
         id,
-        '',
+        tipoUsuario,
         isPro ? approvingUser.area_id : ''
       )
       setApprovingUser(null)
-      await loadPendingUsers()
-      loadActiveUsers().catch(() => {})
+      await loadPendingUsers(pendingPage, pendingSearch)
+      loadActiveUsers(activePage, activeSearch).catch(() => {})
+      toast.success(
+        tipoUsuario === 'jefe'
+          ? 'Jefe de área aprobado correctamente'
+          : 'Usuario aprobado correctamente'
+      )
     } catch (e) {
-      alert('Error aprobando: ' + e.message)
+      // Error 23505: ya existe un jefe en esa área (unique constraint)
+      if (e.message?.includes('23505') || e.code === '23505' ||
+          e.message?.toLowerCase().includes('idx_un_jefe_por_area')) {
+        toast.error('Ya existe un jefe asignado a esa área.')
+      } else {
+        toast.error('Error aprobando: ' + e.message)
+      }
     } finally {
       setApprovingInProgress(false)
     }
@@ -178,8 +241,9 @@ useEffect(() => {
       await sheetsApi.usuarios.rechazar(id)
       setPendingUsers(prev => prev.filter(u => u.id !== id))
       setRejectingUser(null)
+      toast.success('Usuario rechazado')
     } catch (e) { 
-      alert(e.message || 'Error al rechazar usuario') 
+      toast.error(e.message || 'Error al rechazar usuario')
     } finally {
       setRejectingInProgress(false)
     }
@@ -234,16 +298,8 @@ if (initialLoading) {
 
         {/* TAB: Áreas */}
         {tab === 'Areas' && (
-          <div className="animate-fade-in space-y-6">
-            {/* Crear nueva área */}
-            <div
-              className="rounded-2xl p-6"
-              style={{
-                background: '#fff',
-                border: '1px solid #f0eadb',
-                boxShadow: '0 4px 16px rgba(12,24,43,.06)',
-              }}
-            >
+          <div className="grid gap-6">
+            <div>
               <h3 className="font-display text-xl mb-4" style={{ color: '#0a1226' }}>
                 Crear nueva área
               </h3>
@@ -404,16 +460,16 @@ if (initialLoading) {
           style={{ color: '#0a1226', letterSpacing: '0.02em' }}>
           USUARIOS PENDIENTES
         </h2>
-        {pendingUsers.length > 0 && (
+        {pendingTotal > 0 && (
           <p className="text-sm font-body mt-1.5"
             style={{ color: '#5f6e8a' }}>
-            {pendingUsers.length} {pendingUsers.length === 1 ? 'solicitud pendiente' : 'solicitudes pendientes'} de aprobación
+            {pendingTotal} {pendingTotal === 1 ? 'solicitud pendiente' : 'solicitudes pendientes'} de aprobación
           </p>
         )}
       </div>
 
       <button
-        onClick={loadPendingUsers}
+        onClick={() => loadPendingUsers(pendingPage, pendingSearch)}
         disabled={loadingUsers}
         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all disabled:opacity-50"
         style={{
@@ -454,6 +510,42 @@ if (initialLoading) {
       </button>
     </div>
 
+    {/* Barra de Búsqueda */}
+    <div className="mb-6 flex gap-2 max-w-md">
+      <input
+        type="text"
+        placeholder="Buscar por nombre o email..."
+        value={pendingSearch}
+        onChange={e => setPendingSearch(e.target.value)}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            setPendingPage(0)
+            loadPendingUsers(0, pendingSearch)
+          }
+        }}
+        className="w-full px-4 py-2.5 rounded-xl font-body text-sm outline-none border transition-all"
+        style={{
+          background: '#fff',
+          border: '1.5px solid #f0eadb',
+          color: '#0c182b',
+        }}
+      />
+      <button
+        onClick={() => {
+          setPendingPage(0)
+          loadPendingUsers(0, pendingSearch)
+        }}
+        className="px-5 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all"
+        style={{
+          background: 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
+          color: '#0a1226',
+          boxShadow: '0 2px 8px rgba(235,195,43,0.15)',
+        }}
+      >
+        Buscar
+      </button>
+    </div>
+
     {/* Loading state */}
     {loadingUsers && pendingUsers.length === 0 ? (
       <div className="text-center py-20">
@@ -488,7 +580,8 @@ if (initialLoading) {
       </div>
     ) : (
       /* Lista de usuarios */
-      <div className="grid gap-4">
+      <>
+        <div className="grid gap-4">
         {pendingUsers.map(u => {
           const isApproving = approvingUser?.id === u.id
           const isRejecting = rejectingUser === u.id
@@ -550,7 +643,7 @@ if (initialLoading) {
                   {!isApproving && !isRejecting && (
                     <div className="flex gap-2 flex-shrink-0">
                       <button
-                        onClick={() => setApprovingUser({ id: u.id, area_id: '' })}
+                        onClick={() => setApprovingUser({ id: u.id, area_id: '', tipo_usuario: 'general' })}
                         className="px-5 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all"
                         style={{
                           background: 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
@@ -671,13 +764,53 @@ if (initialLoading) {
               {/* Panel de aprobación expandido */}
               {isApproving && (
                 <div className="px-5 pb-5">
-                  <div
-                    className="rounded-xl p-5 flex flex-col gap-5"
-                    style={{
-                      background: 'rgba(235,195,43,0.04)',
-                      border: '1.5px solid rgba(235,195,43,0.15)',
-                    }}
-                  >
+
+                    {/* Selector de tipo de usuario — disponible en plan_pro */}
+                    {isPro && (
+                      <div>
+                        <p className="text-[11px] font-body font-bold uppercase tracking-[0.15em] mb-3 flex items-center gap-2"
+                          style={{ color: '#c99f16' }}>
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                          </svg>
+                          Tipo de usuario
+                        </p>
+                        <div className="flex gap-2">
+                          {[{ val: 'general', label: 'General' }, { val: 'jefe', label: 'Jefe de Área' }].map(({ val, label }) => {
+                            const sel = (approvingUser.tipo_usuario || 'general') === val
+                            return (
+                              <button
+                                key={val}
+                                type="button"
+                                onClick={() => setApprovingUser({ ...approvingUser, tipo_usuario: val })}
+                                className="px-4 py-2 rounded-full text-xs font-body font-bold transition-all"
+                                style={{
+                                  background: sel ? '#ebc32b' : '#fff',
+                                  border: `1.5px solid ${sel ? '#ebc32b' : '#f0eadb'}`,
+                                  color: sel ? '#0a1226' : '#5f6e8a',
+                                }}
+                              >
+                                {label}
+                              </button>
+                            )
+                          })}
+                        </div>
+                        {approvingUser.tipo_usuario === 'jefe' && (
+                          <p className="text-[10px] font-body mt-2" style={{ color: '#c99f16' }}>
+                            ⚠️ El área es obligatoria para jefes. Solo puede haber un jefe por área.
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    <div
+                      className="rounded-xl p-5 flex flex-col gap-5"
+                      style={{
+                        background: 'rgba(235,195,43,0.04)',
+                        border: '1.5px solid rgba(235,195,43,0.15)',
+                      }}
+                    >
 
                     {/* Selector de área — solo Plan_pro */}
                     {isPro && (
@@ -819,183 +952,60 @@ if (initialLoading) {
           )
         })}
       </div>
+
+      {/* Pagination controls for Pending Users */}
+      {pendingTotal > pendingPageSize && (
+        <div className="flex items-center justify-between mt-6 px-2">
+          <span className="text-xs font-body" style={{ color: '#5f6e8a' }}>
+            Mostrando {pendingPage * pendingPageSize + 1} - {Math.min((pendingPage + 1) * pendingPageSize, pendingTotal)} de {pendingTotal}
+          </span>
+          <div className="flex gap-2">
+            <button
+              disabled={pendingPage === 0 || loadingUsers}
+              onClick={() => {
+                const newPage = pendingPage - 1
+                setPendingPage(newPage)
+                loadPendingUsers(newPage, pendingSearch)
+              }}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold border transition-all disabled:opacity-40"
+              style={{ background: '#fff', borderColor: '#f0eadb', color: '#5f6e8a' }}
+            >
+              Anterior
+            </button>
+            <button
+              disabled={(pendingPage + 1) * pendingPageSize >= pendingTotal || loadingUsers}
+              onClick={() => {
+                const newPage = pendingPage + 1
+                setPendingPage(newPage)
+                loadPendingUsers(newPage, pendingSearch)
+              }}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold border transition-all disabled:opacity-40"
+              style={{ background: '#fff', borderColor: '#f0eadb', color: '#5f6e8a' }}
+            >
+              Siguiente
+            </button>
+          </div>
+        </div>
+      )}
+      </>
     )}
   </div>
 )}
 
         {/* TAB: Usuarios Activos */}
         {tab === 'UsuariosActivos' && (
-          <div className="animate-fade-in delay-2">
-            {/* Header */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-              <div>
-                <h2 className="font-display text-2xl md:text-3xl tracking-wide"
-                  style={{ color: '#0a1226', letterSpacing: '0.02em' }}>
-                  USUARIOS ACTIVOS
-                </h2>
-                {activeUsers.length > 0 && (
-                  <p className="text-sm font-body mt-1.5" style={{ color: '#5f6e8a' }}>
-                    {activeUsers.length} {activeUsers.length === 1 ? 'usuario aprobado' : 'usuarios aprobados'}
-                  </p>
-                )}
-              </div>
-
-              <button
-                onClick={loadActiveUsers}
-                disabled={loadingActiveUsers}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all disabled:opacity-50"
-                style={{
-                  background: loadingActiveUsers ? 'rgba(235,195,43,0.1)' : '#fff',
-                  border: '1.5px solid #f0eadb',
-                  color: loadingActiveUsers ? '#c99f16' : '#5f6e8a',
-                  boxShadow: '0 1px 0 rgba(10,18,38,0.03)',
-                }}
-              >
-                {loadingActiveUsers ? (
-                  <>
-                    <span className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                    Actualizando...
-                  </>
-                ) : (
-                  <>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="23 4 23 10 17 10" />
-                      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-                    </svg>
-                    Actualizar
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* Loading */}
-            {loadingActiveUsers && activeUsers.length === 0 ? (
-              <div className="text-center py-20">
-                <span className="inline-block w-10 h-10 border-3 border-t-transparent rounded-full animate-spin"
-                  style={{ borderColor: '#ebc32b', borderTopColor: 'transparent' }} />
-                <p className="font-body text-sm mt-4" style={{ color: '#5f6e8a' }}>
-                  Cargando usuarios...
-                </p>
-              </div>
-            ) : activeUsers.length === 0 ? (
-              /* Empty */
-              <div
-                className="rounded-2xl p-16 text-center"
-                style={{
-                  background: '#fff',
-                  border: '1.5px dashed #f0eadb',
-                  boxShadow: '0 1px 0 rgba(10,18,38,0.03)',
-                }}
-              >
-                <p className="font-body font-semibold text-lg mb-2" style={{ color: '#0a1226' }}>
-                  Todavía no hay usuarios activos
-                </p>
-                <p className="font-body text-sm max-w-md mx-auto" style={{ color: '#5f6e8a' }}>
-                  A medida que apruebes solicitudes pendientes, los usuarios van a aparecer acá.
-                </p>
-              </div>
-            ) : (
-              /* Tabla / lista */
-              <div
-                className="rounded-2xl overflow-hidden"
-                style={{
-                  background: '#fff',
-                  border: '1.5px solid #f0eadb',
-                  boxShadow: '0 1px 0 rgba(10,18,38,0.03)',
-                }}
-              >
-                {/* Encabezado tabla */}
-                <div
-                  className="hidden md:grid gap-3 px-5 py-3 text-[10px] font-body font-bold uppercase tracking-[0.15em]"
-                  style={{
-                    gridTemplateColumns: '1.6fr 1.6fr 1fr 0.8fr 0.8fr 1fr',
-                    background: 'rgba(235,195,43,0.06)',
-                    color: '#c99f16',
-                    borderBottom: '1px solid #f0eadb',
-                  }}
-                >
-                  <span>Nombre</span>
-                  <span>Email</span>
-                  <span>Área</span>
-                  <span>Tipo</span>
-                  <span>Rol</span>
-                  <span>Registrado</span>
-                </div>
-
-                {/* Filas */}
-                {activeUsers.map((u, idx) => {
-                  const area = areas.find(a => a.id === u.area_id)
-                  const areaNombre = area?.nombre || (u.area_id ? '—' : 'Sin área')
-                  return (
-                    <div
-                      key={u.id}
-                      className="grid gap-3 px-5 py-4 items-center"
-                      style={{
-                        gridTemplateColumns: '1.6fr 1.6fr 1fr 0.8fr 0.8fr 1fr',
-                        borderBottom: idx === activeUsers.length - 1 ? 'none' : '1px solid #f5efe3',
-                      }}
-                    >
-                      {/* Nombre con avatar */}
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div
-                          className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center font-display text-sm"
-                          style={{
-                            background: 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
-                            color: '#0a1226',
-                          }}
-                        >
-                          {getInitials(u.nombre)}
-                        </div>
-                        <p className="font-body font-bold text-sm truncate" style={{ color: '#0a1226' }}>
-                          {u.nombre}
-                        </p>
-                      </div>
-
-                      {/* Email */}
-                      <p className="font-body text-sm truncate" style={{ color: '#5f6e8a' }}>
-                        {u.email}
-                      </p>
-
-                      {/* Área */}
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-body font-semibold w-fit"
-                        style={{
-                          background: area ? 'rgba(27,138,90,0.08)' : 'rgba(95,110,138,0.06)',
-                          color: area ? '#1b8a5a' : '#9aa5b8',
-                          border: `1px solid ${area ? 'rgba(27,138,90,0.2)' : 'rgba(95,110,138,0.15)'}`,
-                        }}>
-                        {areaNombre}
-                      </span>
-
-                      {/* Tipo usuario */}
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-body font-semibold w-fit uppercase tracking-wider"
-                        style={{
-                          background: u.tipo_usuario === 'jefe' ? 'rgba(235,195,43,0.1)' : 'rgba(12,24,43,0.05)',
-                          color: u.tipo_usuario === 'jefe' ? '#c99f16' : '#5f6e8a',
-                          border: `1px solid ${u.tipo_usuario === 'jefe' ? 'rgba(235,195,43,0.25)' : 'rgba(12,24,43,0.1)'}`,
-                        }}>
-                        {u.tipo_usuario === 'jefe' ? 'Jefe' : 'General'}
-                      </span>
-
-                      {/* Rol */}
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-body font-semibold w-fit uppercase tracking-wider"
-                        style={{
-                          background: u.rol === 'admin' ? 'rgba(224,50,82,0.07)' : 'rgba(12,24,43,0.05)',
-                          color: u.rol === 'admin' ? '#e03252' : '#5f6e8a',
-                          border: `1px solid ${u.rol === 'admin' ? 'rgba(224,50,82,0.2)' : 'rgba(12,24,43,0.1)'}`,
-                        }}>
-                        {u.rol}
-                      </span>
-
-                      {/* Fecha */}
-                      <p className="font-body text-xs" style={{ color: '#5f6e8a' }}>
-                        {formatDate(u.fecha_registro)}
-                      </p>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-          </div>
+          <ActiveUsersTab
+            activeTotal={activeTotal}
+            loadingActiveUsers={loadingActiveUsers}
+            loadActiveUsers={loadActiveUsers}
+            activeSearch={activeSearch}
+            setActiveSearch={setActiveSearch}
+            activePage={activePage}
+            setActivePage={setActivePage}
+            activeUsers={activeUsers}
+            areas={areas}
+            activePageSize={activePageSize}
+          />
         )}
       </div>
     </AppShell>

@@ -3,6 +3,7 @@ import AppLayout from '../components/layout/AppLayout.jsx'
 import sheetsApi from '../services/sheetsApi.js'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { isBetOpen, timeLeft } from '../utils/index.js'
+import { useToast } from '../hooks/useToast.jsx'
 
 /* ── Chip de filtro reutilizable ───────────────────────── */
 function Chip({ active, onClick, children }) {
@@ -269,6 +270,7 @@ function BetCardItem({ bet, predsDeLaApuesta, expanded, onToggle }) {
 /* ── Página principal ──────────────────────────────── */
 export default function MisPrediccionesPage() {
     const { user } = useAuth()
+    const { toast } = useToast()
     const [bets, setBets] = useState([])
     const [allMatches, setAllMatches] = useState([])
     const [allPreds, setAllPreds] = useState([])
@@ -297,7 +299,7 @@ export default function MisPrediccionesPage() {
                 })
                 setBets(apuestas)
             } catch (err) {
-                alert('Error cargando tus predicciones: ' + err.message)
+                toast.error('Error cargando tus predicciones: ' + err.message)
             } finally {
                 setLoading(false)
             }

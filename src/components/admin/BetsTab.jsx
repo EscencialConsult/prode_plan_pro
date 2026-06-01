@@ -1,5 +1,6 @@
 import CreateBetForm from './CreateBetForm.jsx'
 import { isBetOpen, timeLeft } from '../../utils/index.js'
+import { useToast, useConfirm } from '../../hooks/useToast.jsx'
 
 function getBetStatus(bet) {
   if (bet.estado === 'abierta' && isBetOpen(bet))
@@ -111,21 +112,35 @@ function BetRow({ bet, onClose, onFinalize }) {
 }
 
 export default function BetsTab({ bets, loading, createBet, matches, closeBet, finalizeBet }) {
+  const { toast } = useToast()
+  const confirm   = useConfirm()
+
   const openBets     = bets.filter(b => isBetOpen(b))
   const closedBets   = bets.filter(b => b.estado === 'cerrada' && !isBetOpen(b))
   const finishedBets = bets.filter(b => b.estado === 'finalizada')
 
-
   async function handleClose(id) {
-    if (!window.confirm('¿Cerrar esta apuesta? Los usuarios ya no podrán cargar predicciones.')) return
-    try { await closeBet(id) }
-    catch (e) { alert('Error al cerrar: ' + e.message) }
+    const ok = await confirm({
+      titulo: '¿Cerrar apuesta?',
+      mensaje: 'Los usuarios ya no podrán cargar predicciones.',
+      confirmarTxt: 'Sí, cerrar',
+      tipo: 'warning',
+    })
+    if (!ok) return
+    try { await closeBet(id); toast.success('Apuesta cerrada correctamente') }
+    catch (e) { toast.error('Error al cerrar: ' + e.message) }
   }
 
   async function handleFinalize(id) {
-    if (!window.confirm('¿Finalizar esta apuesta? Esto calculará los puntajes finales.')) return
-    try { await finalizeBet(id) }
-    catch (e) { alert('Error al finalizar: ' + e.message) }
+    const ok = await confirm({
+      titulo: '¿Finalizar apuesta?',
+      mensaje: 'Esto calculará los puntajes finales. No se puede deshacer.',
+      confirmarTxt: 'Sí, finalizar',
+      tipo: 'danger',
+    })
+    if (!ok) return
+    try { await finalizeBet(id); toast.success('Apuesta finalizada y puntajes calculados') }
+    catch (e) { toast.error('Error al finalizar: ' + e.message) }
   }
 
 return (

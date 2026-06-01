@@ -5,9 +5,9 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { useBets } from '../../hooks/useBets.jsx'
 import { useAuth } from '../../hooks/useAuth.jsx'
 import { timeLeft, isBetOpen } from '../../utils/index.js'
+import { useToast } from '../../hooks/useToast.jsx'
 
 function esEliminatoria(fase) {
   if (!fase) return false
@@ -21,9 +21,11 @@ function useDebounce(callback, delay, deps) {
   }, [...deps, delay])
 }
 
-export default function PredictModal({ bet, onSubmit, onClose, loading }) {
-  const { predictions } = useBets()
+// predictions se recibe como prop desde el padre (BetsPage ya los tiene cargados).
+// Así el modal siempre arranca con los datos reales de la DB, sin delay de red.
+export default function PredictModal({ bet, predictions = {}, onSubmit, onClose, loading }) {
   const { user } = useAuth()
+  const { toast } = useToast()
   const [scores, setScores] = useState({})
   const [clasificados, setClasificados] = useState({})
   const [activeMatchIdx, setActiveMatchIdx] = useState(0)
@@ -44,23 +46,59 @@ export default function PredictModal({ bet, onSubmit, onClose, loading }) {
     }
   }
 
+  // ── Inicialización de scores ──────────────────────────────────────────
+  // Se ejecuta UNA sola vez por bet (dep: bet?.id), NO cada vez que cambia
+  // el objeto predictions. Así el usuario no pierde lo que está tipeando.
+  //
+  // Orden de prioridad (de mayor a menor):
+  //   1. Predicción guardada en la DB  → viene en la prop `predictions`
+  //   2. Borrador en localStorage      → sólo rellena campos SIN pred en DB
+  //   3. Vacío                         → campo en blanco
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    if (bet?.partidos) {
-      const initialScores = {}
-      const initialClasif = {}
-      bet.partidos.forEach(p => {
-        const existingPred = predictions?.[p.id]
-        initialScores[p.id] = {
-          local: existingPred?.pred_local != null ? String(existingPred.pred_local) : '',
-          visitante: existingPred?.pred_visitante != null ? String(existingPred.pred_visitante) : '',
-        }
-        initialClasif[p.id] = existingPred?.pred_clasificado || ''
-      })
-      setScores(initialScores)
-      setClasificados(initialClasif)
-    }
-  }, [bet, predictions])
+    if (!bet?.partidos) return
 
+    const initialScores = {}
+    const initialClasif = {}
+
+    // Paso 1 — DB es la fuente de verdad
+    bet.partidos.forEach(p => {
+      const dbPred = predictions?.[p.id]
+      initialScores[p.id] = {
+        local:     dbPred?.pred_local     != null ? String(dbPred.pred_local)     : '',
+        visitante: dbPred?.pred_visitante != null ? String(dbPred.pred_visitante) : '',
+      }
+      initialClasif[p.id] = dbPred?.pred_clasificado || ''
+    })
+
+    // Paso 2 — Borrador rellena SOLO los partidos sin predicción en DB
+    try {
+      const raw = localStorage.getItem(`bet-${bet.id}-draft`)
+      if (raw) {
+        const { scores: dScores, clasificados: dClasif } = JSON.parse(raw)
+        if (dScores) {
+          Object.keys(dScores).forEach(pid => {
+            // Usar borrador únicamente si no hay datos de DB para este partido
+            if (initialScores[pid]?.local === '' && initialScores[pid]?.visitante === '') {
+              initialScores[pid] = dScores[pid]
+            }
+          })
+        }
+        if (dClasif) {
+          Object.keys(dClasif).forEach(pid => {
+            if (!initialClasif[pid]) initialClasif[pid] = dClasif[pid]
+          })
+        }
+      }
+    } catch (e) {
+      console.warn('Error loading draft:', e)
+    }
+
+    setScores(initialScores)
+    setClasificados(initialClasif)
+  }, [bet?.id]) // ← Solo re-init cuando cambia la apuesta, no cada render
+
+  // Guarda el borrador 2s después del último cambio (recovery anti-cierre accidental)
   useDebounce(() => {
     if (!bet?.id) return
     try {
@@ -69,20 +107,6 @@ export default function PredictModal({ bet, onSubmit, onClose, loading }) {
       console.warn('Error saving draft:', e)
     }
   }, 2000, [scores, clasificados])
-
-  useEffect(() => {
-    if (!bet?.id) return
-    try {
-      const draft = localStorage.getItem(`bet-${bet.id}-draft`)
-      if (draft) {
-        const { scores: dScores, clasificados: dClasif } = JSON.parse(draft)
-        if (dScores) setScores(prev => ({ ...prev, ...dScores }))
-        if (dClasif) setClasificados(prev => ({ ...prev, ...dClasif }))
-      }
-    } catch (e) {
-      console.warn('Error loading draft:', e)
-    }
-  }, [bet?.id])
 
   useEffect(() => {
     if (!bet) return
@@ -183,21 +207,17 @@ export default function PredictModal({ bet, onSubmit, onClose, loading }) {
     }
 
     if (empatesSinClasificado.length > 0) {
-      alert(
-        'Predijiste un empate y no indicaste quién pasa por penales.\n\nFalta el clasificado en:\n• ' +
-        empatesSinClasificado.join('\n• ')
+      toast.info(
+        'Predijiste un empate y no indicaste quién pasa por penales. Falta el clasificado en: ' +
+        empatesSinClasificado.join(', ')
       )
       return
     }
 
     if (matchPredictions.length === 0) {
-      alert('Ingresá al menos una predicción válida.')
+      toast.info('Ingresá al menos una predicción válida.')
       return
     }
-
-    try {
-      localStorage.removeItem(`bet-${bet.id}-draft`)
-    } catch (e) {}
 
     onSubmit(bet.id, matchPredictions)
   }

@@ -4,6 +4,7 @@ import Card from '../components/ui/Card.jsx'
 import Badge from '../components/ui/Badge.jsx'
 import sheetsApi from '../services/sheetsApi.js'
 import { fmtFecha, diaLocalIso } from '../utils/index.js'
+import { useToast } from '../hooks/useToast.jsx'
 
 const ORDEN_FASES = ['grupos', '16avos', 'octavos', 'cuartos', 'semis', '3er_puesto', 'final']
 const LABEL_FASE = {
@@ -24,6 +25,7 @@ export default function PartidosPage() {
     const [grupos, setGrupos] = useState([])
     const [partidos, setPartidos] = useState([])
     const [loading, setLoading] = useState(true)
+    const { toast } = useToast()
 
     useEffect(() => {
         async function cargar() {
@@ -36,7 +38,7 @@ export default function PartidosPage() {
                 setGrupos(respGrupos.grupos || [])
                 setPartidos(respPartidos.partidos || [])
             } catch (err) {
-                alert('Error cargando datos: ' + err.message)
+                toast.error('Error cargando datos: ' + err.message)
             } finally {
                 setLoading(false)
             }

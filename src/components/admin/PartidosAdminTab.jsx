@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import sheetsApi from '../../services/sheetsApi.js'
 import { fmtFecha } from '../../utils/index.js'
+import { useToast } from '../../hooks/useToast.jsx'
 
 const ORDEN_FASES = ['grupos', '16avos', 'octavos', 'cuartos', 'semis', '3er_puesto', 'final']
 const LABEL_FASE = {
@@ -66,7 +67,7 @@ function EditScoreModal({ match, onClose, onSave }) {
       onSave()
       onClose()
     } catch (e) {
-      alert('Error actualizando partido: ' + e.message)
+      setErrorPen('Error actualizando partido: ' + e.message)
     } finally {
       setSaving(false)
     }
@@ -232,6 +233,7 @@ function EditScoreModal({ match, onClose, onSave }) {
 }
 
 export default function PartidosAdminTab({ matches, loadBets }) {
+  const { toast } = useToast()
   const [filtroFase,   setFiltroFase  ] = useState('todas')
   const [filtroEstado, setFiltroEstado] = useState('todos')
   const [editingMatch, setEditingMatch ] = useState(null)
@@ -255,9 +257,9 @@ export default function PartidosAdminTab({ matches, loadBets }) {
     try {
       await sheetsApi.partidos.sincronizar()
       await loadBets()
-      alert('Partidos sincronizados correctamente.')
+      toast.success('Partidos sincronizados correctamente')
     } catch (e) {
-      alert('Error al sincronizar: ' + e.message)
+      toast.error('Error al sincronizar: ' + e.message)
     } finally {
       setSyncing(false)
     }

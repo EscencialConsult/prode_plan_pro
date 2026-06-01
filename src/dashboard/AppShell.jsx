@@ -13,6 +13,7 @@ const NAV_ITEMS = [
 
 const ADMIN_ICON = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg>
 const MANUAL_ICON = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+const KEY_ICON = <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
 
 // ❌ ELIMINAR ESTAS LÍNEAS (26-31):
 // const filteredNavItems = NAV_ITEMS.filter(item => {
@@ -108,6 +109,7 @@ export default function AppShell({ children }) {
   const navigate = useNavigate()
   const [mob, setMob] = useState(false)
   const [logoutState, setLogoutState] = useState('idle')
+  const [userMenu, setUserMenu] = useState(false)
 
   const esAdmin = isAdmin || user?.rol === 'admin' || user?.es_admin === true || user?.tipo_usuario === 'admin'
 
@@ -317,47 +319,130 @@ export default function AppShell({ children }) {
                 En vivo
               </span>
 
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '.42rem',
-                  padding: '.28rem .62rem .28rem .28rem',
-                  borderRadius: 99,
-                  background: 'rgba(255,255,255,.07)',
-                  border: '1px solid rgba(255,255,255,.1)',
-                }}
-              >
-                <div
+              <div style={{ position: 'relative' }}>
+                <button
+                  type="button"
+                  title="Opciones de cuenta"
+                  aria-haspopup="menu"
+                  aria-expanded={userMenu}
+                  onClick={() => setUserMenu(v => !v)}
                   style={{
-                    width: 27,
-                    height: 27,
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg,#ebc32b,#c99f16)',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    fontFamily: "'Bebas Neue',sans-serif",
-                    fontSize: '.88rem',
-                    color: '#05090f',
+                    gap: '.42rem',
+                    padding: '.28rem .55rem .28rem .28rem',
+                    borderRadius: 99,
+                    background: (userMenu || location.pathname === '/cambiar-password')
+                      ? 'rgba(235,195,43,.14)' : 'rgba(255,255,255,.07)',
+                    border: `1px solid ${(userMenu || location.pathname === '/cambiar-password')
+                      ? 'rgba(235,195,43,.4)' : 'rgba(255,255,255,.1)'}`,
+                    cursor: 'pointer',
+                    transition: 'all .16s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(235,195,43,.4)' }}
+                  onMouseLeave={e => {
+                    if (!userMenu && location.pathname !== '/cambiar-password') {
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,.1)'
+                    }
                   }}
                 >
-                  {initials(user?.nombre || user?.name || 'U')}
-                </div>
+                  <div
+                    style={{
+                      width: 27,
+                      height: 27,
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg,#ebc32b,#c99f16)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontFamily: "'Bebas Neue',sans-serif",
+                      fontSize: '.88rem',
+                      color: '#05090f',
+                    }}
+                  >
+                    {initials(user?.nombre || user?.name || 'U')}
+                  </div>
 
-                <span
-                  style={{
-                    fontSize: '.78rem',
-                    fontWeight: 600,
-                    color: 'rgba(255,255,255,.72)',
-                    maxWidth: 84,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {user?.nombre || user?.name || 'Usuario'}
-                </span>
+                  <span
+                    style={{
+                      fontSize: '.78rem',
+                      fontWeight: 600,
+                      color: 'rgba(255,255,255,.72)',
+                      maxWidth: 84,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {user?.nombre || user?.name || 'Usuario'}
+                  </span>
+
+                  {/* Flechita indicadora de menú desplegable */}
+                  <svg
+                    width="11" height="11" viewBox="0 0 24 24" fill="none"
+                    stroke="rgba(255,255,255,.5)" strokeWidth="2.5"
+                    strokeLinecap="round" strokeLinejoin="round"
+                    style={{
+                      flexShrink: 0,
+                      transition: 'transform .18s',
+                      transform: userMenu ? 'rotate(180deg)' : 'rotate(0deg)',
+                    }}
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+
+                {userMenu && (
+                  <>
+                    {/* Backdrop para cerrar al hacer click afuera */}
+                    <div
+                      onClick={() => setUserMenu(false)}
+                      style={{ position: 'fixed', inset: 0, zIndex: 60, background: 'transparent' }}
+                    />
+
+                    <div
+                      role="menu"
+                      className="pop-in"
+                      style={{
+                        position: 'absolute',
+                        top: 'calc(100% + 8px)',
+                        right: 0,
+                        zIndex: 61,
+                        minWidth: 200,
+                        background: '#fff',
+                        borderRadius: 12,
+                        boxShadow: '0 12px 32px rgba(12,24,43,.22), 0 0 0 1px rgba(12,24,43,.06)',
+                        padding: '.35rem',
+                        border: '1px solid #f0eadb',
+                      }}
+                    >
+                      <div
+                        style={{
+                          position: 'absolute', top: -6, right: 22, width: 12, height: 12,
+                          background: '#fff', transform: 'rotate(45deg)',
+                          borderTop: '1px solid #f0eadb', borderLeft: '1px solid #f0eadb',
+                        }}
+                      />
+
+                      <Link
+                        to="/cambiar-password"
+                        role="menuitem"
+                        onClick={() => setUserMenu(false)}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '.55rem',
+                          padding: '.6rem .7rem', borderRadius: 8,
+                          fontSize: '.82rem', fontWeight: 600, color: '#0c182b',
+                          textDecoration: 'none', transition: 'background .14s',
+                        }}
+                        onMouseEnter={e => { e.currentTarget.style.background = '#f6f1e3' }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+                      >
+                        <span style={{ color: '#c99f16', display: 'flex' }}>{KEY_ICON}</span>
+                        Cambiar contraseña
+                      </Link>
+                    </div>
+                  </>
+                )}
               </div>
 
               <div style={{ position: 'relative' }}>
@@ -575,6 +660,8 @@ export default function AppShell({ children }) {
               {esAdmin && (
                 <NavLinkMob to="/admin" label="Configuración" icon={ADMIN_ICON} location={location} onClick={() => setMob(false)} />
               )}
+
+              <NavLinkMob to="/cambiar-password" label="Cambiar contraseña" icon={KEY_ICON} location={location} onClick={() => setMob(false)} />
             </div>
           )}
         </nav>

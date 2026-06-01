@@ -19,7 +19,7 @@
 import { createClient } from '@supabase/supabase-js'
 
 // ── Configuración ─────────────────────────────────────────
-const SUPABASE_URL      = import.meta.env.VITE_SUPABASE_URL
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
@@ -120,7 +120,7 @@ function mostrarAvisoSesionExpirada() {
 
 function manejarSesionExpirada() {
   invalidateClientCache()
-  try { sessionStorage.removeItem('prode_user') } catch (e) {}
+  try { sessionStorage.removeItem('prode_user') } catch (e) { }
   const path = window.location.pathname
   const yaEnLogin =
     path === '/login' || path === '/' || path === '/home' ||
@@ -182,25 +182,25 @@ function mapearPartido(p) {
   const visitSel = p.visit_seleccion || null
   return {
     id: p.id,
-    equipo_local:      localSel?.nombre || p.local || '',
-    equipo_visitante:  visitSel?.nombre || p.visitante || '',
-    bandera_local:     localSel?.bandera_url || '',
+    equipo_local: localSel?.nombre || p.local || '',
+    equipo_visitante: visitSel?.nombre || p.visitante || '',
+    bandera_local: localSel?.bandera_url || '',
     bandera_visitante: visitSel?.bandera_url || '',
-    codigo_local:      p.local || '',
-    codigo_visitante:  p.visitante || '',
-    fecha_partido:     p.fecha_hora,
-    goles_local:       p.goles_local,
-    goles_visitante:   p.goles_visitante,
-    penales_local:     p.penales_local,
-    penales_visit:     p.penales_visit,
-    estado:            p.estado,
-    estado_raw:        p.estado_raw || '',
-    minuto:            extraerMinuto(p.estado_raw),
-    fase:              p.fase,
-    grupo:             p.grupo,
-    jornada:           p.jornada,
-    sede:              p.sede,
-    es_eliminatoria:   esFaseEliminatoria(p.fase),
+    codigo_local: p.local || '',
+    codigo_visitante: p.visitante || '',
+    fecha_partido: p.fecha_hora,
+    goles_local: p.goles_local,
+    goles_visitante: p.goles_visitante,
+    penales_local: p.penales_local,
+    penales_visit: p.penales_visit,
+    estado: p.estado,
+    estado_raw: p.estado_raw || '',
+    minuto: extraerMinuto(p.estado_raw),
+    fase: p.fase,
+    grupo: p.grupo,
+    jornada: p.jornada,
+    sede: p.sede,
+    es_eliminatoria: esFaseEliminatoria(p.fase),
   }
 }
 
@@ -241,9 +241,9 @@ function mapearApuesta(a) {
     premio: a.premio,
     fecha_cierre: a.fecha_cierre,
     estado: a.estado,
-    puntos_exacto:      a.puntos_exacto,
-    puntos_diferencia:  a.puntos_diferencia,
-    puntos_resultado:   a.puntos_resultado,
+    puntos_exacto: a.puntos_exacto,
+    puntos_diferencia: a.puntos_diferencia,
+    puntos_resultado: a.puntos_resultado,
     puntos_clasificado: a.puntos_clasificado,
     creado_por: a.creado_por,
     fecha_creacion: a.fecha_creacion,
@@ -378,26 +378,107 @@ const auth = {
     await supabase.auth.signOut()
     return { ok: true, message: 'Tu contraseña se actualizó correctamente. Ya podés iniciar sesión.' }
   },
+
+  /**
+   * Cambio de contraseña para un usuario YA logueado (sin email).
+   *
+   * Flujo seguro, alineado con la lógica de login:
+   *   1. Verifica la contraseña ACTUAL re-autenticando con
+   *      signInWithPassword → Supabase/GoTrue la compara contra el
+   *      hash bcrypt almacenado en auth.users (misma vía que el login).
+   *   2. Si es correcta, updateUser({ password }) genera y guarda el
+   *      NUEVO hash bcrypt (GoTrue hashea internamente).
+   *   3. No depende de links de recuperación por email.
+   *
+   * No cierra la sesión activa: el usuario sigue logueado tras el cambio.
+   *
+   * @param {string} currentPassword - contraseña actual
+   * @param {string} newPassword     - contraseña nueva
+   * @returns {Promise<{ok:true, message:string}>}
+   */
+  cambiarPassword: async (currentPassword, newPassword) => {
+    // ── 1. Validaciones de entrada (mínimas necesarias) ──
+    if (!currentPassword || !newPassword) {
+      throw new Error('Completá la contraseña actual y la nueva.')
+    }
+    if (newPassword.length < 6) {
+      throw new Error('La nueva contraseña debe tener al menos 6 caracteres.')
+    }
+    if (currentPassword === newPassword) {
+      throw new Error('La nueva contraseña debe ser distinta de la actual.')
+    }
+
+    // ── 2. Resolver el email del usuario logueado (sin pedírselo) ──
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user?.email) {
+      manejarSesionExpirada()
+      throw new Error('No hay una sesión activa. Volvé a iniciar sesión.')
+    }
+
+    // ── 3. Verificar la contraseña ACTUAL contra el hash almacenado ──
+    //    Re-autenticación: GoTrue compara contra el hash bcrypt.
+    const { error: errVerif } = await supabase.auth.signInWithPassword({
+      email: user.email,
+      password: currentPassword,
+    })
+    if (errVerif) {
+      // No revelamos detalles internos del proveedor de auth.
+      throw new Error('La contraseña actual es incorrecta.')
+    }
+
+    // ── 4. Generar y guardar el NUEVO hash (bcrypt vía GoTrue) ──
+    const { error: errUpd } = await supabase.auth.updateUser({ password: newPassword })
+    if (errUpd) {
+      throw new Error(traducirErrorAuth(errUpd))
+    }
+
+    return { ok: true, message: 'Tu contraseña se actualizó correctamente.' }
+  },
 }
 
 function traducirErrorAuth(error) {
   const msg = (error.message || '').toLowerCase()
   if (msg.includes('invalid login credentials')) return 'Email o contraseña incorrectos'
-  if (msg.includes('email not confirmed'))       return 'Tu cuenta no fue confirmada todavía'
-  if (msg.includes('user already registered'))   return 'El email ya está registrado'
-  if (msg.includes('password should be'))        return 'La contraseña debe tener al menos 6 caracteres'
-  if (msg.includes('rate limit'))                return 'Demasiados intentos. Probá nuevamente en unos minutos'
+  if (msg.includes('email not confirmed')) return 'Tu cuenta no fue confirmada todavía'
+  if (msg.includes('user already registered')) return 'El email ya está registrado'
+  if (msg.includes('password should be')) return 'La contraseña debe tener al menos 6 caracteres'
+  if (msg.includes('rate limit')) return 'Demasiados intentos. Probá nuevamente en unos minutos'
   return error.message || 'Error de autenticación'
 }
 
 // ── usuarios (admin) ──────────────────────────────────────
 const usuarios = {
-  listar: async (estado = '') => {
-    let q = supabase.from('usuarios').select('*').order('fecha_registro', { ascending: false })
+  listar: async (opciones = '') => {
+    let estado = ''
+    let page = 0
+    let pageSize = 50
+    let search = ''
+
+    if (typeof opciones === 'string') {
+      estado = opciones
+    } else if (opciones && typeof opciones === 'object') {
+      estado = opciones.estado || ''
+      page = opciones.page || 0
+      pageSize = opciones.pageSize || 50
+      search = opciones.search || ''
+    }
+
+    let q = supabase
+      .from('usuarios')
+      .select('*', { count: 'exact' })
+      .order('fecha_registro', { ascending: false })
+      .range(page * pageSize, (page + 1) * pageSize - 1)
     if (estado) q = q.eq('estado', estado)
-    const { data, error } = await q
+    if (search) q = q.or(`nombre.ilike.%${search}%,email.ilike.%${search}%`)
+    const { data, error, count } = await q
     checkError(error, 'usuarios.listar')
-    return { ok: true, usuarios: (data || []).map(u => ({ ...u, user_id: u.id })) }
+    return {
+      ok: true,
+      usuarios: (data || []).map(u => ({ ...u, user_id: u.id })),
+      total: count,
+      page,
+      pageSize,
+    }
   },
 
   obtener: async (user_id) => {
@@ -435,7 +516,7 @@ const usuarios = {
 
 // ── apuestas ──────────────────────────────────────────────
 const apuestas = {
-  listar: async (estado = '') => {
+  listar: async (estado = '', signal) => {
     const cached = getFromClientCache('apuestas.listar', { estado })
     if (cached) return cached
     let q = supabase
@@ -443,6 +524,7 @@ const apuestas = {
       .select('*, apuesta_partidos(partido_id), apuesta_areas(area_id)')
       .order('fecha_creacion', { ascending: false })
     if (estado) q = q.eq('estado', estado)
+    if (signal) q = q.abortSignal(signal)
     const { data, error } = await q
     checkError(error, 'apuestas.listar')
     const result = { ok: true, apuestas: (data || []).map(mapearApuesta) }
@@ -486,9 +568,9 @@ const apuestas = {
         premio: a.premio,
         fecha_cierre: a.fecha_cierre,
         estado: a.estado,
-        puntos_exacto:      a.puntos_exacto,
-        puntos_diferencia:  a.puntos_diferencia,
-        puntos_resultado:   a.puntos_resultado,
+        puntos_exacto: a.puntos_exacto,
+        puntos_diferencia: a.puntos_diferencia,
+        puntos_resultado: a.puntos_resultado,
         puntos_clasificado: a.puntos_clasificado,
         creado_por: a.creado_por,
         fecha_creacion: a.fecha_creacion,
@@ -520,9 +602,9 @@ const apuestas = {
         tipo: data.tipo,
         premio: data.premio,
         fecha_cierre: data.fecha_cierre,
-        puntos_exacto:      data.puntos_exacto      ?? 5,
-        puntos_diferencia:  data.puntos_diferencia  ?? 3,
-        puntos_resultado:   data.puntos_resultado   ?? 1,
+        puntos_exacto: data.puntos_exacto ?? 5,
+        puntos_diferencia: data.puntos_diferencia ?? 3,
+        puntos_resultado: data.puntos_resultado ?? 1,
         puntos_clasificado: data.puntos_clasificado ?? 1,
       })
       .select()
@@ -580,7 +662,7 @@ const apuestas = {
 
 // ── partidos ──────────────────────────────────────────────
 const partidos = {
-  listar: async ({ estado, fase, grupo, jornada } = {}) => {
+  listar: async ({ estado, fase, grupo, jornada, signal } = {}) => {
     const params = { estado: estado || '', fase: fase || '', grupo: grupo || '', jornada: jornada || '' }
     const cached = getFromClientCache('partidos.listar', params)
     if (cached) return cached
@@ -592,10 +674,11 @@ const partidos = {
         visit_seleccion:selecciones!partidos_visitante_fkey(codigo,nombre,bandera_url)
       `)
       .order('fecha_hora', { ascending: true })
-    if (estado)  q = q.eq('estado', estado)
-    if (fase)    q = q.eq('fase', fase)
-    if (grupo)   q = q.eq('grupo', grupo)
+    if (estado) q = q.eq('estado', estado)
+    if (fase) q = q.eq('fase', fase)
+    if (grupo) q = q.eq('grupo', grupo)
     if (jornada) q = q.eq('jornada', jornada)
+    if (signal) q = q.abortSignal(signal)
     const { data, error } = await q
     checkError(error, 'partidos.listar')
     const result = { ok: true, partidos: (data || []).map(mapearPartido) }
@@ -617,18 +700,21 @@ const partidos = {
     return { ok: true, partido: mapearPartido(data) }
   },
 
-  actualizar: async (data) => {
+  actualizar: async (data, signal) => {
     const { partido_id, ...campos } = data
     const update = {}
     // Solo aceptar campos válidos
-    if (campos.goles_local     !== undefined) update.goles_local     = campos.goles_local
+    if (campos.goles_local !== undefined) update.goles_local = campos.goles_local
     if (campos.goles_visitante !== undefined) update.goles_visitante = campos.goles_visitante
-    if (campos.penales_local   !== undefined) update.penales_local   = campos.penales_local
-    if (campos.penales_visit   !== undefined) update.penales_visit   = campos.penales_visit
-    if (campos.estado          !== undefined) update.estado          = campos.estado
-    if (campos.estado_raw      !== undefined) update.estado_raw      = campos.estado_raw
+    if (campos.penales_local !== undefined) update.penales_local = campos.penales_local
+    if (campos.penales_visit !== undefined) update.penales_visit = campos.penales_visit
+    if (campos.estado !== undefined) update.estado = campos.estado
+    if (campos.estado_raw !== undefined) update.estado_raw = campos.estado_raw
 
-    const { error } = await supabase.from('partidos').update(update).eq('id', partido_id)
+    let q = supabase.from('partidos').update(update).eq('id', partido_id)
+    if (signal) q = q.abortSignal(signal)
+
+    const { error } = await q
     checkError(error, 'partidos.actualizar')
     invalidateClientCache()
     return { ok: true, message: 'Partido actualizado correctamente' }
@@ -679,20 +765,40 @@ const predicciones = {
     return { ok: true, message: 'Predicción guardada correctamente' }
   },
 
-  mias: async (apuesta_id = '', user_id = '') => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) throw new Error('No autenticado')
-    const targetUserId = user_id || user.id
-
-    let q = supabase
-      .from('predicciones')
-      .select('*')
-      .eq('user_id', targetUserId)
-    if (apuesta_id) q = q.eq('apuesta_id', apuesta_id)
-    const { data, error } = await q
-    checkError(error, 'predicciones.mias')
-    return { ok: true, predicciones: data || [], mis: data || [] }
+  guardarBatch: async (data) => {
+    const { data: result, error } = await supabase.rpc(
+      'guardar_predicciones_apuesta', {
+      p_apuesta_id: data.apuesta_id,
+      p_predicciones: data.predicciones,
+      p_area_id: data.area_id,
+    }
+    )
+    checkError(error, 'predicciones.guardarBatch')
+    invalidateClientCache()
+    return result
   },
+
+  mias: async (apuesta_id = '', user_id = '') => {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('No autenticado')
+
+  const targetUserId = user_id || user.id
+
+  let q = supabase
+    .from('predicciones')
+    .select('id, apuesta_id, user_id, partido_id, pred_local, pred_visitante, pred_clasificado, puntos, area_id')
+    .eq('user_id', targetUserId)
+
+  if (apuesta_id) {
+    q = q.eq('apuesta_id', apuesta_id)
+  }
+
+  const { data, error } = await q
+
+  checkError(error, 'predicciones.mias')
+
+  return { ok: true, predicciones: data || [], mis: data || [] }
+},
 
   /**
    * Predicciones de un usuario específico.
@@ -718,45 +824,56 @@ const predicciones = {
   tabla: async (apuesta_id, opciones = {}) => {
     const limit = Math.min(parseInt(opciones.limit) || 50, 200)
 
+    // ✅ E-A4 FIX:
+    // Recibimos usuario/área desde useAuth para evitar:
+    // - supabase.auth.getUser()
+    // - query extra a usuarios para area_id
+    const currentUserId = opciones.user_id || ''
+    const currentAreaId = opciones.area_id || ''
+
     // 1) Obtener título y tipo de la apuesta
-    const { data: apuesta } = await supabase
-      .from('apuestas').select('titulo, tipo').eq('id', apuesta_id).single()
+    const { data: apuesta, error: apuestaError } = await supabase
+      .from('apuestas')
+      .select('titulo, tipo')
+      .eq('id', apuesta_id)
+      .single()
+
+    checkError(apuestaError, 'predicciones.tabla (apuesta)')
 
     const esGrupal = apuesta?.tipo === 'grupos'
 
-    // 2) Obtener ranking de la vista correcta según el tipo
-    let ranking, error
+    // 2) Obtener ranking desde cache
+    const { data: ranking, error } = await supabase
+      .from('ranking_cache')
+      .select('*')
+      .eq('apuesta_id', apuesta_id)
+      .eq('es_grupal', esGrupal)
+      .order('posicion', { ascending: true })
 
-    if (esGrupal) {
-      // Apuesta tipo "grupos": ranking por áreas (suma de puntos)
-      const res = await supabase
-        .from('ranking_apuestas_grupales')
-        .select('*')
-        .eq('apuesta_id', apuesta_id)
-        .order('posicion', { ascending: true })
-      ranking = res.data
-      error = res.error
-    } else {
-      // Apuesta tipo "libre": ranking individual
-      const res = await supabase
-        .from('ranking_apuestas')
-        .select('*')
-        .eq('apuesta_id', apuesta_id)
-        .order('posicion', { ascending: true })
-      ranking = res.data
-      error = res.error
-    }
     checkError(error, 'predicciones.tabla')
 
-    let rankingArr = ranking || []
+    const rankingArr = (ranking || []).map(r => {
+      if (esGrupal) {
+        return {
+          user_id: r.area_id,
+          nombre: r.nombre,
+          email: '',
+          puntos_totales: r.puntos_totales,
+          posicion: r.posicion,
+          aciertos_exactos: r.aciertos_exactos,
+          aciertos_diferencia: r.aciertos_diferencia,
+          aciertos_resultado: r.aciertos_resultado,
+          aciertos_clasificado: r.aciertos_clasificado,
+          predicciones: r.predicciones,
+          miembros_participantes: r.miembros_participantes,
+          apuesta_id: r.apuesta_id,
+          es_grupal: true,
+        }
+      }
 
-    // 3) Normalizar el ranking grupal a la estructura que espera el frontend
-    // El frontend lee { user_id, nombre, puntos_totales, posicion, ... }
-    // En grupal: mapeamos area_id → user_id, area_nombre → nombre
-    if (esGrupal) {
-      rankingArr = rankingArr.map(r => ({
-        user_id: r.area_id,
-        nombre: r.area_nombre,
+      return {
+        user_id: r.user_id,
+        nombre: r.nombre,
         email: '',
         puntos_totales: r.puntos_totales,
         posicion: r.posicion,
@@ -765,32 +882,29 @@ const predicciones = {
         aciertos_resultado: r.aciertos_resultado,
         aciertos_clasificado: r.aciertos_clasificado,
         predicciones: r.predicciones,
-        miembros_participantes: r.miembros_participantes,
         apuesta_id: r.apuesta_id,
-        es_grupal: true,
-      }))
-    }
+        es_grupal: false,
+      }
+    })
 
     const top = rankingArr.slice(0, limit)
 
-    // 4) Mi posición (en grupales: la posición del área del usuario)
-    const { data: { user } } = await supabase.auth.getUser()
+    // 3) Mi posición sin consultar Auth ni usuarios
     let miPosicion = null
-    if (user) {
-      if (esGrupal) {
-        // Buscar el área del usuario actual
-        const { data: miUsuario } = await supabase
-          .from('usuarios').select('area_id').eq('id', user.id).single()
-        if (miUsuario?.area_id) {
-          const mia = rankingArr.find(r => r.user_id === miUsuario.area_id)
-          if (mia) miPosicion = mia
-        }
-      } else {
-        const mia = rankingArr.find(r => r.user_id === user.id)
-        if (mia) miPosicion = mia
+
+    if (esGrupal) {
+      if (currentAreaId) {
+        miPosicion = rankingArr.find(r => r.user_id === currentAreaId) || null
+      }
+    } else {
+      if (currentUserId) {
+        miPosicion = rankingArr.find(r => r.user_id === currentUserId) || null
       }
     }
-    const estaEnTop = miPosicion ? Number(miPosicion.posicion) <= limit : false
+
+    const estaEnTop = miPosicion
+      ? Number(miPosicion.posicion) <= limit
+      : false
 
     return {
       ok: true,
@@ -820,14 +934,14 @@ const grupos = {
     checkError(error, 'grupos.listar')
 
     const porGrupo = {}
-    ;(data || []).forEach(s => {
-      if (!s.grupo) return
-      if (!porGrupo[s.grupo]) porGrupo[s.grupo] = []
-      porGrupo[s.grupo].push({
-        grupo: s.grupo, codigo: s.codigo, nombre: s.nombre, bandera_url: s.bandera_url,
-        j: s.j, g: s.g, e: s.e, p: s.p, gf: s.gf, gc: s.gc, dif: s.dif, pts: s.pts, pos: s.pos,
+      ; (data || []).forEach(s => {
+        if (!s.grupo) return
+        if (!porGrupo[s.grupo]) porGrupo[s.grupo] = []
+        porGrupo[s.grupo].push({
+          grupo: s.grupo, codigo: s.codigo, nombre: s.nombre, bandera_url: s.bandera_url,
+          j: s.j, g: s.g, e: s.e, p: s.p, gf: s.gf, gc: s.gc, dif: s.dif, pts: s.pts, pos: s.pos,
+        })
       })
-    })
     const grupos = Object.keys(porGrupo).sort().map(letra => ({
       letra, selecciones: porGrupo[letra],
     }))
@@ -925,7 +1039,7 @@ const bootstrap = {
 supabase.auth.onAuthStateChange((event, _session) => {
   if (event === 'SIGNED_OUT') {
     invalidateClientCache()
-    try { sessionStorage.removeItem('prode_user') } catch (e) {}
+    try { sessionStorage.removeItem('prode_user') } catch (e) { }
   }
 })
 
