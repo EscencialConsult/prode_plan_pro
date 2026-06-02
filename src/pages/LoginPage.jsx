@@ -51,7 +51,7 @@ export default function LoginPage() {
         <div className="relative z-10 flex flex-col items-center mb-6 lp-card">
           {/* Slot logo cliente */}
           <img
-            src="./imgprode/bancosol-logo.png"
+            src="./imgprode/bancosol-blanco.png"
             alt="Prode Talento"
             style={{ height: 52, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,.6))' }}
           />
