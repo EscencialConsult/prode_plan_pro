@@ -24,8 +24,8 @@ export default function HomeNav() {
         : { background: 'transparent', padding: '1rem 0' }
       }>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <img src="./imgprode/one-prode-talento-new3.png" alt="Prode Talento"
-          style={{ height: 46, width: 'auto', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,.5))' }} />
+        <img src="./imgprode/colegio-logo-blanco.png" alt="Prode Talento"
+          style={{ height: 62, width: 'auto', filter: 'drop-shadow(0 4px 12px rgba(0,0,0,.5))' }} />
 
         <div className="hidden lg:flex items-center gap-8">
           {links.map(([href, label]) => (

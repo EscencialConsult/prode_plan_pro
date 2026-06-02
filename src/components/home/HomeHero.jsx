@@ -48,7 +48,7 @@ export default function HomeHero() {
         }}>
 
         <div className="absolute inset-0 pointer-events-none" style={{
-          background: 'radial-gradient(ellipse 60% 50% at 85% 20%, rgba(235,195,43,.15), transparent 55%), radial-gradient(ellipse 50% 60% at 15% 90%, rgba(66,91,139,.28), transparent 60%)'
+          background: 'radial-gradient(ellipse 60% 50% at 85% 20%, rgba(255,255,255,.15), transparent 55%), radial-gradient(ellipse 50% 60% at 15% 90%, rgba(66,91,139,.28), transparent 60%)'
         }} />
 
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 1rem' }}
@@ -67,7 +67,7 @@ export default function HomeHero() {
                 </span>
                 <span className="hidden sm:flex items-center gap-2 text-xs font-body font-semibold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,.55)' }}>
                   <span className="h-px w-6" style={{ background: 'rgba(235,195,43,.45)' }} />
-                  SOGEFI GROUP
+                  CGCET
                 </span>
               </div>
 
@@ -144,8 +144,8 @@ export default function HomeHero() {
             <div className="lg:col-span-5">
               {/* Medalla flotante */}
               <div className="relative mb-5 sm:mb-6 flex justify-center">
-                <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(235,195,43,.28), transparent 60%)', filter: 'blur(28px)' }} />
-                <img src="./imgprode/one-prode-dorado.png" alt="Prode Talento" className="relative float-medal-el"
+                <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(255,255,255,.28), transparent 60%)', filter: 'blur(28px)' }} />
+                <img src="./imgprode/colegio-logo-azul.png" alt="Prode Talento" className="relative float-medal-el"
                   style={{ width: 'clamp(140px, 30vw, 180px)', filter: 'drop-shadow(0 16px 32px rgba(0,0,0,.6))' }} />
               </div>
 
@@ -156,7 +156,7 @@ export default function HomeHero() {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <img src="./imgprode/one-prode-blanco.png" alt="" style={{ height: 'clamp(16px, 4vw, 20px)', opacity: .8 }} />
+                    <img src="./imgprode/colegio-logo-blanco.png" alt="" style={{ height: 'clamp(16px, 4vw, 20px)', opacity: .8 }} />
                     <span className="font-body text-xs uppercase tracking-widest" style={{ color: 'rgba(255,255,255,.4)' }}>· Mundial 2026</span>
                   </div>
                   <span className="flex items-center gap-1.5 text-xs font-body font-bold uppercase tracking-widest" style={{ color: '#ebc32b' }}>
