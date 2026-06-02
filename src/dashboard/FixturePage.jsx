@@ -13,7 +13,7 @@
   const ESTADO = {
     programado: { label:'Programado', color:'#5f6e8a', bg:'rgba(95,110,138,.07)', border:'rgba(95,110,138,.18)' },
     en_vivo:    { label:'EN VIVO',    color:'#e03252', bg:'rgba(224,50,82,.08)',  border:'rgba(224,50,82,.25)'  },
-    finalizado: { label:'Finalizado', color:'#c99f16', bg:'rgba(235,195,43,.08)', border:'rgba(235,195,43,.22)' },
+    finalizado: { label:'Finalizado', color:'#FF7D00', bg:'rgba(255,125,0,.08)', border:'rgba(255,125,0,.22)' },
     cancelado:  { label:'Cancelado',  color:'#a8b2c4', bg:'rgba(168,178,196,.07)',border:'rgba(168,178,196,.2)' },
   }
   const FASES = {
@@ -23,14 +23,14 @@
 
   function Chip({ active, onClick, children }) {
     return (
-      <button onClick={onClick} style={{ padding:'.32rem .75rem', borderRadius:99, fontFamily:"'DM Sans',sans-serif", fontWeight:700, fontSize:'.72rem', textTransform:'uppercase', letterSpacing:'.05em', cursor:'pointer', transition:'all .15s', background:active?'#0c182b':'#fff', color:active?'#ebc32b':'#5f6e8a', border:active?'1px solid transparent':'1px solid #f0eadb', boxShadow:active?'0 2px 8px rgba(12,24,43,.18)':'none' }}>
+      <button onClick={onClick} style={{ padding:'.32rem .75rem', borderRadius:99, fontFamily:"'DM Sans',sans-serif", fontWeight:700, fontSize:'.72rem', textTransform:'uppercase', letterSpacing:'.05em', cursor:'pointer', transition:'all .15s', background:active?'#0c182b':'#fff', color:active?'#FF7D00':'#5f6e8a', border:active?'1px solid transparent':'1px solid #f0eadb', boxShadow:active?'0 2px 8px rgba(12,24,43,.18)':'none' }}>
         {children}
       </button>
     )
   }
   function TabBtn({ active, onClick, icon, label }) {
     return (
-      <button onClick={onClick} style={{ display:'flex', alignItems:'center', gap:'.4rem', padding:'.52rem 1.1rem', borderRadius:10, border:'none', fontFamily:"'DM Sans',sans-serif", fontWeight:700, fontSize:'.78rem', textTransform:'uppercase', letterSpacing:'.05em', cursor:'pointer', transition:'all .17s', background:active?'#0c182b':'transparent', color:active?'#ebc32b':'#5f6e8a', boxShadow:active?'0 2px 10px rgba(12,24,43,.2)':'none' }}>
+      <button onClick={onClick} style={{ display:'flex', alignItems:'center', gap:'.4rem', padding:'.52rem 1.1rem', borderRadius:10, border:'none', fontFamily:"'DM Sans',sans-serif", fontWeight:700, fontSize:'.78rem', textTransform:'uppercase', letterSpacing:'.05em', cursor:'pointer', transition:'all .17s', background:active?'#0c182b':'transparent', color:active?'#FF7D00':'#5f6e8a', boxShadow:active?'0 2px 10px rgba(12,24,43,.2)':'none' }}>
         {icon}{label}
       </button>
     )
@@ -45,9 +45,9 @@
       steel:    '#5f6e8a',
       mute:     '#a8b2c4',
       line:     '#e7dec6',
-      gold:     '#d4a017',
-      goldHi:   '#ebc32b',
-      goldDeep: '#a87a0b',
+      gold:     '#FF7D00',
+      goldHi:   '#FF7D00',
+      goldDeep: '#a85f00',
       red:      '#e03252',
     }
 
@@ -339,9 +339,9 @@
     steel:    '#5f6e8a',
     mute:     '#a8b2c4',
     line:     '#e7dec6',
-    gold:     '#d4a017',
-    goldHi:   '#ebc32b',
-    goldDeep: '#a87a0b',
+    gold:     '#FF7D00',
+    goldHi:   '#FF7D00',
+    goldDeep: '#a85f00',
     red:      '#e03252',
     green:    '#1b8a5a',
   }
@@ -956,7 +956,7 @@
     letterSpacing:'.02em',
   }}>
     <span style={{color:'#0c182b'}}>CRONOGRAMA </span>
-    <span style={{color:'#ebc32b'}}>MUNDIALISTA</span>
+    <span style={{color:'#FF7D00'}}>MUNDIALISTA</span>
   </h1>
   <p style={{ fontSize:'.84rem', color:'#5f6e8a', margin:0 }}>{matches?.length || 0} partidos del Mundial 2026</p>
 </div>
@@ -984,7 +984,7 @@
               <div style={{ display:'flex', flexWrap:'wrap', gap:'.6rem', marginBottom:'1.5rem' }}>
                 <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar equipo..."
                   style={{ padding:'.42rem .9rem', borderRadius:99, border:'1px solid #f0eadb', background:'#fff', fontFamily:"'DM Sans',sans-serif", fontSize:'.82rem', color:'#0c182b', outline:'none', minWidth:180 }}
-                  onFocus={e=>{ e.target.style.borderColor='rgba(235,195,43,.5)' }}
+                  onFocus={e=>{ e.target.style.borderColor='rgba(255,125,0,.5)' }}
                   onBlur={e=>{ e.target.style.borderColor='#f0eadb' }}/>
                 <div style={{ display:'flex', flexWrap:'wrap', gap:'.25rem' }}>
                   <Chip active={!faseFilter} onClick={()=>setFaseFilter('')}>Todas</Chip>
@@ -1000,7 +1000,7 @@
                 : <div style={{ display:'flex', flexDirection:'column', gap:'2rem' }}>
                     {Object.entries(groups).map(([group,items])=>(
                       <div key={group}>
-                        <p style={{ fontSize:'.7rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.12em',color:'rgba(235,195,43,.85)',marginBottom:'.7rem' }}>{group}</p>
+                        <p style={{ fontSize:'.7rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.12em',color:'rgba(255,125,0,.85)',marginBottom:'.7rem' }}>{group}</p>
                         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:'.8rem' }}>
                           {items.map(m=><PartidoCard key={m.id} match={m}/>)}
                         </div>

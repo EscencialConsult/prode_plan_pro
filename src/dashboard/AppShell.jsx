@@ -50,9 +50,9 @@ function NavLink({ to, label, icon, location }) {
           fontSize: '.75rem',
           letterSpacing: '.05em',
           textTransform: 'uppercase',
-          color: a ? '#ebc32b' : 'rgba(255,255,255,.45)',
-          background: a ? 'rgba(235,195,43,.12)' : 'transparent',
-          border: a ? '1px solid rgba(235,195,43,.28)' : '1px solid transparent',
+          color: a ? '#FF7D00' : 'rgba(255,255,255,.45)',
+          background: a ? 'rgba(255,125,0,.12)' : 'transparent',
+          border: a ? '1px solid rgba(255,125,0,.28)' : '1px solid transparent',
           transition: 'all .16s',
           cursor: 'pointer',
         }}
@@ -69,7 +69,7 @@ function NavLink({ to, label, icon, location }) {
           }
         }}
       >
-        <span style={{ color: a ? '#ebc32b' : 'inherit', display: 'flex', opacity: a ? 1 : .65 }}>
+        <span style={{ color: a ? '#FF7D00' : 'inherit', display: 'flex', opacity: a ? 1 : .65 }}>
           {icon}
         </span>
         {label}
@@ -92,11 +92,11 @@ function NavLinkMob({ to, label, icon, location, onClick }) {
           borderRadius: 8,
           fontWeight: 600,
           fontSize: '.85rem',
-          color: a ? '#ebc32b' : 'rgba(255,255,255,.6)',
-          background: a ? 'rgba(235,195,43,.1)' : 'transparent',
+          color: a ? '#FF7D00' : 'rgba(255,255,255,.6)',
+          background: a ? 'rgba(255,125,0,.1)' : 'transparent',
         }}
       >
-        <span style={{ color: a ? '#ebc32b' : 'inherit', display: 'flex' }}>{icon}</span>
+        <span style={{ color: a ? '#FF7D00' : 'inherit', display: 'flex' }}>{icon}</span>
         {label}
       </span>
     </Link>
@@ -229,10 +229,10 @@ export default function AppShell({ children }) {
           >
             <Link to="/dashboard" style={{ textDecoration: 'none', flexShrink: 0, marginRight: '1.8rem' }}>
               <img
-                src="/imgprode/one-prode-talento-new3.png"
+                src="/imgprode/bancosol-logo.png"
                 alt="Prode Talento"
                 style={{
-                  height: 32,
+                  height: 56,
                   width: 'auto',
                   filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))',
                 }}
@@ -271,13 +271,13 @@ export default function AppShell({ children }) {
         transition: 'all .16s',
         cursor: 'pointer',
         boxShadow: location.pathname === '/manual-admin'
-          ? '0 0 0 3px rgba(235,195,43,.18)'
+          ? '0 0 0 3px rgba(255,125,0,.18)'
           : 'none',
       }}
       onMouseEnter={e => {
         if (location.pathname !== '/manual-admin') {
-          e.currentTarget.style.background = 'rgba(235,195,43,.14)'
-          e.currentTarget.style.boxShadow = '0 0 0 3px rgba(235,195,43,.1)'
+          e.currentTarget.style.background = 'rgba(255,125,0,.14)'
+          e.currentTarget.style.boxShadow = '0 0 0 3px rgba(255,125,0,.1)'
         }
       }}
       onMouseLeave={e => {
@@ -333,9 +333,9 @@ export default function AppShell({ children }) {
                     padding: '.28rem .55rem .28rem .28rem',
                     borderRadius: 99,
                     background: (userMenu || location.pathname === '/cambiar-password')
-                      ? 'rgba(235,195,43,.14)' : 'rgba(255,255,255,.07)',
+                      ? 'rgba(255,125,0,.14)' : 'rgba(255,255,255,.07)',
                     border: `1px solid ${(userMenu || location.pathname === '/cambiar-password')
-                      ? 'rgba(235,195,43,.4)' : 'rgba(255,255,255,.1)'}`,
+                      ? 'rgba(255,125,0,.4)' : 'rgba(255,255,255,.1)'}`,
                     cursor: 'pointer',
                     transition: 'all .16s',
                   }}
@@ -351,7 +351,7 @@ export default function AppShell({ children }) {
                       width: 27,
                       height: 27,
                       borderRadius: '50%',
-                      background: 'linear-gradient(135deg,#ebc32b,#c99f16)',
+                      background: 'linear-gradient(135deg,#FF7D00,#ff9a33)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -437,7 +437,7 @@ export default function AppShell({ children }) {
                         onMouseEnter={e => { e.currentTarget.style.background = '#f6f1e3' }}
                         onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
                       >
-                        <span style={{ color: '#c99f16', display: 'flex' }}>{KEY_ICON}</span>
+                        <span style={{ color: '#FF7D00', display: 'flex' }}>{KEY_ICON}</span>
                         Cambiar contraseña
                       </Link>
                     </div>

@@ -9,6 +9,19 @@ function getInitials(name = '') {
     .join('')
 }
 
+const C = {
+  ink: '#0a1226',
+  inkAlt: '#0c182b',
+  steel: '#5f6e8a',
+  mute: '#a8b2c4',
+  line: '#f0eadb',
+  lineSoft: '#f5efe3',
+  gold: '#FF7D00',
+  goldDeep: '#a85f00',
+  red: '#e03252',
+  green: '#1b8a5a',
+}
+
 export default function ActiveUsersTab({
   activeTotal, loadingActiveUsers, loadActiveUsers,
   activeSearch, setActiveSearch, activePage, setActivePage,
@@ -19,12 +32,15 @@ export default function ActiveUsersTab({
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-          <h2 className="font-display text-2xl md:text-3xl tracking-wide"
-            style={{ color: '#0a1226', letterSpacing: '0.02em' }}>
+          <h2
+            className="font-display text-2xl md:text-3xl tracking-wide"
+            style={{ color: C.ink, letterSpacing: '0.02em' }}
+          >
             USUARIOS ACTIVOS
           </h2>
+
           {activeTotal > 0 && (
-            <p className="text-sm font-body mt-1.5" style={{ color: '#5f6e8a' }}>
+            <p className="text-sm font-body mt-1.5" style={{ color: C.steel }}>
               {activeTotal} {activeTotal === 1 ? 'usuario aprobado' : 'usuarios aprobados'}
             </p>
           )}
@@ -35,10 +51,24 @@ export default function ActiveUsersTab({
           disabled={loadingActiveUsers}
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all disabled:opacity-50"
           style={{
-            background: loadingActiveUsers ? 'rgba(235,195,43,0.1)' : '#fff',
-            border: '1.5px solid #f0eadb',
-            color: loadingActiveUsers ? '#c99f16' : '#5f6e8a',
+            background: loadingActiveUsers ? 'rgba(255,125,0,0.1)' : '#fff',
+            border: `1.5px solid ${C.line}`,
+            color: loadingActiveUsers ? C.goldDeep : C.steel,
             boxShadow: '0 1px 0 rgba(10,18,38,0.03)',
+          }}
+          onMouseEnter={e => {
+            if (!loadingActiveUsers) {
+              e.currentTarget.style.borderColor = C.gold
+              e.currentTarget.style.color = C.goldDeep
+              e.currentTarget.style.transform = 'translateY(-1px)'
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(255,125,0,0.15)'
+            }
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = C.line
+            e.currentTarget.style.color = loadingActiveUsers ? C.goldDeep : C.steel
+            e.currentTarget.style.transform = 'translateY(0)'
+            e.currentTarget.style.boxShadow = '0 1px 0 rgba(10,18,38,0.03)'
           }}
         >
           {loadingActiveUsers ? (
@@ -74,10 +104,19 @@ export default function ActiveUsersTab({
           className="w-full px-4 py-2.5 rounded-xl font-body text-sm outline-none border transition-all"
           style={{
             background: '#fff',
-            border: '1.5px solid #f0eadb',
-            color: '#0c182b',
+            border: `1.5px solid ${C.line}`,
+            color: C.inkAlt,
+          }}
+          onFocus={e => {
+            e.target.style.borderColor = C.gold
+            e.target.style.boxShadow = '0 0 0 3px rgba(255,125,0,.08)'
+          }}
+          onBlur={e => {
+            e.target.style.borderColor = C.line
+            e.target.style.boxShadow = 'none'
           }}
         />
+
         <button
           onClick={() => {
             setActivePage(0)
@@ -85,9 +124,17 @@ export default function ActiveUsersTab({
           }}
           className="px-5 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all"
           style={{
-            background: 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
-            color: '#0a1226',
-            boxShadow: '0 2px 8px rgba(235,195,43,0.15)',
+            background: `linear-gradient(135deg, ${C.gold} 0%, ${C.goldDeep} 100%)`,
+            color: '#fff',
+            boxShadow: '0 2px 8px rgba(255,125,0,0.18)',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.transform = 'translateY(-1px)'
+            e.currentTarget.style.boxShadow = '0 4px 14px rgba(255,125,0,0.25)'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.transform = 'translateY(0)'
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(255,125,0,0.18)'
           }}
         >
           Buscar
@@ -97,9 +144,11 @@ export default function ActiveUsersTab({
       {/* Loading */}
       {loadingActiveUsers && activeUsers.length === 0 ? (
         <div className="text-center py-20">
-          <span className="inline-block w-10 h-10 border-3 border-t-transparent rounded-full animate-spin"
-            style={{ borderColor: '#ebc32b', borderTopColor: 'transparent' }} />
-          <p className="font-body text-sm mt-4" style={{ color: '#5f6e8a' }}>
+          <span
+            className="inline-block w-10 h-10 border-3 border-t-transparent rounded-full animate-spin"
+            style={{ borderColor: C.gold, borderTopColor: 'transparent' }}
+          />
+          <p className="font-body text-sm mt-4" style={{ color: C.steel }}>
             Cargando usuarios...
           </p>
         </div>
@@ -109,14 +158,14 @@ export default function ActiveUsersTab({
           className="rounded-2xl p-16 text-center"
           style={{
             background: '#fff',
-            border: '1.5px dashed #f0eadb',
+            border: `1.5px dashed ${C.line}`,
             boxShadow: '0 1px 0 rgba(10,18,38,0.03)',
           }}
         >
-          <p className="font-body font-semibold text-lg mb-2" style={{ color: '#0a1226' }}>
+          <p className="font-body font-semibold text-lg mb-2" style={{ color: C.ink }}>
             Todavía no hay usuarios activos
           </p>
-          <p className="font-body text-sm max-w-md mx-auto" style={{ color: '#5f6e8a' }}>
+          <p className="font-body text-sm max-w-md mx-auto" style={{ color: C.steel }}>
             A medida que apruebes solicitudes pendientes, los usuarios van a aparecer acá.
           </p>
         </div>
@@ -125,137 +174,176 @@ export default function ActiveUsersTab({
         <>
           <div
             className="rounded-2xl overflow-hidden"
-          style={{
-            background: '#fff',
-            border: '1.5px solid #f0eadb',
-            boxShadow: '0 1px 0 rgba(10,18,38,0.03)',
-          }}
-        >
-          {/* Encabezado tabla */}
-          <div
-            className="hidden md:grid gap-3 px-5 py-3 text-[10px] font-body font-bold uppercase tracking-[0.15em]"
             style={{
-              gridTemplateColumns: '1.6fr 1.6fr 1fr 0.8fr 0.8fr 1fr',
-              background: 'rgba(235,195,43,0.06)',
-              color: '#c99f16',
-              borderBottom: '1px solid #f0eadb',
+              background: '#fff',
+              border: `1.5px solid ${C.line}`,
+              boxShadow: '0 1px 0 rgba(10,18,38,0.03)',
             }}
           >
-            <span>Nombre</span>
-            <span>Email</span>
-            <span>Área</span>
-            <span>Tipo</span>
-            <span>Rol</span>
-            <span>Registrado</span>
-          </div>
+            {/* Encabezado tabla */}
+            <div
+              className="hidden md:grid gap-3 px-5 py-3 text-[10px] font-body font-bold uppercase tracking-[0.15em]"
+              style={{
+                gridTemplateColumns: '1.6fr 1.6fr 1fr 0.8fr 0.8fr 1fr',
+                background: 'rgba(255,125,0,0.06)',
+                color: C.goldDeep,
+                borderBottom: `1px solid ${C.line}`,
+              }}
+            >
+              <span>Nombre</span>
+              <span>Email</span>
+              <span>Área</span>
+              <span>Tipo</span>
+              <span>Rol</span>
+              <span>Registrado</span>
+            </div>
 
-          {/* Filas */}
-          {activeUsers.map((u, idx) => {
-            const area = areas.find(a => a.id === u.area_id)
-            const areaNombre = area?.nombre || (u.area_id ? '—' : 'Sin área')
-            return (
-              <div
-                key={u.id}
-                className="grid gap-3 px-5 py-4 items-center"
-                style={{
-                  gridTemplateColumns: '1.6fr 1.6fr 1fr 0.8fr 0.8fr 1fr',
-                  borderBottom: idx === activeUsers.length - 1 ? 'none' : '1px solid #f5efe3',
-                }}
-              >
-                {/* Nombre con avatar */}
-                <div className="flex items-center gap-3 min-w-0">
-                  <div
-                    className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center font-display text-sm"
+            {/* Filas */}
+            {activeUsers.map((u, idx) => {
+              const area = areas.find(a => a.id === u.area_id)
+              const areaNombre = area?.nombre || (u.area_id ? '—' : 'Sin área')
+
+              return (
+                <div
+                  key={u.id}
+                  className="grid gap-3 px-5 py-4 items-center"
+                  style={{
+                    gridTemplateColumns: '1.6fr 1.6fr 1fr 0.8fr 0.8fr 1fr',
+                    borderBottom: idx === activeUsers.length - 1 ? 'none' : `1px solid ${C.lineSoft}`,
+                  }}
+                >
+                  {/* Nombre con avatar */}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div
+                      className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center font-display text-sm"
+                      style={{
+                        background: `linear-gradient(135deg, ${C.gold} 0%, ${C.goldDeep} 100%)`,
+                        color: '#fff',
+                        boxShadow: '0 3px 10px rgba(255,125,0,.18)',
+                      }}
+                    >
+                      {getInitials(u.nombre)}
+                    </div>
+
+                    <p className="font-body font-bold text-sm truncate" style={{ color: C.ink }}>
+                      {u.nombre}
+                    </p>
+                  </div>
+
+                  {/* Email */}
+                  <p className="font-body text-sm truncate" style={{ color: C.steel }}>
+                    {u.email}
+                  </p>
+
+                  {/* Área */}
+                  <span
+                    className="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-body font-semibold w-fit"
                     style={{
-                      background: 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
-                      color: '#0a1226',
+                      background: area ? 'rgba(27,138,90,0.08)' : 'rgba(95,110,138,0.06)',
+                      color: area ? C.green : '#9aa5b8',
+                      border: `1px solid ${area ? 'rgba(27,138,90,0.2)' : 'rgba(95,110,138,0.15)'}`,
                     }}
                   >
-                    {getInitials(u.nombre)}
-                  </div>
-                  <p className="font-body font-bold text-sm truncate" style={{ color: '#0a1226' }}>
-                    {u.nombre}
+                    {areaNombre}
+                  </span>
+
+                  {/* Tipo usuario */}
+                  <span
+                    className="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-body font-semibold w-fit uppercase tracking-wider"
+                    style={{
+                      background: u.tipo_usuario === 'jefe' ? 'rgba(255,125,0,0.1)' : 'rgba(12,24,43,0.05)',
+                      color: u.tipo_usuario === 'jefe' ? C.goldDeep : C.steel,
+                      border: `1px solid ${u.tipo_usuario === 'jefe' ? 'rgba(255,125,0,0.25)' : 'rgba(12,24,43,0.1)'}`,
+                    }}
+                  >
+                    {u.tipo_usuario === 'jefe' ? 'Jefe' : 'General'}
+                  </span>
+
+                  {/* Rol */}
+                  <span
+                    className="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-body font-semibold w-fit uppercase tracking-wider"
+                    style={{
+                      background: u.rol === 'admin' ? 'rgba(224,50,82,0.07)' : 'rgba(12,24,43,0.05)',
+                      color: u.rol === 'admin' ? C.red : C.steel,
+                      border: `1px solid ${u.rol === 'admin' ? 'rgba(224,50,82,0.2)' : 'rgba(12,24,43,0.1)'}`,
+                    }}
+                  >
+                    {u.rol}
+                  </span>
+
+                  {/* Fecha */}
+                  <p className="font-body text-xs" style={{ color: C.steel }}>
+                    {formatDate(u.fecha_registro)}
                   </p>
                 </div>
-
-                {/* Email */}
-                <p className="font-body text-sm truncate" style={{ color: '#5f6e8a' }}>
-                  {u.email}
-                </p>
-
-                {/* Área */}
-                <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-body font-semibold w-fit"
-                  style={{
-                    background: area ? 'rgba(27,138,90,0.08)' : 'rgba(95,110,138,0.06)',
-                    color: area ? '#1b8a5a' : '#9aa5b8',
-                    border: `1px solid ${area ? 'rgba(27,138,90,0.2)' : 'rgba(95,110,138,0.15)'}`,
-                  }}>
-                  {areaNombre}
-                </span>
-
-                {/* Tipo usuario */}
-                <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-body font-semibold w-fit uppercase tracking-wider"
-                  style={{
-                    background: u.tipo_usuario === 'jefe' ? 'rgba(235,195,43,0.1)' : 'rgba(12,24,43,0.05)',
-                    color: u.tipo_usuario === 'jefe' ? '#c99f16' : '#5f6e8a',
-                    border: `1px solid ${u.tipo_usuario === 'jefe' ? 'rgba(235,195,43,0.25)' : 'rgba(12,24,43,0.1)'}`,
-                  }}>
-                  {u.tipo_usuario === 'jefe' ? 'Jefe' : 'General'}
-                </span>
-
-                {/* Rol */}
-                <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-body font-semibold w-fit uppercase tracking-wider"
-                  style={{
-                    background: u.rol === 'admin' ? 'rgba(224,50,82,0.07)' : 'rgba(12,24,43,0.05)',
-                    color: u.rol === 'admin' ? '#e03252' : '#5f6e8a',
-                    border: `1px solid ${u.rol === 'admin' ? 'rgba(224,50,82,0.2)' : 'rgba(12,24,43,0.1)'}`,
-                  }}>
-                  {u.rol}
-                </span>
-
-                {/* Fecha */}
-                <p className="font-body text-xs" style={{ color: '#5f6e8a' }}>
-                  {formatDate(u.fecha_registro)}
-                </p>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Pagination controls for Active Users */}
-        {activeTotal > activePageSize && (
-          <div className="flex items-center justify-between mt-6 px-2">
-            <span className="text-xs font-body" style={{ color: '#5f6e8a' }}>
-              Mostrando {activePage * activePageSize + 1} - {Math.min((activePage + 1) * activePageSize, activeTotal)} de {activeTotal}
-            </span>
-            <div className="flex gap-2">
-              <button
-                disabled={activePage === 0 || loadingActiveUsers}
-                onClick={() => {
-                  const newPage = activePage - 1
-                  setActivePage(newPage)
-                  loadActiveUsers(newPage, activeSearch)
-                }}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold border transition-all disabled:opacity-40"
-                style={{ background: '#fff', borderColor: '#f0eadb', color: '#5f6e8a' }}
-              >
-                Anterior
-              </button>
-              <button
-                disabled={(activePage + 1) * activePageSize >= activeTotal || loadingActiveUsers}
-                onClick={() => {
-                  const newPage = activePage + 1
-                  setActivePage(newPage)
-                  loadActiveUsers(newPage, activeSearch)
-                }}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold border transition-all disabled:opacity-40"
-                style={{ background: '#fff', borderColor: '#f0eadb', color: '#5f6e8a' }}
-              >
-                Siguiente
-              </button>
-            </div>
+              )
+            })}
           </div>
-        )}
+
+          {/* Pagination controls for Active Users */}
+          {activeTotal > activePageSize && (
+            <div className="flex items-center justify-between mt-6 px-2">
+              <span className="text-xs font-body" style={{ color: C.steel }}>
+                Mostrando {activePage * activePageSize + 1} - {Math.min((activePage + 1) * activePageSize, activeTotal)} de {activeTotal}
+              </span>
+
+              <div className="flex gap-2">
+                <button
+                  disabled={activePage === 0 || loadingActiveUsers}
+                  onClick={() => {
+                    const newPage = activePage - 1
+                    setActivePage(newPage)
+                    loadActiveUsers(newPage, activeSearch)
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold border transition-all disabled:opacity-40"
+                  style={{
+                    background: '#fff',
+                    borderColor: C.line,
+                    color: C.steel,
+                  }}
+                  onMouseEnter={e => {
+                    if (!(activePage === 0 || loadingActiveUsers)) {
+                      e.currentTarget.style.borderColor = C.gold
+                      e.currentTarget.style.color = C.goldDeep
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = C.line
+                    e.currentTarget.style.color = C.steel
+                  }}
+                >
+                  Anterior
+                </button>
+
+                <button
+                  disabled={(activePage + 1) * activePageSize >= activeTotal || loadingActiveUsers}
+                  onClick={() => {
+                    const newPage = activePage + 1
+                    setActivePage(newPage)
+                    loadActiveUsers(newPage, activeSearch)
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold border transition-all disabled:opacity-40"
+                  style={{
+                    background: '#fff',
+                    borderColor: C.line,
+                    color: C.steel,
+                  }}
+                  onMouseEnter={e => {
+                    if (!((activePage + 1) * activePageSize >= activeTotal || loadingActiveUsers)) {
+                      e.currentTarget.style.borderColor = C.gold
+                      e.currentTarget.style.color = C.goldDeep
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = C.line
+                    e.currentTarget.style.color = C.steel
+                  }}
+                >
+                  Siguiente
+                </button>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>

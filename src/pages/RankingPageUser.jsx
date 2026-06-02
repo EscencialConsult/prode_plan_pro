@@ -8,7 +8,7 @@
  * - Solo puntajes totales visibles
  *
  * v6.1 — Dimensiones alineadas con FixturePage (maxWidth:1400, padding:'2rem 1.5rem 3rem')
- *        y header con estilo navy + dorado (RANKING + en dorado)
+ *        y header con paleta navy + naranja de FixturePage
  */
 import { useState, useMemo, useEffect } from 'react'
 import AppShell from '../dashboard/AppShell.jsx'
@@ -31,19 +31,19 @@ const CSS = `
 /* Panel izquierdo */
 .rk-sidebar { width:380px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;background:#fcfaf6;border-right:1px solid #f0eadb }
 .rk-sidebar-scroll::-webkit-scrollbar { width:2px }
-.rk-sidebar-scroll::-webkit-scrollbar-thumb { background:#e2ddd6;border-radius:99px }
+.rk-sidebar-scroll::-webkit-scrollbar-thumb { background:#e7dec6;border-radius:99px }
 
 /* Fila apuesta */
 .rk-row { display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;border-bottom:1px solid #f5f3ee;position:relative;transition:background .13s }
 .rk-row:hover { background:rgba(12,24,43,.03) }
 .rk-row.sel { background:#0c182b;border-bottom-color:rgba(255,255,255,.06) }
-.rk-row::before { content:'';position:absolute;left:0;top:25%;bottom:25%;width:3px;background:#ebc32b;border-radius:0 3px 3px 0;opacity:0;transition:opacity .13s }
+.rk-row::before { content:'';position:absolute;left:0;top:25%;bottom:25%;width:3px;background:#FF7D00;border-radius:0 3px 3px 0;opacity:0;transition:opacity .13s }
 .rk-row.sel::before { opacity:1 }
 
 /* Panel derecho */
 .rk-content { flex:1;min-width:0;overflow-y:auto;background:#faf7f0 }
 .rk-content::-webkit-scrollbar { width:4px }
-.rk-content::-webkit-scrollbar-thumb { background:#e2ddd6;border-radius:99px }
+.rk-content::-webkit-scrollbar-thumb { background:#e7dec6;border-radius:99px }
 
 /* Podio cards */
 .rk-pcard { border-radius:16px;text-align:center;position:relative;overflow:visible;transition:transform .16s,box-shadow .16s }
@@ -118,10 +118,10 @@ export default function RankingPageUser() {
           <div className="rk-sidebar">
             {/* Header sidebar */}
             <div style={{ padding: '20px 16px 14px', borderBottom: '1px solid #f0eadb' }}>
-              <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 11, letterSpacing: '.2em', color: '#94a3b8', margin: '0 0 10px' }}>APUESTAS</p>
+              <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 11, letterSpacing: '.2em', color: '#a8b2c4', margin: '0 0 10px' }}>APUESTAS</p>
               <div style={{ display: 'flex', gap: 6 }}>
-                <Pill color="#22c55e" label={`${bets.filter(b => isOpen(b)).length} activas`} />
-                <Pill color="#64748b" label={`${bets.filter(b => !isOpen(b)).length} cerradas`} />
+                <Pill color="#1b8a5a" label={`${bets.filter(b => isOpen(b)).length} activas`} />
+                <Pill color="#5f6e8a" label={`${bets.filter(b => !isOpen(b)).length} cerradas`} />
               </div>
             </div>
 
@@ -133,7 +133,7 @@ export default function RankingPageUser() {
               ) : (
                 <>
                   {bets.filter(b => isOpen(b)).length > 0 && (
-                    <SideSection label="Activas" dot="#22c55e">
+                    <SideSection label="Activas" dot="#1b8a5a">
                       {bets.filter(b => isOpen(b)).map(b => (
                         <BetRow key={b.id} bet={b} sel={sel?.id === b.id} onPick={cargarRanking} />
                       ))}
@@ -209,7 +209,7 @@ function SideSection({ label, dot, children }) {
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px 4px', position: 'sticky', top: 0, background: '#fcfaf6', zIndex: 2 }}>
         {dot && <span style={{ width: 5, height: 5, borderRadius: '50%', background: dot, display: 'inline-block', boxShadow: `0 0 6px ${dot}` }} />}
-        <span style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.18em', color: '#b8c0cc' }}>{label}</span>
+        <span style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.18em', color: '#a8b2c4' }}>{label}</span>
       </div>
       {children}
     </div>
@@ -219,7 +219,7 @@ function SideSection({ label, dot, children }) {
 function BetRow({ bet, sel, onPick }) {
   const open = isOpen(bet)
   const fin = bet.estado === 'finalizada'
-  const col = fin ? '#ebc32b' : open ? '#22c55e' : '#475569'
+  const col = fin ? '#FF7D00' : open ? '#1b8a5a' : '#5f6e8a'
   const parts = bet.partidos_ids ? bet.partidos_ids.split(',').filter(Boolean).length : 0
   return (
     <div className={`rk-row${sel ? ' sel' : ''}`} onClick={() => onPick(bet)}>
@@ -228,11 +228,11 @@ function BetRow({ bet, sel, onPick }) {
         <p style={{ fontSize: 12, fontWeight: 600, color: sel ? '#fff' : '#0c182b', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {bet.titulo}
         </p>
-        <p style={{ fontSize: 10, color: '#94a3b8', margin: 0 }}>
+        <p style={{ fontSize: 10, color: '#a8b2c4', margin: 0 }}>
           {bet.participantes || 0} part · {parts} partidos
         </p>
       </div>
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={sel ? '#ebc32b' : '#c8d0dc'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={sel ? '#FF7D00' : '#a8b2c4'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="9 18 15 12 9 6" />
       </svg>
     </div>
@@ -244,24 +244,24 @@ function BetRow({ bet, sel, onPick }) {
 ══════════════════════════════════════════ */
 function Banner({ apuesta, meta, loading }) {
   return (
-    <div style={{ borderRadius: 14, marginBottom: 24, background: 'linear-gradient(125deg,#0c182b 0%,#1a3060 100%)', padding: '18px 22px', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: 'rgba(235,195,43,.08)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: -40, right: 80, width: 120, height: 120, borderRadius: '50%', background: 'rgba(235,195,43,.05)', pointerEvents: 'none' }} />
+    <div style={{ borderRadius: 14, marginBottom: 24, background: 'linear-gradient(125deg,#0c182b 0%,#1a2540 100%)', padding: '18px 22px', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: 'rgba(255,125,0,.08)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: -40, right: 80, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,125,0,.05)', pointerEvents: 'none' }} />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, position: 'relative' }}>
         <div>
-          <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: 'rgba(235,195,43,.55)', display: 'block', marginBottom: 4 }}>
+          <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: 'rgba(255,125,0,.55)', display: 'block', marginBottom: 4 }}>
             TABLA DE POSICIONES
           </span>
           <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(22px,3vw,32px)', color: '#fff', margin: '0 0 6px', letterSpacing: '.02em', lineHeight: 1 }}>
             {apuesta.titulo}
           </h2>
           {apuesta.premio && (
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(235,195,43,.1)', border: '1px solid rgba(235,195,43,.2)', borderRadius: 99, padding: '3px 10px' }}>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,125,0,.1)', border: '1px solid rgba(255,125,0,.2)', borderRadius: 99, padding: '3px 10px' }}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#FF7D00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" /><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
               </svg>
-              <span style={{ fontSize: 10, color: 'rgba(235,195,43,.8)', fontWeight: 600 }}>{apuesta.premio}</span>
+              <span style={{ fontSize: 10, color: 'rgba(255,125,0,.8)', fontWeight: 600 }}>{apuesta.premio}</span>
             </div>
           )}
         </div>
@@ -280,7 +280,7 @@ function Banner({ apuesta, meta, loading }) {
 function BannerStat({ n, label, gold }) {
   return (
     <div style={{ textAlign: 'center' }}>
-      <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, color: gold ? '#ebc32b' : 'rgba(255,255,255,.9)', margin: '0 0 1px', lineHeight: 1 }}>{n}</p>
+      <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, color: gold ? '#FF7D00' : 'rgba(255,255,255,.9)', margin: '0 0 1px', lineHeight: 1 }}>{n}</p>
       <p style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '.14em', color: 'rgba(255,255,255,.35)', margin: 0 }}>{label}</p>
     </div>
   )
@@ -290,8 +290,8 @@ function BannerStat({ n, label, gold }) {
    PODIO (SIN EXPANDIR)
 ══════════════════════════════════════════ */
 const PODIO_CFG = {
-  0: { grad: 'linear-gradient(145deg,#f5d75a 0%,#c99f16 100%)', shadow: 'rgba(235,195,43,.5)', border: 'rgba(235,195,43,.7)', ring: 'rgba(235,195,43,.3)', emoji: '🥇', label: '1°' },
-  1: { grad: 'linear-gradient(145deg,#e2e8f0 0%,#94a3b8 100%)', shadow: 'rgba(148,163,184,.4)', border: 'rgba(148,163,184,.5)', ring: 'rgba(148,163,184,.2)', emoji: '🥈', label: '2°' },
+  0: { grad: 'linear-gradient(145deg,#f5d75a 0%,#a85f00 100%)', shadow: 'rgba(255,125,0,.5)', border: 'rgba(255,125,0,.7)', ring: 'rgba(255,125,0,.3)', emoji: '🥇', label: '1°' },
+  1: { grad: 'linear-gradient(145deg,#f0eadb 0%,#a8b2c4 100%)', shadow: 'rgba(148,163,184,.4)', border: 'rgba(148,163,184,.5)', ring: 'rgba(148,163,184,.2)', emoji: '🥈', label: '2°' },
   2: { grad: 'linear-gradient(145deg,#fed7aa 0%,#c2720e 100%)', shadow: 'rgba(194,114,14,.4)', border: 'rgba(194,114,14,.5)', ring: 'rgba(194,114,14,.2)', emoji: '🥉', label: '3°' },
 }
 
@@ -304,8 +304,8 @@ function Podio({ top, miId, apuesta }) {
   return (
     <div style={{ marginBottom: 20 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
-        <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 11, letterSpacing: '.18em', color: '#94a3b8' }}>TOP 3</span>
-        <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg,#e2ddd6,transparent)' }} />
+        <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 11, letterSpacing: '.18em', color: '#a8b2c4' }}>TOP 3</span>
+        <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg,#e7dec6,transparent)' }} />
       </div>
 
       <div className="rk-podio-grid" style={{
@@ -326,7 +326,7 @@ function Podio({ top, miId, apuesta }) {
             <div key={u.user_id} className="rk-pcard"
               style={{
                 background: '#fff',
-                border: `${isTop ? 2 : 1.5}px solid ${isTop ? cfg.border : '#e8e3db'}`,
+                border: `${isTop ? 2 : 1.5}px solid ${isTop ? cfg.border : '#f0eadb'}`,
                 padding: isTop ? '20px 14px 14px' : '16px 12px 12px',
                 boxShadow: isTop
                   ? `0 0 0 4px ${cfg.ring}, 0 12px 40px ${cfg.shadow}`
@@ -334,7 +334,7 @@ function Podio({ top, miId, apuesta }) {
               }}>
 
               {isTop && (
-                <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(90deg,#c99f16,#ebc32b)', color: '#fff', fontSize: 8, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', padding: '3px 14px', borderRadius: 99, whiteSpace: 'nowrap', boxShadow: '0 2px 10px rgba(235,195,43,.5)' }}>
+                <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(90deg,#a85f00,#FF7D00)', color: '#fff', fontSize: 8, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', padding: '3px 14px', borderRadius: 99, whiteSpace: 'nowrap', boxShadow: '0 2px 10px rgba(255,125,0,.5)' }}>
                   ★ LÍDER
                 </div>
               )}
@@ -355,22 +355,22 @@ function Podio({ top, miId, apuesta }) {
 
               <p style={{ fontWeight: 700, fontSize: isTop ? 15 : 13, color: '#0c182b', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {u.nombre}
-                {me && <span style={{ fontSize: 10, color: '#94a3b8', fontWeight: 400, marginLeft: 4 }}>(vos)</span>}
+                {me && <span style={{ fontSize: 10, color: '#a8b2c4', fontWeight: 400, marginLeft: 4 }}>(vos)</span>}
               </p>
 
-              <p style={{ fontSize: 10, color: '#94a3b8', margin: '0 0 12px' }}>
+              <p style={{ fontSize: 10, color: '#a8b2c4', margin: '0 0 12px' }}>
                 {u.predicciones} pred · {u.aciertos_exactos} ✓
               </p>
 
               <div style={{
-                background: isTop ? 'linear-gradient(135deg,rgba(235,195,43,.12),rgba(235,195,43,.06))' : 'rgba(12,24,43,.04)',
-                border: isTop ? '1px solid rgba(235,195,43,.25)' : '1px solid #f0eadb',
+                background: isTop ? 'linear-gradient(135deg,rgba(255,125,0,.12),rgba(255,125,0,.06))' : 'rgba(12,24,43,.04)',
+                border: isTop ? '1px solid rgba(255,125,0,.25)' : '1px solid #f0eadb',
                 borderRadius: 10, padding: '8px 0',
               }}>
-                <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: isTop ? 36 : 28, color: isTop ? '#c99f16' : '#0c182b', margin: 0, lineHeight: 1 }}>
+                <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: isTop ? 36 : 28, color: isTop ? '#a85f00' : '#0c182b', margin: 0, lineHeight: 1 }}>
                   {u.puntos_totales}
                 </p>
-                <p style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.14em', color: '#94a3b8', margin: '2px 0 0' }}>puntos</p>
+                <p style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.14em', color: '#a8b2c4', margin: '2px 0 0' }}>puntos</p>
               </div>
             </div>
           )
@@ -386,26 +386,26 @@ function Podio({ top, miId, apuesta }) {
 function MiPosicion({ pos }) {
   return (
     <div style={{ position: 'sticky', bottom: 12, marginTop: 12, zIndex: 10 }}>
-      <div style={{ borderRadius: 13, overflow: 'hidden', boxShadow: '0 8px 32px rgba(12,24,43,.28)', border: '2px solid rgba(235,195,43,.45)' }}>
+      <div style={{ borderRadius: 13, overflow: 'hidden', boxShadow: '0 8px 32px rgba(12,24,43,.28)', border: '2px solid rgba(255,125,0,.45)' }}>
         <div style={{
           display: 'grid', gridTemplateColumns: '44px 1fr 100px 68px',
           padding: '10px 16px', gap: 8, alignItems: 'center',
-          background: 'linear-gradient(90deg,#0c182b,#17376a)',
+          background: 'linear-gradient(90deg,#0c182b,#1a2540)',
         }}>
-          <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, color: '#ebc32b' }}>#{pos.posicion}</span>
+          <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, color: '#FF7D00' }}>#{pos.posicion}</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#ebc32b,#c99f16)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Bebas Neue',sans-serif", fontSize: 12, color: '#0c182b', flexShrink: 0 }}>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#FF7D00,#a85f00)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Bebas Neue',sans-serif", fontSize: 12, color: '#0c182b', flexShrink: 0 }}>
               {initials(pos.nombre)}
             </div>
             <div style={{ minWidth: 0 }}>
               <p style={{ fontWeight: 700, fontSize: 13, color: '#fff', margin: '0 0 1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {pos.nombre}<span style={{ fontSize: 10, color: '#ebc32b', fontWeight: 400, marginLeft: 4 }}>(vos)</span>
+                {pos.nombre}<span style={{ fontSize: 10, color: '#FF7D00', fontWeight: 400, marginLeft: 4 }}>(vos)</span>
               </p>
               <p style={{ fontSize: 10, color: 'rgba(255,255,255,.4)', margin: 0 }}>{pos.predicciones} predicciones</p>
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
-            {[['#22c55e', pos.aciertos_exactos], ['#ebc32b', pos.aciertos_diferencia || 0], ['rgba(255,255,255,.45)', pos.aciertos_resultado]].map(([c, n], i) => (
+            {[['#1b8a5a', pos.aciertos_exactos], ['#FF7D00', pos.aciertos_diferencia || 0], ['rgba(255,255,255,.45)', pos.aciertos_resultado]].map(([c, n], i) => (
               <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 11, fontWeight: 600, color: n > 0 ? c : 'rgba(255,255,255,.2)' }}>
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: n > 0 ? c : 'rgba(255,255,255,.1)', display: 'inline-block' }} />
                 {n}
@@ -413,7 +413,7 @@ function MiPosicion({ pos }) {
             ))}
           </div>
           <div style={{ textAlign: 'center' }}>
-            <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 20, color: '#ebc32b' }}>{pos.puntos_totales}</span>
+            <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 20, color: '#FF7D00' }}>{pos.puntos_totales}</span>
             <span style={{ fontSize: 8, color: 'rgba(255,255,255,.3)', marginLeft: 2, letterSpacing: '.1em', fontWeight: 700, display: 'block' }}>PTS</span>
           </div>
         </div>
@@ -428,9 +428,9 @@ function MiPosicion({ pos }) {
 function LeyendaPuntos({ apuesta, total }) {
   const e = parseInt(apuesta?.puntos_exacto) || 5, d = parseInt(apuesta?.puntos_diferencia) || 3, r = parseInt(apuesta?.puntos_resultado) || 1
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, fontSize: 10, color: '#94a3b8', paddingTop: 12, borderTop: '1px solid #e8e3db', marginTop: 12 }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, fontSize: 10, color: '#a8b2c4', paddingTop: 12, borderTop: '1px solid #f0eadb', marginTop: 12 }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-        {[['#22c55e', `Exacto +${e}pts`], ['#ebc32b', `Diferencia +${d}pts`], ['#94a3b8', `Resultado +${r}pt${r === 1 ? '' : 's'}`], ['#f43f5e', 'Sin acierto 0pts']].map(([c, l]) => (
+        {[['#1b8a5a', `Exacto +${e}pts`], ['#FF7D00', `Diferencia +${d}pts`], ['#a8b2c4', `Resultado +${r}pt${r === 1 ? '' : 's'}`], ['#e03252', 'Sin acierto 0pts']].map(([c, l]) => (
           <span key={l} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: c, display: 'inline-block' }} />
             {l}
@@ -445,18 +445,18 @@ function LeyendaPuntos({ apuesta, total }) {
 function EmptySelect() {
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 40, textAlign: 'center', gap: 20 }}>
-      <div style={{ width: 80, height: 80, borderRadius: 24, background: 'linear-gradient(145deg,#0c182b,#1a3060)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 12px 40px rgba(12,24,43,.2)' }}>
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(235,195,43,.6)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <div style={{ width: 80, height: 80, borderRadius: 24, background: 'linear-gradient(145deg,#0c182b,#1a2540)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 12px 40px rgba(12,24,43,.2)' }}>
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(255,125,0,.6)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
         </svg>
       </div>
       <div>
         <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: '#0c182b', margin: '0 0 6px', letterSpacing: '.04em' }}>SELECCIONÁ UNA APUESTA</p>
-        <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.7 }}>Elegí una apuesta del panel de la<br />izquierda para ver su ranking</p>
+        <p style={{ fontSize: 13, color: '#a8b2c4', margin: 0, lineHeight: 1.7 }}>Elegí una apuesta del panel de la<br />izquierda para ver su ranking</p>
       </div>
       <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', opacity: .15, marginTop: 8, pointerEvents: 'none' }}>
         {[80, 110, 80].map((h, i) => (
-          <div key={i} style={{ width: 56, height: h, borderRadius: 12, background: `linear-gradient(180deg,${i === 1 ? '#ebc32b' : '#cbd5e1'},transparent)` }} />
+          <div key={i} style={{ width: 56, height: h, borderRadius: 12, background: `linear-gradient(180deg,${i === 1 ? '#FF7D00' : '#e7dec6'},transparent)` }} />
         ))}
       </div>
     </div>
@@ -465,9 +465,9 @@ function EmptySelect() {
 
 function SinParticipantes() {
   return (
-    <div style={{ textAlign: 'center', padding: '48px 24px', background: '#fff', borderRadius: 14, border: '1.5px solid #e8e3db' }}>
-      <p style={{ fontWeight: 700, color: '#64748b', margin: '0 0 6px', fontSize: 15 }}>Sin participantes todavía</p>
-      <p style={{ fontSize: 12, color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>Las predicciones aparecerán cuando los participantes las carguen</p>
+    <div style={{ textAlign: 'center', padding: '48px 24px', background: '#fff', borderRadius: 14, border: '1.5px solid #f0eadb' }}>
+      <p style={{ fontWeight: 700, color: '#5f6e8a', margin: '0 0 6px', fontSize: 15 }}>Sin participantes todavía</p>
+      <p style={{ fontSize: 12, color: '#a8b2c4', margin: 0, lineHeight: 1.6 }}>Las predicciones aparecerán cuando los participantes las carguen</p>
     </div>
   )
 }
@@ -519,15 +519,15 @@ function OtrosParticipantes({ tabla, user }) {
         onMouseLeave={e => e.currentTarget.style.opacity = '1'}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
-          <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.14em', color: '#94a3b8' }}>
+          <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.14em', color: '#a8b2c4' }}>
             Otros participantes
           </span>
-          <span style={{ fontSize: 8, fontWeight: 700, background: 'rgba(12,24,43,.05)', color: '#c8d0dc', padding: '1px 6px', borderRadius: 4 }}>
+          <span style={{ fontSize: 8, fontWeight: 700, background: 'rgba(12,24,43,.05)', color: '#a8b2c4', padding: '1px 6px', borderRadius: 4 }}>
             +{otros.length}
           </span>
-          <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg,#e8e3db,transparent)', marginLeft: 8 }} />
+          <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg,#f0eadb,transparent)', marginLeft: 8 }} />
         </div>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#a8b2c4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
           style={{ transition: 'transform .2s', transform: exp ? 'rotate(180deg)' : 'rotate(0deg)', flexShrink: 0, marginLeft: 8 }}>
           <polyline points="6 9 12 15 18 9" />
         </svg>
@@ -541,9 +541,9 @@ function OtrosParticipantes({ tabla, user }) {
               gridTemplateColumns: '32px 1fr 64px 56px',
               gap: 10,
               padding: '9px 12px',
-              background: u.user_id === user?.id ? 'rgba(235,195,43,.1)' : '#fff',
-              border: u.user_id === user?.id ? '1.5px solid #ebc32b' : '1px solid #f5f3ee',
-              boxShadow: u.user_id === user?.id ? '0 0 0 1px rgba(235,195,43,.3), 0 2px 8px rgba(235,195,43,.12)' : 'none',
+              background: u.user_id === user?.id ? 'rgba(255,125,0,.1)' : '#fff',
+              border: u.user_id === user?.id ? '1.5px solid #FF7D00' : '1px solid #f5f3ee',
+              boxShadow: u.user_id === user?.id ? '0 0 0 1px rgba(255,125,0,.3), 0 2px 8px rgba(255,125,0,.12)' : 'none',
               borderRadius: 10,
               alignItems: 'center',
               transition: 'all .15s',
@@ -551,7 +551,7 @@ function OtrosParticipantes({ tabla, user }) {
               onMouseEnter={e => {
                 if (u.user_id !== user?.id) {
                   e.currentTarget.style.background = '#fcfaf6'
-                  e.currentTarget.style.borderColor = '#e8e3db'
+                  e.currentTarget.style.borderColor = '#f0eadb'
                 }
               }}
               onMouseLeave={e => {
@@ -561,19 +561,19 @@ function OtrosParticipantes({ tabla, user }) {
                 }
               }}>
 
-              <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, fontWeight: 700, color: '#94a3b8', textAlign: 'center' }}>#{idx + 4}</span>
+              <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, fontWeight: 700, color: '#a8b2c4', textAlign: 'center' }}>#{idx + 4}</span>
 
               <div style={{ minWidth: 0 }}>
-                <p style={{ fontWeight: u.user_id === user?.id ? 700 : 500, fontSize: 11, color: u.user_id === user?.id ? '#ebc32b' : '#0c182b', margin: '0 0 1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <p style={{ fontWeight: u.user_id === user?.id ? 700 : 500, fontSize: 11, color: u.user_id === user?.id ? '#FF7D00' : '#0c182b', margin: '0 0 1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {u.nombre}
                   {u.user_id === user?.id && (
                     <span style={{
                       fontSize: 8,
-                      color: '#ebc32b',
+                      color: '#FF7D00',
                       marginLeft: 6,
                       fontWeight: 700,
-                      background: 'rgba(235,195,43,.15)',
-                      border: '1px solid rgba(235,195,43,.3)',
+                      background: 'rgba(255,125,0,.15)',
+                      border: '1px solid rgba(255,125,0,.3)',
                       padding: '1px 5px',
                       borderRadius: 3,
                       textTransform: 'uppercase',
@@ -583,11 +583,11 @@ function OtrosParticipantes({ tabla, user }) {
                     </span>
                   )}
                 </p>
-                <p style={{ fontSize: 8, color: '#c8d0dc', margin: 0 }}>{u.predicciones} pred</p>
+                <p style={{ fontSize: 8, color: '#a8b2c4', margin: 0 }}>{u.predicciones} pred</p>
               </div>
 
               <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-start' }}>
-                {[{ v: u.aciertos_exactos, c: '#22c55e' }, { v: u.aciertos_diferencia || 0, c: '#ebc32b' }].map((x, i) => (
+                {[{ v: u.aciertos_exactos, c: '#1b8a5a' }, { v: u.aciertos_diferencia || 0, c: '#FF7D00' }].map((x, i) => (
                   x.v > 0 && (
                     <span key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: 5, background: `${x.c}12`, border: `1px solid ${x.c}25`, fontSize: 9, fontWeight: 600, color: x.c }}>{x.v}</span>
                   )

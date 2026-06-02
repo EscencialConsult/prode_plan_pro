@@ -5,7 +5,7 @@ export default function HomeFooter() {
     <footer style={{ background: '#05090f', position: 'relative', overflow: 'hidden' }}>
 
       {/* Glow ambiental de fondo */}
-      <div style={{ position:'absolute', bottom:0, left:0, width:400, height:250, background:'radial-gradient(ellipse at 0% 100%,rgba(11,74,110,.18),transparent 65%)', pointerEvents:'none' }}/>
+      <div style={{ position:'absolute', bottom:0, left:0, width:400, height:250, background:'radial-gradient(ellipse at 0% 100%,rgba(70,0,155,.18),transparent 65%)', pointerEvents:'none' }}/>
 
       {/* ── Cuerpo principal ── */}
       <div style={{ maxWidth:1200, margin:'0 auto', padding:'3.5rem 1.5rem 2.5rem' }}>
@@ -18,9 +18,9 @@ export default function HomeFooter() {
               <img
                 src="./img/one-logocolor.png"
                 alt="ONE"
-                style={{ height:34, width:'auto', filter:'drop-shadow(0 2px 16px rgba(235,195,43,.3))', opacity:.96 }}
+                style={{ height:34, width:'auto', filter:'drop-shadow(0 2px 16px rgba(255,125,0,.24))', opacity:.96 }}
               />
-              <div style={{ width:1, height:36, background:'rgba(235,195,43,.22)', flexShrink:0 }}/>
+              <div style={{ width:1, height:36, background:'rgba(255,125,0,.18)', flexShrink:0 }}/>
               <a href="https://escencialconsultora.com.ar" target="_blank" rel="noopener noreferrer" style={{ textDecoration:'none', display:'inline-flex' }}>
                 <img
                   src="./img/escencial-logoblanco.png"
@@ -38,8 +38,8 @@ export default function HomeFooter() {
             {/* Social / contacto rápido */}
             <div style={{ display:'flex', gap:'.6rem' }}>
               <a href="https://wa.me/5491133588062" target="_blank" rel="noopener noreferrer"
-                style={{ width:32, height:32, borderRadius:8, background:'rgba(255,255,255,.05)', border:'1px solid rgba(255,255,255,.08)', display:'flex', alignItems:'center', justifyContent:'center', transition:'all .18s', textDecoration:'none' }}
-                onMouseEnter={e=>{ e.currentTarget.style.background='rgba(235,195,43,.12)'; e.currentTarget.style.borderColor='rgba(235,195,43,.3)' }}
+                  style={{ width:32, height:32, borderRadius:8, background:'rgba(255,255,255,.05)', border:'1px solid rgba(255,255,255,.08)', display:'flex', alignItems:'center', justifyContent:'center', transition:'all .18s', textDecoration:'none' }}
+                onMouseEnter={e=>{ e.currentTarget.style.background='rgba(255,125,0,.12)'; e.currentTarget.style.borderColor='rgba(255,125,0,.28)' }}
                 onMouseLeave={e=>{ e.currentTarget.style.background='rgba(255,255,255,.05)'; e.currentTarget.style.borderColor='rgba(255,255,255,.08)' }}>
                 {/* WhatsApp icon */}
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -48,7 +48,7 @@ export default function HomeFooter() {
               </a>
               <a href="mailto:mferreyra@escencialconsult.com.ar"
                 style={{ width:32, height:32, borderRadius:8, background:'rgba(255,255,255,.05)', border:'1px solid rgba(255,255,255,.08)', display:'flex', alignItems:'center', justifyContent:'center', transition:'all .18s', textDecoration:'none' }}
-                onMouseEnter={e=>{ e.currentTarget.style.background='rgba(235,195,43,.12)'; e.currentTarget.style.borderColor='rgba(235,195,43,.3)' }}
+                onMouseEnter={e=>{ e.currentTarget.style.background='rgba(255,125,0,.12)'; e.currentTarget.style.borderColor='rgba(255,125,0,.28)' }}
                 onMouseLeave={e=>{ e.currentTarget.style.background='rgba(255,255,255,.05)'; e.currentTarget.style.borderColor='rgba(255,255,255,.08)' }}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
@@ -56,7 +56,7 @@ export default function HomeFooter() {
               </a>
               <a href="https://escencialconsultora.com.ar" target="_blank" rel="noopener noreferrer"
                 style={{ width:32, height:32, borderRadius:8, background:'rgba(255,255,255,.05)', border:'1px solid rgba(255,255,255,.08)', display:'flex', alignItems:'center', justifyContent:'center', transition:'all .18s', textDecoration:'none' }}
-                onMouseEnter={e=>{ e.currentTarget.style.background='rgba(235,195,43,.12)'; e.currentTarget.style.borderColor='rgba(235,195,43,.3)' }}
+                onMouseEnter={e=>{ e.currentTarget.style.background='rgba(255,125,0,.12)'; e.currentTarget.style.borderColor='rgba(255,125,0,.28)' }}
                 onMouseLeave={e=>{ e.currentTarget.style.background='rgba(255,255,255,.05)'; e.currentTarget.style.borderColor='rgba(255,255,255,.08)' }}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
@@ -67,7 +67,7 @@ export default function HomeFooter() {
 
           {/* Col 2: Servicios */}
           <div>
-            <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.2em', color:'rgba(235,195,43,.7)', margin:'0 0 1.1rem' }}>
+            <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.2em', color:'rgba(255,125,0,.76)', margin:'0 0 1.1rem' }}>
               Servicios
             </p>
             <ul style={{ listStyle:'none', margin:0, padding:0, display:'flex', flexDirection:'column', gap:'.6rem' }}>
@@ -79,7 +79,7 @@ export default function HomeFooter() {
               ].map(label => (
                 <li key={label}>
                   <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.84rem', color:'rgba(255,255,255,.45)', display:'inline-flex', alignItems:'center', gap:'.4rem' }}>
-                    <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(235,195,43,.3)', flexShrink:0 }}/>
+                    <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(255,125,0,.2)', flexShrink:0 }}/>
                     {label}
                   </span>
                 </li>
@@ -89,7 +89,7 @@ export default function HomeFooter() {
 
           {/* Col 3: ONE */}
           <div>
-            <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.2em', color:'rgba(235,195,43,.7)', margin:'0 0 1.1rem' }}>
+            <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.2em', color:'rgba(255,125,0,.76)', margin:'0 0 1.1rem' }}>
               ONE Human-Tech
             </p>
             <ul style={{ listStyle:'none', margin:0, padding:0, display:'flex', flexDirection:'column', gap:'.6rem' }}>
@@ -103,7 +103,7 @@ export default function HomeFooter() {
                     style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.84rem', color:'rgba(255,255,255,.48)', textDecoration:'none', display:'inline-flex', alignItems:'center', gap:'.4rem', transition:'color .18s' }}
                     onMouseEnter={e=>{ e.currentTarget.style.color='#ebc32b' }}
                     onMouseLeave={e=>{ e.currentTarget.style.color='rgba(255,255,255,.48)' }}>
-                    <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(235,195,43,.3)', flexShrink:0 }}/>
+                    <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(255,125,0,.2)', flexShrink:0 }}/>
                     {label}
                   </a>
                 </li>
@@ -113,7 +113,7 @@ export default function HomeFooter() {
 
           {/* Col 4: Contacto */}
           <div>
-            <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.2em', color:'rgba(235,195,43,.7)', margin:'0 0 1.1rem' }}>
+            <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.2em', color:'rgba(255,125,0,.76)', margin:'0 0 1.1rem' }}>
               Contacto
             </p>
             <ul style={{ listStyle:'none', margin:0, padding:0, display:'flex', flexDirection:'column', gap:'.6rem' }}>
@@ -127,7 +127,7 @@ export default function HomeFooter() {
                     style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.82rem', color:'rgba(255,255,255,.48)', textDecoration:'none', display:'inline-flex', alignItems:'center', gap:'.4rem', transition:'color .18s' }}
                     onMouseEnter={e=>{ e.currentTarget.style.color='#ebc32b' }}
                     onMouseLeave={e=>{ e.currentTarget.style.color='rgba(255,255,255,.48)' }}>
-                    <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(235,195,43,.3)', flexShrink:0 }}/>
+                    <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(255,125,0,.2)', flexShrink:0 }}/>
                     {label}
                   </a>
                 </li>

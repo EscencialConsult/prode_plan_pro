@@ -22,27 +22,27 @@ export default function HomeFaq() {
           {/* Left */}
           <div className="lg:sticky" style={{ top: '7rem' }}>
             <span className="inline-flex items-center gap-2 font-body font-bold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-6"
-              style={{ border: '1.5px solid #ebc32b', color: '#c99f16', background: 'rgba(235,195,43,.12)' }}>
-              Ayuda
-            </span>
+                style={{ border: '1.5px solid #FF7D00', color: '#FF7D00', background: 'rgba(255,125,0,.08)' }}>
+                Ayuda
+              </span>
             <h2 className="font-display mb-6" style={{ fontSize: 'clamp(2.5rem,6vw,4.2rem)', color: '#0c182b', lineHeight: 0.95, letterSpacing: '.01em' }}>
               PREGUNTAS<br />FRECUENTES
             </h2>
-            <p className="font-body text-base leading-relaxed mb-10" style={{ color: '#5f6e8a', maxWidth: '28rem' }}>
+            <p className="font-body text-base leading-relaxed mb-10" style={{ color: 'rgba(12,24,43,.78)', maxWidth: '28rem' }}>
               Todo lo que necesitás saber para empezar a participar y sacarle el máximo a la plataforma.
             </p>
             <Link to="/register"
               className="inline-flex items-center gap-2 font-body font-bold text-sm px-7 py-4 rounded-full transition-all duration-300"
-              style={{ background: '#0c182b', color: '#fff', textDecoration: 'none', boxShadow: '0 4px 14px rgba(12,24,43,.25)' }}
+              style={{ background: '#46009B', color: '#fff', textDecoration: 'none', boxShadow: '0 4px 14px rgba(70,0,155,.22)' }}
               onMouseEnter={e => { 
-                e.currentTarget.style.background = '#18243f'
+                e.currentTarget.style.background = '#36116f'
                 e.currentTarget.style.transform = 'translateY(-2px)'
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(12,24,43,.35)'
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(70,0,155,.32)'
               }}
               onMouseLeave={e => { 
-                e.currentTarget.style.background = '#0c182b'
+                e.currentTarget.style.background = '#46009B'
                 e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 4px 14px rgba(12,24,43,.25)'
+                e.currentTarget.style.boxShadow = '0 4px 14px rgba(70,0,155,.22)'
               }}>
               Registrarme ahora
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
@@ -62,11 +62,11 @@ export default function HomeFaq() {
                   key={i} 
                   className="rounded-2xl overflow-hidden bg-white transition-all duration-300"
                   style={{
-                    border: isOpen ? '2px solid #ebc32b' : isHovered ? '2px solid #f0eadb' : '2px solid transparent',
+                    border: isOpen ? '2px solid #FF7D00' : isHovered ? '2px solid rgba(255,125,0,.12)' : '2px solid transparent',
                     boxShadow: isOpen 
-                      ? '0 8px 24px rgba(235,195,43,.18), 0 2px 8px rgba(235,195,43,.1)' 
+                      ? '0 8px 24px rgba(255,125,0,.12), 0 2px 8px rgba(70,0,155,.06)' 
                       : isHovered 
-                        ? '0 4px 12px rgba(12,24,43,.08)' 
+                        ? '0 4px 12px rgba(70,0,155,.06)' 
                         : '0 2px 4px rgba(12,24,43,.04)',
                     transform: isOpen ? 'scale(1.01)' : 'scale(1)',
                   }}
@@ -85,8 +85,8 @@ export default function HomeFaq() {
                     <span 
                       className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300"
                       style={isOpen 
-                        ? { background: '#ebc32b', color: '#05090f', transform: 'rotate(180deg)' } 
-                        : { background: isHovered ? '#f5edd5' : '#f0eadb', color: '#5f6e8a', transform: 'rotate(0deg)' }
+                        ? { background: '#FF7D00', color: '#05090f', transform: 'rotate(180deg)' } 
+                        : { background: isHovered ? 'rgba(255,125,0,.08)' : 'rgba(255,125,0,.06)', color: '#5f6e8a', transform: 'rotate(0deg)' }
                       }
                     >
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
@@ -102,8 +102,8 @@ export default function HomeFaq() {
                       opacity: isOpen ? 1 : 0,
                     }}
                   >
-                    <div className="px-6 pb-6 pt-2" style={{ borderTop: isOpen ? '1px solid #f0eadb' : 'none' }}>
-                      <p className="font-body text-sm leading-relaxed pt-3" style={{ color: '#5f6e8a' }}>
+                    <div className="px-6 pb-6 pt-2" style={{ borderTop: isOpen ? '1px solid rgba(255,125,0,.12)' : 'none' }}>
+                      <p className="font-body text-sm leading-relaxed pt-3" style={{ color: 'rgba(12,24,43,.78)' }}>
                         {a}
                       </p>
                     </div>

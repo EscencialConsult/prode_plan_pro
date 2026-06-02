@@ -78,7 +78,7 @@ export default function ResetPasswordPage() {
         style={{
           backgroundImage: [
             'linear-gradient(160deg, rgba(5,9,15,.82) 0%, rgba(12,24,43,.88) 45%, rgba(5,9,15,.95) 100%)',
-            "url('./imgprode/fondo-banner.png')",
+            "url('./imgprode/bancosol-fondo.png')",
           ].join(','),
           backgroundSize: 'cover',
           backgroundPosition: 'center 25%',
@@ -95,7 +95,7 @@ export default function ResetPasswordPage() {
         {/* Logo */}
         <div className="relative z-10 flex flex-col items-center mb-6 lp-card">
           <img
-            src="./imgprode/one-prode-talento-new3.png"
+            src="./imgprode/bancosol-logo.png"
             alt="Prode Talento"
             style={{ height: 52, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,.6))' }}
           />

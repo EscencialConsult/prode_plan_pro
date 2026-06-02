@@ -32,26 +32,26 @@ export default function LoginPage() {
         style={{
           backgroundImage: [
             'linear-gradient(160deg, rgba(5,9,15,.82) 0%, rgba(12,24,43,.88) 45%, rgba(5,9,15,.95) 100%)',
-            "url('./imgprode/fondo-banner.png')",
+            "url('./imgprode/bancosol-fondo.png')",
           ].join(','),
           backgroundSize: 'cover',
           backgroundPosition: 'center 25%',
         }}
       >
-        {/* Gold glow top-left */}
+        {/* Orange glow top-left */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{
-          background: 'radial-gradient(ellipse 55% 45% at 20% 25%, rgba(235,195,43,.16), transparent 55%)'
+          background: 'radial-gradient(ellipse 55% 45% at 20% 25%, rgba(255,125,0,.16), transparent 55%)'
         }} />
-        {/* Blue glow bottom-right */}
+        {/* Purple glow bottom-right */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{
-          background: 'radial-gradient(ellipse 50% 45% at 80% 75%, rgba(66,91,139,.28), transparent 55%)'
+          background: 'radial-gradient(ellipse 50% 45% at 80% 75%, rgba(70,0,155,.28), transparent 55%)'
         }} />
 
         {/* ── TOP: logo empresa + marca ── */}
         <div className="relative z-10 flex flex-col items-center mb-6 lp-card">
           {/* Slot logo cliente */}
           <img
-            src="./imgprode/one-prode-talento-new3.png"
+            src="./imgprode/bancosol-logo.png"
             alt="Prode Talento"
             style={{ height: 52, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,.6))' }}
           />
@@ -63,25 +63,25 @@ export default function LoginPage() {
           style={{
             maxWidth: 420,
             background: 'linear-gradient(160deg, rgba(12,24,43,.92) 0%, rgba(5,9,15,.96) 100%)',
-            border: '1px solid rgba(235,195,43,.25)',
+            border: '1px solid rgba(255,125,0,.18)',
             borderRadius: 20,
-            boxShadow: '0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(235,195,43,.08), inset 0 1px 0 rgba(255,255,255,.05)',
+            boxShadow: '0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,125,0,.08), inset 0 1px 0 rgba(255,255,255,.05)',
             backdropFilter: 'blur(24px)',
             animationDelay: '.1s',
           }}
         >
           {/* Gold top accent line */}
           <div className="rounded-t-[20px] h-0.5 w-full"
-            style={{ background: 'linear-gradient(90deg, transparent, #ebc32b 30%, #ebc32b 70%, transparent)' }} />
+            style={{ background: 'linear-gradient(90deg, transparent, #FF7D00 30%, #FF7D00 70%, transparent)' }} />
 
           <div className="px-8 py-8">
 
             {/* Card header */}
             <div className="mb-7">
               <div className="flex items-center gap-2 mb-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-400 lp-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FF7D00] lp-pulse" />
                 <span className="font-body text-xs uppercase tracking-widest font-bold"
-                  style={{ color: 'rgba(235,195,43,.7)' }}>
+                  style={{ color: 'rgba(255,125,0,.7)' }}>
                   Mundial 2026
                 </span>
               </div>
@@ -96,7 +96,7 @@ export default function LoginPage() {
 
             {/* Divider */}
             <div className="h-px mb-7"
-              style={{ background: 'linear-gradient(90deg, transparent, rgba(235,195,43,.2) 50%, transparent)' }} />
+              style={{ background: 'linear-gradient(90deg, transparent, rgba(255,125,0,.22) 50%, transparent)' }} />
 
             <form onSubmit={handleSubmit} className="space-y-4">
 
@@ -104,7 +104,7 @@ export default function LoginPage() {
               <div>
                 <label htmlFor="email"
                   className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
-                  style={{ color: 'rgba(235,195,43,.8)' }}>
+                  style={{ color: 'rgba(255,125,0,.8)' }}>
                   Email
                 </label>
                 <input
@@ -121,12 +121,12 @@ export default function LoginPage() {
                     background: 'rgba(255,255,255,.06)',
                     border: '1px solid rgba(255,255,255,.1)',
                     color: '#fff',
-                    caretColor: '#ebc32b',
+                    caretColor: '#FF7D00',
                   }}
                   onFocus={e => {
-                    e.target.style.borderColor = 'rgba(235,195,43,.55)'
-                    e.target.style.background = 'rgba(235,195,43,.06)'
-                    e.target.style.boxShadow = '0 0 0 3px rgba(235,195,43,.1)'
+                    e.target.style.borderColor = 'rgba(255,125,0,.55)'
+                    e.target.style.background = 'rgba(255,125,0,.06)'
+                    e.target.style.boxShadow = '0 0 0 3px rgba(255,125,0,.1)'
                   }}
                   onBlur={e => {
                     e.target.style.borderColor = 'rgba(255,255,255,.1)'
@@ -141,14 +141,14 @@ export default function LoginPage() {
                 <div className="flex items-center justify-between mb-2">
                   <label htmlFor="password"
                     className="block font-body font-bold text-xs uppercase tracking-widest"
-                    style={{ color: 'rgba(235,195,43,.8)' }}>
+                    style={{ color: 'rgba(255,125,0,.8)' }}>
                     Contraseña
                   </label>
                   <Link
                     to="/forgot-password"
                     className="font-body text-xs transition-colors"
                     style={{ color: 'rgba(255,255,255,.45)', textDecoration: 'none' }}
-                    onMouseEnter={e => { e.currentTarget.style.color = '#ebc32b' }}
+                    onMouseEnter={e => { e.currentTarget.style.color = '#FF7D00' }}
                     onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,.45)' }}
                   >
                     ¿Olvidaste tu contraseña?
@@ -167,12 +167,12 @@ export default function LoginPage() {
                     background: 'rgba(255,255,255,.06)',
                     border: '1px solid rgba(255,255,255,.1)',
                     color: '#fff',
-                    caretColor: '#ebc32b',
+                    caretColor: '#FF7D00',
                   }}
                   onFocus={e => {
-                    e.target.style.borderColor = 'rgba(235,195,43,.55)'
-                    e.target.style.background = 'rgba(235,195,43,.06)'
-                    e.target.style.boxShadow = '0 0 0 3px rgba(235,195,43,.1)'
+                    e.target.style.borderColor = 'rgba(255,125,0,.55)'
+                    e.target.style.background = 'rgba(255,125,0,.06)'
+                    e.target.style.boxShadow = '0 0 0 3px rgba(255,125,0,.1)'
                   }}
                   onBlur={e => {
                     e.target.style.borderColor = 'rgba(255,255,255,.1)'
@@ -198,9 +198,9 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading}
                 className="w-full font-body font-bold text-base py-4 rounded-full flex items-center justify-center gap-2 transition-all mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ background: '#ebc32b', color: '#05090f', boxShadow: '0 8px 28px rgba(235,195,43,.3)' }}
-                onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(235,195,43,.45)' } }}
-                onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(235,195,43,.3)' } }}
+                style={{ background: '#FF7D00', color: '#05090f', boxShadow: '0 8px 28px rgba(255,125,0,.3)' }}
+                onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#ff9a33'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(255,125,0,.45)' } }}
+                onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#FF7D00'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(255,125,0,.3)' } }}
               >
                 {loading ? (
                   <>
@@ -230,7 +230,7 @@ export default function LoginPage() {
               to="/register"
               className="block w-full font-body font-semibold text-sm py-3.5 rounded-full text-center transition-all"
               style={{ border: '1px solid rgba(255,255,255,.18)', color: 'rgba(255,255,255,.7)', textDecoration: 'none' }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(235,195,43,.5)'; e.currentTarget.style.color = '#ebc32b'; e.currentTarget.style.background = 'rgba(235,195,43,.06)' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,125,0,.5)'; e.currentTarget.style.color = '#FF7D00'; e.currentTarget.style.background = 'rgba(255,125,0,.06)' }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.18)'; e.currentTarget.style.color = 'rgba(255,255,255,.7)'; e.currentTarget.style.background = 'transparent' }}
             >
               No tengo cuenta — Registrarme
@@ -243,7 +243,7 @@ export default function LoginPage() {
           <Link to="/"
             className="font-body text-sm flex items-center gap-1.5 transition-colors"
             style={{ color: 'rgba(255,255,255,.38)', textDecoration: 'none' }}
-            onMouseEnter={e => { e.currentTarget.style.color = '#ebc32b' }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#FF7D00' }}
             onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,.38)' }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>

@@ -40,7 +40,7 @@ export default function HomeHero() {
 
       <section className="relative min-h-screen text-white overflow-hidden flex items-center"
         style={{
-          backgroundImage: "linear-gradient(180deg,rgba(5,9,15,.55) 0%,rgba(12,24,43,.78) 55%,rgba(12,24,43,.96) 100%), url('./imgprode/fondo-banner.png')",
+          backgroundImage: "linear-gradient(180deg,rgba(70,0,155,.22) 0%,rgba(17,15,48,.42) 40%,rgba(12,24,43,.65) 100%), url('./imgprode/bancosol-fondo.png')",
           backgroundSize: 'cover',
           backgroundPosition: 'center 30%',
           paddingTop: 'clamp(80px, 10vh, 120px)',
@@ -48,7 +48,8 @@ export default function HomeHero() {
         }}>
 
         <div className="absolute inset-0 pointer-events-none" style={{
-          background: 'radial-gradient(ellipse 60% 50% at 85% 20%, rgba(235,195,43,.15), transparent 55%), radial-gradient(ellipse 50% 60% at 15% 90%, rgba(66,91,139,.28), transparent 60%)'
+          background: 'radial-gradient(ellipse 60% 50% at 85% 20%, rgba(255,125,0,.16), transparent 55%), radial-gradient(ellipse 50% 60% at 15% 90%, rgba(70,0,155,.24), transparent 60%), linear-gradient(180deg, rgba(255,125,0,.08), rgba(70,0,155,.22), rgba(12,24,43,.75))',
+          mixBlendMode: 'overlay'
         }} />
 
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 1rem' }}
@@ -61,13 +62,13 @@ export default function HomeHero() {
               {/* Pills superiores */}
               <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <span className="inline-flex items-center gap-2 font-body font-bold text-xs uppercase tracking-widest px-3 py-1.5 rounded-full"
-                  style={{ border: '1px solid #ebc32b', color: '#ebc32b', background: 'rgba(235,195,43,.1)' }}>
-                  <span className="w-2 h-2 rounded-full bg-green-400 pulse-dot-el" />
+                  style={{ border: '1px solid #FF7D00', color: '#FF7D00', background: 'rgba(255,125,0,.12)' }}>
+                  <span className="w-2 h-2 rounded-full bg-[#FF7D00] pulse-dot-el" />
                   Prode Talento
                 </span>
-                <span className="hidden sm:flex items-center gap-2 text-xs font-body font-semibold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,.55)' }}>
-                  <span className="h-px w-6" style={{ background: 'rgba(235,195,43,.45)' }} />
-                  SOGEFI GROUP
+                <span className="hidden sm:flex items-center gap-2 text-xs font-body font-semibold uppercase tracking-widest" style={{ color: 'rgba(170,0,100,.85)' }}>
+                  <span className="h-px w-6" style={{ background: 'rgba(170,0,100,.45)' }} />
+                  BANCOSOL
                 </span>
               </div>
 
@@ -76,7 +77,7 @@ export default function HomeHero() {
                 <h1 className="font-display leading-none block text-white" style={{ fontSize: 'clamp(1.8rem,8vw,5rem)', letterSpacing: '.01em' }}>
                   EL MUNDIAL
                 </h1>
-                <h1 className="font-display leading-none block" style={{ fontSize: 'clamp(2.8rem,12vw,7.5rem)', letterSpacing: '.01em', color: '#ebc32b', textShadow: '0 0 40px rgba(235,195,43,.4)' }}>
+                <h1 className="font-display leading-none block" style={{ fontSize: 'clamp(2.8rem,12vw,7.5rem)', letterSpacing: '.01em', color: '#FF7D00', textShadow: '0 0 40px rgba(170,0,100,.35)' }}>
                   SE VIVE
                 </h1>
                 <h1 className="font-display leading-none block text-white" style={{ fontSize: 'clamp(1.8rem,8vw,5rem)', letterSpacing: '.01em' }}>
@@ -93,12 +94,12 @@ export default function HomeHero() {
               {/* Pills de beneficios */}
               <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3">
                 {[
-                  { label: 'Competencia sana', sub: 'Entre equipos y áreas', bg: 'linear-gradient(135deg,#ebc32b,#c99f16)', ic: '#05090f' },
-                  { label: 'Más participación', sub: 'Todos suman al clima', bg: 'linear-gradient(135deg,#6e83ad,#425b8b)', ic: '#fff' },
-                  { label: 'Energía positiva', sub: 'Unión desde el deporte', bg: 'linear-gradient(135deg,#1b8a5a,#146a46)', ic: '#fff' },
+                  { label: 'Competencia sana', sub: 'Entre equipos y áreas', bg: 'linear-gradient(135deg,#FF7D00,#AA0064)', ic: '#05090f' },
+                  { label: 'Más participación', sub: 'Todos suman al clima', bg: 'linear-gradient(135deg,#46009B,#AA0064)', ic: '#fff' },
+                  { label: 'Energía positiva', sub: 'Unión desde el deporte', bg: 'linear-gradient(135deg,#FF7D00,#46009B)', ic: '#fff' },
                 ].map(({ label, sub, bg, ic }) => (
                   <div key={label} className="flex items-center gap-3 rounded-full pl-2 pr-4 py-1.5 w-full sm:w-auto"
-                    style={{ background: 'rgba(255,255,255,.09)', border: '1px solid rgba(255,255,255,.13)', backdropFilter: 'blur(6px)' }}>
+                    style={{ background: 'rgba(88,88,87,.12)', border: '1px solid rgba(255,125,0,.16)', backdropFilter: 'blur(6px)' }}>
                     <span className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: bg }}>
                       <svg viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -106,7 +107,7 @@ export default function HomeHero() {
                     </span>
                     <div>
                       <p className="text-sm font-body font-semibold text-white leading-tight">{label}</p>
-                      <p className="text-xs font-body leading-tight" style={{ color: 'rgba(255,255,255,.5)' }}>{sub}</p>
+                      <p className="text-xs font-body leading-tight" style={{ color: 'rgba(255,255,255,.65)' }}>{sub}</p>
                     </div>
                   </div>
                 ))}
@@ -115,24 +116,24 @@ export default function HomeHero() {
               {/* Botones */}
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link to="/register" className="font-body font-bold text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full inline-flex items-center justify-center gap-2 transition-all w-full sm:w-auto"
-                  style={{ background: '#ebc32b', color: '#05090f', boxShadow: '0 8px 24px rgba(235,195,43,.3)', textDecoration: 'none' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = '' }}>
+                  style={{ background: '#FF7D00', color: '#05090f', boxShadow: '0 8px 24px rgba(255,125,0,.28)', textDecoration: 'none' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#ff9a33'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#FF7D00'; e.currentTarget.style.transform = '' }}>
                   Crear mi cuenta
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </Link>
                 <Link to="/login" className="font-body font-semibold text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full inline-flex items-center justify-center gap-2 transition-all w-full sm:w-auto"
-                  style={{ color: '#fff', border: '1.5px solid rgba(255,255,255,.3)', textDecoration: 'none' }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#ebc32b'; e.currentTarget.style.color = '#ebc32b' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.3)'; e.currentTarget.style.color = '#fff' }}>
+                  style={{ color: '#fff', border: '1.5px solid rgba(170,0,100,.6)', textDecoration: 'none' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#FF7D00'; e.currentTarget.style.color = '#FF7D00' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(170,0,100,.6)'; e.currentTarget.style.color = '#fff' }}>
                   Ya tengo cuenta →
                 </Link>
               </div>
 
               {/* Alert box */}
               <div className="flex items-start gap-3 p-3 sm:p-4 rounded-lg max-w-xl"
-                style={{ background: 'linear-gradient(135deg,rgba(184,69,46,.12),rgba(184,69,46,.05))', border: '1px solid rgba(184,69,46,.35)', borderLeft: '3px solid #b8452e' }}>
-                <svg viewBox="0 0 24 24" fill="#b8452e" className="w-5 h-5 shrink-0 mt-0.5"><path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/></svg>
+                style={{ background: 'linear-gradient(135deg,rgba(255,125,0,.1),rgba(70,0,155,.08))', border: '1px solid rgba(255,125,0,.22)', borderLeft: '3px solid #FF7D00' }}>
+                <svg viewBox="0 0 24 24" fill="#FF7D00" className="w-5 h-5 shrink-0 mt-0.5"><path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/></svg>
                 <p className="text-xs sm:text-sm font-body leading-relaxed" style={{ color: 'rgba(255,255,255,.88)' }}>
                   <strong className="text-white">El Mundial comienza el 11 de junio.</strong>{' '}
                   Registrate antes de que arranque para no perderte los primeros partidos.
@@ -144,38 +145,38 @@ export default function HomeHero() {
             <div className="lg:col-span-5">
               {/* Medalla flotante */}
               <div className="relative mb-5 sm:mb-6 flex justify-center">
-                <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(235,195,43,.28), transparent 60%)', filter: 'blur(28px)' }} />
-                <img src="./imgprode/one-prode-dorado.png" alt="Prode Talento" className="relative float-medal-el"
+                <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(255,125,0,.18), transparent 60%)', filter: 'blur(28px)' }} />
+                <img src="./imgprode/bancosol_bounce.png" alt="Prode Talento" className="relative float-medal-el"
                   style={{ width: 'clamp(140px, 30vw, 180px)', filter: 'drop-shadow(0 16px 32px rgba(0,0,0,.6))' }} />
               </div>
 
               {/* Panel principal */}
               <div className="rounded-2xl p-4 sm:p-5"
-                style={{ background: 'linear-gradient(160deg,rgba(12,24,43,.78),rgba(5,9,15,.88))', border: '1px solid rgba(235,195,43,.28)', backdropFilter: 'blur(16px)', boxShadow: '0 28px 70px rgba(5,9,15,.55)' }}>
+                style={{ background: 'linear-gradient(160deg,rgba(88,88,87,.95),rgba(12,12,25,.92))', border: '1px solid rgba(255,125,0,.25)', backdropFilter: 'blur(16px)', boxShadow: '0 28px 70px rgba(5,9,15,.55)' }}>
                 
                 {/* Header */}
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <img src="./imgprode/one-prode-blanco.png" alt="" style={{ height: 'clamp(16px, 4vw, 20px)', opacity: .8 }} />
+                    <img src="./imgprode/bancosol_bounce.png" alt="" style={{ height: 'clamp(16px, 4vw, 20px)', opacity: .8 }} />
                     <span className="font-body text-xs uppercase tracking-widest" style={{ color: 'rgba(255,255,255,.4)' }}>· Mundial 2026</span>
                   </div>
-                  <span className="flex items-center gap-1.5 text-xs font-body font-bold uppercase tracking-widest" style={{ color: '#ebc32b' }}>
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 pulse-dot-el" />
+                  <span className="flex items-center gap-1.5 text-xs font-body font-bold uppercase tracking-widest" style={{ color: '#FF7D00' }}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#FF7D00] pulse-dot-el" />
                     En vivo
                   </span>
                 </div>
 
-                <div className="mb-4 h-px" style={{ background: 'linear-gradient(90deg,transparent,rgba(235,195,43,.3),transparent)' }} />
+                <div className="mb-4 h-px" style={{ background: 'linear-gradient(90deg,transparent,rgba(255,125,0,.3),transparent)' }} />
 
                 {/* Countdown */}
-                <p className="font-body font-bold text-xs uppercase tracking-widest mb-3 text-center" style={{ color: '#ebc32b' }}>
+                <p className="font-body font-bold text-xs uppercase tracking-widest mb-3 text-center" style={{ color: '#FF7D00' }}>
                   Falta para el inicio
                 </p>
                 <div className="grid grid-cols-4 gap-1.5 mb-4">
                   {[{v:cd.days,l:'Días'},{v:cd.hours,l:'Horas'},{v:cd.minutes,l:'Min'},{v:cd.seconds,l:'Seg'}].map(({v,l}) => (
                     <div key={l} className="py-2 sm:py-3 text-center rounded-lg"
                       style={{ background: 'rgba(235,195,43,.06)', border: '1px solid rgba(235,195,43,.18)' }}>
-                      <div className="font-display leading-none" style={{ fontSize: 'clamp(1.2rem,5vw,2rem)', color: '#ebc32b' }}>
+                      <div className="font-display leading-none" style={{ fontSize: 'clamp(1.2rem,5vw,2rem)', color: '#FF7D00' }}>
                         {String(v).padStart(2,'0')}
                       </div>
                       <div className="text-[10px] sm:text-xs uppercase tracking-wider mt-1 font-body" style={{ color: 'rgba(255,255,255,.45)' }}>{l}</div>
@@ -183,10 +184,10 @@ export default function HomeHero() {
                   ))}
                 </div>
 
-                <div className="mb-4 h-px" style={{ background: 'linear-gradient(90deg,transparent,rgba(235,195,43,.3),transparent)' }} />
+                <div className="mb-4 h-px" style={{ background: 'linear-gradient(90deg,transparent,rgba(255,125,0,.3),transparent)' }} />
 
                 {/* Predicciones recientes */}
-                <p className="font-body font-bold text-xs uppercase tracking-widest mb-3" style={{ color: '#ebc32b' }}>Predicciones recientes</p>
+                <p className="font-body font-bold text-xs uppercase tracking-widest mb-3" style={{ color: '#FF7D00' }}>Predicciones recientes</p>
                 <div className="space-y-2.5 mb-4">
                   {PREDS.map(({user,pred,pts}) => (
                     <div key={user} className="flex items-center justify-between gap-2">
@@ -198,16 +199,16 @@ export default function HomeHero() {
                           <div className="font-body text-[10px] sm:text-xs truncate" style={{ color: 'rgba(255,255,255,.38)' }}>{pred}</div>
                         </div>
                       </div>
-                      <span className="font-body font-bold text-xs flex-shrink-0" style={{ color: '#ebc32b' }}>{pts}</span>
+                      <span className="font-body font-bold text-xs flex-shrink-0" style={{ color: '#FF7D00' }}>{pts}</span>
                     </div>
                   ))}
                 </div>
 
                 {/* CTA final */}
                 <Link to="/register" className="flex items-center justify-center gap-2 w-full font-body font-bold text-sm py-3 sm:py-3.5 rounded-full transition-all"
-                  style={{ background: '#ebc32b', color: '#05090f', textDecoration: 'none' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#f5d75a' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = '#ebc32b' }}>
+                  style={{ background: '#FF7D00', color: '#05090f', textDecoration: 'none' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#ff9a33' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#FF7D00' }}>
                   Empezar a pronosticar
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </Link>

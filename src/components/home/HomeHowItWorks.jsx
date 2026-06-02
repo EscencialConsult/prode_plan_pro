@@ -26,7 +26,7 @@ export default function HomeHowItWorks() {
 
         <div className="text-center mb-14">
           <span className="inline-flex items-center gap-2 font-body font-bold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-5"
-            style={{ border: '1px solid #ebc32b', color: '#c99f16', background: 'rgba(235,195,43,.1)' }}>
+            style={{ border: '1px solid #FF7D00', color: '#FF7D00', background: 'rgba(255,125,0,.08)' }}>
             Cómo funciona
           </span>
           <h2 className="font-display" style={{ fontSize: 'clamp(2.4rem,6vw,4rem)', color: '#0c182b', lineHeight: 1, letterSpacing: '.01em' }}>
@@ -37,19 +37,19 @@ export default function HomeHowItWorks() {
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           {STEPS.map(({ n, title, desc, icon }) => (
             <div key={n} className="relative rounded-2xl p-7 bg-white transition-all duration-300"
-              style={{ border: '1px solid #f0eadb', boxShadow: '0 1px 0 rgba(12,24,43,.03)' }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = '#ebc32b'; e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 14px 36px rgba(12,24,43,.1)' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = '#f0eadb'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 1px 0 rgba(12,24,43,.03)' }}
+              style={{ border: '1px solid rgba(88,88,87,.06)', boxShadow: '0 1px 0 rgba(12,24,43,.03)' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#FF7D00'; e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 14px 36px rgba(70,0,155,.08)' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(88,88,87,.06)'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 1px 0 rgba(12,24,43,.03)' }}
             >
-              <div className="font-display leading-none mb-4 select-none" style={{ fontSize: '5.5rem', color: '#ebc32b', opacity: .70 }}>
+              <div className="font-display leading-none mb-4 select-none" style={{ fontSize: '5.5rem', color: '#46009B', opacity: .90, textShadow: '0 6px 30px rgba(255,125,0,.06)' }}>
                 {n}
               </div>
               <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5"
-                style={{ background: 'linear-gradient(135deg,#0c182b,#425b8b)', color: '#ebc32b' }}>
+                style={{ background: 'linear-gradient(135deg,#FF7D00,#46009B)', color: '#ffffff' }}>
                 {icon}
               </div>
               <h3 className="font-display text-2xl mb-3" style={{ color: '#0c182b', letterSpacing: '.01em' }}>{title}</h3>
-              <p className="font-body text-sm leading-relaxed" style={{ color: '#5f6e8a' }}>{desc}</p>
+              <p className="font-body text-sm leading-relaxed" style={{ color: 'rgba(12,24,43,.7)' }}>{desc}</p>
             </div>
           ))}
         </div>
@@ -57,9 +57,9 @@ export default function HomeHowItWorks() {
         <div className="text-center">
           <Link to="/register"
             className="inline-flex items-center gap-2 font-body font-bold text-base px-8 py-4 rounded-full transition-all"
-            style={{ background: '#ebc32b', color: '#05090f', boxShadow: '0 8px 24px rgba(235,195,43,.28)', textDecoration: 'none' }}
-            onMouseEnter={e => { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-            onMouseLeave={e => { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = '' }}>
+            style={{ background: '#FF7D00', color: '#05090f', boxShadow: '0 8px 24px rgba(255,125,0,.24)', textDecoration: 'none' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#ff9a33'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#FF7D00'; e.currentTarget.style.transform = '' }}>
             Empezar ahora
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </Link>
@@ -71,7 +71,7 @@ export default function HomeHowItWorks() {
       <svg className="absolute bottom-0 left-0 w-full" style={{ display: 'block', height: 72, marginBottom: -2 }}
         viewBox="0 0 1440 72" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
         <rect width="1440" height="72" fill="#faf7f0" />
-        <path d="M0,40 C360,72 720,0 1080,30 C1260,45 1380,60 1440,40 L1440,72 L0,72 Z" fill="#0c182b" />
+        <path d="M0,40 C360,72 720,0 1080,30 C1260,45 1380,60 1440,40 L1440,72 L0,72 Z" fill="#46009B" />
       </svg>
     </section>
   )
