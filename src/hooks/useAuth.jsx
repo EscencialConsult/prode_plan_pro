@@ -90,12 +90,12 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
-  const login = useCallback(async (email, password) => {
+  // Login por DNI (el email real se resuelve internamente en sheetsApi)
+  const login = useCallback(async (dni, password) => {
     setLoading(true)
     setError(null)
     try {
-      // sheetsApi.auth.login guarda el session_token automáticamente
-      const data = await sheetsApi.auth.login(email, password)
+      const data = await sheetsApi.auth.login(dni, password)
       setUser(data.user)
       sessionStorage.setItem(USER_KEY, JSON.stringify(data.user))
       return data.user
@@ -110,7 +110,6 @@ export function AuthProvider({ children }) {
   const logout = useCallback(async () => {
     setLoading(true)
     try {
-      // sheetsApi.auth.logout limpia el token aunque el servidor falle
       await sheetsApi.auth.logout()
     } finally {
       setUser(null)
@@ -120,17 +119,38 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
-  const register = useCallback(async (nombre, email, password) => {
+  // Registro con DNI, nombre, email real, teléfono y contraseña
+  const register = useCallback(async (dni, nombre, email, telefono, password) => {
     setLoading(true)
     setError(null)
     try {
-      const data = await sheetsApi.auth.registro(nombre, email, password)
+      const data = await sheetsApi.auth.registro(dni, nombre, email, telefono, password)
       return data
     } catch (err) {
       setError(err.message)
       throw err
     } finally {
       setLoading(false)
+    }
+  }, [])
+
+  // Completar perfil (primer ingreso): actualiza nombre, email, teléfono
+  // y marca perfil_completo = true en la base de datos.
+  const completarPerfil = useCallback(async (nombre, email, telefono) => {
+    setError(null)
+    try {
+      const data = await sheetsApi.auth.completarPerfil(nombre, email, telefono)
+      // Actualizar el usuario en memoria para reflejar perfil_completo = true
+      setUser(prev => {
+        if (!prev) return prev
+        const updated = { ...prev, perfil_completo: true, nombre, email, telefono }
+        sessionStorage.setItem(USER_KEY, JSON.stringify(updated))
+        return updated
+      })
+      return data
+    } catch (err) {
+      setError(err.message)
+      throw err
     }
   }, [])
 
@@ -142,11 +162,14 @@ export function AuthProvider({ children }) {
     return await sheetsApi.auth.cambiarPassword(currentPassword, newPassword)
   }, [])
 
-const isAdmin = !!(
+  const isAdmin = !!(
     user?.rol === 'admin' ||
     user?.role === 'admin' ||
     user?.es_admin === true
   )
+
+  // ¿El usuario completó el perfil obligatorio del primer ingreso?
+  const perfilCompleto = !!user?.perfil_completo
 
   // Plan de la empresa del usuario logueado.
   // Si la columna empresa está vacía, se considera Plan_pro por defecto
@@ -163,8 +186,10 @@ const isAdmin = !!(
       login,
       logout,
       register,
+      completarPerfil,
       cambiarPassword,
       isAdmin,
+      perfilCompleto,
       isPlanBasic,
       isPro,
     }}>

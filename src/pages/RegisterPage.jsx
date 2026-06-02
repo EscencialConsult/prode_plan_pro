@@ -3,17 +3,38 @@ import { Link } from 'react-router-dom'
 import sheetsApi from '../services/sheetsApi.js'
 
 export default function RegisterPage() {
-  const [form, setForm]       = useState({ nombre: '', email: '', password: '' })
+  const [form, setForm]       = useState({ dni: '', nombre: '', email: '', telefono: '', password: '' })
   const [done, setDone]       = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState(null)
 
+  function setField(field) {
+    return e => setForm(p => ({ ...p, [field]: e.target.value }))
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
-    setLoading(true)
     setError(null)
+
+    // Validaciones en frontend
+    if (!/^\d{7,8}$/.test(form.dni.trim())) {
+      setError('El DNI debe tener 7 u 8 dígitos numéricos')
+      return
+    }
+    if (form.password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres')
+      return
+    }
+
+    setLoading(true)
     try {
-      await sheetsApi.auth.registro(form.nombre, form.email, form.password)
+      await sheetsApi.auth.registro(
+        form.dni.trim(),
+        form.nombre.trim(),
+        form.email.trim(),
+        form.telefono.trim(),
+        form.password
+      )
       setDone(true)
     } catch (err) {
       setError(err.message || 'No se pudo completar el registro')
@@ -76,7 +97,6 @@ export default function RegisterPage() {
 
         {/* ── Logo / Brand ── */}
         <div className="relative z-10 flex flex-col items-center mb-6 rp-card">
-
           <img
             src="./imgprode/colegio-logo-blanco.png"
             alt="Prode Talento"
@@ -88,7 +108,7 @@ export default function RegisterPage() {
         <div
           className="rp-card relative z-10 w-full"
           style={{
-            maxWidth: 420,
+            maxWidth: 440,
             background: 'linear-gradient(160deg, rgba(12,24,43,.92) 0%, rgba(5,9,15,.96) 100%)',
             border: '1px solid rgba(235,195,43,.25)',
             borderRadius: 20,
@@ -167,21 +187,47 @@ export default function RegisterPage() {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
 
+                  {/* DNI */}
+                  <div>
+                    <label htmlFor="reg-dni"
+                      className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
+                      style={{ color: 'rgba(235,195,43,.8)' }}>
+                      DNI <span style={{ color: 'rgba(235,195,43,.5)', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>— identificador de acceso</span>
+                    </label>
+                    <input
+                      id="reg-dni"
+                      type="text"
+                      inputMode="numeric"
+                      value={form.dni}
+                      onChange={e => setForm(p => ({ ...p, dni: e.target.value.replace(/\D/g, '').slice(0, 8) }))}
+                      placeholder="12345678"
+                      required
+                      autoFocus
+                      autoComplete="username"
+                      className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
+                      style={{ ...inputStyle, letterSpacing: '0.1em' }}
+                      onFocus={onFocus}
+                      onBlur={onBlur}
+                    />
+                    <p className="font-body text-xs mt-1.5" style={{ color: 'rgba(255,255,255,.28)' }}>
+                      7 u 8 dígitos · Lo usarás para iniciar sesión
+                    </p>
+                  </div>
+
                   {/* Nombre */}
                   <div>
-                    <label htmlFor="nombre"
+                    <label htmlFor="reg-nombre"
                       className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
                       style={{ color: 'rgba(235,195,43,.8)' }}>
                       Nombre completo
                     </label>
                     <input
-                      id="nombre"
+                      id="reg-nombre"
                       type="text"
                       value={form.nombre}
-                      onChange={e => setForm(p => ({ ...p, nombre: e.target.value }))}
+                      onChange={setField('nombre')}
                       placeholder="Juan Pérez"
                       required
-                      autoFocus
                       autoComplete="name"
                       className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
                       style={inputStyle}
@@ -192,19 +238,44 @@ export default function RegisterPage() {
 
                   {/* Email */}
                   <div>
-                    <label htmlFor="email"
+                    <label htmlFor="reg-email"
                       className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
                       style={{ color: 'rgba(235,195,43,.8)' }}>
                       Email
                     </label>
                     <input
-                      id="email"
+                      id="reg-email"
                       type="email"
                       value={form.email}
-                      onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
+                      onChange={setField('email')}
                       placeholder="tu@empresa.com"
                       required
                       autoComplete="email"
+                      className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
+                      style={inputStyle}
+                      onFocus={onFocus}
+                      onBlur={onBlur}
+                    />
+                    <p className="font-body text-xs mt-1.5" style={{ color: 'rgba(255,255,255,.28)' }}>
+                      Para recuperación de contraseña y notificaciones
+                    </p>
+                  </div>
+
+                  {/* Teléfono */}
+                  <div>
+                    <label htmlFor="reg-telefono"
+                      className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
+                      style={{ color: 'rgba(235,195,43,.8)' }}>
+                      Teléfono
+                    </label>
+                    <input
+                      id="reg-telefono"
+                      type="tel"
+                      value={form.telefono}
+                      onChange={setField('telefono')}
+                      placeholder="+54 9 11 1234-5678"
+                      required
+                      autoComplete="tel"
                       className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
                       style={inputStyle}
                       onFocus={onFocus}
@@ -214,16 +285,16 @@ export default function RegisterPage() {
 
                   {/* Contraseña */}
                   <div>
-                    <label htmlFor="password"
+                    <label htmlFor="reg-password"
                       className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
                       style={{ color: 'rgba(235,195,43,.8)' }}>
                       Contraseña
                     </label>
                     <input
-                      id="password"
+                      id="reg-password"
                       type="password"
                       value={form.password}
-                      onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
+                      onChange={setField('password')}
                       placeholder="••••••••"
                       required
                       minLength={6}

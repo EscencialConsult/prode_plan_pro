@@ -20,6 +20,7 @@ import ManualUser          from './pages/ManualUser.jsx'
 import RankingPageUser     from './pages/RankingPageUser.jsx'
 import RankingWrapper      from './pages/RankingWrapper.jsx'
 import CambiarPasswordPage from './pages/CambiarPasswordPage.jsx'
+import CompletarPerfilPage from './pages/CompletarPerfilPage.jsx'
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
             <Route path="/register"         element={<RegisterPage />} />
             <Route path="/forgot-password"  element={<ForgotPasswordPage />} />
             <Route path="/reset-password"   element={<ResetPasswordPage />} />
+            <Route path="/completar-perfil" element={<CompletarPerfilPage />} />
             <Route path="/"                 element={<HomePage />} />
 
             {/* Usuario autenticado */}

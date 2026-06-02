@@ -3,17 +3,23 @@ import { Link } from 'react-router-dom'
 import sheetsApi from '../services/sheetsApi.js'
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail]     = useState('')
+  const [dni, setDni]         = useState('')
   const [loading, setLoading] = useState(false)
   const [done, setDone]       = useState(false)
   const [error, setError]     = useState(null)
 
   async function handleSubmit(e) {
     e.preventDefault()
-    setLoading(true)
     setError(null)
+
+    if (!/^\d{7,8}$/.test(dni.trim())) {
+      setError('El DNI debe tener 7 u 8 dígitos numéricos')
+      return
+    }
+
+    setLoading(true)
     try {
-      await sheetsApi.auth.resetSolicitar(email)
+      await sheetsApi.auth.resetSolicitar(dni.trim())
       setDone(true)
     } catch (err) {
       setError(err.message || 'No se pudo procesar la solicitud')
@@ -102,7 +108,7 @@ export default function ForgotPasswordPage() {
                   REVISÁ TU EMAIL
                 </h2>
                 <p className="font-body text-sm mb-5 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.55)', lineHeight: 1.5 }}>
-                  Si el email está registrado, te enviamos un correo con instrucciones para restablecer tu contraseña. Revisá también la carpeta de spam.
+                  Si el DNI está registrado, te enviamos un correo al email asociado a tu cuenta con las instrucciones para restablecer tu contraseña. Revisá también la carpeta de spam.
                 </p>
 
                 <p className="font-body text-xs mb-6" style={{ color: 'rgba(255,255,255,.3)' }}>
@@ -135,7 +141,7 @@ export default function ForgotPasswordPage() {
                     ¿OLVIDASTE<br />TU CONTRASEÑA?
                   </h1>
                   <p className="font-body text-sm mt-2" style={{ color: 'rgba(255,255,255,.45)' }}>
-                    Ingresá tu email y te enviamos un link para elegir una contraseña nueva.
+                    Ingresá tu DNI y te enviamos un link a tu email registrado para elegir una contraseña nueva.
                   </p>
                 </div>
 
@@ -145,28 +151,30 @@ export default function ForgotPasswordPage() {
 
                 <form onSubmit={handleSubmit} className="space-y-4">
 
-                  {/* Email */}
+                  {/* DNI */}
                   <div>
-                    <label htmlFor="email"
+                    <label htmlFor="forgot-dni"
                       className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
                       style={{ color: 'rgba(235,195,43,.8)' }}>
-                      Email
+                      DNI
                     </label>
                     <input
-                      id="email"
-                      type="email"
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      placeholder="tu@empresa.com"
+                      id="forgot-dni"
+                      type="text"
+                      inputMode="numeric"
+                      value={dni}
+                      onChange={e => setDni(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                      placeholder="12345678"
                       required
                       autoFocus
-                      autoComplete="email"
+                      autoComplete="username"
                       className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
                       style={{
                         background: 'rgba(255,255,255,.06)',
                         border: '1px solid rgba(255,255,255,.1)',
                         color: '#fff',
                         caretColor: '#ebc32b',
+                        letterSpacing: '0.1em',
                       }}
                       onFocus={e => {
                         e.target.style.borderColor = 'rgba(235,195,43,.55)'

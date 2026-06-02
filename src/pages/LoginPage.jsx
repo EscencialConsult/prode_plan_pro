@@ -5,15 +5,25 @@ import { useAuth } from '../hooks/useAuth.jsx'
 export default function LoginPage() {
   const { login, loading, error } = useAuth()
   const navigate = useNavigate()
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [form, setForm] = useState({ dni: '', password: '' })
+  const [localError, setLocalError] = useState(null)
 
   async function handleSubmit(e) {
     e.preventDefault()
+    setLocalError(null)
+
+    if (!/^\d{7,8}$/.test(form.dni.trim())) {
+      setLocalError('El DNI debe tener 7 u 8 dígitos numéricos')
+      return
+    }
+
     try {
-      await login(form.email, form.password)
+      await login(form.dni, form.password)
       navigate('/dashboard')
     } catch (_) {}
   }
+
+  const displayError = localError || error
 
   return (
     <>
@@ -49,7 +59,6 @@ export default function LoginPage() {
 
         {/* ── TOP: logo empresa + marca ── */}
         <div className="relative z-10 flex flex-col items-center mb-6 lp-card">
-          {/* Slot logo cliente */}
           <img
             src="./imgprode/colegio-logo-blanco.png"
             alt="Prode Talento"
@@ -90,7 +99,7 @@ export default function LoginPage() {
                 BIENVENIDO
               </h1>
               <p className="font-body text-sm mt-1.5" style={{ color: 'rgba(255,255,255,.45)' }}>
-                Ingresá para empezar a pronosticar con tu equipo.
+                Ingresá tu DNI y contraseña para pronosticar con tu equipo.
               </p>
             </div>
 
@@ -100,28 +109,31 @@ export default function LoginPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
 
-              {/* Email */}
+              {/* DNI */}
               <div>
-                <label htmlFor="email"
+                <label htmlFor="dni"
                   className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
                   style={{ color: 'rgba(235,195,43,.8)' }}>
-                  Email
+                  DNI
                 </label>
                 <input
-                  id="email"
-                  type="email"
-                  value={form.email}
-                  onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                  placeholder="tu@empresa.com"
+                  id="dni"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="\d{7,8}"
+                  value={form.dni}
+                  onChange={e => setForm(p => ({ ...p, dni: e.target.value.replace(/\D/g, '').slice(0, 8) }))}
+                  placeholder="12345678"
                   required
                   autoFocus
-                  autoComplete="email"
+                  autoComplete="username"
                   className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
                   style={{
                     background: 'rgba(255,255,255,.06)',
                     border: '1px solid rgba(255,255,255,.1)',
                     color: '#fff',
                     caretColor: '#ebc32b',
+                    letterSpacing: '0.1em',
                   }}
                   onFocus={e => {
                     e.target.style.borderColor = 'rgba(235,195,43,.55)'
@@ -183,13 +195,13 @@ export default function LoginPage() {
               </div>
 
               {/* Error */}
-              {error && (
+              {displayError && (
                 <div className="flex items-start gap-2.5 px-4 py-3 rounded-xl font-body text-sm"
                   style={{ background: 'rgba(184,69,46,.12)', border: '1px solid rgba(184,69,46,.35)', color: '#e07050' }}>
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-px">
                     <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                   </svg>
-                  {error}
+                  {displayError}
                 </div>
               )}
 
