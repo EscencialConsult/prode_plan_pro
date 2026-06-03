@@ -123,6 +123,19 @@ export default function RankingPageAdmin() {
     finally { setLoading(false) }
   }
 
+  async function cargarGeneral() {
+    if (sel?.id === '__general__') return
+    const g = { id: '__general__', titulo: 'Ranking General', __general: true }
+    setSel(g); setLoading(true); setTabla([]); setMeta({})
+    setExpandedUser(null); setPredicciones({}); setLoadingUser(null)
+    try {
+      const rG = await sheetsApi.predicciones.general({ user_id: user?.id || user?.user_id })
+      setTabla(rG.tabla || [])
+      setMeta({ total: rG.total, mi_posicion: rG.mi_posicion, esta_en_top: rG.esta_en_top })
+    } catch (e) { toast.error('Error cargando ranking general: ' + e.message) }
+    finally { setLoading(false) }
+  }
+
   async function toggleUser(userId) {
     if (expandedUser === userId) {
       setExpandedUser(null)
@@ -134,7 +147,7 @@ export default function RankingPageAdmin() {
     }
     setLoadingUser(userId)
     try {
-      const r = await sheetsApi.predicciones.deUsuario(sel.id, userId)
+      const r = await sheetsApi.predicciones.deUsuario(sel?.__general ? '' : sel.id, userId)
       const predsRaw = r.mis || r.predicciones || []
       const predsEnriquecidas = predsRaw.map(pred => {
         const partido = partidosMap.get(pred.partido_id) || {}
@@ -195,6 +208,30 @@ export default function RankingPageAdmin() {
               <div style={{ display: 'flex', gap: 6 }}>
                 <Pill color="#22c55e" label={`${bets.filter(b => isOpen(b)).length} activas`} />
                 <Pill color="#64748b" label={`${bets.filter(b => !isOpen(b)).length} cerradas`} />
+              </div>
+            </div>
+
+            {/* Botón Ranking General (acumulado) */}
+            <div style={{ padding: '12px 12px 0' }}>
+              <div
+                onClick={cargarGeneral}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer',
+                  padding: '11px 12px', borderRadius: 12,
+                  background: 'linear-gradient(125deg,#0c182b,#1a3060)',
+                  border: sel?.id === '__general__' ? '1.5px solid #ebc32b' : '1px solid rgba(235,195,43,.25)',
+                  boxShadow: sel?.id === '__general__' ? '0 0 0 3px rgba(235,195,43,.15)' : 'none',
+                  transition: 'all .15s',
+                }}
+              >
+                <span style={{ fontSize: 18, lineHeight: 1 }}>🏆</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontSize: 12.5, fontWeight: 700, color: '#fff', margin: '0 0 2px' }}>Ranking General</p>
+                  <p style={{ fontSize: 10, color: 'rgba(235,195,43,.75)', margin: 0 }}>Acumulado de todas las fases</p>
+                </div>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
               </div>
             </div>
 
@@ -338,7 +375,7 @@ function Banner({ apuesta, meta, loading }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, position: 'relative' }}>
         <div>
           <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: 'rgba(235,195,43,.55)', display: 'block', marginBottom: 4 }}>
-            TABLA DE POSICIONES
+            {apuesta.__general ? 'RANKING GENERAL · ACUMULADO DE TODAS LAS FASES' : 'TABLA DE POSICIONES'}
           </span>
           <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(22px,3vw,32px)', color: '#fff', margin: '0 0 6px', letterSpacing: '.02em', lineHeight: 1 }}>
             {apuesta.titulo}

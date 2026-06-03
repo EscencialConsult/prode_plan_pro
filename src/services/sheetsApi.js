@@ -980,6 +980,37 @@ const predicciones = {
       esta_en_top: estaEnTop,
     }
   },
+
+  /**
+   * Ranking GENERAL acumulado: suma los puntos de cada persona a lo
+   * largo de TODAS las apuestas finalizadas (función ranking_general en BD).
+   * Devuelve el mismo formato que `tabla` para reusar la UI.
+   */
+  general: async (opciones = {}) => {
+    const currentUserId = opciones.user_id || ''
+    const { data, error } = await supabase.rpc('ranking_general')
+    checkError(error, 'predicciones.general')
+
+    const tabla = (data || []).map(r => ({
+      user_id: r.user_id,
+      nombre: r.nombre,
+      email: '',
+      puntos_totales: r.puntos_totales,
+      posicion: r.posicion,
+      aciertos_exactos: r.aciertos_exactos,
+      aciertos_diferencia: r.aciertos_diferencia,
+      aciertos_resultado: r.aciertos_resultado,
+      aciertos_clasificado: r.aciertos_clasificado,
+      predicciones: r.predicciones,
+      es_grupal: false,
+    }))
+
+    const miPosicion = currentUserId
+      ? tabla.find(r => r.user_id === currentUserId) || null
+      : null
+
+    return { ok: true, es_grupal: false, total: tabla.length, tabla, mi_posicion: miPosicion, esta_en_top: true }
+  },
 }
 
 // ── grupos (selecciones agrupadas por letra) ──────────────
