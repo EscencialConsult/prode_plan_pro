@@ -49,7 +49,7 @@ export default function Navbar() {
 
           <div className="w-px h-5 hidden sm:block" style={{ background: 'rgba(235,195,43,.25)' }} />
           <img
-            src="./imgprode/colegio-logo-blanco.png"
+            src="./imgprode/sta-logo.png"
             alt="Prode CGCET"
             style={{ height: 32, width: 'auto', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))' }}
           />

@@ -145,7 +145,7 @@ export default function HomeHero() {
               {/* Medalla flotante */}
               <div className="relative mb-5 sm:mb-6 flex justify-center">
                 <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(255,255,255,.28), transparent 60%)', filter: 'blur(28px)' }} />
-                <img src="./imgprode/colegio-logo-azul.png" alt="Prode Talento" className="relative float-medal-el"
+                <img src="./imgprode/sta-logo.png" alt="Prode Talento" className="relative float-medal-el"
                   style={{ width: 'clamp(140px, 30vw, 180px)', filter: 'drop-shadow(0 16px 32px rgba(0,0,0,.6))' }} />
               </div>
 
@@ -156,7 +156,7 @@ export default function HomeHero() {
                 {/* Header */}
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <img src="./imgprode/colegio-logo-blanco.png" alt="" style={{ height: 'clamp(16px, 4vw, 20px)', opacity: .8 }} />
+                    <img src="./imgprode/sta-logo.png" alt="" style={{ height: 'clamp(16px, 4vw, 20px)', opacity: .8 }} />
                     <span className="font-body text-xs uppercase tracking-widest" style={{ color: 'rgba(255,255,255,.4)' }}>· Mundial 2026</span>
                   </div>
                   <span className="flex items-center gap-1.5 text-xs font-body font-bold uppercase tracking-widest" style={{ color: '#ebc32b' }}>
