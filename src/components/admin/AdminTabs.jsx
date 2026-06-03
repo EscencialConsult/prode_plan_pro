@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { useAuth } from '../../hooks/useAuth.jsx'
 
 export default function AdminTabs({
   tab,
@@ -6,6 +7,8 @@ export default function AdminTabs({
   pendingCount = 0,
   activeBetsCount = 0,
 }) {
+  const { isPro } = useAuth()
+
   const tabs = [
     {
       key: 'NuevaApuesta',
@@ -16,10 +19,11 @@ export default function AdminTabs({
       label: 'Apuestas Creadas',
       count: activeBetsCount,
     },
-    {
+    // La pestaña "Áreas" solo está disponible en plan Pro
+    ...(isPro ? [{
       key: 'Areas',
       label: 'Áreas',
-    },
+    }] : []),
     {
       key: 'Usuarios',
       label: 'Usuarios',
