@@ -95,9 +95,9 @@ export default function ResetPasswordPage() {
         {/* Logo */}
         <div className="relative z-10 flex flex-col items-center mb-6 lp-card">
           <img
-            src="./imgprode/one-prode-talento-new3.png"
+            src="./imgprode/colegio-logo-blanco.png"
             alt="Prode Talento"
-            style={{ height: 52, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,.6))' }}
+            style={{ height: 66, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,.6))' }}
           />
         </div>
 

@@ -274,14 +274,32 @@ const sistema = {
 
 // ── auth ──────────────────────────────────────────────────
 const auth = {
-  login: async (email, password) => {
+  /**
+   * Login por DNI.
+   * 1. Traduce el DNI al email real via RPC pública `obtener_email_por_dni`.
+   * 2. Autentica con Supabase usando ese email.
+   */
+  login: async (dni, password) => {
+    const dniClean = String(dni).trim()
+
+    // Paso 1: obtener el email asociado al DNI
+    const { data: emailReal, error: errLookup } = await supabase
+      .rpc('obtener_email_por_dni', { p_dni: dniClean })
+
+    // Error de red u otro error del RPC
+    if (errLookup) throw new Error('Error al verificar el DNI. Intentá nuevamente.')
+
+    // DNI no existe → mismo mensaje que contraseña incorrecta (no revelar info)
+    if (!emailReal) throw new Error('DNI o contraseña incorrectos')
+
+    // Paso 2: autenticar con el email real
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.trim().toLowerCase(),
+      email: emailReal,
       password,
     })
     if (error) throw new Error(traducirErrorAuth(error))
 
-    // Cargar perfil completo del usuario para verificar estado y rol
+    // Cargar perfil completo del usuario
     const { data: perfil, error: errPerfil } = await supabase
       .from('usuarios')
       .select('*')
@@ -320,11 +338,28 @@ const auth = {
     return { ok: true }
   },
 
-  registro: async (nombre, email, password) => {
+  /**
+   * Registro con DNI.
+   * El email real va directo a auth.users.
+   * El DNI y teléfono se pasan en los metadatos para que
+   * el trigger handle_new_user() los guarde en public.usuarios.
+   */
+  registro: async (dni, nombre, email, telefono, password) => {
+    const dniClean    = String(dni).trim()
+    const emailClean  = email.trim().toLowerCase()
+    const nombreClean = nombre.trim()
+    const telClean    = telefono.trim()
+
     const { data, error } = await supabase.auth.signUp({
-      email: email.trim().toLowerCase(),
+      email: emailClean,
       password,
-      options: { data: { nombre: nombre.trim() } },
+      options: {
+        data: {
+          nombre:   nombreClean,
+          dni:      dniClean,
+          telefono: telClean,
+        },
+      },
     })
     if (error) throw new Error(traducirErrorAuth(error))
     return {
@@ -333,18 +368,44 @@ const auth = {
     }
   },
 
-  // Recuperación de contraseña (flujo Supabase nativo).
-  resetSolicitar: async (email) => {
-    const redirectTo = `${window.location.origin}/reset-password`
-    const { error } = await supabase.auth.resetPasswordForEmail(
-      email.trim().toLowerCase(),
-      { redirectTo }
-    )
-    // Mensaje genérico (no revela si el email existe o no)
+  /**
+   * Recuperación de contraseña por DNI.
+   * 1. Busca el email real del usuario a través de la RPC pública.
+   * 2. Llama resetPasswordForEmail con ese email real.
+   *    → Supabase envía el link AL EMAIL REAL del usuario. ✅
+   */
+  resetSolicitar: async (dni) => {
+    const dniClean = String(dni).trim()
+
+    // Buscar email real por DNI
+    const { data: emailReal } = await supabase
+      .rpc('obtener_email_por_dni', { p_dni: dniClean })
+
+    // Siempre mostrar mensaje genérico (no revelar si el DNI existe)
+    if (emailReal) {
+      const redirectTo = `${window.location.origin}/reset-password`
+      await supabase.auth.resetPasswordForEmail(emailReal, { redirectTo })
+    }
+
     return {
       ok: true,
-      message: 'Si el email está registrado, te enviamos un correo con instrucciones para restablecer tu contraseña.',
+      message: 'Si el DNI está registrado, te enviamos un correo con instrucciones para restablecer tu contraseña.',
     }
+  },
+
+  /**
+   * Completar perfil (primer ingreso).
+   * Llama la RPC autenticada que actualiza nombre, email, teléfono
+   * y marca perfil_completo = true.
+   */
+  completarPerfil: async (nombre, email, telefono) => {
+    const { data, error } = await supabase.rpc('completar_perfil', {
+      p_nombre:   nombre.trim(),
+      p_email:    email.trim().toLowerCase(),
+      p_telefono: telefono.trim(),
+    })
+    if (error) throw new Error(error.message || 'No se pudo completar el perfil')
+    return data
   },
 
   /**
@@ -438,11 +499,12 @@ const auth = {
 
 function traducirErrorAuth(error) {
   const msg = (error.message || '').toLowerCase()
-  if (msg.includes('invalid login credentials')) return 'Email o contraseña incorrectos'
-  if (msg.includes('email not confirmed')) return 'Tu cuenta no fue confirmada todavía'
-  if (msg.includes('user already registered')) return 'El email ya está registrado'
-  if (msg.includes('password should be')) return 'La contraseña debe tener al menos 6 caracteres'
-  if (msg.includes('rate limit')) return 'Demasiados intentos. Probá nuevamente en unos minutos'
+  if (msg.includes('invalid login credentials')) return 'DNI o contraseña incorrectos'
+  if (msg.includes('email not confirmed'))       return 'Tu cuenta no fue confirmada todavía'
+  if (msg.includes('user already registered'))  return 'El email ya está registrado. Si ya tenés cuenta, iniciá sesión con tu DNI.'
+  if (msg.includes('duplicate') && msg.includes('dni')) return 'El DNI ingresado ya está registrado'
+  if (msg.includes('password should be'))        return 'La contraseña debe tener al menos 6 caracteres'
+  if (msg.includes('rate limit'))                return 'Demasiados intentos. Probá nuevamente en unos minutos'
   return error.message || 'Error de autenticación'
 }
 
