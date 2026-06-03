@@ -265,7 +265,7 @@ export default function HomeCampaignGoals() {
               <blockquote style={{ margin: 0, borderLeft: '3px solid #86C873', paddingLeft: '1.25rem' }}>
                 <p className="font-body text-sm sm:text-base leading-relaxed italic" style={{ color: '#1e3020', margin: 0 }}>
                   "Compañeros camioneros de Tucumán: <strong>la ruta nos enseña que solos no llegamos a ningún lado</strong>.
-                  Hoy el modelo que representamos desde la Agrupación Moyano es el de la lealtad, la fuerza y la unión.
+                  Hoy el modelo que representamos desde Moyano Conducción es el de la lealtad, la fuerza y la unión.
                   Me postulo a Secretario General porque conozco el sacrificio que hacen ustedes cada vez que encienden el motor
                   y dejan a sus familias. No vengo a prometer desde un escritorio, vengo a comprometerme desde la calle y la base.
                   Vamos por salarios dignos, por una obra social que responda y por el respeto que nuestra profesión merece.

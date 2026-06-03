@@ -120,11 +120,11 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
-  const register = useCallback(async (nombre, email, password) => {
+   const register = useCallback(async (nombre, email, dni, password) => {
     setLoading(true)
     setError(null)
     try {
-      const data = await sheetsApi.auth.registro(nombre, email, password)
+      const data = await sheetsApi.auth.registro(nombre, email, dni, password)
       return data
     } catch (err) {
       setError(err.message)

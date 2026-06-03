@@ -9,6 +9,7 @@
  *    explicando la regla del +1 por acertar al clasificado.
  *  - ✅ ARREGLADO: onFinalize cambiado a onClose para que el botón X funcione
  */
+import { useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import AppShell from './AppShell.jsx'
 import { useBets } from '../hooks/useBets.jsx'

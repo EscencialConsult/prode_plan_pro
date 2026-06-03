@@ -274,9 +274,13 @@ const sistema = {
 
 // ── auth ──────────────────────────────────────────────────
 const auth = {
-  login: async (email, password) => {
+  login: async (emailOrDni, password) => {
+    let email = emailOrDni.trim().toLowerCase()
+    if (!email.includes('@')) {
+      email = `${email}@prodetalento.com`
+    }
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.trim().toLowerCase(),
+      email,
       password,
     })
     if (error) throw new Error(traducirErrorAuth(error))
@@ -320,11 +324,18 @@ const auth = {
     return { ok: true }
   },
 
-  registro: async (nombre, email, password) => {
+  registro: async (nombre, email, dni, password) => {
+    const authEmail = `${dni.trim()}@prodetalento.com`
     const { data, error } = await supabase.auth.signUp({
-      email: email.trim().toLowerCase(),
+      email: authEmail,
       password,
-      options: { data: { nombre: nombre.trim() } },
+      options: { 
+        data: { 
+          nombre: nombre.trim(),
+          dni: dni.trim(),
+          email_contacto: email.trim().toLowerCase()
+        } 
+      },
     })
     if (error) throw new Error(traducirErrorAuth(error))
     return {
@@ -806,7 +817,7 @@ const predicciones = {
    */
   deUsuario: async (apuesta_id, user_id) => {
     let q = supabase.from('predicciones').select('*').eq('user_id', user_id)
-    if (apuesta_id) q = q.eq('apuesta_id', apuesta_id)
+    if (apuesta_id && apuesta_id !== 'global') q = q.eq('apuesta_id', apuesta_id)
     const { data, error } = await q
     checkError(error, 'predicciones.deUsuario')
     return { ok: true, predicciones: data || [], mis: data || [] }
@@ -912,6 +923,78 @@ const predicciones = {
       apuesta_tipo: apuesta?.tipo || 'libre',
       es_grupal: esGrupal,
       total: rankingArr.length,
+      limit,
+      tabla: top,
+      mi_posicion: miPosicion,
+      esta_en_top: estaEnTop,
+    }
+  },
+
+  tablaGlobal: async function (opciones = {}) {
+    const currentUserId = opciones.user_id || ''
+
+    const { data: ranking, error } = await supabase
+      .from('ranking_cache')
+      .select('*')
+      .eq('es_grupal', false)
+
+    if (error) {
+      console.error('Error fetching global ranking:', error)
+      return { ok: false, error: error.message, tabla: [] }
+    }
+
+    const agrupado = {}
+    for (const r of (ranking || [])) {
+      if (!r.user_id) continue
+      if (!agrupado[r.user_id]) {
+        agrupado[r.user_id] = {
+          user_id: r.user_id,
+          nombre: r.nombre || 'Participante',
+          puntos_totales: 0,
+          aciertos_exactos: 0,
+          aciertos_diferencia: 0,
+          aciertos_resultado: 0,
+          aciertos_clasificado: 0,
+          predicciones: 0,
+        }
+      }
+      const u = agrupado[r.user_id]
+      u.puntos_totales += (r.puntos_totales || 0)
+      u.aciertos_exactos += (r.aciertos_exactos || 0)
+      u.aciertos_diferencia += (r.aciertos_diferencia || 0)
+      u.aciertos_resultado += (r.aciertos_resultado || 0)
+      u.aciertos_clasificado += (r.aciertos_clasificado || 0)
+      u.predicciones += (r.predicciones || 0)
+    }
+
+    const sorted = Object.values(agrupado).sort((a, b) => b.puntos_totales - a.puntos_totales)
+
+    let pos = 1
+    const finalTabla = sorted.map((u, idx) => {
+      if (idx > 0 && u.puntos_totales < sorted[idx - 1].puntos_totales) {
+        pos = idx + 1
+      }
+      return {
+        ...u,
+        posicion: pos
+      }
+    })
+
+    let miPosicion = null
+    if (currentUserId) {
+      miPosicion = finalTabla.find(r => r.user_id === currentUserId) || null
+    }
+
+    const limit = 200
+    const top = finalTabla.slice(0, limit)
+    const estaEnTop = miPosicion ? Number(miPosicion.posicion) <= 3 : false
+
+    return {
+      ok: true,
+      apuesta_titulo: 'RANKING GLOBAL',
+      apuesta_tipo: 'global',
+      es_grupal: false,
+      total: finalTabla.length,
       limit,
       tabla: top,
       mi_posicion: miPosicion,

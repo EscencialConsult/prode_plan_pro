@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import sheetsApi from '../services/sheetsApi.js'
 
 export default function RegisterPage() {
-  const [form, setForm]       = useState({ nombre: '', email: '', password: '' })
+  const [form, setForm]       = useState({ nombre: '', email: '', dni: '', password: '' })
   const [done, setDone]       = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState(null)
@@ -13,7 +13,7 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
     try {
-      await sheetsApi.auth.registro(form.nombre, form.email, form.password)
+      await sheetsApi.auth.registro(form.nombre, form.email, form.dni, form.password)
       setDone(true)
     } catch (err) {
       setError(err.message || 'No se pudo completar el registro')
@@ -190,6 +190,27 @@ export default function RegisterPage() {
                       required
                       autoFocus
                       autoComplete="name"
+                      className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
+                      style={inputStyle}
+                      onFocus={onFocus}
+                      onBlur={onBlur}
+                    />
+                  </div>
+
+                  {/* DNI */}
+                  <div>
+                    <label htmlFor="dni"
+                      className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
+                      style={{ color: 'rgba(255,255,255,.7)' }}>
+                      DNI
+                    </label>
+                    <input
+                      id="dni"
+                      type="text"
+                      value={form.dni}
+                      onChange={e => setForm(p => ({ ...p, dni: e.target.value }))}
+                      placeholder="DNI"
+                      required
                       className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
                       style={inputStyle}
                       onFocus={onFocus}

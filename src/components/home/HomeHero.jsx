@@ -25,70 +25,69 @@ export default function HomeHero() {
 
       <section className="relative min-h-0 md:min-h-screen text-white overflow-hidden flex flex-col justify-start md:justify-center"
         style={{
-          backgroundImage: "linear-gradient(180deg,rgba(10,15,10,.40) 0%,rgba(17,24,17,.65) 70%,rgba(10,15,10,.95) 100%), var(--bg-banner)",
+          backgroundImage: "linear-gradient(180deg,rgba(10,15,10,.35) 0%,rgba(17,24,17,.60) 70%,rgba(10,15,10,.95) 100%), url(/imgprode/stock/argentinagol.jpg)",
           backgroundSize: 'cover',
-          backgroundPosition: 'center 30%',
-          paddingTop: 'clamp(75px, 8vh, 100px)',
+          backgroundPosition: 'center 25%',
+          paddingTop: 'clamp(115px, 12vh, 140px)',
           paddingBottom: 'clamp(75px, 8vh, 110px)',
         }}>
 
-        {/* Glow ambiental verde */}
+        {/* Glow ambiental celeste/blanco de Argentina */}
         <div className="absolute inset-0 pointer-events-none" style={{
-          background: 'radial-gradient(ellipse 60% 50% at 85% 20%, rgba(134,200,115,.12), transparent 55%), radial-gradient(ellipse 50% 60% at 15% 90%, rgba(58,125,68,.22), transparent 60%)'
+          background: 'radial-gradient(ellipse 60% 50% at 85% 20%, rgba(123,163,192,.22), transparent 55%), radial-gradient(ellipse 50% 60% at 15% 90%, rgba(255,255,255,.12), transparent 60%)'
         }} />
 
 
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 1rem' }}
-          className="relative z-10 w-full">
-          <div className="grid lg:grid-cols-12 gap-8 lg:gap-14 items-center">
+        <div className="max-w-[1200px] w-full mx-auto px-6 relative z-10">
+          <div className="grid lg:grid-cols-12 gap-8 items-center">
 
-            {/* ── COLUMNA IZQUIERDA (Original, alineada a la izquierda) ── */}
-            <div className="lg:col-span-7 space-y-5 sm:space-y-6">
-
-              {/* Pills superiores */}
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                <span className="inline-flex items-center gap-2 font-body font-bold text-xs uppercase tracking-widest px-3 py-1.5 rounded-full"
-                  style={{ border: '1px solid rgba(134,200,115,.45)', color: '#86C873', background: 'rgba(134,200,115,.08)' }}>
-                  <span className="w-2 h-2 rounded-full pulse-dot-el" style={{ background: '#86C873' }} />
-                  PRODE LUIS BARRIONUEVO
+            {/* ── COLUMNA IZQUIERDA (Info y textos) ── */}
+            <div className="lg:col-span-7 space-y-6 sm:space-y-8 text-left">
+              {/* Badge de campaña */}
+              <div className="inline-flex flex-wrap items-center gap-2 px-3.5 py-2 rounded-full"
+                style={{ background: 'rgba(134,200,115,.18)', border: '1px solid rgba(134,200,115,.4)' }}>
+                <span className="w-2 h-2 rounded-full pulse-dot-el" style={{ background: '#86C873', boxShadow: '0 0 8px #86C873' }} />
+                <span className="text-[10px] sm:text-xs font-body font-bold uppercase tracking-widest text-[#86C873]">
+                  🇦🇷 PRODE CAMIONERO - LUIS BARRIONUEVO 2026
                 </span>
-                <span className="hidden sm:flex items-center gap-2 text-xs font-body font-semibold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,.55)' }}>
-                  <span className="h-px w-6" style={{ background: 'rgba(134,200,115,.4)' }} />
-                  SINDICATO DE CAMIONEROS
+                <span style={{ color: 'rgba(255,255,255,.25)' }}>|</span>
+                <span className="text-[10px] sm:text-xs font-body font-bold uppercase tracking-widest text-white">
+                  ★ MOYANO CONDUCCIÓN
                 </span>
               </div>
 
-              {/* Títulos */}
-              <div>
-                <h1 className="font-display leading-none block text-white" style={{ fontSize: 'clamp(1.8rem,8vw,5rem)', letterSpacing: '.01em' }}>
-                  EL MUNDIAL
+              {/* Titular */}
+              <div className="space-y-2">
+                <h1 className="font-display leading-[0.9] tracking-tight uppercase"
+                  style={{ fontSize: 'clamp(2.5rem, 7vw, 4.8rem)' }}>
+                  CAMINO
+                  <br />
+                  <span style={{
+                    color: '#7BA3C0',
+                    textShadow: '0 0 45px rgba(123,163,192,0.5)',
+                  }}>
+                    A LA GLORIA
+                  </span>
+                  <br />
+                  CON LA SELECCIÓN
                 </h1>
-                <h1 className="font-display leading-none block" style={{ fontSize: 'clamp(2.8rem,12vw,7.5rem)', letterSpacing: '.01em', color: '#86C873', textShadow: '0 0 40px rgba(134,200,115,.4)' }}>
-                  SE VIVE
-                </h1>
-                <h1 className="font-display leading-none block text-white" style={{ fontSize: 'clamp(1.8rem,8vw,5rem)', letterSpacing: '.01em' }}>
-                  ACÁ ADENTRO
-                </h1>
+                <p className="text-sm sm:text-base font-body leading-relaxed max-w-xl" style={{ color: 'rgba(255,255,255,.75)' }}>
+                  Pronosticá los partidos, sumá puntos y competí con tus compañeros. El prode oficial impulsado por la agrupación <strong className="text-white">Moyano Conducción</strong> ya está activo.
+                </p>
               </div>
 
-              {/* Descripción */}
-              <p className="font-body text-sm sm:text-base lg:text-lg leading-relaxed max-w-xl" style={{ color: 'rgba(255,255,255,.82)' }}>
-                Pronosticá los partidos, sumá puntos y competí con tus compañeros.
-                El <strong className="font-bold text-white">prode del sindicato</strong> ya está activo.
-              </p>
-
-              {/* Pills de beneficios */}
-              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3">
+              {/* Features inline */}
+              <div className="grid sm:grid-cols-3 gap-4 py-2">
                 {[
-                  { label: 'Competencia sana', sub: 'Entre compañeros', bg: 'linear-gradient(135deg,#86C873,#5A9E4A)', ic: '#0a0f0a' },
-                  { label: 'Más unión', sub: 'El sindicato juega junto', bg: 'linear-gradient(135deg,#5a825a,#3a5c3a)', ic: '#fff' },
-                  { label: 'Energía positiva', sub: 'Deporte y compañerismo', bg: 'linear-gradient(135deg,#3A7D44,#2a5c32)', ic: '#fff' },
-                ].map(({ label, sub, bg, ic }) => (
-                  <div key={label} className="flex items-center gap-3 rounded-full pl-2 pr-4 py-1.5 w-full sm:w-auto"
-                    style={{ background: 'rgba(255,255,255,.07)', border: '1px solid rgba(134,200,115,.15)', backdropFilter: 'blur(6px)' }}>
-                    <span className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: bg }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke={ic} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  ['Moyano Conducción', 'Fuerza y Lealtad'],
+                  ['Más unión', 'El sindicato juega junto'],
+                  ['Celeste y blanca', 'Pasión nacional'],
+                ].map(([label, sub]) => (
+                  <div key={label} className="flex items-center gap-3">
+                    <span className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{ background: 'rgba(123,163,192,.18)', border: '1px solid rgba(123,163,192,.3)', color: '#7BA3C0' }}>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                       </svg>
                     </span>
                     <div>
@@ -102,15 +101,15 @@ export default function HomeHero() {
               {/* Botones */}
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link to="/register" className="font-body font-bold text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full inline-flex items-center justify-center gap-2 transition-all w-full sm:w-auto"
-                  style={{ background: 'linear-gradient(135deg,#86C873,#5A9E4A)', color: '#0a0f0a', boxShadow: '0 8px 24px rgba(134,200,115,.3)', textDecoration: 'none' }}
-                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 12px 32px rgba(134,200,115,.5)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                  onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 8px 24px rgba(134,200,115,.3)'; e.currentTarget.style.transform = '' }}>
+                  style={{ background: 'linear-gradient(135deg,#7BA3C0,#4A84B0)', color: '#fff', boxShadow: '0 8px 24px rgba(123,163,192,.35)', textDecoration: 'none' }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 12px 32px rgba(123,163,192,.55)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 8px 24px rgba(123,163,192,.35)'; e.currentTarget.style.transform = '' }}>
                   Crear mi cuenta
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </Link>
                 <Link to="/login" className="font-body font-semibold text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full inline-flex items-center justify-center gap-2 transition-all w-full sm:w-auto"
                   style={{ color: '#fff', border: '1.5px solid rgba(255,255,255,.25)', textDecoration: 'none' }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#86C873'; e.currentTarget.style.color = '#86C873' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#7BA3C0'; e.currentTarget.style.color = '#7BA3C0' }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.25)'; e.currentTarget.style.color = '#fff' }}>
                   Ya tengo cuenta →
                 </Link>
@@ -118,17 +117,55 @@ export default function HomeHero() {
 
               {/* Alert box */}
               <div className="flex items-start gap-3 p-3 sm:p-4 rounded-lg max-w-xl"
-                style={{ background: 'linear-gradient(135deg,rgba(184,69,46,.12),rgba(184,69,46,.05))', border: '1px solid rgba(184,69,46,.35)', borderLeft: '3px solid #b8452e' }}>
-                <svg viewBox="0 0 24 24" fill="#b8452e" className="w-5 h-5 shrink-0 mt-0.5"><path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/></svg>
+                style={{ background: 'linear-gradient(135deg,rgba(123,163,192,.18),rgba(10,15,10,.05))', border: '1px solid rgba(123,163,192,.35)', borderLeft: '3px solid #7BA3C0' }}>
+                <span className="text-xl shrink-0 mt-px text-[#7BA3C0]">★</span>
                 <p className="text-xs sm:text-sm font-body leading-relaxed" style={{ color: 'rgba(255,255,255,.88)' }}>
-                  <strong className="text-white">El Mundial comienza el 11 de junio.</strong>{' '}
-                  Registrate antes de que arranque para no perderte los primeros partidos.
+                  <strong className="text-white">PRODE MOYANO CONDUCCIÓN.</strong>{' '}
+                  El Mundial comienza el 11 de junio. Registrate antes de que arranque para sumarte a la jugada con toda la agrupación de Camioneros.
                 </p>
               </div>
             </div>
 
-            {/* ── COLUMNA DERECHA (Completamente limpia y vacía) ── */}
-            <div className="lg:col-span-5" />
+            {/* ── COLUMNA DERECHA (Con Imagen de la Selección Argentina y frase) ── */}
+            <div className="lg:col-span-5 flex justify-center lg:justify-end">
+              <div className="float-medal-el rounded-2xl p-5 max-w-md w-full"
+                style={{
+                  background: 'rgba(10,15,10,0.75)',
+                  border: '1.5px solid rgba(123,163,192,.35)',
+                  boxShadow: '0 24px 64px rgba(0,0,0,.6), 0 0 40px rgba(123,163,192,.15)',
+                  backdropFilter: 'blur(16px)',
+                }}>
+                <div className="flex justify-center mb-4">
+                  <img
+                    src="/imgprode/one-prode-blanco.png"
+                    alt="Logo"
+                    style={{ height: 120, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(134,200,115,0.5))' }}
+                  />
+                </div>
+                <div className="relative overflow-hidden rounded-xl aspect-[16/10] mb-4">
+                  <img
+                    src="/imgprode/seleccion_argentina.png"
+                    alt="Selección Argentina"
+                    className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent pointer-events-none" />
+                  <span className="absolute bottom-3 left-3 bg-[#7BA3C0] text-black font-body font-bold text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-full backdrop-blur-sm shadow-md">
+                    🇦🇷 Acompañando a la celeste y blanca
+                  </span>
+                </div>
+                <div className="text-center px-2">
+                  <p className="font-body font-bold text-sm text-[#7BA3C0] uppercase tracking-wider mb-2">
+                    Moyano Conducción
+                  </p>
+                  <p className="font-body text-xs sm:text-sm text-white/85 leading-relaxed">
+                    Viví la pasión de nuestra selección en cada partido del mundial. ¡Sumá tus pronósticos y alentá con tus compañeros!
+                  </p>
+                  <p className="font-body text-xs text-[#ebc32b] italic mt-2.5 font-semibold">
+                    de la mano de Luis Barrionuevo
+                  </p>
+                </div>
+              </div>
+            </div>
 
           </div>
         </div>

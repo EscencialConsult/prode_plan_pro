@@ -168,11 +168,9 @@ export default function DashboardPage() {
   const activeBets = bets.filter(b => isBetOpen(b))
 
   useEffect(() => {
-    if (activeBets.length > 0 && user) {
-      sheetsApi.predicciones.tabla(activeBets[0].id, {
-        limit: 1,
+    if (user) {
+      sheetsApi.predicciones.tablaGlobal({
         user_id: user?.id || user?.user_id,
-        area_id: user?.area_id,
       })
         .then(res => {
           if (res.ok && res.mi_posicion) {
@@ -181,7 +179,7 @@ export default function DashboardPage() {
         })
         .catch(console.error)
     }
-  }, [bets.length, user])
+  }, [user])
   const liveBets = bets.filter(b => b.partidos?.some(p => p.estado === 'en_vivo'))
   const myPredCount = Object.keys(predictions).length
   const nombre = (user?.nombre || '').split(' ')[0].toUpperCase()
@@ -293,9 +291,56 @@ export default function DashboardPage() {
                     ? `Tenés ${activeBets.length} apuesta${activeBets.length > 1 ? 's' : ''} activa${activeBets.length > 1 ? 's' : ''} disponible${activeBets.length > 1 ? 's' : ''}.`
                     : 'Acá está el resumen de tu actividad en Prode Talento.'}
                 </p>
+                {!esAdmin && (
+                  <div className="mt-4 sm:mt-5 relative z-20">
+                    <p className="font-body font-bold text-[10px] uppercase tracking-widest mb-2" style={{ color: 'rgba(134,200,115,.65)' }}>
+                      ACCESOS RÁPIDOS
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      <Link to="/apuestas" className="font-body font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-full inline-flex items-center justify-center gap-1.5 transition-all hover:scale-[1.02]"
+                        style={{ background: '#86C873', color: '#0a0f0a', boxShadow: '0 4px 14px rgba(134,200,115,.25)', textDecoration: 'none' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" /><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" /></svg>
+                        IR A APUESTAS
+                      </Link>
+                      <Link to="/ranking" className="font-body font-bold text-xs uppercase tracking-widest px-5 py-2.5 rounded-full inline-flex items-center justify-center gap-1.5 transition-all hover:scale-[1.02]"
+                        style={{ background: '#86C873', color: '#0a0f0a', boxShadow: '0 4px 14px rgba(134,200,115,.25)', textDecoration: 'none' }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" /></svg>
+                        IR A RANKING
+                      </Link>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
+            {/* Logo de Moyano Conducción grande a la derecha */}
+            <div className="hidden sm:block self-start sm:self-center text-right pr-2 select-none">
+              <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', letterSpacing: '.06em', textShadow: '0 4px 16px rgba(0,0,0,0.85)', lineHeight: 1 }}>
+                <span style={{ color: '#7BA3C0' }}>MOYANO </span>
+                <span style={{ color: '#fff' }}>C</span>
+                <span style={{ color: '#ebc32b' }}>O</span>
+                <span style={{ color: '#fff' }}>N</span>
+                <span style={{ color: '#7BA3C0' }}>DUCCIÓN</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Cartel de Alerta de Seguridad */}
+        <div className="bg-amber-50/90 backdrop-blur-sm border border-amber-200 rounded-2xl p-4 mb-6 flex items-start gap-3.5 shadow-sm animate-fade-in"
+          style={{ border: '1px solid rgba(217, 119, 6, 0.25)', background: 'rgba(254, 243, 199, 0.95)' }}>
+          <div className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 text-amber-700">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <h4 className="font-display font-bold text-sm text-amber-900 m-0" style={{ letterSpacing: '.01em' }}>Recomendación de Seguridad</h4>
+            <p className="font-body text-xs text-amber-800 mt-1 leading-relaxed">
+              Recordá que, por motivos de seguridad, se solicita actualizar tu contraseña luego del primer ingreso. Podés cambiarla fácilmente ingresando a <Link to="/cambiar-password" className="font-bold underline hover:text-amber-950">Cambiar Contraseña</Link>.
+            </p>
           </div>
         </div>
 
@@ -314,7 +359,7 @@ export default function DashboardPage() {
             </>
           ) : (
             <>
-              <StatCard label="Puntos totales" value={rankingData ? rankingData.puntos_totales : "—"} sub={rankingData ? "Apuesta activa" : "Sin partidos finalizados"} gold
+              <StatCard label="Puntos totales" value={rankingData ? rankingData.puntos_totales : "—"} sub="Acumulado global" gold
                 icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>}
               />
               <StatCard label="Posición" value={rankingData ? `#${rankingData.posicion}` : "—"} sub="Ranking global" gold

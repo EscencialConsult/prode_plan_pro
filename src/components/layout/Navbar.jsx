@@ -51,7 +51,7 @@ export default function Navbar() {
           <img
             src="./imgprode/one-prode-blanco.png"
             alt="PRODE LUIS BARRIONUEVO"
-            style={{ height: 32, width: 'auto', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))' }}
+            style={{ height: 52, width: 'auto', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))' }}
           />
         </Link>
 

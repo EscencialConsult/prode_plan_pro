@@ -29,9 +29,259 @@ function CountUp({ end, suffix = '', duration = 1800 }) {
 /* ── Marquee ticker ───────────────────────────────── */
 const TICKER = [
   'Secretario General', 'Camioneros Tucumán', 'Defensa Salarial', 'Obra Social',
-  'Siempre con el trabajador', 'Agrupación Moyano', 'Seguridad en Ruta', 'NOA',
+  'Siempre con el trabajador', 'Moyano Conducción', 'Seguridad en Ruta', 'NOA',
   'Paritarias Actualizadas', 'Elecciones 2026', 'Más Unión',
 ]
+
+function BuzonPropuestas() {
+  const [area, setArea] = useState('')
+  const [propuesta, setPropuesta] = useState('')
+  const [enviando, setEnviando] = useState(false)
+  const [enviado, setEnviado] = useState(false)
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (!area || !propuesta.trim()) return
+
+    setEnviando(true)
+    setTimeout(() => {
+      setEnviando(false)
+      setEnviado(true)
+      setArea('')
+      setPropuesta('')
+    }, 1500)
+  }
+
+  return (
+    <section id="buzon-propuestas" style={{
+      padding: '5rem 1.5rem',
+      background: 'linear-gradient(180deg, #0c140c 0%, #050905 100%)',
+      borderTop: '1px solid rgba(134, 200, 115, 0.1)',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      position: 'relative',
+      zIndex: 10
+    }}>
+      <div style={{ textAlign: 'center', marginBottom: '3rem', maxWidth: 600 }}>
+        <p style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: '0.68rem',
+          fontWeight: 700,
+          textTransform: 'uppercase',
+          letterSpacing: '.25em',
+          color: '#86C873',
+          margin: 0
+        }}>
+          Tu opinión suma
+        </p>
+        <h2 style={{
+          fontFamily: "'Bebas Neue', sans-serif",
+          fontSize: 'clamp(2.2rem, 5vw, 3.5rem)',
+          color: '#fff',
+          letterSpacing: '0.04em',
+          margin: '0.35rem 0 0'
+        }}>
+          BUZÓN DE PROPUESTAS ANÓNIMO
+        </h2>
+        <p style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: '0.9rem',
+          color: 'rgba(255, 255, 255, 0.6)',
+          lineHeight: 1.6,
+          marginTop: '0.75rem'
+        }}>
+          Queremos escuchar tus ideas para seguir mejorando. Contanos tu propuesta para el sindicato de forma 100% anónima y segura.
+        </p>
+        <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #86C873 50%, transparent)', borderRadius: 99, width: 140, margin: '0.75rem auto 0' }} />
+      </div>
+
+      <div style={{
+        width: '100%',
+        maxWidth: 620,
+        background: 'rgba(10, 15, 10, 0.65)',
+        backdropFilter: 'blur(12px)',
+        border: '1.5px solid rgba(134, 200, 115, 0.2)',
+        borderRadius: '24px',
+        padding: '2rem',
+        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)'
+      }}>
+        {enviado ? (
+          <div style={{ textAlign: 'center', padding: '2rem 1rem' }} className="animate-fade-in">
+            <div style={{
+              width: 64,
+              height: 64,
+              borderRadius: '50%',
+              background: 'rgba(134, 200, 115, 0.1)',
+              border: '2px solid #86C873',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.5rem',
+              color: '#86C873'
+            }}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+            <h3 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.8rem', color: '#fff', margin: '0 0 0.5rem', letterSpacing: '0.02em' }}>
+              ¡PROPUESTA ENVIADA!
+            </h3>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.85rem', color: 'rgba(255, 255, 255, 0.6)', lineHeight: 1.6, margin: '0 0 1.5rem' }}>
+              Muchas gracias por colaborar. Tu propuesta ha sido recopilada de forma totalmente anónima para ser analizada por nuestro equipo de trabajo.
+            </p>
+            <button
+              onClick={() => setEnviado(false)}
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '.15em',
+                background: 'transparent',
+                border: '1.5px solid #86C873',
+                color: '#86C873',
+                padding: '0.75rem 1.75rem',
+                borderRadius: '99px',
+                cursor: 'pointer',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#86C873'; e.currentTarget.style.color = '#050905' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#86C873' }}
+            >
+              Enviar otra propuesta
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <label style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                color: 'rgba(255, 255, 255, 0.7)',
+                letterSpacing: '0.05em'
+              }}>
+                Área de la mejora / Propuesta
+              </label>
+              <select
+                required
+                value={area}
+                onChange={e => setArea(e.target.value)}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1.5px solid rgba(134, 200, 115, 0.3)',
+                  borderRadius: '12px',
+                  color: '#fff',
+                  padding: '0.85rem 1rem',
+                  fontSize: '0.9rem',
+                  fontFamily: "'DM Sans', sans-serif",
+                  outline: 'none',
+                  cursor: 'pointer',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={e => e.currentTarget.style.borderColor = '#86C873'}
+                onBlur={e => e.currentTarget.style.borderColor = 'rgba(134, 200, 115, 0.3)'}
+              >
+                <option value="" disabled style={{ background: '#0c140c' }}>Seleccioná un área...</option>
+                <option value="Salud y Obra Social" style={{ background: '#0c140c' }}>Salud y Obra Social</option>
+                <option value="Paritarias y Salarios" style={{ background: '#0c140c' }}>Paritarias y Salarios</option>
+                <option value="Rutas y Condiciones Gremiales" style={{ background: '#0c140c' }}>Rutas y Condiciones Gremiales</option>
+                <option value="Capacitación y Cursos" style={{ background: '#0c140c' }}>Capacitación y Cursos</option>
+                <option value="Deportes y Recreación" style={{ background: '#0c140c' }}>Deportes y Recreación</option>
+                <option value="Otro" style={{ background: '#0c140c' }}>Otro / Propuesta General</option>
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <label style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: '0.75rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                color: 'rgba(255, 255, 255, 0.7)',
+                letterSpacing: '0.05em'
+              }}>
+                Detalle de tu propuesta
+              </label>
+              <textarea
+                required
+                rows="5"
+                placeholder="Escribí acá tu sugerencia o propuesta de mejora..."
+                value={propuesta}
+                onChange={e => setPropuesta(e.target.value)}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  border: '1.5px solid rgba(134, 200, 115, 0.3)',
+                  borderRadius: '12px',
+                  color: '#fff',
+                  padding: '0.85rem 1rem',
+                  fontSize: '0.9rem',
+                  fontFamily: "'DM Sans', sans-serif",
+                  outline: 'none',
+                  resize: 'none',
+                  lineHeight: 1.6,
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={e => e.currentTarget.style.borderColor = '#86C873'}
+                onBlur={e => e.currentTarget.style.borderColor = 'rgba(134, 200, 115, 0.3)'}
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={enviando || !area || !propuesta.trim()}
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '.15em',
+                background: '#86C873',
+                border: 'none',
+                color: '#050905',
+                padding: '1rem',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '0.5rem',
+                opacity: (!area || !propuesta.trim()) ? 0.6 : 1
+              }}
+              onMouseEnter={e => { if (area && propuesta.trim()) e.currentTarget.style.background = '#A8E096' }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#86C873' }}
+            >
+              {enviando ? (
+                <>
+                  <span className="animate-spin" style={{
+                    width: 16,
+                    height: 16,
+                    border: '2.5px solid #050905',
+                    borderTopColor: 'transparent',
+                    borderRadius: '50%',
+                    display: 'inline-block'
+                  }} />
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  Enviar Propuesta
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ width: 16, height: 16 }}>
+                    <line x1="22" y1="2" x2="11" y2="13" />
+                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                  </svg>
+                </>
+              )}
+            </button>
+          </form>
+        )}
+      </div>
+    </section>
+  )
+}
 
 export default function LuisBarrionuevoPage() {
   const [scrolled, setScrolled] = useState(false)
@@ -285,7 +535,7 @@ export default function LuisBarrionuevoPage() {
                   Candidato a Secretario General
                 </span>
                 <span style={{fontFamily:"'DM Sans',sans-serif", fontSize:'.62rem', fontWeight:600, color:'rgba(255,255,255,.35)', textTransform:'uppercase', letterSpacing:'.18em'}}>
-                  Agrupación Moyano
+                  Moyano Conducción
                 </span>
               </div>
 
@@ -371,7 +621,7 @@ export default function LuisBarrionuevoPage() {
               </div>
             </div>
 
-            {/* ── DERECHA — FOTO ── */}
+            {/* ── DERECHA — FOTO LIMPIA ── */}
             <div className="photo-col" style={{position:'relative', display:'flex', justifyContent:'center', alignItems:'flex-end'}}>
 
               {/* Anillos decorativos */}
@@ -393,58 +643,219 @@ export default function LuisBarrionuevoPage() {
                   filter:'drop-shadow(0 30px 60px rgba(0,0,0,.85)) drop-shadow(0 0 40px rgba(134,200,115,.12))',
                 }}
               />
+            </div>
+          </div>
 
-              {/* Card — Secretario */}
-              <div className="lb-float-anim" style={{
-                position:'absolute', bottom:'12%', left:'-10%', zIndex:3,
-                background:'linear-gradient(135deg,rgba(13,20,13,.97),rgba(22,34,22,.94))',
-                border:'1px solid rgba(134,200,115,.32)',
-                borderRadius:16, padding:'14px 18px',
-                backdropFilter:'blur(20px)',
-                boxShadow:'0 20px 48px rgba(0,0,0,.55), inset 0 1px 0 rgba(134,200,115,.12)',
-                maxWidth:190,
+          {/* ── NUEVO SEGMENTO — FICHA DETALLADA DEL CANDIDATO ── */}
+          <div id="ficha-candidato" style={{ marginTop: '6rem', padding: '4rem 1.5rem 5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 10, background: 'linear-gradient(180deg, rgba(134,200,115,0.01) 0%, rgba(10,15,10,0.4) 100%)', borderTop: '1px solid rgba(134,200,115,0.06)' }}>
+            
+            {/* Título de sección */}
+            <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+              <p style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: '0.68rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '.25em',
+                color: '#86C873',
+                margin: 0
               }}>
-                <div style={{display:'flex', alignItems:'center', gap:'.4rem', marginBottom:'.4rem'}}>
-                  <span style={{width:7, height:7, borderRadius:'50%', background:'#86C873', animation:'lb-dot 1.8s ease infinite', flexShrink:0}} />
-                  <span style={{fontFamily:"'DM Sans',sans-serif", fontSize:'.58rem', fontWeight:700, color:'rgba(134,200,115,.75)', textTransform:'uppercase', letterSpacing:'.18em'}}>Candidato oficial</span>
+                Conocé a nuestro candidato
+              </p>
+              <h2 style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: 'clamp(2rem, 5vw, 3.2rem)',
+                color: '#fff',
+                letterSpacing: '0.04em',
+                margin: '0.35rem 0 0'
+              }}>
+                TRAYECTORIA Y COMPROMISO
+              </h2>
+              <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #86C873 50%, transparent)', borderRadius: 99, width: 140, margin: '0.75rem auto 0' }} />
+            </div>
+
+            {/* Card Contenedora Principal */}
+            <div style={{
+              width: '100%',
+              maxWidth: 740,
+              background: 'linear-gradient(135deg, rgba(10, 15, 10, 0.95) 0%, rgba(20, 38, 20, 0.98) 100%)',
+              border: '1.5px solid rgba(134, 200, 115, 0.3)',
+              borderRadius: '24px',
+              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.75), 0 0 40px rgba(134, 200, 115, 0.12)',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+              
+              {/* Cabecera de la ficha */}
+              <div style={{
+                background: 'rgba(134, 200, 115, 0.08)',
+                padding: '0.9rem 1.5rem',
+                borderBottom: '1.5px solid rgba(134, 200, 115, 0.15)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <span style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: '0.68rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '.15em',
+                  color: '#86C873'
+                }}>
+                  Ficha Oficial de la Agrupación
+                </span>
+                <span style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: '0.65rem',
+                  fontWeight: 600,
+                  color: 'rgba(255, 255, 255, 0.4)'
+                }}>
+                  Elecciones 2026
+                </span>
+              </div>
+
+              {/* Contenido en dos columnas (Foto / Info) */}
+              <div style={{
+                display: 'flex',
+                minHeight: 340
+              }} className="flex-col md:flex-row">
+                
+                {/* Columna Izquierda: Marco de la Foto */}
+                <div style={{
+                  flex: '1.05',
+                  background: 'radial-gradient(circle at center, rgba(134, 200, 115, 0.18) 0%, rgba(10, 15, 10, 0.95) 100%), #111811',
+                  borderRight: '1px solid rgba(134, 200, 115, 0.15)',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'flex-end',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  minHeight: 300
+                }}>
+                  
+                  {/* Glow de fondo */}
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    width: '100%',
+                    height: '60%',
+                    background: 'linear-gradient(180deg, transparent, rgba(134, 200, 115, 0.35))',
+                    pointerEvents: 'none'
+                  }} />
+                  
+                  {/* Foto recortada */}
+                  <img
+                    src="./imgprode/luisbarrionuevo.png"
+                    alt="Luis Barrionuevo"
+                    style={{
+                      width: '85%',
+                      height: 'auto',
+                      maxHeight: '100%',
+                      objectFit: 'contain',
+                      position: 'relative',
+                      zIndex: 2,
+                      filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.65))'
+                    }}
+                  />
                 </div>
-                <p style={{fontFamily:"'Bebas Neue',sans-serif", fontSize:'1.05rem', color:'#fff', margin:0, letterSpacing:'.04em', lineHeight:1.15}}>SECRETARIO GENERAL</p>
-                <p style={{fontFamily:"'DM Sans',sans-serif", fontSize:'.65rem', color:'rgba(255,255,255,.45)', margin:'4px 0 0'}}>Camioneros Tucumán 2026</p>
-              </div>
 
-              {/* Card — Logo mini */}
-              <div className="right-card" style={{
-                position:'absolute', top:'15%', right:'-12%', zIndex:3,
-                background:'linear-gradient(135deg,rgba(5,9,5,.98),rgba(13,20,10,.95))',
-                border:'1px solid rgba(245,197,24,.3)',
-                borderRadius:14, padding:'12px 16px',
-                backdropFilter:'blur(20px)',
-                boxShadow:'0 16px 40px rgba(0,0,0,.5), inset 0 1px 0 rgba(245,197,24,.08)',
-              }}>
-                <div style={{fontFamily:"'Bebas Neue',sans-serif", fontSize:'1.05rem', letterSpacing:'.07em', lineHeight:1}}>
-                  <span style={{color:'#7BA3C0'}}>MOYANO </span>
-                  <span style={{color:'#fff'}}>C</span>
-                  <span style={{color:'#F5C518'}}>O</span>
-                  <span style={{color:'#fff'}}>N</span>
-                  <span style={{color:'#7BA3C0'}}>DUCCIÓN</span>
+                {/* Columna Derecha: Información del Candidato */}
+                <div style={{
+                  flex: '1.25',
+                  padding: '2rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between'
+                }}>
+                  
+                  {/* Datos Personales */}
+                  <div>
+                    <div style={{
+                      fontFamily: "'Bebas Neue', sans-serif",
+                      fontSize: '2.1rem',
+                      color: '#fff',
+                      letterSpacing: '0.04em',
+                      lineHeight: 1.1,
+                      marginBottom: '0.2rem'
+                    }}>
+                      LUIS BARRIONUEVO
+                    </div>
+                    
+                    <div style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      color: '#86C873',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.08em',
+                      marginBottom: '1.25rem'
+                    }}>
+                      Candidato a Secretario General
+                    </div>
+
+                    <p style={{
+                      fontFamily: "'DM Sans', sans-serif",
+                      fontSize: '0.85rem',
+                      lineHeight: 1.65,
+                      color: 'rgba(255,255,255,0.72)',
+                      margin: 0
+                    }}>
+                      Líder indiscutido de Moyano Conducción en Tucumán. Forjado en el trabajo diario y con un compromiso inquebrantable para impulsar paritarias dignas, un servicio de salud óptimo y la presencia constante al lado de cada chofer y sus familias.
+                    </p>
+                  </div>
+
+                  {/* Atributos / Viñetas */}
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.65rem',
+                    borderTop: '1px solid rgba(255,255,255,0.1)',
+                    paddingTop: '1.25rem',
+                    marginTop: '1.5rem'
+                  }}>
+                    
+                    {[
+                      { label: 'Agrupación', val: 'Moyano Conducción' },
+                      { label: 'Lucha Gremial', val: 'Siempre con el trabajador' },
+                      { label: 'Seccional', val: 'Tucumán' }
+                    ].map(({ label, val }) => (
+                      <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{
+                          fontFamily: "'DM Sans', sans-serif",
+                          fontSize: '0.65rem',
+                          fontWeight: 700,
+                          textTransform: 'uppercase',
+                          color: 'rgba(255,255,255,0.4)',
+                          letterSpacing: '0.05em'
+                        }}>
+                          {label}
+                        </span>
+                        <span style={{
+                          fontFamily: "'DM Sans', sans-serif",
+                          fontSize: '0.78rem',
+                          fontWeight: 600,
+                          color: val === 'Moyano Conducción' ? '#86C873' : '#fff'
+                        }}>
+                          {val === 'Moyano Conducción' ? (
+                            <>
+                              <span style={{ color: '#7BA3C0' }}>MOYANO </span>
+                              <span style={{ color: '#fff' }}>C</span>
+                              <span style={{ color: '#ebc32b' }}>O</span>
+                              <span style={{ color: '#fff' }}>N</span>
+                              <span style={{ color: '#7BA3C0' }}>DUCCIÓN</span>
+                            </>
+                          ) : val}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
                 </div>
-                <div style={{height:1.5, background:'linear-gradient(90deg,#7BA3C0,#F5C518)', borderRadius:99, margin:'6px 0 4px'}} />
-                <p style={{fontFamily:"'DM Sans',sans-serif", fontSize:'.58rem', color:'rgba(255,255,255,.38)', margin:0, textTransform:'uppercase', letterSpacing:'.14em'}}>Agrupación Moyano</p>
+
               </div>
 
-              {/* Card — Eslogan */}
-              <div className="right-card" style={{
-                position:'absolute', top:'50%', right:'-15%', zIndex:3,
-                background:'rgba(134,200,115,.08)',
-                border:'1px solid rgba(134,200,115,.2)',
-                borderRadius:12, padding:'10px 14px',
-                backdropFilter:'blur(12px)',
-                transform:'translateY(-50%)',
-              }}>
-                <p style={{fontFamily:"'DM Sans',sans-serif", fontSize:'.72rem', fontStyle:'italic', color:'#A8E096', margin:0, fontWeight:500}}>
-                  "Siempre con<br/>el trabajador"
-                </p>
-              </div>
             </div>
           </div>
         </div>
@@ -475,6 +886,9 @@ export default function LuisBarrionuevoPage() {
       {/* ══════════ OBJETIVOS ══════════ */}
       <HomeCampaignGoals />
 
+      {/* ══════════ BUZÓN DE PROPUESTAS ANÓNIMO ══════════ */}
+      <BuzonPropuestas />
+
       {/* ══════════ FOOTER ══════════ */}
       <footer style={{ background: '#050905', padding: '2.5rem 1.5rem 2rem', borderTop: '1px solid rgba(134,200,115,.1)' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
@@ -503,7 +917,7 @@ export default function LuisBarrionuevoPage() {
               <span style={{ color: '#7BA3C0' }}>DUCCIÓN</span>
             </div>
             <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize: '.72rem', color: 'rgba(255,255,255,.25)', margin: '0 0 .9rem' }}>
-              © 2026 Sindicato de Camioneros Tucumán · Agrupación Moyano · "Siempre con el trabajador"
+              © 2026 Sindicato de Camioneros Tucumán · Moyano Conducción · "Siempre con el trabajador"
             </p>
             <Link to="/" style={{ fontFamily:"'DM Sans',sans-serif", fontSize: '.78rem', fontWeight: 600, color: '#86C873', textDecoration: 'none' }}>
               ← Volver al Prode del Sindicato

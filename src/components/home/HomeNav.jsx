@@ -31,7 +31,7 @@ export default function HomeNav() {
             src="./imgprode/one-prode-blanco.png"
             alt="ONE PRODE"
             style={{
-              height: 'clamp(44px, 8vw, 62px)',
+              height: 'clamp(54px, 9vw, 72px)',
               width: 'auto',
               display: 'block',
               filter: 'drop-shadow(0 2px 12px rgba(134, 200, 115, 0.5))',

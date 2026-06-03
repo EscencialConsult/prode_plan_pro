@@ -88,6 +88,7 @@ export default function RankingPageAdmin() {
   const { user } = useAuth()
   const { toast } = useToast()
 
+  const [tipoRanking, setTipoRanking] = useState('apuesta') // 'apuesta' | 'global'
   const [sel, setSel] = useState(null)
   const [tabla, setTabla] = useState([])
   const [meta, setMeta] = useState({})
@@ -99,11 +100,13 @@ export default function RankingPageAdmin() {
 
   const partidosMap = useMemo(() => {
     const map = new Map()
-    if (sel?.partidos) {
-      sel.partidos.forEach(p => map.set(p.id, p))
-    }
+    bets.forEach(b => {
+      if (b.partidos) {
+        b.partidos.forEach(p => map.set(p.id, p))
+      }
+    })
     return map
-  }, [sel])
+  }, [bets])
 
   async function cargarRanking(bet) {
     if (sel?.id === bet.id) return
@@ -120,6 +123,20 @@ export default function RankingPageAdmin() {
       setMeta({ total: rT.total, mi_posicion: rT.mi_posicion, esta_en_top: rT.esta_en_top })
       setSel(prev => ({ ...(prev || bet), ...rA.apuesta }))
     } catch (e) { toast.error('Error cargando ranking: ' + e.message) }
+    finally { setLoading(false) }
+  }
+
+  async function cargarRankingGlobal() {
+    setSel({ id: 'global', titulo: 'Ranking Global', tipo: 'global' })
+    setLoading(true); setTabla([]); setMeta({})
+    setExpandedUser(null); setPredicciones({}); setLoadingUser(null)
+    try {
+      const rT = await sheetsApi.predicciones.tablaGlobal({
+        user_id: user?.id || user?.user_id,
+      })
+      setTabla(rT.tabla || [])
+      setMeta({ total: rT.total, mi_posicion: rT.mi_posicion, esta_en_top: rT.esta_en_top })
+    } catch (e) { toast.error('Error cargando ranking global: ' + e.message) }
     finally { setLoading(false) }
   }
 
@@ -183,40 +200,85 @@ export default function RankingPageAdmin() {
             <span style={{ color: '#86C873' }}>ADMIN</span>
           </h1>
           <p style={{ fontSize: '.84rem', color: '#4a6b50', margin: 0 }}>
-            {sel ? sel.titulo : 'Seleccioná una apuesta para ver el detalle'}
+            {sel ? sel.titulo : 'Seleccioná una opción para ver el ranking'}
           </p>
         </div>
 
         <div className="rk-shell" style={{ display: 'flex', height: 'calc(100vh - 200px)', minHeight: 520, borderRadius: 20, overflow: 'hidden', boxShadow: '0 8px 48px rgba(17,24,17,.14)' }}>
 
-          <div className="rk-sidebar">
-            <div style={{ padding: '20px 16px 14px', borderBottom: '1px solid #e2eede' }}>
-              <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 11, letterSpacing: '.2em', color: '#94a3b8', margin: '0 0 10px' }}>APUESTAS</p>
+          <div className="rk-sidebar" style={{ display: 'flex', flexDirection: 'column' }}>
+            {/* TIPO DE RANKING selector tab */}
+            <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #e2eede', background: 'rgba(134,200,115,.04)' }}>
+              <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 10, letterSpacing: '.18em', color: '#4a6b50', margin: '0 0 8px' }}>TIPO DE RANKING</p>
               <div style={{ display: 'flex', gap: 6 }}>
-                <Pill color="#22c55e" label={`${bets.filter(b => isOpen(b)).length} activas`} />
-                <Pill color="#64748b" label={`${bets.filter(b => !isOpen(b)).length} cerradas`} />
+                <button
+                  onClick={() => { setTipoRanking('apuesta'); setSel(null); setTabla([]); setMeta({}) }}
+                  style={{
+                    flex: 1, padding: '7px 10px', borderRadius: 8, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em',
+                    border: 'none', cursor: 'pointer', transition: 'all .15s',
+                    background: tipoRanking === 'apuesta' ? '#111811' : 'rgba(17,24,17,.05)',
+                    color: tipoRanking === 'apuesta' ? '#86C873' : '#4a6b50'
+                  }}
+                >
+                  🏆 Por Apuesta
+                </button>
+                <button
+                  onClick={() => { setTipoRanking('global'); cargarRankingGlobal() }}
+                  style={{
+                    flex: 1, padding: '7px 10px', borderRadius: 8, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em',
+                    border: 'none', cursor: 'pointer', transition: 'all .15s',
+                    background: tipoRanking === 'global' ? '#111811' : 'rgba(17,24,17,.05)',
+                    color: tipoRanking === 'global' ? '#86C873' : '#4a6b50'
+                  }}
+                >
+                  🌎 Global
+                </button>
               </div>
             </div>
 
-            <div className="rk-sidebar-scroll">
-              {lb ? (
-                <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                  {[...Array(6)].map((_, i) => <div key={i} className="rk-sk" style={{ height: 52 }} />)}
+            <div className="rk-sidebar-scroll" style={{ flex: 1, overflowY: 'auto' }}>
+              {tipoRanking === 'global' ? (
+                <div style={{ padding: 20, textAlign: 'center' }} className="rk-in">
+                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 44, height: 44, borderRadius: '50%', background: 'rgba(134,200,115,.12)', color: '#86C873', marginBottom: 12 }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                  </div>
+                  <h4 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 15, color: '#111811', margin: '0 0 6px', letterSpacing: '.04em' }}>
+                    ACUMULADO GENERAL (ADMIN)
+                  </h4>
+                  <p style={{ fontSize: 11, color: '#4a6b50', lineHeight: 1.4, margin: 0 }}>
+                    Este ranking suma automáticamente todos los puntajes obtenidos por cada participante en todas las apuestas en las que haya jugado. Como administrador podés ver el detalle global de las predicciones de cada chofer.
+                  </p>
                 </div>
               ) : (
                 <>
-                  {bets.filter(b => isOpen(b)).length > 0 && (
-                    <SideSection label="Activas" dot="#22c55e">
-                      {bets.filter(b => isOpen(b)).map(b => (
-                        <BetRow key={b.id} bet={b} sel={sel?.id === b.id} onPick={cargarRanking} />
-                      ))}
-                    </SideSection>
+                  <div style={{ padding: '16px 16px 14px', borderBottom: '1px solid #e2eede' }}>
+                    <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 11, letterSpacing: '.2em', color: '#94a3b8', margin: '0 0 10px' }}>APUESTAS DISPONIBLES</p>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      <Pill color="#22c55e" label={`${bets.filter(b => isOpen(b)).length} activas`} />
+                      <Pill color="#64748b" label={`${bets.filter(b => !isOpen(b)).length} cerradas`} />
+                    </div>
+                  </div>
+
+                  {lb ? (
+                    <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      {[...Array(6)].map((_, i) => <div key={i} className="rk-sk" style={{ height: 52 }} />)}
+                    </div>
+                  ) : (
+                    <>
+                      {bets.filter(b => isOpen(b)).length > 0 && (
+                        <SideSection label="Activas" dot="#22c55e">
+                          {bets.filter(b => isOpen(b)).map(b => (
+                            <BetRow key={b.id} bet={b} sel={sel?.id === b.id} onPick={cargarRanking} />
+                          ))}
+                        </SideSection>
+                      )}
+                      <SideSection label="Historial">
+                        {bets.filter(b => !isOpen(b)).map(b => (
+                          <BetRow key={b.id} bet={b} sel={sel?.id === b.id} onPick={cargarRanking} />
+                        ))}
+                      </SideSection>
+                    </>
                   )}
-                  <SideSection label="Historial">
-                    {bets.filter(b => !isOpen(b)).map(b => (
-                      <BetRow key={b.id} bet={b} sel={sel?.id === b.id} onPick={cargarRanking} />
-                    ))}
-                  </SideSection>
                 </>
               )}
             </div>
@@ -330,17 +392,39 @@ function BetRow({ bet, sel, onPick }) {
    BANNER
 ══════════════════════════════════════════ */
 function Banner({ apuesta, meta, loading }) {
+  const isGlobal = apuesta.tipo === 'global'
   return (
-    <div style={{ borderRadius: 14, marginBottom: 24, background: 'linear-gradient(125deg,#111811 0%,#1e3020 100%)', padding: '18px 22px', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: 'rgba(134,200,115,.08)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: -40, right: 80, width: 120, height: 120, borderRadius: '50%', background: 'rgba(134,200,115,.05)', pointerEvents: 'none' }} />
+    <div style={{
+      borderRadius: 14,
+      marginBottom: 24,
+      background: isGlobal ? 'linear-gradient(125deg,#1b170c 0%,#352c11 100%)' : 'linear-gradient(125deg,#111811 0%,#1e3020 100%)',
+      border: isGlobal ? '1.5px solid #ebc32b' : '1px solid rgba(134,200,115,.2)',
+      padding: '24px 22px 18px',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: isGlobal ? 'rgba(235,195,43,.06)' : 'rgba(134,200,115,.08)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: -40, right: 80, width: 120, height: 120, borderRadius: '50%', background: isGlobal ? 'rgba(235,195,43,.04)' : 'rgba(134,200,115,.05)', pointerEvents: 'none' }} />
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, position: 'relative' }}>
+      {/* Styled MOYANO CONDUCCIÓN Logo top-right */}
+      <div style={{ position: 'absolute', top: 12, right: 18, pointerEvents: 'none', display: 'flex', alignItems: 'center', gap: 8, transformOrigin: 'top right' }}>
+        <img src="/imgprode/one-prode-blanco.png" alt="Logo" style={{ height: 32, width: 'auto', opacity: 0.95, filter: 'drop-shadow(0 2px 8px rgba(134,200,115,0.4))' }} />
+        <div style={{ width: 1, height: 18, background: 'rgba(255,255,255,.25)', flexShrink: 0 }} />
+        <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.25rem', letterSpacing: '.06em', fontWeight: 600 }}>
+          <span style={{ color: '#7BA3C0' }}>MOYANO </span>
+          <span style={{ color: '#fff' }}>C</span>
+          <span style={{ color: '#ebc32b' }}>O</span>
+          <span style={{ color: '#fff' }}>N</span>
+          <span style={{ color: '#7BA3C0' }}>DUCCIÓN</span>
+        </span>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 16, position: 'relative', marginTop: 6 }}>
         <div>
-          <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: 'rgba(134,200,115,.55)', display: 'block', marginBottom: 4 }}>
-            TABLA DE POSICIONES
+          <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: isGlobal ? '#ebc32b' : 'rgba(134,200,115,.55)', display: 'block', marginBottom: 4 }}>
+            {isGlobal ? '🏆 ACUMULADO GENERAL' : 'TABLA DE POSICIONES'}
           </span>
-          <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(22px,3vw,32px)', color: '#fff', margin: '0 0 6px', letterSpacing: '.02em', lineHeight: 1 }}>
+          <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(22px,3vw,32px)', color: isGlobal ? '#ebc32b' : '#fff', margin: '0 0 6px', letterSpacing: '.02em', lineHeight: 1 }}>
             {apuesta.titulo}
           </h2>
           {apuesta.premio && (
@@ -355,7 +439,7 @@ function Banner({ apuesta, meta, loading }) {
 
         {!loading && (
           <div style={{ display: 'flex', gap: 20, flexShrink: 0 }}>
-            {meta.total > 0 && <BannerStat n={meta.total} label="Part." />}
+            {meta.total > 0 && <BannerStat n={meta.total} label="Part." gold={isGlobal} />}
           </div>
         )}
       </div>
@@ -366,7 +450,7 @@ function Banner({ apuesta, meta, loading }) {
 function BannerStat({ n, label, gold }) {
   return (
     <div style={{ textAlign: 'center' }}>
-      <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, color: gold ? '#86C873' : 'rgba(255,255,255,.9)', margin: '0 0 1px', lineHeight: 1 }}>{n}</p>
+      <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, color: gold ? '#ebc32b' : 'rgba(255,255,255,.9)', margin: '0 0 1px', lineHeight: 1 }}>{n}</p>
       <p style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '.14em', color: 'rgba(255,255,255,.35)', margin: 0 }}>{label}</p>
     </div>
   )

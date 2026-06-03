@@ -250,7 +250,7 @@ export default function AppShell({ children }) {
                 src="/imgprode/one-prode-gorro-blanco.png"
                 alt="PRODE"
                 style={{
-                  height: 50,
+                  height: 58,
                   width: 'auto',
                   filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))',
                   display: 'block',
@@ -803,6 +803,20 @@ export default function AppShell({ children }) {
             >
               <div className="foot-left" style={{ display: 'flex', alignItems: 'center', gap: '.65rem', flexWrap: 'wrap' }}>
                 <img src="/imgprode/one-prode-blanco.png" alt="ONE Prode" style={{ height: 26, width: 'auto', display: 'block', opacity: .9 }} />
+                <span
+                  style={{
+                    fontFamily: "'Bebas Neue',sans-serif",
+                    fontSize: '.95rem',
+                    letterSpacing: '.04em',
+                    fontWeight: 600,
+                  }}
+                >
+                  <span style={{ color: '#7BA3C0' }}>MOYANO </span>
+                  <span style={{ color: '#fff' }}>C</span>
+                  <span style={{ color: '#ebc32b' }}>O</span>
+                  <span style={{ color: '#fff' }}>N</span>
+                  <span style={{ color: '#7BA3C0' }}>DUCCIÓN</span>
+                </span>
                 <span
                   style={{
                     fontFamily: "'DM Sans',sans-serif",

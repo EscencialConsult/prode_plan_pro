@@ -45,7 +45,7 @@ const ITEMS = [
 ]
 
 const MARQUEE = [
-  'Camioneros Tucumán','Agrupación Moyano','Luis Barrionuevo 2026',
+  'Camioneros Tucumán','Moyano Conducción','Luis Barrionuevo 2026',
   'Siempre con el trabajador','Gran Prode Mundialista','Fixture Oficial',
   'Predicciones Copa','Premios Exclusivos','Camioneros Juega Unido',
 ]

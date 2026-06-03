@@ -17,8 +17,12 @@ export default function HomeFooter() {
             <div style={{ display:'flex', alignItems:'center', gap:'0.75rem', marginBottom:'1.25rem' }}>
               <img src="/imgprode/one-prode-blanco.png" alt="ONE Prode" style={{ height: 26, width: 'auto', display: 'block', opacity: .9 }} />
               <div>
-                <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize: '1rem', color: '#fff', letterSpacing: '.08em', lineHeight: 1.1 }}>
-                  PRODE LUIS BARRIONUEVO
+                <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize: '1rem', letterSpacing: '.08em', lineHeight: 1.1 }}>
+                  <span style={{ color: '#7BA3C0' }}>MOYANO </span>
+                  <span style={{ color: '#fff' }}>C</span>
+                  <span style={{ color: '#ebc32b' }}>O</span>
+                  <span style={{ color: '#fff' }}>N</span>
+                  <span style={{ color: '#7BA3C0' }}>DUCCIÓN</span>
                 </div>
                 <div style={{ fontFamily:"'DM Sans',sans-serif", fontSize: '.6rem', color: 'rgba(134,200,115,.6)', letterSpacing: '.12em', fontWeight: 600 }}>
                   SINDICATO DE CAMIONEROS TUCUMÁN

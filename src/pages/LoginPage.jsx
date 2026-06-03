@@ -5,12 +5,12 @@ import { useAuth } from '../hooks/useAuth.jsx'
 export default function LoginPage() {
   const { login, loading, error } = useAuth()
   const navigate = useNavigate()
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [form, setForm] = useState({ dni: '', password: '' })
 
   async function handleSubmit(e) {
     e.preventDefault()
     try {
-      await login(form.email, form.password)
+      await login(form.dni, form.password)
       navigate('/dashboard')
     } catch (_) {}
   }
@@ -104,22 +104,21 @@ export default function LoginPage() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
 
-              {/* Email */}
+              {/* DNI */}
               <div>
-                <label htmlFor="email"
+                <label htmlFor="dni"
                   className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
                   style={{ color: 'rgba(255,255,255,.7)' }}>
-                  Email
+                  DNI
                 </label>
                 <input
-                  id="email"
-                  type="email"
-                  value={form.email}
-                  onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                  placeholder="tu@empresa.com"
+                  id="dni"
+                  type="text"
+                  value={form.dni}
+                  onChange={e => setForm(p => ({ ...p, dni: e.target.value }))}
+                  placeholder="Ingresá tu DNI"
                   required
                   autoFocus
-                  autoComplete="email"
                   className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
                   style={{
                     background: 'rgba(255,255,255,.05)',
