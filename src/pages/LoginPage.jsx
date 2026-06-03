@@ -31,29 +31,33 @@ export default function LoginPage() {
         className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-4 py-8"
         style={{
           backgroundImage: [
-            'linear-gradient(160deg, rgba(5,9,15,.82) 0%, rgba(12,24,43,.88) 45%, rgba(5,9,15,.95) 100%)',
-            "url('./imgprode/fondo-banner.png')",
+            'linear-gradient(160deg, rgba(10,15,10,.82) 0%, rgba(17,24,17,.88) 45%, rgba(10,15,10,.95) 100%)',
+            "var(--bg-banner)",
           ].join(','),
           backgroundSize: 'cover',
           backgroundPosition: 'center 25%',
         }}
       >
-        {/* Gold glow top-left */}
+        {/* Green glow top-left */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{
-          background: 'radial-gradient(ellipse 55% 45% at 20% 25%, rgba(235,195,43,.16), transparent 55%)'
+          background: 'radial-gradient(ellipse 55% 45% at 20% 25%, rgba(134,200,115,.18), transparent 55%)'
         }} />
-        {/* Blue glow bottom-right */}
+        {/* Deep glow bottom-right */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{
-          background: 'radial-gradient(ellipse 50% 45% at 80% 75%, rgba(66,91,139,.28), transparent 55%)'
+          background: 'radial-gradient(ellipse 50% 45% at 80% 75%, rgba(58,125,68,.22), transparent 55%)'
         }} />
 
         {/* ── TOP: logo empresa + marca ── */}
         <div className="relative z-10 flex flex-col items-center mb-6 lp-card">
-          {/* Slot logo cliente */}
           <img
-            src="./imgprode/one-prode-talento-new3.png"
-            alt="Prode Talento"
-            style={{ height: 52, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,.6))' }}
+            src="./imgprode/one-prode-blanco.png"
+            alt="ONE PRODE"
+            style={{
+              height: 'clamp(70px, 20vw, 110px)',
+              width: 'auto',
+              display: 'block',
+              filter: 'drop-shadow(0 4px 25px rgba(134,200,115,0.65)) drop-shadow(0 0 4px rgba(255,255,255,0.95))',
+            }}
           />
         </div>
 
@@ -62,31 +66,31 @@ export default function LoginPage() {
           className="lp-card relative z-10 w-full"
           style={{
             maxWidth: 420,
-            background: 'linear-gradient(160deg, rgba(12,24,43,.92) 0%, rgba(5,9,15,.96) 100%)',
-            border: '1px solid rgba(235,195,43,.25)',
+            background: 'linear-gradient(160deg, rgba(17,24,17,.94) 0%, rgba(10,15,10,.98) 100%)',
+            border: '1px solid rgba(134,200,115,.28)',
             borderRadius: 20,
-            boxShadow: '0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(235,195,43,.08), inset 0 1px 0 rgba(255,255,255,.05)',
+            boxShadow: '0 32px 80px rgba(0,0,0,.65), 0 0 0 1px rgba(134,200,115,.08), inset 0 1px 0 rgba(255,255,255,.05)',
             backdropFilter: 'blur(24px)',
             animationDelay: '.1s',
           }}
         >
-          {/* Gold top accent line */}
+          {/* Green top accent line */}
           <div className="rounded-t-[20px] h-0.5 w-full"
-            style={{ background: 'linear-gradient(90deg, transparent, #ebc32b 30%, #ebc32b 70%, transparent)' }} />
+            style={{ background: 'linear-gradient(90deg, transparent, #86C873 30%, #86C873 70%, transparent)' }} />
 
-          <div className="px-8 py-8">
+          <div className="px-5 py-6 sm:px-8 sm:py-8">
 
             {/* Card header */}
             <div className="mb-7">
               <div className="flex items-center gap-2 mb-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-400 lp-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400 lp-pulse" style={{ background: '#86C873', boxShadow: '0 0 8px #86C873' }} />
                 <span className="font-body text-xs uppercase tracking-widest font-bold"
-                  style={{ color: 'rgba(235,195,43,.7)' }}>
-                  Mundial 2026
+                  style={{ color: '#86C873', textShadow: '0 0 10px rgba(134,200,115,0.2)' }}>
+                  PRODE LUIS BARRIONUEVO
                 </span>
               </div>
               <h1 className="font-display leading-none"
-                style={{ fontSize: '2.6rem', color: '#fff', letterSpacing: '.03em' }}>
+                style={{ fontSize: 'clamp(1.8rem, 6vw, 2.6rem)', color: '#fff', letterSpacing: '.03em' }}>
                 BIENVENIDO
               </h1>
               <p className="font-body text-sm mt-1.5" style={{ color: 'rgba(255,255,255,.45)' }}>
@@ -96,7 +100,7 @@ export default function LoginPage() {
 
             {/* Divider */}
             <div className="h-px mb-7"
-              style={{ background: 'linear-gradient(90deg, transparent, rgba(235,195,43,.2) 50%, transparent)' }} />
+              style={{ background: 'linear-gradient(90deg, transparent, rgba(134,200,115,.2) 50%, transparent)' }} />
 
             <form onSubmit={handleSubmit} className="space-y-4">
 
@@ -104,7 +108,7 @@ export default function LoginPage() {
               <div>
                 <label htmlFor="email"
                   className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
-                  style={{ color: 'rgba(235,195,43,.8)' }}>
+                  style={{ color: 'rgba(255,255,255,.7)' }}>
                   Email
                 </label>
                 <input
@@ -118,19 +122,19 @@ export default function LoginPage() {
                   autoComplete="email"
                   className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
                   style={{
-                    background: 'rgba(255,255,255,.06)',
+                    background: 'rgba(255,255,255,.05)',
                     border: '1px solid rgba(255,255,255,.1)',
                     color: '#fff',
-                    caretColor: '#ebc32b',
+                    caretColor: '#86C873',
                   }}
                   onFocus={e => {
-                    e.target.style.borderColor = 'rgba(235,195,43,.55)'
-                    e.target.style.background = 'rgba(235,195,43,.06)'
-                    e.target.style.boxShadow = '0 0 0 3px rgba(235,195,43,.1)'
+                    e.target.style.borderColor = 'rgba(134,200,115,.55)'
+                    e.target.style.background = 'rgba(134,200,115,.06)'
+                    e.target.style.boxShadow = '0 0 0 3px rgba(134,200,115,.1)'
                   }}
                   onBlur={e => {
                     e.target.style.borderColor = 'rgba(255,255,255,.1)'
-                    e.target.style.background = 'rgba(255,255,255,.06)'
+                    e.target.style.background = 'rgba(255,255,255,.05)'
                     e.target.style.boxShadow = 'none'
                   }}
                 />
@@ -141,14 +145,14 @@ export default function LoginPage() {
                 <div className="flex items-center justify-between mb-2">
                   <label htmlFor="password"
                     className="block font-body font-bold text-xs uppercase tracking-widest"
-                    style={{ color: 'rgba(235,195,43,.8)' }}>
+                    style={{ color: 'rgba(255,255,255,.7)' }}>
                     Contraseña
                   </label>
                   <Link
                     to="/forgot-password"
                     className="font-body text-xs transition-colors"
                     style={{ color: 'rgba(255,255,255,.45)', textDecoration: 'none' }}
-                    onMouseEnter={e => { e.currentTarget.style.color = '#ebc32b' }}
+                    onMouseEnter={e => { e.currentTarget.style.color = '#86C873' }}
                     onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,.45)' }}
                   >
                     ¿Olvidaste tu contraseña?
@@ -164,19 +168,19 @@ export default function LoginPage() {
                   autoComplete="current-password"
                   className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
                   style={{
-                    background: 'rgba(255,255,255,.06)',
+                    background: 'rgba(255,255,255,.05)',
                     border: '1px solid rgba(255,255,255,.1)',
                     color: '#fff',
-                    caretColor: '#ebc32b',
+                    caretColor: '#86C873',
                   }}
                   onFocus={e => {
-                    e.target.style.borderColor = 'rgba(235,195,43,.55)'
-                    e.target.style.background = 'rgba(235,195,43,.06)'
-                    e.target.style.boxShadow = '0 0 0 3px rgba(235,195,43,.1)'
+                    e.target.style.borderColor = 'rgba(134,200,115,.55)'
+                    e.target.style.background = 'rgba(134,200,115,.06)'
+                    e.target.style.boxShadow = '0 0 0 3px rgba(134,200,115,.1)'
                   }}
                   onBlur={e => {
                     e.target.style.borderColor = 'rgba(255,255,255,.1)'
-                    e.target.style.background = 'rgba(255,255,255,.06)'
+                    e.target.style.background = 'rgba(255,255,255,.05)'
                     e.target.style.boxShadow = 'none'
                   }}
                 />
@@ -186,7 +190,7 @@ export default function LoginPage() {
               {error && (
                 <div className="flex items-start gap-2.5 px-4 py-3 rounded-xl font-body text-sm"
                   style={{ background: 'rgba(184,69,46,.12)', border: '1px solid rgba(184,69,46,.35)', color: '#e07050' }}>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-px">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-px">
                     <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                   </svg>
                   {error}
@@ -198,9 +202,9 @@ export default function LoginPage() {
                 type="submit"
                 disabled={loading}
                 className="w-full font-body font-bold text-base py-4 rounded-full flex items-center justify-center gap-2 transition-all mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ background: '#ebc32b', color: '#05090f', boxShadow: '0 8px 28px rgba(235,195,43,.3)' }}
-                onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(235,195,43,.45)' } }}
-                onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(235,195,43,.3)' } }}
+                style={{ background: 'linear-gradient(135deg,#86C873,#5A9E4A)', color: '#0a0f0a', boxShadow: '0 8px 28px rgba(134,200,115,.3)' }}
+                onMouseEnter={e => { if (!loading) { e.currentTarget.style.filter = 'brightness(1.1)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(134,200,115,.5)' } }}
+                onMouseLeave={e => { if (!loading) { e.currentTarget.style.filter = 'none'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(134,200,115,.3)' } }}
               >
                 {loading ? (
                   <>
@@ -230,7 +234,7 @@ export default function LoginPage() {
               to="/register"
               className="block w-full font-body font-semibold text-sm py-3.5 rounded-full text-center transition-all"
               style={{ border: '1px solid rgba(255,255,255,.18)', color: 'rgba(255,255,255,.7)', textDecoration: 'none' }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(235,195,43,.5)'; e.currentTarget.style.color = '#ebc32b'; e.currentTarget.style.background = 'rgba(235,195,43,.06)' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(134,200,115,.5)'; e.currentTarget.style.color = '#86C873'; e.currentTarget.style.background = 'rgba(134,200,115,.06)' }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.18)'; e.currentTarget.style.color = 'rgba(255,255,255,.7)'; e.currentTarget.style.background = 'transparent' }}
             >
               No tengo cuenta — Registrarme
@@ -243,7 +247,7 @@ export default function LoginPage() {
           <Link to="/"
             className="font-body text-sm flex items-center gap-1.5 transition-colors"
             style={{ color: 'rgba(255,255,255,.38)', textDecoration: 'none' }}
-            onMouseEnter={e => { e.currentTarget.style.color = '#ebc32b' }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#86C873' }}
             onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,.38)' }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>

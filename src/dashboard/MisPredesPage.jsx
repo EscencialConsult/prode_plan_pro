@@ -8,14 +8,14 @@
  *    fue de eliminación directa y ya tiene resultado/penales.
  */
 import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import AppShell from './AppShell.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { useBets } from '../hooks/useBets.jsx'
 import sheetsApi from '../services/sheetsApi.js'
 
-const CARD={background:'#fff',border:'1px solid #f0eadb',borderRadius:14,boxShadow:'0 1px 0 rgba(12,24,43,.04)'}
-const MUTED={fontSize:'.76rem',color:'#5f6e8a'}
+const CARD={background:'#fff',border:'1px solid #c8dbcc',borderRadius:14,boxShadow:'0 1px 0 rgba(17,24,17,.04)'}
+const MUTED={fontSize:'.76rem',color:'#4a6b50'}
 
 function timeLeft(d){const diff=new Date(d)-Date.now();if(diff<=0)return'Cerrada';const h=Math.floor(diff/3600000);const m=Math.floor((diff%3600000)/60000);if(h>=24)return`${Math.floor(h/24)}d ${h%24}h`;if(h>0)return`${h}h ${m}m`;return`${m}m`}
 
@@ -44,11 +44,11 @@ function clasificadoReal(match) {
   return pl > pv ? match.codigo_local : match.codigo_visitante
 }
 
-function StatCard({label,value,color='#0c182b'}){
+function StatCard({label,value,color='#111811'}){
   return(
     <div style={{...CARD,padding:'1.1rem',textAlign:'center'}}>
       <p style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(1.8rem,4vw,2.5rem)',color,margin:0,lineHeight:1,letterSpacing:'.02em'}}>{value}</p>
-      <p style={{fontSize:'.65rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.12em',color:'#a8b2c4',margin:'.25rem 0 0'}}>{label}</p>
+      <p style={{fontSize:'.65rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.12em',color:'#8aaa8e',margin:'.25rem 0 0'}}>{label}</p>
     </div>
   )
 }
@@ -65,38 +65,38 @@ function PartidoRow({match,pred}){
   const aciertoClasif = clasifPred && clasifRealCode && String(clasifPred).trim() === String(clasifRealCode).trim()
 
   return(
-    <div style={{padding:'.7rem .85rem',borderRadius:10,background:pts>0?'rgba(27,138,90,.04)':'rgba(12,24,43,.02)',border:`1px solid ${pts>0?'rgba(27,138,90,.2)':'#f0eadb'}`}}>
+    <div style={{padding:'.7rem .85rem',borderRadius:10,background:pts>0?'rgba(27,138,90,.04)':'rgba(17,24,17,.02)',border:`1px solid ${pts>0?'rgba(27,138,90,.2)':'#c8dbcc'}`}}>
       {/* Equipos */}
       <div style={{display:'grid',gridTemplateColumns:'1fr auto 1fr',alignItems:'center',gap:'.5rem',marginBottom:'.45rem'}}>
         <div style={{display:'flex',alignItems:'center',gap:'.4rem',minWidth:0}}>
-          {match.bandera_local&&<img src={match.bandera_local} alt="" style={{width:22,height:16,objectFit:'cover',borderRadius:2,border:'1px solid #f0eadb',flexShrink:0}}/>}
-          <span style={{fontWeight:600,fontSize:'.82rem',color:'#0c182b',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{match.equipo_local}</span>
+          {match.bandera_local&&<img src={match.bandera_local} alt="" style={{width:22,height:16,objectFit:'cover',borderRadius:2,border:'1px solid #c8dbcc',flexShrink:0}}/>}
+          <span style={{fontWeight:600,fontSize:'.82rem',color:'#111811',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{match.equipo_local}</span>
         </div>
-        <span style={{fontSize:'.72rem',color:'#a8b2c4'}}>vs</span>
+        <span style={{fontSize:'.72rem',color:'#8aaa8e'}}>vs</span>
         <div style={{display:'flex',alignItems:'center',gap:'.4rem',minWidth:0,justifyContent:'flex-end'}}>
-          <span style={{fontWeight:600,fontSize:'.82rem',color:'#0c182b',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',textAlign:'right'}}>{match.equipo_visitante}</span>
-          {match.bandera_visitante&&<img src={match.bandera_visitante} alt="" style={{width:22,height:16,objectFit:'cover',borderRadius:2,border:'1px solid #f0eadb',flexShrink:0}}/>}
+          <span style={{fontWeight:600,fontSize:'.82rem',color:'#111811',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',textAlign:'right'}}>{match.equipo_visitante}</span>
+          {match.bandera_visitante&&<img src={match.bandera_visitante} alt="" style={{width:22,height:16,objectFit:'cover',borderRadius:2,border:'1px solid #c8dbcc',flexShrink:0}}/>}
         </div>
       </div>
 
       {/* Scores */}
-      <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'1.2rem',paddingTop:'.45rem',borderTop:'1px solid #f5f3ee',flexWrap:'wrap'}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'1.2rem',paddingTop:'.45rem',borderTop:'1px solid #e2eede',flexWrap:'wrap'}}>
         {pred?(
           <div style={{textAlign:'center'}}>
-            <p style={{fontSize:'.58rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.1em',color:'#a8b2c4',margin:'0 0 2px'}}>{pred.es_grupal?'Área':'Tu predicción'}</p>
-            <p style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.2rem',color:'#c99f16',margin:0,lineHeight:1}}>{pred.pred_local} - {pred.pred_visitante}</p>
+            <p style={{fontSize:'.58rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.1em',color:'#8aaa8e',margin:'0 0 2px'}}>{pred.es_grupal?'Área':'Tu predicción'}</p>
+            <p style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.2rem',color:'#5A9E4A',margin:0,lineHeight:1}}>{pred.pred_local} - {pred.pred_visitante}</p>
           </div>
         ):(
           <p style={{...MUTED,fontSize:'.72rem',textAlign:'center',margin:0}}>Sin predicción</p>
         )}
         {(fin||live)&&match.goles_local!=null&&(
           <>
-            <div style={{width:1,height:28,background:'#f0eadb'}}/>
+            <div style={{width:1,height:28,background:'#c8dbcc'}}/>
             <div style={{textAlign:'center'}}>
-              <p style={{fontSize:'.58rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.1em',color:'#a8b2c4',margin:'0 0 2px'}}>{live?'En vivo':'Resultado'}</p>
-              <p style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.2rem',color:live?'#e03252':'#0c182b',margin:0,lineHeight:1}}>{match.goles_local} - {match.goles_visitante}</p>
+              <p style={{fontSize:'.58rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.1em',color:'#8aaa8e',margin:'0 0 2px'}}>{live?'En vivo':'Resultado'}</p>
+              <p style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.2rem',color:live?'#e03252':'#111811',margin:0,lineHeight:1}}>{match.goles_local} - {match.goles_visitante}</p>
               {tienePenales && (
-                <p style={{fontSize:'.6rem',fontWeight:700,color:'#c99f16',margin:'2px 0 0',textTransform:'uppercase',letterSpacing:'.06em'}}>
+                <p style={{fontSize:'.6rem',fontWeight:700,color:'#5A9E4A',margin:'2px 0 0',textTransform:'uppercase',letterSpacing:'.06em'}}>
                   pen {match.penales_local}-{match.penales_visit}
                 </p>
               )}
@@ -105,10 +105,10 @@ function PartidoRow({match,pred}){
         )}
         {pts!=null&&pts!==''&&(
           <>
-            <div style={{width:1,height:28,background:'#f0eadb'}}/>
+            <div style={{width:1,height:28,background:'#c8dbcc'}}/>
             <div style={{textAlign:'center'}}>
-              <p style={{fontSize:'.58rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.1em',color:'#a8b2c4',margin:'0 0 2px'}}>Puntos</p>
-              <p style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.2rem',color:Number(pts)>0?'#1b8a5a':'#a8b2c4',margin:0,lineHeight:1}}>+{pts}</p>
+              <p style={{fontSize:'.58rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.1em',color:'#8aaa8e',margin:'0 0 2px'}}>Puntos</p>
+              <p style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.2rem',color:Number(pts)>0?'#1b8a5a':'#8aaa8e',margin:0,lineHeight:1}}>+{pts}</p>
             </div>
           </>
         )}
@@ -116,13 +116,13 @@ function PartidoRow({match,pred}){
 
       {/* ★ NUEVO: línea de "clasificado" para fases eliminatorias */}
       {esElim && (clasifPred || clasifRealCode) && (
-        <div style={{marginTop:'.45rem',paddingTop:'.45rem',borderTop:'1px dashed #f0eadb',display:'flex',flexWrap:'wrap',gap:'.4rem .9rem',alignItems:'center',justifyContent:'center'}}>
+        <div style={{marginTop:'.45rem',paddingTop:'.45rem',borderTop:'1px dashed #c8dbcc',display:'flex',flexWrap:'wrap',gap:'.4rem .9rem',alignItems:'center',justifyContent:'center'}}>
           {clasifPred && (
             <span style={{display:'inline-flex',alignItems:'center',gap:'.3rem',fontSize:'.7rem',fontFamily:"'DM Sans',sans-serif"}}>
-              <span style={{fontSize:'.58rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em',color:'#a8b2c4'}}>
+              <span style={{fontSize:'.58rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em',color:'#8aaa8e'}}>
                 Tu clasif.:
               </span>
-              <span style={{fontWeight:700, color: clasifRealCode ? (aciertoClasif ? '#1b8a5a' : '#e03252') : '#c99f16'}}>
+              <span style={{fontWeight:700, color: clasifRealCode ? (aciertoClasif ? '#1b8a5a' : '#e03252') : '#5A9E4A'}}>
                 {nombreDesdeCodigo(match, clasifPred)}
               </span>
               {clasifRealCode && (aciertoClasif
@@ -133,10 +133,10 @@ function PartidoRow({match,pred}){
           )}
           {clasifRealCode && (
             <span style={{display:'inline-flex',alignItems:'center',gap:'.3rem',fontSize:'.7rem',fontFamily:"'DM Sans',sans-serif"}}>
-              <span style={{fontSize:'.58rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em',color:'#a8b2c4'}}>
+              <span style={{fontSize:'.58rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em',color:'#8aaa8e'}}>
                 Pasó:
               </span>
-              <span style={{fontWeight:700, color:'#0c182b'}}>{nombreDesdeCodigo(match, clasifRealCode)}</span>
+              <span style={{fontWeight:700, color:'#111811'}}>{nombreDesdeCodigo(match, clasifRealCode)}</span>
             </span>
           )}
         </div>
@@ -146,7 +146,12 @@ function PartidoRow({match,pred}){
 }
 
 export default function MisPredesPage(){
-  const {user}=useAuth()
+  const {user, isAdmin}=useAuth()
+  const esAdmin = isAdmin || user?.rol === 'admin' || user?.es_admin === true || user?.tipo_usuario === 'admin'
+
+  if (esAdmin) {
+    return <Navigate to="/dashboard" replace />
+  }
   const {bets,loading:lb}=useBets()
   const [misPredes,setMisPredes]=useState({})
   const [loading,setLoading]=useState(false)
@@ -187,22 +192,22 @@ export default function MisPredesPage(){
 
         {/* Header */}
         <div className="din" style={{marginBottom:'1.6rem'}}>
-          <h1 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(2.4rem,6vw,3.5rem)',color:'#0c182b',margin:'0 0 .3rem',lineHeight:1,letterSpacing:'.02em'}}>MIS PREDICCIONES</h1>
+          <h1 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'clamp(2.4rem,6vw,3.5rem)',color:'#111811',margin:'0 0 .3rem',lineHeight:1,letterSpacing:'.02em'}}>MIS PREDICCIONES</h1>
           <p style={{...MUTED,margin:0}}>Historial de todos tus pronósticos</p>
         </div>
 
         {/* Stats */}
         <div className="din" style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:'.85rem',marginBottom:'1.75rem',animationDelay:'60ms'}}>
-          <StatCard label="Puntos totales" value={loading?'—':totalPts} color="#c99f16"/>
-          <StatCard label="Predicciones" value={loading?'—':totalPred} color="#425b8b"/>
+          <StatCard label="Puntos totales" value={loading?'—':totalPts} color="#5A9E4A"/>
+          <StatCard label="Predicciones" value={loading?'—':totalPred} color="#3a5c3a"/>
           <StatCard label="Exactos" value={loading?'—':totalExactos} color="#1b8a5a"/>
-          <StatCard label="Apuestas" value={loading?'—':betsConPred.length} color="#0c182b"/>
+          <StatCard label="Apuestas" value={loading?'—':betsConPred.length} color="#111811"/>
         </div>
 
         {/* Filtros */}
         <div className="din" style={{display:'flex',gap:'.3rem',marginBottom:'1.4rem',animationDelay:'80ms'}}>
           {[{k:'todas',l:'Todas'},{k:'con',l:`Con predicción (${betsConPred.length})`},{k:'sin',l:`Sin predicción (${betsSinPred.length})`}].map(({k,l})=>(
-            <button key={k} onClick={()=>setFiltro(k)} style={{padding:'.34rem .82rem',borderRadius:99,fontFamily:"'DM Sans',sans-serif",fontWeight:700,fontSize:'.72rem',textTransform:'uppercase',letterSpacing:'.05em',cursor:'pointer',transition:'all .15s',background:filtro===k?'#0c182b':'#fff',color:filtro===k?'#ebc32b':'#5f6e8a',border:filtro===k?'1px solid transparent':'1px solid #f0eadb',boxShadow:filtro===k?'0 2px 8px rgba(12,24,43,.18)':'none'}}>
+            <button key={k} onClick={()=>setFiltro(k)} style={{padding:'.34rem .82rem',borderRadius:99,fontFamily:"'DM Sans',sans-serif",fontWeight:700,fontSize:'.72rem',textTransform:'uppercase',letterSpacing:'.05em',cursor:'pointer',transition:'all .15s',background:filtro===k?'#111811':'#fff',color:filtro===k?'#86C873':'#4a6b50',border:filtro===k?'1px solid transparent':'1px solid #c8dbcc',boxShadow:filtro===k?'0 2px 8px rgba(17,24,17,.18)':'none'}}>
               {l}
             </button>
           ))}
@@ -215,7 +220,7 @@ export default function MisPredesPage(){
           </div>
         ):filtradas.length===0?(
           <div style={{...CARD,borderRadius:16,padding:'3rem',textAlign:'center'}}>
-            <p style={{fontWeight:600,color:'#5f6e8a',margin:0}}>No hay apuestas en esta categoría</p>
+            <p style={{fontWeight:600,color:'#4a6b50',margin:0}}>No hay apuestas en esta categoría</p>
           </div>
         ):(
           <div style={{display:'flex',flexDirection:'column',gap:'.75rem'}}>
@@ -230,11 +235,11 @@ export default function MisPredesPage(){
                   {/* Cabecera */}
                   <div style={{padding:'1rem 1.2rem',display:'flex',alignItems:'center',gap:'1rem',cursor:'pointer'}}
                     onClick={()=>setOpen(isExpanded?null:bet.id)}
-                    onMouseEnter={e=>{e.currentTarget.style.background='rgba(12,24,43,.02)'}}
+                    onMouseEnter={e=>{e.currentTarget.style.background='rgba(17,24,17,.02)'}}
                     onMouseLeave={e=>{e.currentTarget.style.background='transparent'}}>
                     <div style={{flex:1,minWidth:0}}>
                       <div style={{display:'flex',alignItems:'center',gap:'.55rem',marginBottom:'.22rem'}}>
-                        <h3 style={{fontWeight:700,fontSize:'.92rem',color:'#0c182b',margin:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{bet.titulo}</h3>
+                        <h3 style={{fontWeight:700,fontSize:'.92rem',color:'#111811',margin:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{bet.titulo}</h3>
                         {hasPred&&<span style={{display:'inline-flex',alignItems:'center',gap:'.25rem',fontSize:'.62rem',fontWeight:700,color:'#1b8a5a',flexShrink:0}}>
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                           Guardada
@@ -246,23 +251,23 @@ export default function MisPredesPage(){
                         {bet.estado==='finalizada'?' · Finalizada':''}
                       </p>
                     </div>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a8b2c4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,transition:'transform .2s',transform:isExpanded?'rotate(180deg)':'rotate(0)'}}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8aaa8e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{flexShrink:0,transition:'transform .2s',transform:isExpanded?'rotate(180deg)':'rotate(0)'}}>
                       <polyline points="6 9 12 15 18 9"/>
                     </svg>
                   </div>
 
                   {/* Expandido */}
                   {isExpanded&&(
-                    <div style={{padding:'0 1.2rem 1.2rem',borderTop:'1px solid #f5f3ee'}}>
+                    <div style={{padding:'0 1.2rem 1.2rem',borderTop:'1px solid #e2eede'}}>
                       <div style={{display:'flex',flexDirection:'column',gap:'.5rem',paddingTop:'.9rem'}}>
                         {bet.partidos?.map(m=>(
                           <PartidoRow key={m.id} match={m} pred={misPredes[m.id]}/>
                         ))}
                       </div>
                       {isOpenBet&&(
-                        <Link to="/apuestas" style={{display:'block',textAlign:'center',marginTop:'1rem',padding:'.55rem',fontFamily:"'DM Sans',sans-serif",fontSize:'.8rem',fontWeight:700,color:'#c99f16',textDecoration:'none',borderRadius:99,border:'1px solid rgba(235,195,43,.3)',background:'rgba(235,195,43,.06)',transition:'all .17s'}}
-                          onMouseEnter={e=>{e.currentTarget.style.background='rgba(235,195,43,.12)'}}
-                          onMouseLeave={e=>{e.currentTarget.style.background='rgba(235,195,43,.06)'}}>
+                        <Link to="/apuestas" style={{display:'block',textAlign:'center',marginTop:'1rem',padding:'.55rem',fontFamily:"'DM Sans',sans-serif",fontSize:'.8rem',fontWeight:700,color:'#5A9E4A',textDecoration:'none',borderRadius:99,border:'1px solid rgba(134,200,115,.3)',background:'rgba(134,200,115,.06)',transition:'all .17s'}}
+                          onMouseEnter={e=>{e.currentTarget.style.background='rgba(134,200,115,.12)'}}
+                          onMouseLeave={e=>{e.currentTarget.style.background='rgba(134,200,115,.06)'}}>
                           Editar predicciones →
                         </Link>
                       )}

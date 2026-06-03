@@ -50,9 +50,9 @@ function NavLink({ to, label, icon, location }) {
           fontSize: '.75rem',
           letterSpacing: '.05em',
           textTransform: 'uppercase',
-          color: a ? '#ebc32b' : 'rgba(255,255,255,.45)',
-          background: a ? 'rgba(235,195,43,.12)' : 'transparent',
-          border: a ? '1px solid rgba(235,195,43,.28)' : '1px solid transparent',
+          color: a ? '#86C873' : 'rgba(255,255,255,.45)',
+          background: a ? 'rgba(134,200,115,.12)' : 'transparent',
+          border: a ? '1px solid rgba(134,200,115,.28)' : '1px solid transparent',
           transition: 'all .16s',
           cursor: 'pointer',
         }}
@@ -69,7 +69,7 @@ function NavLink({ to, label, icon, location }) {
           }
         }}
       >
-        <span style={{ color: a ? '#ebc32b' : 'inherit', display: 'flex', opacity: a ? 1 : .65 }}>
+        <span style={{ color: a ? '#86C873' : 'inherit', display: 'flex', opacity: a ? 1 : .65 }}>
           {icon}
         </span>
         {label}
@@ -92,11 +92,11 @@ function NavLinkMob({ to, label, icon, location, onClick }) {
           borderRadius: 8,
           fontWeight: 600,
           fontSize: '.85rem',
-          color: a ? '#ebc32b' : 'rgba(255,255,255,.6)',
-          background: a ? 'rgba(235,195,43,.1)' : 'transparent',
+          color: a ? '#86C873' : 'rgba(255,255,255,.6)',
+          background: a ? 'rgba(134,200,115,.1)' : 'transparent',
         }}
       >
-        <span style={{ color: a ? '#ebc32b' : 'inherit', display: 'flex' }}>{icon}</span>
+        <span style={{ color: a ? '#86C873' : 'inherit', display: 'flex' }}>{icon}</span>
         {label}
       </span>
     </Link>
@@ -195,12 +195,30 @@ export default function AppShell({ children }) {
         @media(max-width:860px) {
           .dnav { display: none !important; }
           .mhb { display: flex !important; }
+          .hide-mob { display: none !important; }
+        }
+
+        @media(max-width:640px) {
+          .shell-foot {
+            padding: 1.25rem 1rem !important;
+          }
+          .foot-container {
+            flex-direction: column !important;
+            align-items: center !important;
+            text-align: center !important;
+            gap: 0.9rem !important;
+          }
+          .foot-left, .foot-right {
+            justify-content: center !important;
+            flex-wrap: wrap !important;
+            gap: 0.5rem !important;
+          }
         }
       `}</style>
 
 <div
         style={{
-          background: '#faf7f0',
+          background: '#f0f5ee',
           display: 'flex',
           flexDirection: 'column',
           fontFamily: "'DM Sans',sans-serif",
@@ -210,10 +228,10 @@ export default function AppShell({ children }) {
       >
         <nav
           style={{
-            background: '#0c182b',
+            background: '#111811',
             flexShrink: 0,
             zIndex: 50,
-            borderBottom: '1px solid rgba(235,195,43,.14)',
+            borderBottom: '1px solid rgba(134,200,115,.14)',
           }}
         >
 <div
@@ -227,14 +245,16 @@ export default function AppShell({ children }) {
   }}
 
           >
-            <Link to="/dashboard" style={{ textDecoration: 'none', flexShrink: 0, marginRight: '1.8rem' }}>
+            <Link to="/dashboard" style={{ textDecoration: 'none', flexShrink: 0, marginRight: '1.8rem', display: 'flex', alignItems: 'center' }}>
               <img
-                src="/imgprode/one-prode-talento-new3.png"
-                alt="Prode Talento"
+                src="/imgprode/one-prode-gorro-blanco.png"
+                alt="PRODE"
                 style={{
-                  height: 32,
+                  height: 50,
                   width: 'auto',
                   filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))',
+                  display: 'block',
+                  transform: 'translateY(4px)',
                 }}
               />
             </Link>
@@ -252,6 +272,7 @@ export default function AppShell({ children }) {
 {esAdmin && (
   <Link
     to="/manual-admin"
+    className="hide-mob"
     style={{ textDecoration: 'none', marginRight: '.75rem' }}
   >
     <span
@@ -265,19 +286,19 @@ export default function AppShell({ children }) {
         fontSize: '.72rem',
         letterSpacing: '.06em',
         textTransform: 'uppercase',
-        color: location.pathname === '/manual-admin' ? '#0c182b' : '#ebc32b',
-        background: location.pathname === '/manual-admin' ? '#ebc32b' : 'transparent',
-        border: '1.5px solid #ebc32b',
+        color: location.pathname === '/manual-admin' ? '#111811' : '#86C873',
+        background: location.pathname === '/manual-admin' ? '#86C873' : 'transparent',
+        border: '1.5px solid #86C873',
         transition: 'all .16s',
         cursor: 'pointer',
         boxShadow: location.pathname === '/manual-admin'
-          ? '0 0 0 3px rgba(235,195,43,.18)'
+          ? '0 0 0 3px rgba(134,200,115,.18)'
           : 'none',
       }}
       onMouseEnter={e => {
         if (location.pathname !== '/manual-admin') {
-          e.currentTarget.style.background = 'rgba(235,195,43,.14)'
-          e.currentTarget.style.boxShadow = '0 0 0 3px rgba(235,195,43,.1)'
+          e.currentTarget.style.background = 'rgba(134,200,115,.14)'
+          e.currentTarget.style.boxShadow = '0 0 0 3px rgba(134,200,115,.1)'
         }
       }}
       onMouseLeave={e => {
@@ -319,7 +340,7 @@ export default function AppShell({ children }) {
                 En vivo
               </span>
 
-              <div style={{ position: 'relative' }}>
+              <div className="hide-mob" style={{ position: 'relative' }}>
                 <button
                   type="button"
                   title="Opciones de cuenta"
@@ -333,13 +354,13 @@ export default function AppShell({ children }) {
                     padding: '.28rem .55rem .28rem .28rem',
                     borderRadius: 99,
                     background: (userMenu || location.pathname === '/cambiar-password')
-                      ? 'rgba(235,195,43,.14)' : 'rgba(255,255,255,.07)',
+                      ? 'rgba(134,200,115,.14)' : 'rgba(255,255,255,.07)',
                     border: `1px solid ${(userMenu || location.pathname === '/cambiar-password')
-                      ? 'rgba(235,195,43,.4)' : 'rgba(255,255,255,.1)'}`,
+                      ? 'rgba(134,200,115,.4)' : 'rgba(255,255,255,.1)'}`,
                     cursor: 'pointer',
                     transition: 'all .16s',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(235,195,43,.4)' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(134,200,115,.4)' }}
                   onMouseLeave={e => {
                     if (!userMenu && location.pathname !== '/cambiar-password') {
                       e.currentTarget.style.borderColor = 'rgba(255,255,255,.1)'
@@ -351,13 +372,13 @@ export default function AppShell({ children }) {
                       width: 27,
                       height: 27,
                       borderRadius: '50%',
-                      background: 'linear-gradient(135deg,#ebc32b,#c99f16)',
+                      background: 'linear-gradient(135deg,#86C873,#5A9E4A)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontFamily: "'Bebas Neue',sans-serif",
                       fontSize: '.88rem',
-                      color: '#05090f',
+                      color: '#0a0f0a',
                     }}
                   >
                     {initials(user?.nombre || user?.name || 'U')}
@@ -411,16 +432,16 @@ export default function AppShell({ children }) {
                         minWidth: 200,
                         background: '#fff',
                         borderRadius: 12,
-                        boxShadow: '0 12px 32px rgba(12,24,43,.22), 0 0 0 1px rgba(12,24,43,.06)',
+                        boxShadow: '0 12px 32px rgba(17,24,17,.22), 0 0 0 1px rgba(17,24,17,.06)',
                         padding: '.35rem',
-                        border: '1px solid #f0eadb',
+                        border: '1px solid #c8dbcc',
                       }}
                     >
                       <div
                         style={{
                           position: 'absolute', top: -6, right: 22, width: 12, height: 12,
                           background: '#fff', transform: 'rotate(45deg)',
-                          borderTop: '1px solid #f0eadb', borderLeft: '1px solid #f0eadb',
+                          borderTop: '1px solid #c8dbcc', borderLeft: '1px solid #c8dbcc',
                         }}
                       />
 
@@ -431,13 +452,13 @@ export default function AppShell({ children }) {
                         style={{
                           display: 'flex', alignItems: 'center', gap: '.55rem',
                           padding: '.6rem .7rem', borderRadius: 8,
-                          fontSize: '.82rem', fontWeight: 600, color: '#0c182b',
+                          fontSize: '.82rem', fontWeight: 600, color: '#111811',
                           textDecoration: 'none', transition: 'background .14s',
                         }}
                         onMouseEnter={e => { e.currentTarget.style.background = '#f6f1e3' }}
                         onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
                       >
-                        <span style={{ color: '#c99f16', display: 'flex' }}>{KEY_ICON}</span>
+                        <span style={{ color: '#5A9E4A', display: 'flex' }}>{KEY_ICON}</span>
                         Cambiar contraseña
                       </Link>
                     </div>
@@ -445,7 +466,7 @@ export default function AppShell({ children }) {
                 )}
               </div>
 
-              <div style={{ position: 'relative' }}>
+              <div className="hide-mob" style={{ position: 'relative' }}>
                 <button
                   onClick={logoutState === 'idle' ? pedirConfirmacion : undefined}
                   disabled={logoutState === 'logging' || logoutState === 'redirect'}
@@ -512,9 +533,9 @@ export default function AppShell({ children }) {
                         minWidth: 240,
                         background: '#fff',
                         borderRadius: 12,
-                        boxShadow: '0 12px 32px rgba(12,24,43,.22), 0 0 0 1px rgba(12,24,43,.06)',
+                        boxShadow: '0 12px 32px rgba(17,24,17,.22), 0 0 0 1px rgba(17,24,17,.06)',
                         padding: '.85rem .95rem',
-                        border: '1px solid #f0eadb',
+                        border: '1px solid #c8dbcc',
                       }}
                     >
                       <div
@@ -526,8 +547,8 @@ export default function AppShell({ children }) {
                           height: 12,
                           background: '#fff',
                           transform: 'rotate(45deg)',
-                          borderTop: '1px solid #f0eadb',
-                          borderLeft: '1px solid #f0eadb',
+                          borderTop: '1px solid #c8dbcc',
+                          borderLeft: '1px solid #c8dbcc',
                         }}
                       />
 
@@ -535,7 +556,7 @@ export default function AppShell({ children }) {
                         style={{
                           fontFamily: "'Bebas Neue',sans-serif",
                           fontSize: '1rem',
-                          color: '#0c182b',
+                          color: '#111811',
                           margin: '0 0 .15rem',
                           letterSpacing: '.02em',
                         }}
@@ -546,7 +567,7 @@ export default function AppShell({ children }) {
                       <p
                         style={{
                           fontSize: '.76rem',
-                          color: '#5f6e8a',
+                          color: '#4a6b50',
                           margin: '0 0 .85rem',
                           lineHeight: 1.4,
                         }}
@@ -559,22 +580,22 @@ export default function AppShell({ children }) {
                           onClick={cancelarLogout}
                           style={{
                             background: 'transparent',
-                            border: '1px solid #f0eadb',
+                            border: '1px solid #c8dbcc',
                             borderRadius: 7,
                             padding: '.4rem .8rem',
                             fontSize: '.74rem',
                             fontWeight: 600,
-                            color: '#5f6e8a',
+                            color: '#4a6b50',
                             cursor: 'pointer',
                             transition: 'all .14s',
                           }}
                           onMouseEnter={e => {
-                            e.currentTarget.style.borderColor = '#0c182b'
-                            e.currentTarget.style.color = '#0c182b'
+                            e.currentTarget.style.borderColor = '#111811'
+                            e.currentTarget.style.color = '#111811'
                           }}
                           onMouseLeave={e => {
-                            e.currentTarget.style.borderColor = '#f0eadb'
-                            e.currentTarget.style.color = '#5f6e8a'
+                            e.currentTarget.style.borderColor = '#c8dbcc'
+                            e.currentTarget.style.color = '#4a6b50'
                           }}
                         >
                           Cancelar
@@ -646,13 +667,51 @@ export default function AppShell({ children }) {
           {mob && (
             <div
               style={{
-                borderTop: '1px solid rgba(235,195,43,.1)',
-                padding: '.55rem 1rem .75rem',
+                borderTop: '1px solid rgba(134,200,115,.1)',
+                padding: '1.2rem 1.2rem 1.5rem',
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '.18rem',
+                gap: '.5rem',
+                background: '#111811',
               }}
             >
+              {/* User Profile Header in mobile menu */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '.65rem',
+                  padding: '.2rem .5rem 1rem',
+                  borderBottom: '1px solid rgba(134,200,115,.12)',
+                  marginBottom: '.4rem',
+                }}
+              >
+                <div
+                  style={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg,#86C873,#5A9E4A)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: "'Bebas Neue',sans-serif",
+                    fontSize: '1.15rem',
+                    color: '#0a0f0a',
+                  }}
+                >
+                  {initials(user?.nombre || user?.name || 'U')}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+                  <span style={{ fontSize: '.9rem', fontWeight: 700, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user?.nombre || user?.name || 'Usuario'}
+                  </span>
+                  <span style={{ fontSize: '.72rem', color: 'rgba(255,255,255,.45)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user?.email}
+                  </span>
+                </div>
+              </div>
+
               {filteredNavItems.map(({ to, label, icon }) => (
                 <NavLinkMob key={to} to={to} label={label} icon={icon} location={location} onClick={() => setMob(false)} />
               ))}
@@ -661,7 +720,44 @@ export default function AppShell({ children }) {
                 <NavLinkMob to="/admin" label="Configuración" icon={ADMIN_ICON} location={location} onClick={() => setMob(false)} />
               )}
 
+              {/* Manual for admin */}
+              {esAdmin && (
+                <NavLinkMob to="/manual-admin" label="Manual Admin" icon={MANUAL_ICON} location={location} onClick={() => setMob(false)} />
+              )}
+
               <NavLinkMob to="/cambiar-password" label="Cambiar contraseña" icon={KEY_ICON} location={location} onClick={() => setMob(false)} />
+
+              {/* Salir / Logout button */}
+              <div style={{ borderTop: '1px solid rgba(255,255,255,.08)', paddingTop: '1rem', marginTop: '.5rem' }}>
+                <button
+                  onClick={() => {
+                    setMob(false)
+                    pedirConfirmacion()
+                  }}
+                  style={{
+                    width: '100%',
+                    background: 'rgba(255,77,109,.08)',
+                    border: '1px solid rgba(255,77,109,.3)',
+                    borderRadius: 10,
+                    padding: '.7rem',
+                    fontSize: '.85rem',
+                    fontWeight: 700,
+                    color: '#ff4d6d',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '.4rem',
+                  }}
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
+                  Cerrar sesión
+                </button>
+              </div>
             </div>
           )}
         </nav>
@@ -674,84 +770,97 @@ export default function AppShell({ children }) {
             minHeight: 0,
             overflowY: 'auto',
             overflowX: 'hidden',
-            background: '#faf7f0',
+            background: '#f0f5ee',
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
-          {children}
-        </main>
+          <div style={{ flex: '1 0 auto' }}>
+            {children}
+          </div>
 
-        <footer
-          style={{
-            background: '#080f1e',
-            borderTop: '2px solid #ebb32b',
-            padding: '.4rem 2rem',
-            flexShrink: 0,
-          }}
-        >
-          <div
+          <footer
+            className="shell-foot"
             style={{
-              maxWidth: 1280,
-              margin: '0 auto',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: '.75rem',
+              background: '#0a0f0a',
+              borderTop: '1px solid rgba(134,200,115,.22)',
+              padding: '1.25rem 2rem',
+              flexShrink: 0,
+              marginTop: '2rem',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '.65rem' }}>
-              <img src="/img/one-logoletra.png" alt="ONE" style={{ height: 20, width: 'auto', display: 'block' }} />
-              <span
-                style={{
-                  fontFamily: "'DM Sans',sans-serif",
-                  fontSize: '.75rem',
-                  color: 'rgba(255,255,255,.7)',
-                  fontWeight: 400,
-                }}
-              >
-                | Todos los derechos reservados. © {new Date().getFullYear()}
-              </span>
+            <div
+              className="foot-container"
+              style={{
+                maxWidth: 1280,
+                margin: '0 auto',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '.75rem',
+              }}
+            >
+              <div className="foot-left" style={{ display: 'flex', alignItems: 'center', gap: '.65rem', flexWrap: 'wrap' }}>
+                <img src="/imgprode/one-prode-blanco.png" alt="ONE Prode" style={{ height: 26, width: 'auto', display: 'block', opacity: .9 }} />
+                <span
+                  style={{
+                    fontFamily: "'DM Sans',sans-serif",
+                    fontSize: '.72rem',
+                    color: 'rgba(255,255,255,.45)',
+                    fontWeight: 400,
+                  }}
+                >
+                  | Todos los derechos reservados. © {new Date().getFullYear()}
+                </span>
+              </div>
+
+              <div className="foot-right" style={{ display: 'flex', alignItems: 'center', gap: '.65rem', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}>
+                  <span
+                    style={{
+                      fontFamily: "'DM Sans',sans-serif",
+                      fontSize: '.72rem',
+                      color: 'rgba(255,255,255,.45)',
+                      fontWeight: 400,
+                    }}
+                  >
+                    Desarrollado por
+                  </span>
+                  <img src="/imgprode/one-prode-blanco.png" alt="ONE Prode" style={{ height: 20, width: 'auto', display: 'block', opacity: .8 }} />
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}>
+                  <span
+                    style={{
+                      fontFamily: "'DM Sans',sans-serif",
+                      fontSize: '.72rem',
+                      color: 'rgba(255,255,255,.45)',
+                      fontWeight: 400,
+                    }}
+                  >
+                    by
+                  </span>
+                  <img
+                    src="/img/escencial-logoblanco.png"
+                    alt="Escencial"
+                    style={{
+                      height: 28,
+                      width: 'auto',
+                      display: 'block',
+                      cursor: 'pointer',
+                      opacity: .6,
+                      transition: 'opacity .18s',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.opacity = '1' }}
+                    onMouseLeave={e => { e.currentTarget.style.opacity = '.6' }}
+                    onClick={() => window.open('https://escencialconsultora.com.ar/', '_blank')}
+                  />
+                </div>
+              </div>
             </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
-              <span
-                style={{
-                  fontFamily: "'DM Sans',sans-serif",
-                  fontSize: '.75rem',
-                  color: 'rgba(255,255,255,.7)',
-                  fontWeight: 400,
-                }}
-              >
-                Desarrollado por
-              </span>
-
-              <img src="/img/one-logocolor.png" alt="ONE" style={{ height: 25, width: 'auto', display: 'block' }} />
-
-              <span
-                style={{
-                  fontFamily: "'DM Sans',sans-serif",
-                  fontSize: '.75rem',
-                  color: 'rgba(255,255,255,.7)',
-                  fontWeight: 400,
-                }}
-              >
-                by
-              </span>
-
-              <img
-                src="/img/escencial-logoblanco.png"
-                alt="Escencial"
-                style={{
-                  height: 40,
-                  width: 'auto',
-                  display: 'block',
-                  cursor: 'pointer',
-                }}
-                onClick={() => window.open('https://escencialconsultora.com.ar/', '_blank')}
-              />
-            </div>
-          </div>
-        </footer>
+          </footer>
+        </main>
       </div>
 
       {logoutState === 'redirect' && (
@@ -761,7 +870,7 @@ export default function AppShell({ children }) {
             position: 'fixed',
             inset: 0,
             zIndex: 999,
-            background: 'rgba(12,24,43,.92)',
+            background: 'rgba(17,24,17,.92)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -774,15 +883,15 @@ export default function AppShell({ children }) {
                 width: 56,
                 height: 56,
                 borderRadius: '50%',
-                background: 'rgba(235,195,43,.15)',
-                border: '1px solid rgba(235,195,43,.4)',
+                background: 'rgba(134,200,115,.15)',
+                border: '1px solid rgba(134,200,115,.4)',
                 margin: '0 auto 1rem',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#86C873" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>

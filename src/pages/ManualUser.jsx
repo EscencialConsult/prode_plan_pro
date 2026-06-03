@@ -9,20 +9,20 @@ import AppShell from '../dashboard/AppShell.jsx'
 
 /* ── Paleta ── */
 const C = {
-  navyDeep:  '#05090f',
-  navy:      '#0c182b',
-  navySoft:  '#18243f',
-  blueMed:   '#425b8b',
-  blueSoft:  '#6e83ad',
-  gold:      '#ebc32b',
-  goldLt:    '#f5d75a',
-  goldDk:    '#c99f16',
-  cream:     '#faf7f0',
-  cream2:    '#f0eadb',
+  navyDeep:  '#0a0f0a',
+  navy:      '#111811',
+  navySoft:  '#1a241a',
+  blueMed:   '#3a5c3a',
+  blueSoft:  '#5a825a',
+  gold:      '#86C873',
+  goldLt:    '#A8E096',
+  goldDk:    '#5A9E4A',
+  cream:     '#f0f5ee',
+  cream2:    '#e2eede',
   cream3:    '#e8e0c9',
-  ink700:    '#2b3a5a',
-  ink500:    '#5f6e8a',
-  ink300:    '#a8b2c4',
+  ink700:    '#1e3020',
+  ink500:    '#4a6b50',
+  ink300:    '#8aaa8e',
   red:       '#b8452e',
   green:     '#1b8a5a',
   white:     '#ffffff',
@@ -66,7 +66,7 @@ function SectionHeader({ num, kicker, title, icon }) {
         position:'absolute', top:-18, left:-4,
         fontFamily:"'Bebas Neue',sans-serif",
         fontSize:120, lineHeight:.85, letterSpacing:'.02em',
-        color:'rgba(12,24,43,.05)',
+        color:'rgba(17,24,17,.05)',
         pointerEvents:'none', userSelect:'none',
         zIndex:0,
       }}>{num}</span>
@@ -88,9 +88,9 @@ function SectionHeader({ num, kicker, title, icon }) {
             <div style={{
               width:42, height:42, borderRadius:12, flexShrink:0,
               background:`linear-gradient(135deg,${C.navy},${C.navySoft})`,
-              border:`1px solid rgba(235,195,43,.35)`,
+              border:`1px solid rgba(134,200,115,.35)`,
               display:'flex', alignItems:'center', justifyContent:'center',
-              boxShadow:'0 6px 18px rgba(12,24,43,.18)',
+              boxShadow:'0 6px 18px rgba(17,24,17,.18)',
               marginTop:4,
             }}>{icon}</div>
           )}
@@ -103,7 +103,7 @@ function SectionHeader({ num, kicker, title, icon }) {
         </div>
         <div style={{
           height:2, marginTop:14, marginLeft:icon?56:0,
-          background:`linear-gradient(90deg,${C.gold} 0%,rgba(235,195,43,.4) 30%,rgba(235,195,43,0) 80%)`,
+          background:`linear-gradient(90deg,${C.gold} 0%,rgba(134,200,115,.4) 30%,rgba(134,200,115,0) 80%)`,
         }}/>
       </div>
     </div>
@@ -113,8 +113,8 @@ function SectionHeader({ num, kicker, title, icon }) {
 function Callout({ type='info', title, children }) {
   const variants = {
     tip:    { accent:C.green,   bg:'rgba(27,138,90,.06)',  ic:'✓', tone:'CONSEJO' },
-    warn:   { accent:C.goldDk,  bg:'rgba(235,195,43,.08)', ic:'!', tone:'IMPORTANTE' },
-    info:   { accent:C.blueMed, bg:'rgba(66,91,139,.06)',  ic:'i', tone:'NOTA' },
+    warn:   { accent:C.goldDk,  bg:'rgba(134,200,115,.08)', ic:'!', tone:'IMPORTANTE' },
+    info:   { accent:C.blueMed, bg:'rgba(58,125,68,.06)',  ic:'i', tone:'NOTA' },
     danger: { accent:C.red,     bg:'rgba(184,69,46,.06)',  ic:'⚠', tone:'CUIDADO' },
   }
   const v = variants[type] || variants.info
@@ -163,7 +163,7 @@ function StateCard({ tag, tagColor, name, desc, accent=C.gold }) {
       transition:'all .22s ease',
       overflow:'hidden',
     }}
-      onMouseEnter={e=>{ e.currentTarget.style.borderColor=accent; e.currentTarget.style.transform='translateY(-3px)'; e.currentTarget.style.boxShadow=`0 14px 32px rgba(12,24,43,.1), 0 0 0 1px ${accent}33` }}
+      onMouseEnter={e=>{ e.currentTarget.style.borderColor=accent; e.currentTarget.style.transform='translateY(-3px)'; e.currentTarget.style.boxShadow=`0 14px 32px rgba(17,24,17,.1), 0 0 0 1px ${accent}33` }}
       onMouseLeave={e=>{ e.currentTarget.style.borderColor=C.cream2; e.currentTarget.style.transform='none'; e.currentTarget.style.boxShadow='none' }}>
       <div style={{
         position:'absolute', top:0, left:0, right:0, height:2,
@@ -314,8 +314,8 @@ export default function ManualUser() {
         <div style={{
           position:'absolute', inset:0, pointerEvents:'none', overflow:'hidden',
           background:`
-            radial-gradient(ellipse 600px 400px at 90% 5%, rgba(235,195,43,.08), transparent 60%),
-            radial-gradient(ellipse 500px 600px at 5% 60%, rgba(66,91,139,.05), transparent 60%)
+            radial-gradient(ellipse 600px 400px at 90% 5%, rgba(134,200,115,.08), transparent 60%),
+            radial-gradient(ellipse 500px 600px at 5% 60%, rgba(58,125,68,.05), transparent 60%)
           `,
         }}/>
 
@@ -345,15 +345,15 @@ export default function ManualUser() {
                 textTransform:'uppercase', letterSpacing:'.2em',
                 color:C.ink500, marginBottom:12,
               }}>
-                Prode Talento · Mundial 2026
+                PRODE LUIS BARRIONUEVO · PRODE CAMIONERO
               </div>
               <span style={{
                 display:'inline-flex', alignItems:'center', gap:6,
                 fontSize:9, fontWeight:700,
                 textTransform:'uppercase', letterSpacing:'.16em',
                 color:C.goldDk,
-                background:'rgba(235,195,43,.12)',
-                border:`1px solid rgba(235,195,43,.35)`,
+                background:'rgba(134,200,115,.12)',
+                border:`1px solid rgba(134,200,115,.35)`,
                 borderRadius:99, padding:'3px 10px',
               }}>
                 <span style={{ width:5, height:5, borderRadius:'50%', background:C.gold }}/>
@@ -377,14 +377,14 @@ export default function ManualUser() {
                       <button key={s.id} onClick={()=>goTo(s.id)} style={{
                         display:'flex', alignItems:'center', gap:10,
                         width:'100%', padding:'7px 18px 7px 12px',
-                        background:active?'rgba(235,195,43,.1)':'transparent',
+                        background:active?'rgba(134,200,115,.1)':'transparent',
                         border:'none',
                         borderLeft:`2px solid ${active?C.gold:'transparent'}`,
                         cursor:'pointer', textAlign:'left',
                         transition:'all .15s ease',
                         fontFamily:"'DM Sans',sans-serif",
                       }}
-                        onMouseEnter={e=>{ if(!active){ e.currentTarget.style.background='rgba(235,195,43,.05)' }}}
+                        onMouseEnter={e=>{ if(!active){ e.currentTarget.style.background='rgba(134,200,115,.05)' }}}
                         onMouseLeave={e=>{ if(!active){ e.currentTarget.style.background='transparent' }}}>
                         <span style={{
                           fontFamily:"'Bebas Neue',sans-serif", fontSize:12,
@@ -434,7 +434,7 @@ export default function ManualUser() {
                 PARTICIPÁ Y<br/>
                 <span style={{
                   color:C.goldDk,
-                  textShadow:'0 0 32px rgba(235,195,43,.25)',
+                  textShadow:'0 0 32px rgba(134,200,115,.25)',
                 }}>GANÁ PREMIOS</span>
               </h1>
 
@@ -443,7 +443,7 @@ export default function ManualUser() {
                 fontSize:17, lineHeight:1.7, color:C.ink500,
                 maxWidth:560, margin:'0 0 28px',
               }}>
-                Guía completa para participar del prode interno del Mundial 2026. Aprendé a cargar tus predicciones, seguir tus puntos y competir por los premios.
+                Guía completa para participar del prode interno de PRODE CAMIONERO. Aprendé a cargar tus predicciones, seguir tus puntos y competir por los premios.
               </p>
             </header>
 
@@ -564,7 +564,7 @@ export default function ManualUser() {
                 color:C.navy, margin:'24px 0 12px', letterSpacing:'.03em',
               }}>¿Qué es el fixture?</h3>
               <P>
-                El fixture muestra todos los partidos del Mundial 2026, organizados por fecha. Podés ver:
+                El fixture muestra todos los partidos de PRODE CAMIONERO, organizados por fecha. Podés ver:
               </P>
               <ul style={{ margin:'14px 0', paddingLeft:24 }}>
                 <li style={{ fontFamily:"'DM Sans',sans-serif", fontSize:14, color:C.ink700, marginBottom:8 }}>Los equipos que juegan</li>
@@ -699,7 +699,7 @@ export default function ManualUser() {
               <p style={{
                 fontSize:12, color:C.ink500, margin:0,
               }}>
-                Prode Talento — Manual del Participante · Mundial 2026
+                PRODE LUIS BARRIONUEVO — Manual del Participante · PRODE CAMIONERO
               </p>
             </div>
 

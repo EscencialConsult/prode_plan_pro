@@ -44,10 +44,10 @@ export default function BetsPage() {
         <div className="mb-8 animate-fade-in flex flex-col md:flex-row md:items-end justify-between gap-5">
           <div>
             <h1 className="font-display leading-none tracking-wide mb-2"
-              style={{ fontSize: 'clamp(2.8rem,7vw,4rem)', color: '#0c182b' }}>
+              style={{ fontSize: 'clamp(2.8rem,7vw,4rem)', color: '#111811' }}>
               APUESTAS
             </h1>
-            <p className="font-body text-sm" style={{ color: '#5f6e8a' }}>
+            <p className="font-body text-sm" style={{ color: '#4a6b50' }}>
               {bets.length} {bets.length === 1 ? 'apuesta disponible' : 'apuestas disponibles'}
             </p>
           </div>
@@ -57,8 +57,8 @@ export default function BetsPage() {
             className="inline-flex gap-1 p-1 rounded-xl self-start md:self-auto"
             style={{
               background: '#fff',
-              border: '1px solid #f0eadb',
-              boxShadow: '0 1px 0 rgba(12,24,43,.04)',
+              border: '1px solid #c8dbcc',
+              boxShadow: '0 1px 0 rgba(17,24,17,.04)',
             }}
           >
             {FILTERS.map(f => {
@@ -69,12 +69,12 @@ export default function BetsPage() {
                   onClick={() => setFilter(f)}
                   className="px-4 py-2 text-xs font-body font-bold uppercase tracking-wider rounded-lg transition-all"
                   style={{
-                    background: active ? '#0c182b' : 'transparent',
-                    color: active ? '#ebc32b' : '#5f6e8a',
-                    boxShadow: active ? '0 2px 8px rgba(12,24,43,.25)' : 'none',
+                    background: active ? '#111811' : 'transparent',
+                    color: active ? '#86C873' : '#4a6b50',
+                    boxShadow: active ? '0 2px 8px rgba(17,24,17,.25)' : 'none',
                   }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#0c182b' }}
-                  onMouseLeave={e => { if (!active) e.currentTarget.style.color = '#5f6e8a' }}
+                  onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#111811' }}
+                  onMouseLeave={e => { if (!active) e.currentTarget.style.color = '#4a6b50' }}
                 >
                   {f}
                 </button>
@@ -103,26 +103,26 @@ export default function BetsPage() {
               className="rounded-2xl p-12 text-center animate-fade-in"
               style={{
                 background: '#fff',
-                border: '1.5px dashed #f0eadb',
+                border: '1.5px dashed #c8dbcc',
               }}
             >
               <svg
                 width="48" height="48" viewBox="0 0 24 24" fill="none"
-                stroke="#a8b2c4" strokeWidth="1.5"
+                stroke="#8aaa8e" strokeWidth="1.5"
                 strokeLinecap="round" strokeLinejoin="round"
                 className="mx-auto mb-4"
               >
                 <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
                 <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
               </svg>
-              <p className="font-body font-semibold text-base mb-1" style={{ color: '#5f6e8a' }}>
+              <p className="font-body font-semibold text-base mb-1" style={{ color: '#4a6b50' }}>
                 {filter === 'todas'
                   ? 'Todavía no hay apuestas publicadas'
                   : filter === 'activas'
                     ? 'No hay apuestas activas en este momento'
                     : 'No hay apuestas cerradas todavía'}
               </p>
-              <p className="font-body text-xs" style={{ color: '#a8b2c4' }}>
+              <p className="font-body text-xs" style={{ color: '#8aaa8e' }}>
                 {filter === 'todas'
                   ? 'Las próximas apuestas van a aparecer acá cuando se publiquen.'
                   : filter === 'activas'
@@ -135,8 +135,8 @@ export default function BetsPage() {
           {filtered.length === 0 && loading && (
             <div className="text-center py-16">
               <span className="inline-block w-8 h-8 border-2 border-t-transparent rounded-full animate-spin"
-                style={{ borderColor: '#0c182b', borderTopColor: 'transparent' }} />
-              <p className="font-body text-sm mt-3" style={{ color: '#5f6e8a' }}>Cargando apuestas...</p>
+                style={{ borderColor: '#111811', borderTopColor: 'transparent' }} />
+              <p className="font-body text-sm mt-3" style={{ color: '#4a6b50' }}>Cargando apuestas...</p>
             </div>
           )}
         </div>

@@ -24,19 +24,19 @@ export default function RegisterPage() {
 
   // ── Input field helper ───────────────────────────────────
   const inputStyle = {
-    background: 'rgba(255,255,255,.06)',
+    background: 'rgba(255,255,255,.05)',
     border: '1px solid rgba(255,255,255,.1)',
     color: '#fff',
-    caretColor: '#ebc32b',
+    caretColor: '#86C873',
   }
   const onFocus = e => {
-    e.target.style.borderColor = 'rgba(235,195,43,.55)'
-    e.target.style.background  = 'rgba(235,195,43,.06)'
-    e.target.style.boxShadow   = '0 0 0 3px rgba(235,195,43,.1)'
+    e.target.style.borderColor = 'rgba(134,200,115,.55)'
+    e.target.style.background  = 'rgba(134,200,115,.06)'
+    e.target.style.boxShadow   = '0 0 0 3px rgba(134,200,115,.1)'
   }
   const onBlur = e => {
     e.target.style.borderColor = 'rgba(255,255,255,.1)'
-    e.target.style.background  = 'rgba(255,255,255,.06)'
+    e.target.style.background  = 'rgba(255,255,255,.05)'
     e.target.style.boxShadow   = 'none'
   }
 
@@ -58,29 +58,33 @@ export default function RegisterPage() {
         className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden px-4 py-8"
         style={{
           backgroundImage: [
-            'linear-gradient(160deg, rgba(5,9,15,.82) 0%, rgba(12,24,43,.88) 45%, rgba(5,9,15,.95) 100%)',
-            "url('./imgprode/fondo-banner.png')",
+            'linear-gradient(160deg, rgba(10,15,10,.82) 0%, rgba(17,24,17,.88) 45%, rgba(10,15,10,.95) 100%)',
+            "var(--bg-banner)",
           ].join(','),
           backgroundSize: 'cover',
           backgroundPosition: 'center 25%',
         }}
       >
-        {/* Gold glow */}
+        {/* Green glow */}
         <div className="absolute inset-0 pointer-events-none" style={{
-          background: 'radial-gradient(ellipse 55% 45% at 20% 25%, rgba(235,195,43,.16), transparent 55%)'
+          background: 'radial-gradient(ellipse 55% 45% at 20% 25%, rgba(134,200,115,.18), transparent 55%)'
         }} />
-        {/* Blue glow */}
+        {/* Deep glow */}
         <div className="absolute inset-0 pointer-events-none" style={{
-          background: 'radial-gradient(ellipse 50% 45% at 80% 75%, rgba(66,91,139,.28), transparent 55%)'
+          background: 'radial-gradient(ellipse 50% 45% at 80% 75%, rgba(58,125,68,.22), transparent 55%)'
         }} />
 
         {/* ── Logo / Brand ── */}
         <div className="relative z-10 flex flex-col items-center mb-6 rp-card">
-
           <img
-            src="./imgprode/one-prode-talento-new3.png"
-            alt="Prode Talento"
-            style={{ height: 52, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,.6))' }}
+            src="./imgprode/one-prode-blanco.png"
+            alt="ONE PRODE"
+            style={{
+              height: 'clamp(70px, 20vw, 110px)',
+              width: 'auto',
+              display: 'block',
+              filter: 'drop-shadow(0 4px 25px rgba(134,200,115,0.65)) drop-shadow(0 0 4px rgba(255,255,255,0.95))',
+            }}
           />
         </div>
 
@@ -89,27 +93,27 @@ export default function RegisterPage() {
           className="rp-card relative z-10 w-full"
           style={{
             maxWidth: 420,
-            background: 'linear-gradient(160deg, rgba(12,24,43,.92) 0%, rgba(5,9,15,.96) 100%)',
-            border: '1px solid rgba(235,195,43,.25)',
+            background: 'linear-gradient(160deg, rgba(17,24,17,.94) 0%, rgba(10,15,10,.98) 100%)',
+            border: '1px solid rgba(134,200,115,.28)',
             borderRadius: 20,
-            boxShadow: '0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(235,195,43,.08), inset 0 1px 0 rgba(255,255,255,.05)',
+            boxShadow: '0 32px 80px rgba(0,0,0,.65), 0 0 0 1px rgba(134,200,115,.08), inset 0 1px 0 rgba(255,255,255,.05)',
             backdropFilter: 'blur(24px)',
             animationDelay: '.1s',
           }}
         >
-          {/* Gold top accent */}
+          {/* Green top accent */}
           <div className="rounded-t-[20px] h-0.5 w-full"
-            style={{ background: 'linear-gradient(90deg, transparent, #ebc32b 30%, #ebc32b 70%, transparent)' }} />
+            style={{ background: 'linear-gradient(90deg, transparent, #86C873 30%, #86C873 70%, transparent)' }} />
 
-          <div className="px-8 py-8">
+          <div className="px-5 py-6 sm:px-8 sm:py-8">
 
             {done ? (
               /* ══ ESTADO: REGISTRO EXITOSO ══════════════════════════ */
               <div className="text-center py-4">
                 {/* Check ring */}
                 <div className="rp-pop w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center"
-                  style={{ background: 'linear-gradient(135deg, rgba(235,195,43,.25), rgba(235,195,43,.1))', border: '2px solid rgba(235,195,43,.5)', boxShadow: '0 0 0 6px rgba(235,195,43,.08)' }}>
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  style={{ background: 'linear-gradient(135deg, rgba(134,200,115,.25), rgba(134,200,115,.1))', border: '2px solid rgba(134,200,115,.5)', boxShadow: '0 0 0 6px rgba(134,200,115,.08)' }}>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#86C873" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
@@ -119,22 +123,25 @@ export default function RegisterPage() {
                 </h2>
 
                 <p className="font-body text-sm leading-relaxed mb-2 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.55)' }}>
-                  Tu cuenta está <strong style={{ color: '#ebc32b' }}>pendiente de aprobación</strong> por el administrador.
+                  Tu cuenta está <strong style={{ color: '#86C873' }}>pendiente de aprobación</strong> por el administrador.
+                </p>
+                <p className="font-body text-sm leading-relaxed mb-2 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.55)' }}>
+                  Revisá tu <strong style={{ color: '#86C873' }}>correo electrónico</strong> y hacé clic en el enlace para confirmar tu registro.
                 </p>
                 <p className="font-body text-sm leading-relaxed mb-8 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.4)' }}>
-                  Te avisaremos cuando esté activa y ya puedas ingresar.
+                  Si no lo encontrás, revisá la carpeta de spam o correo no deseado. Te avisaremos cuando tu cuenta esté activa.
                 </p>
 
                 {/* Divider */}
                 <div className="h-px mb-6 mx-auto w-3/4"
-                  style={{ background: 'linear-gradient(90deg, transparent, rgba(235,195,43,.2), transparent)' }} />
+                  style={{ background: 'linear-gradient(90deg, transparent, rgba(134,200,115,.2), transparent)' }} />
 
                 <Link
                   to="/login"
                   className="inline-flex items-center gap-2 font-body font-bold text-sm px-6 py-3 rounded-full transition-all"
-                  style={{ background: '#ebc32b', color: '#05090f', textDecoration: 'none', boxShadow: '0 6px 20px rgba(235,195,43,.28)' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-1px)' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = '' }}
+                  style={{ background: 'linear-gradient(135deg,#86C873,#5A9E4A)', color: '#0a0f0a', textDecoration: 'none', boxShadow: '0 6px 20px rgba(134,200,115,.28)' }}
+                  onMouseEnter={e => { e.currentTarget.style.filter = 'brightness(1.1)'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.filter = 'none'; e.currentTarget.style.transform = '' }}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
@@ -149,12 +156,12 @@ export default function RegisterPage() {
                 {/* Card header */}
                 <div className="mb-7">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 rp-pulse" />
-                    <span className="font-body text-xs uppercase tracking-widest font-bold" style={{ color: 'rgba(235,195,43,.7)' }}>
-                      Mundial 2026
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 rp-pulse" style={{ background: '#86C873', boxShadow: '0 0 8px #86C873' }} />
+                    <span className="font-body text-xs uppercase tracking-widest font-bold" style={{ color: '#86C873', textShadow: '0 0 10px rgba(134,200,115,0.2)' }}>
+                      PRODE LUIS BARRIONUEVO
                     </span>
                   </div>
-                  <h1 className="font-display leading-none" style={{ fontSize: '2.6rem', color: '#fff', letterSpacing: '.03em' }}>
+                  <h1 className="font-display leading-none" style={{ fontSize: 'clamp(1.8rem, 6vw, 2.6rem)', color: '#fff', letterSpacing: '.03em' }}>
                     CREAR CUENTA
                   </h1>
                   <p className="font-body text-sm mt-1.5" style={{ color: 'rgba(255,255,255,.45)' }}>
@@ -163,7 +170,7 @@ export default function RegisterPage() {
                 </div>
 
                 {/* Divider */}
-                <div className="h-px mb-7" style={{ background: 'linear-gradient(90deg, transparent, rgba(235,195,43,.2) 50%, transparent)' }} />
+                <div className="h-px mb-7" style={{ background: 'linear-gradient(90deg, transparent, rgba(134,200,115,.2) 50%, transparent)' }} />
 
                 <form onSubmit={handleSubmit} className="space-y-4">
 
@@ -171,7 +178,7 @@ export default function RegisterPage() {
                   <div>
                     <label htmlFor="nombre"
                       className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
-                      style={{ color: 'rgba(235,195,43,.8)' }}>
+                      style={{ color: 'rgba(255,255,255,.7)' }}>
                       Nombre completo
                     </label>
                     <input
@@ -194,7 +201,7 @@ export default function RegisterPage() {
                   <div>
                     <label htmlFor="email"
                       className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
-                      style={{ color: 'rgba(235,195,43,.8)' }}>
+                      style={{ color: 'rgba(255,255,255,.7)' }}>
                       Email
                     </label>
                     <input
@@ -216,7 +223,7 @@ export default function RegisterPage() {
                   <div>
                     <label htmlFor="password"
                       className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
-                      style={{ color: 'rgba(235,195,43,.8)' }}>
+                      style={{ color: 'rgba(255,255,255,.7)' }}>
                       Contraseña
                     </label>
                     <input
@@ -242,7 +249,7 @@ export default function RegisterPage() {
                   {error && (
                     <div className="flex items-start gap-2.5 px-4 py-3 rounded-xl font-body text-sm"
                       style={{ background: 'rgba(184,69,46,.12)', border: '1px solid rgba(184,69,46,.35)', color: '#e07050' }}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-px">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-px">
                         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                       </svg>
                       <span>{error}</span>
@@ -254,9 +261,9 @@ export default function RegisterPage() {
                     type="submit"
                     disabled={loading}
                     className="w-full font-body font-bold text-base py-4 rounded-full flex items-center justify-center gap-2 transition-all mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ background: '#ebc32b', color: '#05090f', boxShadow: '0 8px 28px rgba(235,195,43,.3)' }}
-                    onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(235,195,43,.45)' } }}
-                    onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(235,195,43,.3)' } }}
+                    style={{ background: 'linear-gradient(135deg,#86C873,#5A9E4A)', color: '#0a0f0a', boxShadow: '0 8px 28px rgba(134,200,115,.3)' }}
+                    onMouseEnter={e => { if (!loading) { e.currentTarget.style.filter = 'brightness(1.1)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(134,200,115,.5)' } }}
+                    onMouseLeave={e => { if (!loading) { e.currentTarget.style.filter = 'none'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(134,200,115,.3)' } }}
                   >
                     {loading ? (
                       <>
@@ -286,7 +293,7 @@ export default function RegisterPage() {
                   to="/login"
                   className="block w-full font-body font-semibold text-sm py-3.5 rounded-full text-center transition-all"
                   style={{ border: '1px solid rgba(255,255,255,.18)', color: 'rgba(255,255,255,.7)', textDecoration: 'none' }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(235,195,43,.5)'; e.currentTarget.style.color = '#ebc32b'; e.currentTarget.style.background = 'rgba(235,195,43,.06)' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(134,200,115,.5)'; e.currentTarget.style.color = '#86C873'; e.currentTarget.style.background = 'rgba(134,200,115,.06)' }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.18)'; e.currentTarget.style.color = 'rgba(255,255,255,.7)'; e.currentTarget.style.background = 'transparent' }}
                 >
                   Ya tengo cuenta — Iniciar sesión
@@ -302,7 +309,7 @@ export default function RegisterPage() {
             <Link to="/"
               className="font-body text-sm flex items-center gap-1.5 transition-colors"
               style={{ color: 'rgba(255,255,255,.38)', textDecoration: 'none' }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#ebc32b' }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#86C873' }}
               onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,.38)' }}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>

@@ -275,7 +275,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
           <div className="p-6 border-b border-white/10 bg-gradient-to-r from-yellow-500/10 to-transparent flex-shrink-0">
             <div className="text-[10px] font-bold tracking-[0.2em] text-yellow-400 uppercase mb-2.5 flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
-              Mundial 2026
+              PRODE CAMIONERO
             </div>
             <h2 className="text-xl font-extrabold leading-tight text-white">{bet.titulo}</h2>
           </div>

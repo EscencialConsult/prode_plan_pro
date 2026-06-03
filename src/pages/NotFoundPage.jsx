@@ -48,15 +48,15 @@ export default function NotFoundPage() {
             className="w-full sm:w-auto sm:min-w-[200px] text-center font-body font-bold px-7 py-3.5 rounded-lg text-sm transition-all"
             style={{
               background: 'linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-bright) 100%)',
-              color: '#020F27',
-              boxShadow: '0 6px 24px rgba(34,217,223,0.35)',
+              color: '#0a0f0a',
+              boxShadow: '0 6px 24px rgba(134,200,115,0.35)',
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.boxShadow = '0 8px 32px rgba(34,217,223,0.55)'
+              e.currentTarget.style.boxShadow = '0 8px 32px rgba(134,200,115,0.55)'
               e.currentTarget.style.transform = 'translateY(-1px)'
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.boxShadow = '0 6px 24px rgba(34,217,223,0.35)'
+              e.currentTarget.style.boxShadow = '0 6px 24px rgba(134,200,115,0.35)'
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
@@ -68,16 +68,16 @@ export default function NotFoundPage() {
             className="w-full sm:w-auto sm:min-w-[200px] text-center font-body font-semibold px-7 py-3.5 rounded-lg text-sm transition-all"
             style={{
               background: 'transparent',
-              border: '1px solid rgba(34,217,223,0.4)',
+              border: '1px solid rgba(134,200,115,0.4)',
               color: 'var(--color-accent)',
             }}
             onMouseEnter={e => {
-              e.currentTarget.style.background = 'rgba(34,217,223,0.08)'
-              e.currentTarget.style.borderColor = 'rgba(34,217,223,0.6)'
+              e.currentTarget.style.background = 'rgba(134,200,115,0.08)'
+              e.currentTarget.style.borderColor = 'rgba(134,200,115,0.6)'
             }}
             onMouseLeave={e => {
               e.currentTarget.style.background = 'transparent'
-              e.currentTarget.style.borderColor = 'rgba(34,217,223,0.4)'
+              e.currentTarget.style.borderColor = 'rgba(134,200,115,0.4)'
             }}
           >
             Ir al dashboard

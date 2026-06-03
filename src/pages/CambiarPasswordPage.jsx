@@ -22,7 +22,7 @@ const LABEL_STYLE = {
   fontWeight: 700,
   textTransform: 'uppercase',
   letterSpacing: '.06em',
-  color: '#5f6e8a',
+  color: '#4a6b50',
   marginBottom: '.4rem',
 }
 
@@ -30,10 +30,10 @@ const INPUT_STYLE = {
   width: '100%',
   padding: '.8rem .9rem',
   borderRadius: 10,
-  border: '1px solid #e3ddcf',
+  border: '1px solid #c8d9c4',
   background: '#fff',
   fontSize: '.9rem',
-  color: '#0c182b',
+  color: '#111811',
   outline: 'none',
   transition: 'border-color .15s, box-shadow .15s',
 }
@@ -58,11 +58,11 @@ function CampoPassword({ id, label, value, onChange, autoComplete, autoFocus, vi
         disabled={disabled}
         style={INPUT_STYLE}
         onFocus={e => {
-          e.target.style.borderColor = '#ebc32b'
-          e.target.style.boxShadow = '0 0 0 3px rgba(235,195,43,.15)'
+          e.target.style.borderColor = '#86C873'
+          e.target.style.boxShadow = '0 0 0 3px rgba(134,200,115,.15)'
         }}
         onBlur={e => {
-          e.target.style.borderColor = '#e3ddcf'
+          e.target.style.borderColor = '#c8d9c4'
           e.target.style.boxShadow = 'none'
         }}
       />
@@ -137,7 +137,7 @@ export default function CambiarPasswordPage() {
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '.4rem',
             fontSize: '.7rem', fontWeight: 700, textTransform: 'uppercase',
-            letterSpacing: '.08em', color: '#c99f16', marginBottom: '.35rem',
+            letterSpacing: '.08em', color: '#5A9E4A', marginBottom: '.35rem',
           }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
@@ -147,11 +147,11 @@ export default function CambiarPasswordPage() {
           </div>
           <h1 style={{
             fontFamily: "'Bebas Neue', sans-serif",
-            fontSize: '2rem', color: '#0c182b', margin: 0, letterSpacing: '.02em',
+            fontSize: '2rem', color: '#111811', margin: 0, letterSpacing: '.02em',
           }}>
             Cambiar contraseña
           </h1>
-          <p style={{ fontSize: '.85rem', color: '#5f6e8a', margin: '.3rem 0 0' }}>
+          <p style={{ fontSize: '.85rem', color: '#4a6b50', margin: '.3rem 0 0' }}>
             Ingresá tu contraseña actual y elegí una nueva. No necesitás email.
           </p>
         </div>
@@ -159,9 +159,9 @@ export default function CambiarPasswordPage() {
         {/* Tarjeta */}
         <div style={{
           background: '#fff',
-          border: '1px solid #efe9da',
+          border: '1px solid #d4e6d0',
           borderRadius: 16,
-          boxShadow: '0 12px 32px rgba(12,24,43,.08)',
+          boxShadow: '0 12px 32px rgba(17,24,17,.08)',
           padding: '1.5rem',
         }}>
           {done ? (
@@ -175,17 +175,17 @@ export default function CambiarPasswordPage() {
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
-              <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.5rem', color: '#0c182b', margin: '0 0 .4rem' }}>
+              <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.5rem', color: '#111811', margin: '0 0 .4rem' }}>
                 ¡Contraseña actualizada!
               </h2>
-              <p style={{ fontSize: '.85rem', color: '#5f6e8a', margin: '0 0 1.3rem' }}>
+              <p style={{ fontSize: '.85rem', color: '#4a6b50', margin: '0 0 1.3rem' }}>
                 Tu nueva contraseña ya está activa. Seguís con la sesión iniciada.
               </p>
               <div style={{ display: 'flex', gap: '.6rem', justifyContent: 'center' }}>
                 <button
                   onClick={() => navigate('/dashboard')}
                   style={{
-                    background: '#0c182b', color: '#fff', border: 'none', borderRadius: 999,
+                    background: '#111811', color: '#fff', border: 'none', borderRadius: 999,
                     padding: '.65rem 1.4rem', fontSize: '.8rem', fontWeight: 700, cursor: 'pointer',
                   }}
                 >
@@ -194,7 +194,7 @@ export default function CambiarPasswordPage() {
                 <button
                   onClick={() => setDone(false)}
                   style={{
-                    background: 'transparent', color: '#5f6e8a', border: '1px solid #e3ddcf',
+                    background: 'transparent', color: '#4a6b50', border: '1px solid #c8d9c4',
                     borderRadius: 999, padding: '.65rem 1.4rem', fontSize: '.8rem', fontWeight: 600, cursor: 'pointer',
                   }}
                 >
@@ -216,7 +216,7 @@ export default function CambiarPasswordPage() {
                 disabled={loading}
               />
 
-              <div style={{ height: 1, background: '#f0ecdf' }} />
+              <div style={{ height: 1, background: '#e2eede' }} />
 
               <CampoPassword
                 id="pwd-nueva"
@@ -240,12 +240,12 @@ export default function CambiarPasswordPage() {
 
               {/* Mostrar/ocultar + ayuda */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <label style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', fontSize: '.78rem', color: '#5f6e8a', cursor: 'pointer' }}>
+                <label style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem', fontSize: '.78rem', color: '#4a6b50', cursor: 'pointer' }}>
                   <input
                     type="checkbox"
                     checked={verPass}
                     onChange={e => setVerPass(e.target.checked)}
-                    style={{ accentColor: '#ebc32b' }}
+                    style={{ accentColor: '#86C873' }}
                   />
                   Mostrar contraseñas
                 </label>
@@ -272,20 +272,20 @@ export default function CambiarPasswordPage() {
                 disabled={loading}
                 style={{
                   marginTop: '.2rem',
-                  background: loading ? '#d9c98f' : '#ebc32b',
-                  color: '#05090f', border: 'none', borderRadius: 999,
+                  background: loading ? '#8ebf7a' : '#86C873',
+                  color: '#0a0f0a', border: 'none', borderRadius: 999,
                   padding: '.85rem', fontSize: '.9rem', fontWeight: 700,
                   cursor: loading ? 'wait' : 'pointer',
                   display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem',
-                  boxShadow: '0 8px 24px rgba(235,195,43,.28)',
+                  boxShadow: '0 8px 24px rgba(134,200,115,.28)',
                   transition: 'background .15s',
                 }}
               >
                 {loading ? (
                   <>
                     <span style={{
-                      width: 15, height: 15, border: '2px solid rgba(5,9,15,.35)',
-                      borderTopColor: '#05090f', borderRadius: '50%',
+                      width: 15, height: 15, border: '2px solid rgba(10,15,10,.35)',
+                      borderTopColor: '#0a0f0a', borderRadius: '50%',
                       display: 'inline-block', animation: 'cpw-spin .7s linear infinite',
                     }} />
                     Guardando...

@@ -52,7 +52,7 @@ export default function PartidosPage() {
             <div className="bg-brand-grad rounded-[var(--radius-lg)] p-6 mb-6 text-white shadow-md animate-fade-in">
                 <h1 className="font-display text-4xl text-white">Partidos</h1>
                 <p className="text-white opacity-80 font-body text-sm mt-1">
-                    Tablas de grupos y fixture del Mundial 2026
+                    Tablas de grupos y fixture de PRODE CAMIONERO
                 </p>
             </div>
 

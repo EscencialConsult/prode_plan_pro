@@ -11,10 +11,10 @@
 
 
   const ESTADO = {
-    programado: { label:'Programado', color:'#5f6e8a', bg:'rgba(95,110,138,.07)', border:'rgba(95,110,138,.18)' },
+    programado: { label:'Programado', color:'#4a6b50', bg:'rgba(95,110,138,.07)', border:'rgba(95,110,138,.18)' },
     en_vivo:    { label:'EN VIVO',    color:'#e03252', bg:'rgba(224,50,82,.08)',  border:'rgba(224,50,82,.25)'  },
-    finalizado: { label:'Finalizado', color:'#c99f16', bg:'rgba(235,195,43,.08)', border:'rgba(235,195,43,.22)' },
-    cancelado:  { label:'Cancelado',  color:'#a8b2c4', bg:'rgba(168,178,196,.07)',border:'rgba(168,178,196,.2)' },
+    finalizado: { label:'Finalizado', color:'#5A9E4A', bg:'rgba(134,200,115,.08)', border:'rgba(134,200,115,.22)' },
+    cancelado:  { label:'Cancelado',  color:'#8aaa8e', bg:'rgba(168,178,196,.07)',border:'rgba(168,178,196,.2)' },
   }
   const FASES = {
     grupos:'Fase de grupos','16avos':'16avos de final',octavos:'Octavos',
@@ -23,31 +23,40 @@
 
   function Chip({ active, onClick, children }) {
     return (
-      <button onClick={onClick} style={{ padding:'.32rem .75rem', borderRadius:99, fontFamily:"'DM Sans',sans-serif", fontWeight:700, fontSize:'.72rem', textTransform:'uppercase', letterSpacing:'.05em', cursor:'pointer', transition:'all .15s', background:active?'#0c182b':'#fff', color:active?'#ebc32b':'#5f6e8a', border:active?'1px solid transparent':'1px solid #f0eadb', boxShadow:active?'0 2px 8px rgba(12,24,43,.18)':'none' }}>
+      <button onClick={onClick} style={{ padding:'.32rem .75rem', borderRadius:99, fontFamily:"'DM Sans',sans-serif", fontWeight:700, fontSize:'.72rem', textTransform:'uppercase', letterSpacing:'.05em', cursor:'pointer', transition:'all .15s', background:active?'#111811':'#fff', color:active?'#86C873':'#4a6b50', border:active?'1px solid transparent':'1px solid #c8dbcc', boxShadow:active?'0 2px 8px rgba(17,24,17,.18)':'none' }}>
         {children}
       </button>
     )
   }
   function TabBtn({ active, onClick, icon, label }) {
     return (
-      <button onClick={onClick} style={{ display:'flex', alignItems:'center', gap:'.4rem', padding:'.52rem 1.1rem', borderRadius:10, border:'none', fontFamily:"'DM Sans',sans-serif", fontWeight:700, fontSize:'.78rem', textTransform:'uppercase', letterSpacing:'.05em', cursor:'pointer', transition:'all .17s', background:active?'#0c182b':'transparent', color:active?'#ebc32b':'#5f6e8a', boxShadow:active?'0 2px 10px rgba(12,24,43,.2)':'none' }}>
-        {icon}{label}
+      <button
+        onClick={onClick}
+        className="tab-btn"
+        style={{
+          background: active ? '#111811' : 'transparent',
+          color: active ? '#86C873' : '#4a6b50',
+          boxShadow: active ? '0 2px 10px rgba(17,24,17,.2)' : 'none',
+        }}
+      >
+        {icon && <span className="hidden sm:inline-flex">{icon}</span>}
+        <span>{label}</span>
       </button>
     )
   }
 
   function PartidoCard({ match }) {
     const C = {
-      cream:    '#f7f1e1',
-      creamHi:  '#fcf8ec',
-      ink:      '#0a1226',
-      inkSoft:  '#1a2540',
-      steel:    '#5f6e8a',
-      mute:     '#a8b2c4',
-      line:     '#e7dec6',
-      gold:     '#d4a017',
-      goldHi:   '#ebc32b',
-      goldDeep: '#a87a0b',
+      cream:    '#e2eede',
+      creamHi:  '#f0f5ee',
+      ink:      '#0a0f0a',
+      inkSoft:  '#111811',
+      steel:    '#4a6b50',
+      mute:     '#8aaa8e',
+      line:     '#c8dbcc',
+      gold:     '#86C873',
+      goldHi:   '#86C873',
+      goldDeep: '#5A9E4A',
       red:      '#e03252',
     }
 
@@ -72,19 +81,19 @@
           border: `1px solid ${fin ? C.gold + '55' : C.line}`,
           boxShadow: fin
             ? `0 1px 0 ${C.line}, 0 18px 40px -22px ${C.gold}55`
-            : '0 1px 0 rgba(12,24,43,.04)',
+            : '0 1px 0 rgba(17,24,17,.04)',
         }}
         onMouseEnter={e => {
           e.currentTarget.style.transform = 'translateY(-2px)'
           e.currentTarget.style.boxShadow = fin
             ? `0 1px 0 ${C.line}, 0 18px 40px -22px ${C.gold}55`
-            : '0 8px 22px rgba(12,24,43,.09)'
+            : '0 8px 22px rgba(17,24,17,.09)'
         }}
         onMouseLeave={e => {
           e.currentTarget.style.transform = 'none'
           e.currentTarget.style.boxShadow = fin
             ? `0 1px 0 ${C.line}, 0 18px 40px -22px ${C.gold}55`
-            : '0 1px 0 rgba(12,24,43,.04)'
+            : '0 1px 0 rgba(17,24,17,.04)'
         }}
       >
         {fin && (
@@ -197,7 +206,7 @@
                     borderRadius: 3,
                     border: `1px solid ${C.line}`,
                     flexShrink: 0,
-                    boxShadow: '0 1px 3px rgba(12,24,43,.08)',
+                    boxShadow: '0 1px 3px rgba(17,24,17,.08)',
                   }}
                 />
               ) : (
@@ -318,7 +327,7 @@
                     borderRadius: 3,
                     border: `1px solid ${C.line}`,
                     flexShrink: 0,
-                    boxShadow: '0 1px 3px rgba(12,24,43,.08)',
+                    boxShadow: '0 1px 3px rgba(17,24,17,.08)',
                   }}
                 />
               ) : (
@@ -332,16 +341,16 @@
   }
 
   const C = {
-    cream:    '#f7f1e1',
-    creamHi:  '#fcf8ec',
-    ink:      '#0a1226',
-    inkSoft:  '#1a2540',
-    steel:    '#5f6e8a',
-    mute:     '#a8b2c4',
-    line:     '#e7dec6',
-    gold:     '#d4a017',
-    goldHi:   '#ebc32b',
-    goldDeep: '#a87a0b',
+    cream:    '#e2eede',
+    creamHi:  '#f0f5ee',
+    ink:      '#0a0f0a',
+    inkSoft:  '#111811',
+    steel:    '#4a6b50',
+    mute:     '#8aaa8e',
+    line:     '#c8dbcc',
+    gold:     '#86C873',
+    goldHi:   '#86C873',
+    goldDeep: '#5A9E4A',
     red:      '#e03252',
     green:    '#1b8a5a',
   }
@@ -428,7 +437,7 @@
     return (
       <div className="overflow-hidden rounded-[20px]" style={{ background: C.cream }}>
         <div
-          className="relative overflow-hidden px-6 py-5"
+          className="relative overflow-hidden px-4 sm:px-6 py-5"
           style={{
             background: `linear-gradient(120deg, ${C.ink} 0%, ${C.inkSoft} 60%, ${C.ink} 100%)`,
           }}
@@ -470,7 +479,7 @@
           </div>
         </div>
 
-        <div className="px-6 py-4" style={{ borderBottom: `1px solid ${C.line}` }}>
+        <div className="px-4 sm:px-6 py-4" style={{ borderBottom: `1px solid ${C.line}` }}>
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setGrupoSel(null)}
@@ -540,11 +549,11 @@
           </div>
         </div>
 
-        <div className="px-6 py-6">
+        <div className="px-4 sm:px-6 py-6">
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 400px), 1fr))',
               gap: '1.25rem',
             }}
           >
@@ -557,7 +566,7 @@
         </div>
 
         <div
-          className="flex items-center justify-between px-6 py-3"
+          className="flex items-center justify-between px-4 sm:px-6 py-3"
           style={{
             background: C.creamHi,
             borderTop: `1px solid ${C.line}`,
@@ -603,15 +612,15 @@
         style={{
           background: '#fff',
           border: `1px solid ${C.line}`,
-          boxShadow: '0 1px 0 rgba(12,24,43,.04)',
+          boxShadow: '0 1px 0 rgba(17,24,17,.04)',
         }}
         onMouseEnter={e => {
           e.currentTarget.style.transform = 'translateY(-2px)'
-          e.currentTarget.style.boxShadow = '0 8px 24px rgba(12,24,43,.12)'
+          e.currentTarget.style.boxShadow = '0 8px 24px rgba(17,24,17,.12)'
         }}
         onMouseLeave={e => {
           e.currentTarget.style.transform = 'none'
-          e.currentTarget.style.boxShadow = '0 1px 0 rgba(12,24,43,.04)'
+          e.currentTarget.style.boxShadow = '0 1px 0 rgba(17,24,17,.04)'
         }}
       >
         <div
@@ -709,25 +718,29 @@
                 >
                   Equipo
                 </th>
-                {['J', 'G', 'E', 'P', 'GF', 'GC', 'DIF', 'PTS'].map((h, i) => (
-                  <th
-                    key={h}
-                    style={{
-                      width: h === 'PTS' ? '46px' : h === 'DIF' ? '42px' : '32px',
-                      padding: '8px 2px',
-                      fontFamily: "'DM Sans',sans-serif",
-                      fontSize: '0.6rem',
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
-                      letterSpacing: '.1em',
-                      color: C.mute,
-                      textAlign: 'center',
-                      borderBottom: `1px solid ${C.line}`,
-                    }}
-                  >
-                    {h}
-                  </th>
-                ))}
+                {['J', 'G', 'E', 'P', 'GF', 'GC', 'DIF', 'PTS'].map((h) => {
+                  const isExtra = ['G', 'E', 'P', 'GF', 'GC'].includes(h);
+                  return (
+                    <th
+                      key={h}
+                      className={isExtra ? "hidden sm:table-cell" : ""}
+                      style={{
+                        width: h === 'PTS' ? '46px' : h === 'DIF' ? '42px' : '32px',
+                        padding: '8px 2px',
+                        fontFamily: "'DM Sans',sans-serif",
+                        fontSize: '0.6rem',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        letterSpacing: '.1em',
+                        color: C.mute,
+                        textAlign: 'center',
+                        borderBottom: `1px solid ${C.line}`,
+                      }}
+                    >
+                      {h}
+                    </th>
+                  );
+                })}
               </tr>
             </thead>
             <tbody>
@@ -829,6 +842,7 @@
                     {[s.j, s.g, s.e, s.p, s.gf, s.gc].map((v, idx) => (
                       <td
                         key={idx}
+                        className={idx > 0 ? "hidden sm:table-cell" : ""}
                         style={{
                           padding: '10px 2px',
                           textAlign: 'center',
@@ -943,6 +957,29 @@
           @keyframes din{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
           .din{animation:din .38s ease both}
           @keyframes skp{0%,100%{opacity:.7}50%{opacity:.3}}
+          .no-scrollbar::-webkit-scrollbar { display: none !important; }
+          .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+          .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.52rem 0.62rem;
+            border-radius: 10px;
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.17s;
+          }
+          @media(min-width: 640px) {
+            .tab-btn {
+              padding: 0.52rem 1.1rem;
+              font-size: 0.78rem;
+            }
+          }
         `}</style>
 
         <div style={{ maxWidth:1400, margin:'0 auto', padding:'2rem 1.5rem 3rem' }}>
@@ -955,27 +992,27 @@
     lineHeight:1,
     letterSpacing:'.02em',
   }}>
-    <span style={{color:'#0c182b'}}>CRONOGRAMA </span>
-    <span style={{color:'#ebc32b'}}>MUNDIALISTA</span>
+    <span style={{color:'#111811'}}>CRONOGRAMA </span>
+    <span style={{color:'#86C873'}}>MUNDIALISTA</span>
   </h1>
-  <p style={{ fontSize:'.84rem', color:'#5f6e8a', margin:0 }}>{matches?.length || 0} partidos del Mundial 2026</p>
+  <p style={{ fontSize:'.84rem', color:'#4a6b50', margin:0 }}>{matches?.length || 0} partidos de PRODE CAMIONERO</p>
 </div>
 
-          <div className="din" style={{ display:'flex', gap:'.3rem', padding:'.3rem', background:'#fff', border:'1px solid #f0eadb', borderRadius:14, width:'fit-content', marginBottom:'1.75rem', animationDelay:'40ms' }}>
+          <div className="din" style={{ display:'flex', gap:'.3rem', padding:'.3rem', background:'#fff', border:'1px solid #c8dbcc', borderRadius:14, width:'fit-content', maxWidth:'100%', marginBottom:'1.75rem', animationDelay:'40ms' }}>
             <TabBtn active={tab==='fixture'} onClick={()=>setTab('fixture')} label="Fixture"
               icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>}
             />
             <TabBtn active={tab==='grupos'} onClick={()=>setTab('grupos')} label="Grupos"
               icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>}
             />
-            <TabBtn active={tab==='Eliminatoria'} onClick={()=>setTab('Eliminatoria')} label="Eliminatoria"
+            <TabBtn active={tab==='Eliminatoria'} onClick={()=>setTab('Eliminatoria')} label="Eliminatorias"
               icon={<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>}
             />
           </div>
 
           {loading && (
             <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:'1rem' }}>
-              {[...Array(6)].map((_,i)=><div key={i} style={{ height:100, borderRadius:14, background:'#fff', border:'1px solid #f0eadb', animation:'skp 1.4s ease-in-out infinite' }}/>)}
+              {[...Array(6)].map((_,i)=><div key={i} style={{ height:100, borderRadius:14, background:'#fff', border:'1px solid #c8dbcc', animation:'skp 1.4s ease-in-out infinite' }}/>)}
             </div>
           )}
 
@@ -983,9 +1020,9 @@
             <div className="din">
               <div style={{ display:'flex', flexWrap:'wrap', gap:'.6rem', marginBottom:'1.5rem' }}>
                 <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar equipo..."
-                  style={{ padding:'.42rem .9rem', borderRadius:99, border:'1px solid #f0eadb', background:'#fff', fontFamily:"'DM Sans',sans-serif", fontSize:'.82rem', color:'#0c182b', outline:'none', minWidth:180 }}
-                  onFocus={e=>{ e.target.style.borderColor='rgba(235,195,43,.5)' }}
-                  onBlur={e=>{ e.target.style.borderColor='#f0eadb' }}/>
+                  style={{ padding:'.42rem .9rem', borderRadius:99, border:'1px solid #c8dbcc', background:'#fff', fontFamily:"'DM Sans',sans-serif", fontSize:'.82rem', color:'#111811', outline:'none', minWidth:180 }}
+                  onFocus={e=>{ e.target.style.borderColor='rgba(134,200,115,.5)' }}
+                  onBlur={e=>{ e.target.style.borderColor='#c8dbcc' }}/>
                 <div style={{ display:'flex', flexWrap:'wrap', gap:'.25rem' }}>
                   <Chip active={!faseFilter} onClick={()=>setFaseFilter('')}>Todas</Chip>
                   {fases.map(f=><Chip key={f} active={faseFilter===f} onClick={()=>setFaseFilter(f)}>{FASES[f]||f}</Chip>)}
@@ -996,11 +1033,11 @@
                 </div>
               </div>
               {filtered.length===0
-                ? <div style={{ borderRadius:18,padding:'3rem',textAlign:'center',background:'#fff',border:'1.5px dashed #f0eadb' }}><p style={{ fontWeight:600,color:'#5f6e8a',margin:0 }}>No hay partidos que coincidan</p></div>
+                ? <div style={{ borderRadius:18,padding:'3rem',textAlign:'center',background:'#fff',border:'1.5px dashed #c8dbcc' }}><p style={{ fontWeight:600,color:'#4a6b50',margin:0 }}>No hay partidos que coincidan</p></div>
                 : <div style={{ display:'flex', flexDirection:'column', gap:'2rem' }}>
                     {Object.entries(groups).map(([group,items])=>(
                       <div key={group}>
-                        <p style={{ fontSize:'.7rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.12em',color:'rgba(235,195,43,.85)',marginBottom:'.7rem' }}>{group}</p>
+                        <p style={{ fontSize:'.7rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.12em',color:'rgba(134,200,115,.85)',marginBottom:'.7rem' }}>{group}</p>
                         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(300px,1fr))', gap:'.8rem' }}>
                           {items.map(m=><PartidoCard key={m.id} match={m}/>)}
                         </div>

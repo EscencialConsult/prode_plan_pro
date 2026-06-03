@@ -10,6 +10,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage.jsx'
 import ResetPasswordPage  from './pages/ResetPasswordPage.jsx'
 import NotFoundPage       from './pages/NotFoundPage.jsx'
 import AdminPage          from './pages/AdminPage.jsx'
+import LuisBarrionuevoPage from './pages/LuisBarrionuevoPage.jsx'
 
 import DashboardPage       from './dashboard/DashboardPage.jsx'
 import BetsPage            from './dashboard/BetsPage.jsx'
@@ -33,6 +34,7 @@ export default function App() {
             <Route path="/register"         element={<RegisterPage />} />
             <Route path="/forgot-password"  element={<ForgotPasswordPage />} />
             <Route path="/reset-password"   element={<ResetPasswordPage />} />
+            <Route path="/luisbarrionuevo"  element={<LuisBarrionuevoPage />} />
             <Route path="/"                 element={<HomePage />} />
 
             {/* Usuario autenticado */}

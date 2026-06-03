@@ -20,7 +20,7 @@ const CSS = `
 @keyframes rk-in { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 @keyframes rk-shimmer { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
 .rk-in { animation: rk-in .28s ease both }
-.rk-sk { background:linear-gradient(90deg,rgba(12,24,43,.06) 25%,rgba(12,24,43,.1) 50%,rgba(12,24,43,.06) 75%);background-size:400px 100%;animation:rk-shimmer 1.4s ease infinite;border-radius:8px }
+.rk-sk { background:linear-gradient(90deg,rgba(17,24,17,.06) 25%,rgba(17,24,17,.1) 50%,rgba(17,24,17,.06) 75%);background-size:400px 100%;animation:rk-shimmer 1.4s ease infinite;border-radius:8px }
 `
 
 export default function RankingPageAdmin() {
@@ -71,10 +71,10 @@ export default function RankingPageAdmin() {
 
         {/* Header */}
         <div className="rk-in" style={{ marginBottom: '1.5rem' }}>
-          <h1 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(2.4rem,6vw,3.5rem)', color: '#0c182b', margin: '0 0 .3rem', lineHeight: 1, letterSpacing: '.02em' }}>
-            RANKING ADMIN
+          <h1 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(2.4rem,6vw,3.5rem)', color: '#111811', margin: '0 0 .3rem', lineHeight: 1, letterSpacing: '.02em' }}>
+            RANKING CAMIONERO
           </h1>
-          <p style={{ fontSize: '.84rem', color: '#5f6e8a', margin: 0 }}>
+          <p style={{ fontSize: '.84rem', color: '#4a6b50', margin: 0 }}>
             {sel ? `Detalles de "${sel.titulo}"` : `${bets.length} apuestas disponibles`}
           </p>
         </div>
@@ -87,8 +87,9 @@ export default function RankingPageAdmin() {
             ))}
 
             {!lb && bets.length === 0 && (
-              <div style={{ textAlign: 'center', padding: '3rem 1.5rem', background: '#fff', border: '1px solid #f0eadb', borderRadius: 14 }}>
-                <p style={{ fontWeight: 600, color: '#5f6e8a', margin: 0 }}>Sin apuestas creadas</p>
+              <div style={{ textAlign: 'center', padding: '3rem 1.5rem', background: '#fff', border: '1px solid #e2eede', borderRadius: 14 }}>
+                <img src="/imgprode/one-prode-placa.png" alt="" style={{ height: 65, margin: '0 auto 1rem' }} />
+                <p style={{ fontWeight: 600, color: '#4a6b50', margin: 0 }}>Sin apuestas creadas</p>
               </div>
             )}
 
@@ -103,17 +104,17 @@ export default function RankingPageAdmin() {
                     gap: '1.5rem',
                     padding: '1.2rem 1.5rem',
                     background: '#fff',
-                    border: '1px solid #f0eadb',
+                    border: '1px solid #e2eede',
                     borderRadius: 14,
                     cursor: 'pointer',
                     transition: 'all .2s',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#ebc32b'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(235,195,43,.15)' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#f0eadb'; e.currentTarget.style.boxShadow = 'none' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#86C873'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(134,200,115,.15)' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2eede'; e.currentTarget.style.boxShadow = 'none' }}
                 >
                   <div>
-                    <h3 style={{ fontWeight: 700, fontSize: '1rem', color: '#0c182b', margin: '0 0 .3rem' }}>{bet.titulo}</h3>
-                    <p style={{ fontSize: '.75rem', color: '#5f6e8a', margin: 0 }}>
+                    <h3 style={{ fontWeight: 700, fontSize: '1rem', color: '#111811', margin: '0 0 .3rem' }}>{bet.titulo}</h3>
+                    <p style={{ fontSize: '.75rem', color: '#4a6b50', margin: 0 }}>
                       {bet.participantes || 0} participantes · {bet.partidos_ids?.split(',').filter(Boolean).length || 0} partidos
                     </p>
                   </div>
@@ -125,13 +126,13 @@ export default function RankingPageAdmin() {
                       fontWeight: 700,
                       padding: '.3rem .7rem',
                       borderRadius: 99,
-                      background: activa ? 'rgba(34,197,94,.1)' : 'rgba(235,195,43,.1)',
-                      color: activa ? '#22c55e' : '#c99f16',
+                      background: activa ? 'rgba(34,197,94,.1)' : 'rgba(134,200,115,.1)',
+                      color: activa ? '#22c55e' : '#5A9E4A',
                     }}>
                       {activa ? 'ACTIVA' : bet.estado === 'finalizada' ? 'FINALIZADA' : 'CERRADA'}
                     </span>
                   </div>
-                  <div style={{ textAlign: 'right', color: '#5f6e8a' }}>→</div>
+                  <div style={{ textAlign: 'right', color: '#4a6b50' }}>→</div>
                 </div>
               )
             })}
@@ -145,7 +146,7 @@ export default function RankingPageAdmin() {
                 fontSize: '.85rem',
                 padding: '.5rem .9rem',
                 background: '#fff',
-                border: '1px solid #f0eadb',
+                border: '1px solid #e2eede',
                 borderRadius: 8,
                 cursor: 'pointer',
                 marginBottom: '1.5rem',
@@ -161,13 +162,14 @@ export default function RankingPageAdmin() {
                 ))}
               </div>
             ) : tabla.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '3rem', background: '#fff', border: '1px solid #f0eadb', borderRadius: 14 }}>
-                <p style={{ fontWeight: 600, color: '#5f6e8a' }}>Sin participantes todavía</p>
+              <div style={{ textAlign: 'center', padding: '3rem', background: '#fff', border: '1px solid #e2eede', borderRadius: 14 }}>
+                <img src="/imgprode/one-prode-gorro-blanco.png" alt="" style={{ height: 65, margin: '0 auto 1rem' }} />
+                <p style={{ fontWeight: 600, color: '#4a6b50' }}>Sin compañeros participando todavía</p>
               </div>
             ) : (
               <div style={{ display: 'grid', gap: '1.2rem' }}>
                 {tabla.map((u, idx) => (
-                  <div key={u.user_id} style={{ background: '#fff', border: '1px solid #f0eadb', borderRadius: 14, overflow: 'hidden' }}>
+                  <div key={u.user_id} style={{ background: '#fff', border: '1px solid #e2eede', borderRadius: 14, overflow: 'hidden' }}>
 
                     {/* Header del participante */}
                     <button
@@ -184,18 +186,18 @@ export default function RankingPageAdmin() {
                         cursor: 'pointer',
                         transition: 'all .2s',
                       }}
-                      onMouseEnter={e => e.currentTarget.style.background = '#fcfaf6'}
+                      onMouseEnter={e => e.currentTarget.style.background = '#f0f5ee'}
                       onMouseLeave={e => e.currentTarget.style.background = '#fff'}
                     >
-                      <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: '1.1rem', fontWeight: 700, color: '#0c182b' }}>{idx + 1}</span>
+                      <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: '1.1rem', fontWeight: 700, color: '#111811' }}>{idx + 1}</span>
 
                       <div style={{ textAlign: 'left', minWidth: 0 }}>
-                        <p style={{ fontWeight: 600, fontSize: '.95rem', color: '#0c182b', margin: '0 0 .2rem' }}>{u.nombre}</p>
-                        <p style={{ fontSize: '.75rem', color: '#5f6e8a', margin: 0 }}>{u.predicciones} predicciones</p>
+                        <p style={{ fontWeight: 600, fontSize: '.95rem', color: '#111811', margin: '0 0 .2rem' }}>{u.nombre}</p>
+                        <p style={{ fontSize: '.75rem', color: '#4a6b50', margin: 0 }}>{u.predicciones} predicciones</p>
                       </div>
 
                       <div style={{ display: 'flex', gap: '.4rem', justifyContent: 'center' }}>
-                        {[{ v: u.aciertos_exactos, c: '#22c55e' }, { v: u.aciertos_diferencia || 0, c: '#ebc32b' }].map((x, i) => (
+                        {[{ v: u.aciertos_exactos, c: '#22c55e' }, { v: u.aciertos_diferencia || 0, c: '#86C873' }].map((x, i) => (
                           x.v > 0 && (
                             <span key={i} style={{
                               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -209,15 +211,15 @@ export default function RankingPageAdmin() {
                         ))}
                       </div>
 
-                      <div style={{ textAlign: 'right', fontFamily: "'Bebas Neue',sans-serif", fontSize: '1.3rem', fontWeight: 700, color: '#0c182b' }}>
+                      <div style={{ textAlign: 'right', fontFamily: "'Bebas Neue',sans-serif", fontSize: '1.3rem', fontWeight: 700, color: '#111811' }}>
                         {u.puntos_totales}
                       </div>
                     </button>
 
                     {/* Predicciones expandidas */}
                     {expandedUser === u.user_id && (
-                      <div style={{ borderTop: '1px solid #f0eadb', padding: '1rem 1.5rem', background: '#fcfaf6' }}>
-                        <p style={{ fontSize: '.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#5f6e8a', margin: '0 0 1rem' }}>
+                      <div style={{ borderTop: '1px solid #e2eede', padding: '1rem 1.5rem', background: '#f0f5ee' }}>
+                        <p style={{ fontSize: '.75rem', fontWeight: 700, textTransform: 'uppercase', color: '#4a6b50', margin: '0 0 1rem' }}>
                           Predicciones ({predicciones[u.user_id]?.length || 0})
                         </p>
 
@@ -230,36 +232,36 @@ export default function RankingPageAdmin() {
                                 gap: '1rem',
                                 padding: '.8rem',
                                 background: '#fff',
-                                border: '1px solid #e8e3db',
+                                border: '1px solid #c8dbcc',
                                 borderRadius: 10,
                                 alignItems: 'center',
                               }}>
                                 <div style={{ minWidth: 0 }}>
-                                  <p style={{ fontSize: '.85rem', fontWeight: 600, color: '#0c182b', margin: '0 0 .2rem' }}>
+                                  <p style={{ fontSize: '.85rem', fontWeight: 600, color: '#111811', margin: '0 0 .2rem' }}>
                                     {pred.equipo_local} vs {pred.equipo_visitante}
                                   </p>
-                                  <p style={{ fontSize: '.7rem', color: '#5f6e8a', margin: 0 }}>
+                                  <p style={{ fontSize: '.7rem', color: '#4a6b50', margin: 0 }}>
                                     Jornada {pred.jornada} · {pred.fecha_partido ? new Date(pred.fecha_partido).toLocaleDateString('es-AR') : '—'}
                                   </p>
                                 </div>
 
                                 <div style={{ textAlign: 'center' }}>
-                                  <p style={{ fontSize: '.7rem', color: '#5f6e8a', margin: '0 0 .2rem' }}>Predicción</p>
-                                  <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: '1.2rem', fontWeight: 700, color: '#0c182b', margin: 0 }}>
+                                  <p style={{ fontSize: '.7rem', color: '#4a6b50', margin: '0 0 .2rem' }}>Predicción</p>
+                                  <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: '1.2rem', fontWeight: 700, color: '#111811', margin: 0 }}>
                                     {pred.pred_local}-{pred.pred_visitante}
                                   </p>
                                 </div>
 
                                 <div style={{ textAlign: 'center' }}>
-                                  <p style={{ fontSize: '.7rem', color: '#5f6e8a', margin: '0 0 .2rem' }}>Real</p>
-                                  <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: '1.2rem', fontWeight: 700, color: pred.goles_local == null ? '#a8b2c4' : '#0c182b', margin: 0 }}>
+                                  <p style={{ fontSize: '.7rem', color: '#4a6b50', margin: '0 0 .2rem' }}>Real</p>
+                                  <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: '1.2rem', fontWeight: 700, color: pred.goles_local == null ? '#8aaa8e' : '#111811', margin: 0 }}>
                                     {pred.goles_local != null ? `${pred.goles_local}-${pred.goles_visitante}` : '—'}
                                   </p>
                                 </div>
                               </div>
                             ))
                           ) : (
-                            <p style={{ fontSize: '.75rem', color: '#a8b2c4', textAlign: 'center', margin: 0 }}>Sin predicciones</p>
+                            <p style={{ fontSize: '.75rem', color: '#8aaa8e', textAlign: 'center', margin: 0 }}>Sin predicciones</p>
                           )}
                         </div>
                       </div>

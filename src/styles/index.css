@@ -5,25 +5,47 @@
 
 @import "tailwindcss";
 
-:root {
-  /* Backgrounds — navy profundo */
-  --color-bg:           #020F27;
-  --color-bg-2:         #071A3A;
-  --color-bg-3:         #0F2145;
-  --color-surface:      #0F2B4F;
-  --color-surface-2:    #17376A;
-  --color-border:       #1E3B6E;
-  --color-border-soft:  rgba(34, 217, 223, 0.12);
+@theme {
+  --color-slate-50: #f0f5ee;
+  --color-slate-100: #e2eede;
+  --color-slate-200: #c8dbcc;
+  --color-slate-300: #b8c0cc;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #4a6b50;
+  --color-slate-600: #3a5c3a;
+  --color-slate-700: #1e3020;
+  --color-slate-800: #161D17;
+  --color-slate-900: #111811;
 
-  /* Acento único — cyan premium */
-  --color-accent:       #22D9DF;
-  --color-accent-bright:#28FFFF;
-  --color-accent-dim:   #148B91;
-  --color-accent-glow:  rgba(34, 217, 223, 0.18);
-  --color-accent-soft:  rgba(34, 217, 223, 0.08);
+  --color-yellow-300: #A8E096;
+  --color-yellow-400: #86C873;
+  --color-yellow-500: #5A9E4A;
+  --color-yellow-600: #3A7D44;
+  --color-yellow-700: #1e3020;
+  
+  --color-blue-500: #86C873;
+  --color-blue-600: #5A9E4A;
+}
+
+:root {
+  /* Backgrounds — gris oscuro sindical */
+  --color-bg:           #0F1410;
+  --color-bg-2:         #161D17;
+  --color-bg-3:         #1C261D;
+  --color-surface:      #1E2B1F;
+  --color-surface-2:    #263328;
+  --color-border:       #2E402F;
+  --color-border-soft:  rgba(134, 200, 115, 0.12);
+
+  /* Acento único — verde claro sindical */
+  --color-accent:       #86C873;
+  --color-accent-bright:#A8E096;
+  --color-accent-dim:   #5A9E4A;
+  --color-accent-glow:  rgba(134, 200, 115, 0.20);
+  --color-accent-soft:  rgba(134, 200, 115, 0.08);
 
   /* Semánticos */
-  --color-success:      #22D9DF;
+  --color-success:      #86C873;
   --color-warn:         #F4B42A;
   --color-warn-dim:     rgba(244, 180, 42, 0.15);
   --color-danger:       #FF4D6D;
@@ -31,9 +53,9 @@
   --color-live:         #FF3D71;
 
   /* Texto */
-  --color-text:         #F0F4FF;
-  --color-text-muted:   #8499C2;
-  --color-text-faint:   #4A5F8A;
+  --color-text:         #F0F5EF;
+  --color-text-muted:   #8FAE88;
+  --color-text-faint:   #5A7854;
 
   /* Tipografía */
   --font-display:       'Bebas Neue', sans-serif;
@@ -50,12 +72,20 @@
   --shadow-md:          0 4px 20px rgba(0,0,0,0.6);
   --shadow-lg:          0 12px 40px rgba(0,0,0,0.7);
   --shadow-glow:        0 0 32px var(--color-accent-glow);
-  --shadow-glow-strong: 0 0 48px rgba(34, 217, 223, 0.35);
+  --shadow-glow-strong: 0 0 48px rgba(134, 200, 115, 0.35);
 
   /* Transiciones */
   --transition-fast:    150ms ease;
   --transition-base:    250ms ease;
   --transition-slow:    400ms ease;
+
+  --bg-banner: url('/imgprode/fondo-banner.png');
+}
+
+@media (max-width: 768px) {
+  :root {
+    --bg-banner: url('/imgprode/fondo-banner-mobile.png');
+  }
 }
 
 /* ── Reset & Base ─────────────────────────────────────── */
@@ -78,7 +108,16 @@ html {
 body:has(.sh-in) {
   min-height: unset;
   background-image: none;
-  background-color: #faf7f0;
+  background-color: #f0f5ee;
+}
+
+body:has(.sh-in) {
+  min-height: 100vh;
+  height: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background-image: none;
+  background-color: #f0f5ee;
 }
 
 #root {
@@ -215,22 +254,25 @@ a:hover {
    Agregar al final de src/styles/index.css
    ═══════════════════════════════════════════════════════════ */
 
-/* Paleta landing */
+/* Paleta landing — Verde claro + Grises sindicales */
 :root {
-  --lnd-navy-deep: #05090f;
-  --lnd-navy:      #0c182b;
-  --lnd-navy-soft: #18243f;
-  --lnd-blue-med:  #425b8b;
-  --lnd-blue-soft: #6e83ad;
-  --lnd-gold:      #ebc32b;
-  --lnd-gold-lt:   #f5d75a;
-  --lnd-gold-dk:   #c99f16;
-  --lnd-cream:     #faf7f0;
-  --lnd-cream-2:   #f0eadb;
-  --lnd-ink-700:   #2b3a5a;
-  --lnd-ink-500:   #5f6e8a;
-  --lnd-ink-300:   #a8b2c4;
+  --lnd-navy-deep: #0a0f0a;
+  --lnd-navy:      #111811;
+  --lnd-navy-soft: #1a241a;
+  --lnd-blue-med:  #3a5c3a;
+  --lnd-blue-soft: #5a825a;
+  --lnd-gold:      #86C873;
+  --lnd-gold-lt:   #A8E096;
+  --lnd-gold-dk:   #5A9E4A;
+  --lnd-cream:     #f0f5ee;
+  --lnd-cream-2:   #e2eede;
+  --lnd-ink-700:   #1e3020;
+  --lnd-ink-500:   #4a6b50;
+  --lnd-ink-300:   #8aaa8e;
   --lnd-red:       #b8452e;
+  --lnd-green-strong: #3A7D44;
+  --lnd-grey-bg:   #f4f7f4;
+  --lnd-grey-2:    #e8ede8;
 }
 
 /* Marquee strip */
@@ -285,7 +327,7 @@ body:has(.sh-in) {
   overflow-x: hidden;
   overflow-y: auto;
   background-image: none;
-  background-color: #faf7f0;
+  background-color: #f0f5ee;
 }
 
 #root:has(.sh-in) {
@@ -323,7 +365,7 @@ body:has(.sh-in) {
   min-height: 560px;
   background: #fff;
   border-radius: 20px;
-  border: 1px solid #f0eadb;
+  border: 1px solid #c8dbcc;
   box-shadow: 0 4px 32px rgba(12, 24, 43, .07);
   overflow: hidden;
 }
@@ -334,13 +376,13 @@ body:has(.sh-in) {
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #f0eadb;
+  border-right: 1px solid #c8dbcc;
   overflow: hidden;
   background: #fcfaf6;
 }
 .rk-left-header {
   padding: 16px 16px 10px;
-  border-bottom: 1px solid #f0eadb;
+  border-bottom: 1px solid #c8dbcc;
   flex-shrink: 0;
 }
 .rk-left-title {
@@ -373,7 +415,7 @@ body:has(.sh-in) {
   position: sticky;
   top: 0;
   z-index: 2;
-  border-bottom: 1px solid #f0eadb;
+  border-bottom: 1px solid #c8dbcc;
 }
 .rk-section-dot {
   width: 6px;
@@ -459,7 +501,7 @@ body:has(.sh-in) {
 }
 .rk-right::-webkit-scrollbar { width: 4px; }
 .rk-right::-webkit-scrollbar-track { background: transparent; }
-.rk-right::-webkit-scrollbar-thumb { background: #f0eadb; border-radius: 99px; }
+.rk-right::-webkit-scrollbar-thumb { background: #c8dbcc; border-radius: 99px; }
 
 /* ── Banner apuesta ── */
 .rk-banner {
@@ -587,7 +629,7 @@ body:has(.sh-in) {
 .rk-podio-action {
   margin-top: 8px;
   padding-top: 8px;
-  border-top: 1px dashed #f0eadb;
+  border-top: 1px dashed #c8dbcc;
   font-size: 10px;
   font-weight: 700;
   display: flex;
@@ -629,7 +671,7 @@ body:has(.sh-in) {
   gap: 6px;
 }
 .rk-detalle-body {
-  background: #faf7f0;
+  background: #f0f5ee;
   padding: 14px 16px 16px;
 }
 .rk-resumen-chips {
@@ -664,7 +706,7 @@ body:has(.sh-in) {
   gap: 8px;
   padding: 8px 10px;
   border-radius: 10px;
-  border: 1px solid #f0eadb;
+  border: 1px solid #c8dbcc;
   background: #fff;
   margin-bottom: 4px;
   transition: border-color .14s;
@@ -698,7 +740,7 @@ body:has(.sh-in) {
   height: 11px;
   object-fit: cover;
   border-radius: 2px;
-  border: 1px solid #f0eadb;
+  border: 1px solid #c8dbcc;
   flex-shrink: 0;
 }
 .rk-partido-meta {
@@ -734,7 +776,7 @@ body:has(.sh-in) {
 .rk-tabla {
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid #f0eadb;
+  border: 1px solid #c8dbcc;
   box-shadow: 0 1px 4px rgba(12, 24, 43, .05);
   margin-bottom: 12px;
 }
@@ -743,7 +785,7 @@ body:has(.sh-in) {
   grid-template-columns: 40px 1fr 108px 70px 18px;
   padding: 8px 16px;
   background: rgba(12, 24, 43, .03);
-  border-bottom: 1px solid #f0eadb;
+  border-bottom: 1px solid #c8dbcc;
   gap: 8px;
   align-items: center;
 }
@@ -881,7 +923,7 @@ body:has(.sh-in) {
   font-size: 10px;
   color: #5f6e8a;
   padding-top: 12px;
-  border-top: 1px solid #f0eadb;
+  border-top: 1px solid #c8dbcc;
   margin-top: 12px;
 }
 .rk-leyenda-item {
@@ -913,7 +955,7 @@ body:has(.sh-in) {
   letter-spacing: .07em;
   cursor: pointer;
   transition: all .15s;
-  border: 1px solid #f0eadb;
+  border: 1px solid #c8dbcc;
   background: #fff;
   color: #5f6e8a;
 }
@@ -951,8 +993,8 @@ body:has(.sh-in) {
   width: 100%;
   padding: 7px 10px 7px 30px;
   border-radius: 99px;
-  border: 1px solid #f0eadb;
-  background: #faf7f0;
+  border: 1px solid #c8dbcc;
+  background: #f0f5ee;
   font-family: 'DM Sans', sans-serif;
   font-size: 12px;
   color: #0c182b;
@@ -984,7 +1026,7 @@ body:has(.sh-in) {
 /* ── Responsive ── */
 @media (max-width: 860px) {
   .rk-shell { height: auto; flex-direction: column; min-height: unset; }
-  .rk-left  { width: 100%; border-right: none; border-bottom: 1px solid #f0eadb; max-height: 280px; }
+  .rk-left  { width: 100%; border-right: none; border-bottom: 1px solid #c8dbcc; max-height: 280px; }
   .rk-right { padding: 16px; }
 }
 @media (max-width: 600px) {

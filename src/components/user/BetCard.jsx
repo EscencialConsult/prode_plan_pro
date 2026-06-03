@@ -11,25 +11,25 @@ const STATE_STYLES = {
     bg: 'rgba(224,50,82,.1)',
   },
   abierta: {
-    border: 'rgba(66,91,139,.6)',
-    glow: '0 0 24px rgba(66,91,139,.15)',
+    border: 'rgba(58,125,68,.6)',
+    glow: '0 0 24px rgba(58,125,68,.15)',
     label: 'ABIERTA',
     color: '#7b9fd4',
-    bg: 'rgba(66,91,139,.18)',
+    bg: 'rgba(58,125,68,.18)',
   },
   finalizada: {
-    border: 'rgba(235,195,43,.35)',
-    glow: '0 0 24px rgba(235,195,43,.08)',
+    border: 'rgba(134,200,115,.35)',
+    glow: '0 0 24px rgba(134,200,115,.08)',
     label: 'FINALIZADA',
-    color: '#c99f16',
-    bg: 'rgba(235,195,43,.1)',
+    color: '#5A9E4A',
+    bg: 'rgba(134,200,115,.1)',
   },
   cerrada: {
-    border: 'rgba(30,59,110,.65)',
+    border: 'rgba(58,125,68,.4)',
     glow: 'none',
     label: 'CERRADA',
-    color: '#4a6899',
-    bg: 'rgba(30,59,110,.2)',
+    color: '#4a6b50',
+    bg: 'rgba(58,125,68,.1)',
   },
 }
 /* ── Ícono de trofeo (premio) ───────────────────────────── */
@@ -122,7 +122,7 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
     <div
       className="rounded-2xl overflow-hidden transition-all"
       style={{
-        background: 'linear-gradient(145deg, #0f2145 0%, #0a1830 100%)',
+        background: 'linear-gradient(145deg, #1C261D 0%, #0a150a 100%)',
         border: `1px solid ${style.border}`,
         boxShadow: `0 10px 30px rgba(0,0,0,0.35), ${style.glow}`,
       }}
@@ -132,7 +132,7 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
         {/* Header: título + badges de estado/tipo */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="min-w-0 flex-1">
-            <h3 className="font-display text-2xl md:text-3xl style={{ color: '#d0daf0' }} tracking-wide leading-tight truncate">
+            <h3 className="font-display text-2xl md:text-3xl tracking-wide leading-tight truncate" style={{ color: '#d0daf0' }}>
               {bet.titulo}
             </h3>
             <p className="text-xs text-[var(--color-text-muted)] font-body mt-1">
@@ -163,8 +163,8 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
             ) : (
               <Pill
                 color="var(--color-accent)"
-                bg="rgba(34,217,223,0.1)"
-                border="rgba(34,217,223,0.3)"
+                bg="rgba(134,200,115,0.1)"
+                border="rgba(134,200,115,0.3)"
               >
                 Individual
               </Pill>
@@ -178,8 +178,8 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
           <div
             className="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg"
             style={{
-              background: 'rgba(2,15,39,0.5)',
-              border: `1px solid ${isClosingSoon ? 'rgba(244,180,42,0.3)' : 'rgba(34,217,223,0.2)'}`,
+              background: 'rgba(10,21,10,0.5)',
+              border: `1px solid ${isClosingSoon ? 'rgba(244,180,42,0.3)' : 'rgba(134,200,115,0.2)'}`,
             }}
           >
             <div style={{ color: isClosingSoon ? 'var(--color-warn)' : 'var(--color-accent)' }}>
@@ -211,7 +211,7 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
                   key={match.id}
                   className="rounded-lg p-3"
                   style={{
-                    background: 'rgba(2,15,39,0.4)',
+                    background: 'rgba(10,21,10,0.4)',
                     border: `1px solid ${isMatchLive ? 'rgba(255,61,113,0.25)' : 'var(--color-border)'}`,
                   }}
                 >
@@ -219,8 +219,8 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
                   <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
                     <div className="flex items-center gap-2 min-w-0">
                       <Bandera url={match.bandera_local} alt={match.equipo_local} />
-                      <span className="font-body font-semibold  text-sm truncate">
-                        {match.equipo_local}style={{ color: '#d0daf0' }}
+                      <span className="font-body font-semibold text-sm truncate" style={{ color: '#d0daf0' }}>
+                        {match.equipo_local}
                       </span>
                     </div>
 
@@ -229,7 +229,7 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
                     </span>
 
                     <div className="flex items-center gap-2 min-w-0 justify-end">
-                      <span className="font-body font-semibold style={{ color: '#d0daf0' }} text-sm truncate text-right">
+                      <span className="font-body font-semibold text-sm truncate text-right" style={{ color: '#d0daf0' }}>
                         {match.equipo_visitante}
                       </span>
                       <Bandera url={match.bandera_visitante} alt={match.equipo_visitante} />
@@ -308,7 +308,7 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
               <p className="text-[10px] font-body font-bold uppercase tracking-[0.15em] text-[var(--color-warn)] mb-0.5">
                 Premio
               </p>
-              <p className="font-body font-semibold style={{ color: '#d0daf0' }} text-sm truncate">
+              <p className="font-body font-semibold text-sm truncate" style={{ color: '#d0daf0' }}>
                 {bet.premio}
               </p>
             </div>
@@ -325,21 +325,21 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
               background: open && puedeApostarGrupal
                 ? 'linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-bright) 100%)'
                 : 'transparent',
-              color: open && puedeApostarGrupal ? '#020F27' : 'var(--color-accent)',
-              border: open && puedeApostarGrupal ? 'none' : '1px solid rgba(34,217,223,0.4)',
-              boxShadow: open && puedeApostarGrupal ? '0 6px 20px rgba(34,217,223,0.3)' : 'none',
+              color: open && puedeApostarGrupal ? '#0F1410' : 'var(--color-accent)',
+              border: open && puedeApostarGrupal ? 'none' : '1px solid rgba(134,200,115,0.4)',
+              boxShadow: open && puedeApostarGrupal ? '0 6px 20px rgba(134,200,115,0.3)' : 'none',
             }}
             onMouseEnter={e => {
               if (open && puedeApostarGrupal) {
-                e.currentTarget.style.boxShadow = '0 8px 28px rgba(34,217,223,0.5)'
+                e.currentTarget.style.boxShadow = '0 8px 28px rgba(134,200,115,0.5)'
                 e.currentTarget.style.transform = 'translateY(-1px)'
               } else {
-                e.currentTarget.style.background = 'rgba(34,217,223,0.08)'
+                e.currentTarget.style.background = 'rgba(134,200,115,0.08)'
               }
             }}
             onMouseLeave={e => {
               if (open && puedeApostarGrupal) {
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(34,217,223,0.3)'
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(134,200,115,0.3)'
                 e.currentTarget.style.transform = 'translateY(0)'
               } else {
                 e.currentTarget.style.background = 'transparent'
