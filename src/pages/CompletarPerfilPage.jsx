@@ -154,7 +154,9 @@ export default function CompletarPerfilPage() {
                 COMPLETÁ<br />TU PERFIL
               </h1>
               <p className="font-body text-sm mt-2" style={{ color: 'rgba(255,255,255,.45)', lineHeight: 1.5 }}>
-                Antes de continuar, necesitamos que confirmes tus datos de contacto. Solo te lo pedimos una vez.
+                Bienvenido colega.
+
+Indícanos dónde deseas recibir la aceptación y las comunicaciones del juego. Te solicitamos este dato por única vez para gestionar correctamente tu participación y mantenerte informado durante todo el desarrollo del concurso.
               </p>
             </div>
 
@@ -276,7 +278,7 @@ export default function CompletarPerfilPage() {
         {/* ── Footer ── */}
         <div className="relative z-10 mt-6 cp-card" style={{ animationDelay: '.2s' }}>
           <p className="font-body text-xs text-center" style={{ color: 'rgba(255,255,255,.22)' }}>
-            Prohibida la participación de menores de 18 años. Juega con responsabilidad.
+            Condición de participación: podrán participar únicamente los profesionales matriculados en el Colegio de Graduados en Ciencias Económicas de Tucumán que posean Matrícula Profesional (MP) vigente y se encuentren al día con sus obligaciones institucionales.
           </p>
         </div>
 

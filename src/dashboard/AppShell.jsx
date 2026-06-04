@@ -232,7 +232,7 @@ export default function AppShell({ children }) {
                 src="/imgprode/colegio-logo-blanco.png"
                 alt="Prode Talento"
                 style={{
-                  height: 46,
+                  height: 70,
                   width: 'auto',
                   filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))',
                 }}

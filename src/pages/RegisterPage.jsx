@@ -100,7 +100,7 @@ export default function RegisterPage() {
           <img
             src="./imgprode/colegio-logo-blanco.png"
             alt="Prode Talento"
-            style={{ height: 66, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,.6))' }}
+            style={{ height: 110, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,.6))' }}
           />
         </div>
 
@@ -381,7 +381,7 @@ export default function RegisterPage() {
               Volver al inicio
             </Link>
             <p className="font-body text-xs" style={{ color: 'rgba(255,255,255,.22)' }}>
-              Prohibida la participación de menores de 18 años. Juega con responsabilidad.
+              Condición de participación: podrán participar únicamente los profesionales matriculados en el Colegio de Graduados en Ciencias Económicas de Tucumán que posean Matrícula Profesional (MP) vigente y se encuentren al día con sus obligaciones institucionales.
             </p>
           </div>
         )}

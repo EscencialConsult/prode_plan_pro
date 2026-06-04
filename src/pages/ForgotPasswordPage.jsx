@@ -250,7 +250,7 @@ export default function ForgotPasswordPage() {
         {/* ── Footer ── */}
         <div className="relative z-10 flex flex-col items-center gap-2 mt-6 lp-card" style={{ animationDelay: '.2s' }}>
           <p className="font-body text-xs" style={{ color: 'rgba(255,255,255,.22)' }}>
-            Prohibida la participación de menores de 18 años. Juega con responsabilidad.
+            Condición de participación: podrán participar únicamente los profesionales matriculados en el Colegio de Graduados en Ciencias Económicas de Tucumán que posean Matrícula Profesional (MP) vigente y se encuentren al día con sus obligaciones institucionales.
           </p>
         </div>
 
