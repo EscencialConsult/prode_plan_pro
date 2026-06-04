@@ -39,7 +39,7 @@ const MISTICA_PLAYERS = [
   {
     name: 'La Selección',
     role: 'El Abrazo de Gol',
-    phrase: 'En el sindicato jugamos en equipo. Reforzá la unión y sumá puntos junto a tus compañeros.',
+    phrase: 'En la Lista Verde jugamos en equipo. Reforzá la unión y sumá puntos junto a tus compañeros.',
     img: '/imgprode/stock/argentinagol.jpg',
     badge: '👥 TRABAJO EN EQUIPO',
   },

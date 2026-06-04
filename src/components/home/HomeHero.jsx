@@ -80,7 +80,7 @@ export default function HomeHero() {
               <div className="grid sm:grid-cols-3 gap-4 py-2">
                 {[
                   ['Moyano Conducción', 'Fuerza y Lealtad'],
-                  ['Más unión', 'El sindicato juega junto'],
+                  ['Más unión', 'Juntos por la victoria'],
                   ['Celeste y blanca', 'Pasión nacional'],
                 ].map(([label, sub]) => (
                   <div key={label} className="flex items-center gap-3">

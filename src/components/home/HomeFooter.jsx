@@ -127,7 +127,7 @@ export default function HomeFooter() {
             © 2026 ONE · Escencial · Sindicato de Camioneros Tucumán. Todos los derechos reservados.
           </span>
           <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: '.72rem', color: 'rgba(134,200,115,.3)', fontWeight: 600 }}>
-            V1.2.0
+            V1.3.0
           </span>
         </div>
       </div>
