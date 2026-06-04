@@ -98,7 +98,7 @@ export default function CompletarPerfilPage() {
         }} />
 
         {/* ── Logo ── */}
-        <div className="relative z-10 flex flex-col items-center mb-6 cp-card">
+        <div className="relative z-10 flex flex-col items-center mb-2 cp-card">
           <img
             src="./imgprode/colegio-logo-blanco.png"
             alt="Prode"

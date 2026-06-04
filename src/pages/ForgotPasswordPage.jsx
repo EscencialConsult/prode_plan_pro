@@ -61,7 +61,7 @@ export default function ForgotPasswordPage() {
         }} />
 
         {/* ── TOP: logo ── */}
-        <div className="relative z-10 flex flex-col items-center mb-6 lp-card">
+        <div className="relative z-10 flex flex-col items-center mb-2 lp-card">
           <img
             src="./imgprode/colegio-logo-blanco.png"
             alt="Prode Talento"
