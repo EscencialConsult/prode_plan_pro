@@ -2,11 +2,37 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import sheetsApi from '../services/sheetsApi.js'
 
+// Dominios mal escritos frecuentes → sugerencia correcta
+const TYPOS_EMAIL = {
+  'gmai.com': 'gmail.com', 'gmial.com': 'gmail.com', 'gamil.com': 'gmail.com', 'gnail.com': 'gmail.com',
+  'gmail.co': 'gmail.com', 'gmail.con': 'gmail.com', 'gmaill.com': 'gmail.com', 'gmail.cm': 'gmail.com',
+  'hotmai.com': 'hotmail.com', 'hotmial.com': 'hotmail.com', 'hotmil.com': 'hotmail.com', 'hotnail.com': 'hotmail.com',
+  'hotmail.co': 'hotmail.com', 'hotmail.con': 'hotmail.com', 'hotmail.cm': 'hotmail.com',
+  'outlok.com': 'outlook.com', 'outloo.com': 'outlook.com', 'outlook.co': 'outlook.com', 'outlook.con': 'outlook.com',
+  'yaho.com': 'yahoo.com', 'yahooo.com': 'yahoo.com', 'yahoo.co': 'yahoo.com',
+  'live.co': 'live.com', 'icloud.co': 'icloud.com',
+}
+
+// Devuelve un mensaje de error si el email es inválido, o null si está OK.
+function validarEmail(raw) {
+  const e = (raw || '').trim().toLowerCase()
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)) {
+    return 'Ingresá un email válido (ej: nombre@gmail.com)'
+  }
+  const dominio = e.split('@')[1]
+  if (TYPOS_EMAIL[dominio]) {
+    return `Revisá el email: ¿quisiste decir @${TYPOS_EMAIL[dominio]}?`
+  }
+  return null
+}
+
 export default function RegisterPage() {
   const [form, setForm]       = useState({ dni: '', nombre: '', email: '', telefono: '', password: '' })
   const [done, setDone]       = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState(null)
+  const [autoActivado, setAutoActivado] = useState(false)
+  const [showPass, setShowPass] = useState(false)
 
   function setField(field) {
     return e => setForm(p => ({ ...p, [field]: e.target.value }))
@@ -16,11 +42,42 @@ export default function RegisterPage() {
     e.preventDefault()
     setError(null)
 
-    // Validaciones en frontend
+    // Todos los campos son obligatorios — no se puede dejar nada vacío
+    if (!form.dni.trim() || !form.nombre.trim() || !form.email.trim() ||
+        !form.telefono.trim() || !form.password.trim()) {
+      setError('Completá todos los campos para continuar')
+      return
+    }
+
+    // ── Validación de TODOS los campos ──
+    // DNI: 7-8 dígitos
     if (!/^\d{7,8}$/.test(form.dni.trim())) {
       setError('El DNI debe tener 7 u 8 dígitos numéricos')
       return
     }
+    // Nombre completo: nombre + apellido, solo letras
+    const nombre = form.nombre.trim()
+    if (nombre.length < 3 || !/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s'.-]+$/.test(nombre)) {
+      setError('Ingresá tu nombre y apellido (solo letras)')
+      return
+    }
+    if (nombre.split(/\s+/).filter(Boolean).length < 2) {
+      setError('Ingresá nombre y apellido completos')
+      return
+    }
+    // Email: formato + typos comunes
+    const emailErr = validarEmail(form.email)
+    if (emailErr) {
+      setError(emailErr)
+      return
+    }
+    // Teléfono: entre 8 y 15 dígitos (admite +, espacios y guiones)
+    const telDigits = form.telefono.replace(/[\s()+-]/g, '')
+    if (!/^\d{8,15}$/.test(telDigits)) {
+      setError('Ingresá un teléfono válido (entre 8 y 15 números)')
+      return
+    }
+    // Contraseña: mínimo 6 caracteres
     if (form.password.length < 6) {
       setError('La contraseña debe tener al menos 6 caracteres')
       return
@@ -28,6 +85,17 @@ export default function RegisterPage() {
 
     setLoading(true)
     try {
+      // Validar el DNI contra el padrón (mensajes claros)
+      const estadoDni = await sheetsApi.auth.validarDniRegistro(form.dni.trim())
+      if (estadoDni === 'ya_registrado') {
+        setError('Ese DNI ya está registrado. Iniciá sesión con tu DNI.')
+        return
+      }
+      if (estadoDni === 'no_habilitado') {
+        setError('Tu DNI no está habilitado para registrarte. Contactá al sindicato.')
+        return
+      }
+
       await sheetsApi.auth.registro(
         form.dni.trim(),
         form.nombre.trim(),
@@ -35,6 +103,7 @@ export default function RegisterPage() {
         form.telefono.trim(),
         form.password
       )
+      setAutoActivado(estadoDni === 'habilitado')
       setDone(true)
     } catch (err) {
       setError(err.message || 'No se pudo completar el registro')
@@ -135,15 +204,23 @@ export default function RegisterPage() {
                 </div>
 
                 <h2 className="font-display leading-none mb-3" style={{ fontSize: '2.4rem', color: '#fff', letterSpacing: '.03em' }}>
-                  ¡REGISTRO ENVIADO!
+                  {autoActivado ? '¡CUENTA CREADA!' : '¡REGISTRO ENVIADO!'}
                 </h2>
 
-                <p className="font-body text-sm leading-relaxed mb-2 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.55)' }}>
-                  Tu cuenta está <strong style={{ color: '#ebc32b' }}>pendiente de aprobación</strong> por el administrador.
-                </p>
-                <p className="font-body text-sm leading-relaxed mb-8 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.4)' }}>
-                  Te avisaremos cuando esté activa y ya puedas ingresar.
-                </p>
+                {autoActivado ? (
+                  <p className="font-body text-sm leading-relaxed mb-8 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.55)' }}>
+                    Tu cuenta ya está <strong style={{ color: '#ebc32b' }}>activa</strong>. Ya podés iniciar sesión con tu DNI y contraseña.
+                  </p>
+                ) : (
+                  <>
+                    <p className="font-body text-sm leading-relaxed mb-2 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.55)' }}>
+                      Tu cuenta está <strong style={{ color: '#ebc32b' }}>pendiente de aprobación</strong> por el administrador.
+                    </p>
+                    <p className="font-body text-sm leading-relaxed mb-8 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.4)' }}>
+                      Te avisaremos cuando esté activa y ya puedas ingresar.
+                    </p>
+                  </>
+                )}
 
                 {/* Divider */}
                 <div className="h-px mb-6 mx-auto w-3/4"
@@ -290,20 +367,43 @@ export default function RegisterPage() {
                       style={{ color: 'rgba(235,195,43,.8)' }}>
                       Contraseña
                     </label>
-                    <input
-                      id="reg-password"
-                      type="password"
-                      value={form.password}
-                      onChange={setField('password')}
-                      placeholder="••••••••"
-                      required
-                      minLength={6}
-                      autoComplete="new-password"
-                      className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
-                      style={inputStyle}
-                      onFocus={onFocus}
-                      onBlur={onBlur}
-                    />
+                    <div className="relative">
+                      <input
+                        id="reg-password"
+                        type={showPass ? 'text' : 'password'}
+                        value={form.password}
+                        onChange={setField('password')}
+                        placeholder="••••••••"
+                        required
+                        minLength={6}
+                        autoComplete="new-password"
+                        className="w-full pl-4 pr-12 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
+                        style={inputStyle}
+                        onFocus={onFocus}
+                        onBlur={onBlur}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPass(s => !s)}
+                        aria-label={showPass ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md"
+                        style={{ color: 'rgba(255,255,255,.45)' }}
+                        onMouseEnter={e => { e.currentTarget.style.color = '#ebc32b' }}
+                        onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,.45)' }}
+                      >
+                        {showPass ? (
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                            <line x1="1" y1="1" x2="23" y2="23" />
+                          </svg>
+                        ) : (
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
                     <p className="font-body text-xs mt-1.5" style={{ color: 'rgba(255,255,255,.28)' }}>
                       Mínimo 6 caracteres
                     </p>

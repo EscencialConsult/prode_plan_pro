@@ -369,6 +369,17 @@ const auth = {
   },
 
   /**
+   * Valida un DNI contra el padrón antes de registrar (para mensajes claros).
+   * Devuelve: 'ya_registrado' | 'sin_padron' | 'habilitado' | 'no_habilitado'.
+   * Ante error, devuelve 'sin_padron' para no bloquear (la BD igual valida).
+   */
+  validarDniRegistro: async (dni) => {
+    const { data, error } = await supabase.rpc('validar_dni_registro', { p_dni: String(dni).trim() })
+    if (error) return 'sin_padron'
+    return data || 'sin_padron'
+  },
+
+  /**
    * Recuperación de contraseña por DNI.
    * 1. Busca el email real del usuario a través de la RPC pública.
    * 2. Llama resetPasswordForEmail con ese email real.
