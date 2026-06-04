@@ -980,6 +980,42 @@ const predicciones = {
       esta_en_top: estaEnTop,
     }
   },
+
+  /**
+   * Ranking global acumulado: suma de puntos de TODAS las apuestas
+   * cerradas/finalizadas para el usuario actual.
+   *
+   * Lee UNA sola fila de ranking_global_cache (O(log n) con índice único).
+   * El caché se actualiza automáticamente cada vez que el AppScript corre
+   * refrescar_rankings_por_partidos (cada 5 minutos).
+   *
+   * @param {{ user_id?: string }} opciones
+   */
+  rankingGlobal: async (opciones = {}) => {
+    const currentUserId = opciones.user_id || ''
+    if (!currentUserId) return { ok: true, total: 0, mi_posicion: null }
+
+    // Dos queries en paralelo: mi fila + total de participantes (head only)
+    const [miRowResult, totalResult] = await Promise.all([
+      supabase
+        .from('ranking_global_cache')
+        .select('*')
+        .eq('user_id', currentUserId)
+        .maybeSingle(),
+      supabase
+        .from('ranking_global_cache')
+        .select('*', { count: 'exact', head: true }),
+    ])
+
+    checkError(miRowResult.error, 'predicciones.rankingGlobal (mi_posicion)')
+    checkError(totalResult.error, 'predicciones.rankingGlobal (total)')
+
+    return {
+      ok: true,
+      total: totalResult.count || 0,
+      mi_posicion: miRowResult.data || null,
+    }
+  },
 }
 
 // ── grupos (selecciones agrupadas por letra) ──────────────
