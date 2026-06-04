@@ -1948,6 +1948,10 @@ GRANT INSERT ON public.auditoria TO authenticated;
 -- config (si la consulta el frontend)
 GRANT SELECT ON public.config TO authenticated;
 
+GRANT INSERT ON public.apuestas TO authenticated;
+
+GRANT INSERT ON public.apuesta_partidos TO authenticated;
+
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 
