@@ -954,6 +954,63 @@ const predicciones = {
       mi_posicion: miRowResult.data || null,
     }
   },
+
+  /**
+   * Tabla completa del ranking global acumulado.
+   * Lee el top N de ranking_global_cache ordenado por posición,
+   * más la fila del usuario actual (para mostrar su posición aunque no esté en el top).
+   *
+   * @param {{ user_id?: string, limit?: number }} opciones
+   */
+  rankingGlobalTabla: async (opciones = {}) => {
+    const currentUserId = opciones.user_id || ''
+    const limit = Math.min(parseInt(opciones.limit) || 50, 200)
+
+    const [tablaResult, totalResult, miRowResult] = await Promise.all([
+      supabase
+        .from('ranking_global_cache')
+        .select('*')
+        .order('posicion', { ascending: true })
+        .limit(limit),
+      supabase
+        .from('ranking_global_cache')
+        .select('*', { count: 'exact', head: true }),
+      currentUserId
+        ? supabase
+            .from('ranking_global_cache')
+            .select('*')
+            .eq('user_id', currentUserId)
+            .maybeSingle()
+        : Promise.resolve({ data: null, error: null }),
+    ])
+
+    checkError(tablaResult.error, 'predicciones.rankingGlobalTabla (tabla)')
+    checkError(totalResult.error, 'predicciones.rankingGlobalTabla (total)')
+    checkError(miRowResult.error, 'predicciones.rankingGlobalTabla (mi_posicion)')
+
+    const tabla = (tablaResult.data || []).map(r => ({
+      user_id: r.user_id,
+      nombre: r.nombre,
+      puntos_totales: r.puntos_totales,
+      posicion: r.posicion,
+      aciertos_exactos: r.aciertos_exactos,
+      aciertos_diferencia: r.aciertos_diferencia,
+      aciertos_resultado: r.aciertos_resultado,
+      predicciones: r.predicciones,
+      apuestas_participadas: r.apuestas_participadas,
+    }))
+
+    const miPosicion = miRowResult.data || null
+    const estaEnTop = miPosicion ? Number(miPosicion.posicion) <= limit : false
+
+    return {
+      ok: true,
+      total: totalResult.count || 0,
+      tabla,
+      mi_posicion: miPosicion,
+      esta_en_top: estaEnTop,
+    }
+  },
 }
 
 // ── grupos (selecciones agrupadas por letra) ──────────────

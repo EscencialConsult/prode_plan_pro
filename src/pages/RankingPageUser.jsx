@@ -73,6 +73,29 @@ export default function RankingPageUser() {
   const [meta, setMeta] = useState({})
   const [loading, setLoading] = useState(false)
 
+  // ── Ranking global (se carga al montar y cuando no hay apuesta seleccionada) ──
+  const [globalTabla, setGlobalTabla] = useState([])
+  const [globalMeta, setGlobalMeta] = useState({})
+  const [globalLoading, setGlobalLoading] = useState(false)
+
+  useEffect(() => {
+    cargarRankingGlobal()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, user?.user_id])
+
+  async function cargarRankingGlobal() {
+    setGlobalLoading(true)
+    try {
+      const r = await sheetsApi.predicciones.rankingGlobalTabla({
+        user_id: user?.id || user?.user_id,
+        limit: 50,
+      })
+      setGlobalTabla(r.tabla || [])
+      setGlobalMeta({ total: r.total, mi_posicion: r.mi_posicion, esta_en_top: r.esta_en_top })
+    } catch (e) { toast.error('Error cargando ranking global: ' + e.message) }
+    finally { setGlobalLoading(false) }
+  }
+
   async function cargarRanking(bet) {
     if (sel?.id === bet.id) return
     setSel(bet); setLoading(true); setTabla([]); setMeta({})
@@ -107,7 +130,7 @@ export default function RankingPageUser() {
             <span style={{ color: '#0c182b' }}>RANKING</span>
           </h1>
           <p style={{ fontSize: '.84rem', color: '#5f6e8a', margin: 0 }}>
-            {sel ? sel.titulo : 'Seleccioná una apuesta para ver el ranking'}
+            {sel ? sel.titulo : 'Ranking global acumulado · Seleccioná una apuesta para ver su ranking individual'}
           </p>
         </div>
 
@@ -153,7 +176,13 @@ export default function RankingPageUser() {
           <div className="rk-content" style={{ padding: '24px 32px 32px' }}>
 
             {!sel ? (
-              <EmptySelect />
+              <RankingGlobal
+                tabla={globalTabla}
+                meta={globalMeta}
+                loading={globalLoading}
+                user={user}
+                onRefresh={cargarRankingGlobal}
+              />
             ) : (
               <div className="rk-in">
 
@@ -442,23 +471,73 @@ function LeyendaPuntos({ apuesta, total }) {
   )
 }
 
-function EmptySelect() {
+/* ══════════════════════════════════════════
+   RANKING GLOBAL (vista por defecto)
+══════════════════════════════════════════ */
+function RankingGlobal({ tabla, meta, loading, user, onRefresh }) {
+  const miId = user?.id || user?.user_id
+
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 40, textAlign: 'center', gap: 20 }}>
-      <div style={{ width: 80, height: 80, borderRadius: 24, background: 'linear-gradient(145deg,#0c182b,#1a3060)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 12px 40px rgba(12,24,43,.2)' }}>
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(235,195,43,.6)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-        </svg>
+    <div className="rk-in">
+      {/* Header global */}
+      <div style={{ borderRadius: 14, marginBottom: 24, background: 'linear-gradient(125deg,#0c182b 0%,#1a3060 100%)', padding: '18px 22px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: 'rgba(235,195,43,.08)', pointerEvents: 'none' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, position: 'relative' }}>
+          <div>
+            <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: 'rgba(235,195,43,.55)', display: 'block', marginBottom: 4 }}>RANKING GLOBAL ACUMULADO</span>
+            <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(22px,3vw,32px)', color: '#fff', margin: '0 0 6px', letterSpacing: '.02em', lineHeight: 1 }}>Todas las apuestas</h2>
+            <p style={{ fontSize: 11, color: 'rgba(255,255,255,.4)', margin: 0 }}>Suma de puntos de apuestas cerradas y finalizadas</p>
+          </div>
+          {!loading && (
+            <div style={{ display: 'flex', gap: 20, flexShrink: 0 }}>
+              {meta.total > 0 && <BannerStat n={meta.total} label="Participantes" />}
+              {meta.mi_posicion && <BannerStat n={`#${meta.mi_posicion.posicion}`} label="Tu pos." gold />}
+              <button
+                onClick={onRefresh}
+                title="Actualizar ranking global"
+                style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.12)', borderRadius: 8, padding: '6px 10px', cursor: 'pointer', color: 'rgba(255,255,255,.5)', display: 'flex', alignItems: 'center', alignSelf: 'flex-start' }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.12)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,.06)'}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" />
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-      <div>
-        <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: '#0c182b', margin: '0 0 6px', letterSpacing: '.04em' }}>SELECCIONÁ UNA APUESTA</p>
-        <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.7 }}>Elegí una apuesta del panel de la<br />izquierda para ver su ranking</p>
-      </div>
-      <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', opacity: .15, marginTop: 8, pointerEvents: 'none' }}>
-        {[80, 110, 80].map((h, i) => (
-          <div key={i} style={{ width: 56, height: h, borderRadius: 12, background: `linear-gradient(180deg,${i === 1 ? '#ebc32b' : '#cbd5e1'},transparent)` }} />
-        ))}
-      </div>
+
+      {loading ? (
+        <SkeletonContent />
+      ) : tabla.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '48px 24px', background: '#fff', borderRadius: 14, border: '1.5px solid #e8e3db' }}>
+          <p style={{ fontWeight: 700, color: '#64748b', margin: '0 0 6px', fontSize: 15 }}>Sin datos en el ranking global</p>
+          <p style={{ fontSize: 12, color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>El ranking global se calcula cuando hay apuestas cerradas o finalizadas con puntos calculados</p>
+        </div>
+      ) : (
+        <>
+          {/* Top 3 podio */}
+          <Podio top={tabla.slice(0, 3)} miId={miId} apuesta={null} global />
+
+          {/* Mi posición si no está en el top */}
+          {!meta.esta_en_top && meta.mi_posicion && (
+            <MiPosicion pos={meta.mi_posicion} />
+          )}
+
+          {/* Resto de participantes */}
+          {tabla.length > 3 && (
+            <OtrosParticipantes tabla={tabla} user={user} />
+          )}
+
+          {/* Footer */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, fontSize: 10, color: '#94a3b8', paddingTop: 12, borderTop: '1px solid #e8e3db', marginTop: 12 }}>
+            <span>Seleccioná una apuesta del panel izquierdo para ver su ranking individual</span>
+            {meta.total > 0 && <span>Mostrando top {Math.min(tabla.length, 50)} de {meta.total} participantes</span>}
+          </div>
+        </>
+      )}
     </div>
   )
 }
