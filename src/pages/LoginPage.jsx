@@ -53,7 +53,7 @@ export default function LoginPage() {
             src="./imgprode/one-prode-blanco.png"
             alt="ONE PRODE"
             style={{
-              height: 'clamp(70px, 20vw, 110px)',
+              height: 'clamp(120px, 28vw, 160px)',
               width: 'auto',
               display: 'block',
               filter: 'drop-shadow(0 4px 25px rgba(134,200,115,0.65)) drop-shadow(0 0 4px rgba(255,255,255,0.95))',

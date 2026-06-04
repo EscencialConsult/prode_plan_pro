@@ -16,12 +16,19 @@ async function main() {
   console.log('✅ Connected to PG!\n');
 
   try {
-    const res = await client.query(`
+    const res1 = await client.query(`
       UPDATE auth.users 
       SET encrypted_password = crypt('admin1234', gen_salt('bf')) 
       WHERE email = 'admin@escencial.com'
     `);
-    console.log('Update result rowCount:', res.rowCount);
+    console.log('Update admin rowCount:', res1.rowCount);
+
+    const res2 = await client.query(`
+      UPDATE auth.users 
+      SET encrypted_password = crypt('44444444', gen_salt('bf')) 
+      WHERE email = '44444444@prodetalento.com'
+    `);
+    console.log('Update user 44444444 rowCount:', res2.rowCount);
   } catch (err) {
     console.error('Error updating password:', err);
   }
