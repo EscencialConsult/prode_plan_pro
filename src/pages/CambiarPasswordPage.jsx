@@ -14,7 +14,7 @@ import AppShell from '../dashboard/AppShell.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { useToast } from '../hooks/useToast.jsx'
 
-const ESTADO_INICIAL = { actual: '', nueva: '', repetir: '' }
+const ESTADO_INICIAL = { actual: '', nueva: '', repetir: '', email: '' }
 
 const LABEL_STYLE = {
   display: 'block',
@@ -71,7 +71,7 @@ function CampoPassword({ id, label, value, onChange, autoComplete, autoFocus, vi
 }
 
 export default function CambiarPasswordPage() {
-  const { cambiarPassword } = useAuth()
+  const { cambiarPassword, user } = useAuth()
   const { toast } = useToast()
   const navigate = useNavigate()
 
@@ -88,6 +88,9 @@ export default function CambiarPasswordPage() {
 
   // Validaciones de cliente (defensa rápida; el servicio revalida igual).
   function validar() {
+    if (user?.email?.endsWith('@prodetalento.com') && !form.email.trim()) {
+      return 'Ingresá tu nuevo correo electrónico.'
+    }
     if (!form.actual || !form.nueva || !form.repetir) {
       return 'Completá todos los campos.'
     }
@@ -115,7 +118,7 @@ export default function CambiarPasswordPage() {
 
     setLoading(true)
     try {
-      const res = await cambiarPassword(form.actual, form.nueva)
+      const res = await cambiarPassword(form.actual, form.nueva, form.email)
       setDone(true)
       setForm(ESTADO_INICIAL)
       toast.success(res?.message || 'Tu contraseña se actualizó correctamente.')
@@ -152,7 +155,9 @@ export default function CambiarPasswordPage() {
             Cambiar contraseña
           </h1>
           <p style={{ fontSize: '.85rem', color: '#4a6b50', margin: '.3rem 0 0' }}>
-            Ingresá tu contraseña actual y elegí una nueva. No necesitás email.
+            {user?.email?.endsWith('@prodetalento.com')
+              ? 'Registrá tu dirección de email real y actualizá tu contraseña.'
+              : 'Ingresá tu contraseña actual y elegí una nueva.'}
           </p>
         </div>
 
@@ -204,6 +209,38 @@ export default function CambiarPasswordPage() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+
+              {user?.email?.endsWith('@prodetalento.com') && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '.4rem' }}>
+                  <label htmlFor="email" style={LABEL_STYLE}>Tu nuevo Email Real</label>
+                  <input
+                    id="email"
+                    type="email"
+                    value={form.email}
+                    onChange={e => setCampo('email', e.target.value)}
+                    placeholder="ejemplo@correo.com"
+                    required
+                    disabled={loading}
+                    style={INPUT_STYLE}
+                    onFocus={e => {
+                      e.target.style.borderColor = '#86C873'
+                      e.target.style.boxShadow = '0 0 0 3px rgba(134,200,115,.15)'
+                    }}
+                    onBlur={e => {
+                      e.target.style.borderColor = '#c8d9c4'
+                      e.target.style.boxShadow = 'none'
+                    }}
+                  />
+                  <div style={{
+                    marginTop: '.2rem', padding: '.6rem .8rem', borderRadius: 8,
+                    background: 'rgba(244,180,42,.08)', border: '1px solid rgba(244,180,42,.2)',
+                    color: '#c99f16', fontSize: '.75rem', lineHeight: 1.4
+                  }}>
+                    <strong>⚠️ Correo Requerido:</strong> Tenés una cuenta con correo por defecto de DNI. Para actualizar tu clave, primero ingresá tu correo electrónico real.
+                  </div>
+                  <div style={{ height: 1, background: '#e2eede', marginTop: '.5rem' }} />
+                </div>
+              )}
 
               <CampoPassword
                 id="pwd-actual"

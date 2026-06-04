@@ -1,4 +1,7 @@
+import { useState } from 'react'
 import { formatDate } from '../../utils/index.js'
+import { useToast, useConfirm } from '../../hooks/useToast.jsx'
+import sheetsApi from '../../services/sheetsApi.js'
 
 function getInitials(name = '') {
   return name
@@ -14,6 +17,29 @@ export default function ActiveUsersTab({
   activeSearch, setActiveSearch, activePage, setActivePage,
   activeUsers, areas, activePageSize = 25, isPro = false
 }) {
+  const [resettingId, setResettingId] = useState(null)
+  const { toast } = useToast()
+  const confirm = useConfirm()
+
+  async function handleResetPassword(u) {
+    const ok = await confirm({
+      titulo: 'Restablecer contraseña',
+      mensaje: `¿Estás seguro de restablecer la contraseña de ${u.nombre}? La nueva contraseña volverá a ser su número de DNI.`,
+      confirmarTxt: 'Sí, restablecer',
+      tipo: 'warning'
+    })
+    if (!ok) return
+
+    setResettingId(u.id)
+    try {
+      await sheetsApi.usuarios.restablecerPasswordDni(u.id)
+      toast.success(`La contraseña de ${u.nombre} fue restablecida a su DNI.`)
+    } catch (err) {
+      toast.error(`Error: ${err.message}`)
+    } finally {
+      setResettingId(null)
+    }
+  }
   return (
     <div className="animate-fade-in delay-2">
       {/* Header */}
@@ -133,7 +159,7 @@ export default function ActiveUsersTab({
           <div
             className="hidden md:grid gap-3 px-5 py-3 text-[10px] font-body font-bold uppercase tracking-[0.15em]"
             style={{
-              gridTemplateColumns: isPro ? '1.6fr 1.6fr 1fr 0.8fr 0.8fr 1fr' : '2fr 2fr 1fr 1.2fr',
+              gridTemplateColumns: isPro ? '1.5fr 1.5fr 1fr 0.8fr 0.7fr 1.2fr 1.1fr' : '2fr 2fr 1fr 1.2fr 1.2fr',
               background: 'rgba(134,200,115,0.06)',
               color: '#5A9E4A',
               borderBottom: '1px solid #e2eede',
@@ -145,6 +171,7 @@ export default function ActiveUsersTab({
             {isPro && <span>Tipo</span>}
             <span>Rol</span>
             <span>Registrado</span>
+            <span>Acciones</span>
           </div>
 
           {/* Filas */}
@@ -156,7 +183,7 @@ export default function ActiveUsersTab({
                 key={u.id}
                 className="grid gap-3 px-5 py-4 items-center"
                 style={{
-                  gridTemplateColumns: isPro ? '1.6fr 1.6fr 1fr 0.8fr 0.8fr 1fr' : '2fr 2fr 1fr 1.2fr',
+                  gridTemplateColumns: isPro ? '1.5fr 1.5fr 1fr 0.8fr 0.7fr 1.2fr 1.1fr' : '2fr 2fr 1fr 1.2fr 1.2fr',
                   borderBottom: idx === activeUsers.length - 1 ? 'none' : '1px solid #f5efe3',
                 }}
               >
@@ -219,6 +246,32 @@ export default function ActiveUsersTab({
                 <p className="font-body text-xs" style={{ color: '#4a6b50' }}>
                   {formatDate(u.fecha_registro)}
                 </p>
+
+                {/* Acciones */}
+                <div>
+                  <button
+                    onClick={() => handleResetPassword(u)}
+                    disabled={resettingId === u.id}
+                    className="px-2.5 py-1.5 rounded-lg text-[11px] font-body font-bold uppercase tracking-wider transition-all disabled:opacity-50"
+                    style={{
+                      background: 'rgba(224,50,82,0.06)',
+                      border: '1px solid rgba(224,50,82,0.2)',
+                      color: '#e03252',
+                    }}
+                    onMouseEnter={e => {
+                      if (resettingId !== u.id) {
+                        e.currentTarget.style.background = 'rgba(224,50,82,0.12)'
+                        e.currentTarget.style.borderColor = 'rgba(224,50,82,0.45)'
+                      }
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.background = 'rgba(224,50,82,0.06)'
+                      e.currentTarget.style.borderColor = 'rgba(224,50,82,0.2)'
+                    }}
+                  >
+                    {resettingId === u.id ? 'Procesando...' : 'Blanquear Clave'}
+                  </button>
+                </div>
               </div>
             )
           })}

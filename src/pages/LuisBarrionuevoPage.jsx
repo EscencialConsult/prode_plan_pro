@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import HomeCampaignGoals from '../components/home/HomeCampaignGoals'
+import sheetsApi from '../services/sheetsApi'
+import { useAuth } from '../hooks/useAuth'
 
 /* ── Contador animado ─────────────────────────────── */
 function CountUp({ end, suffix = '', duration = 1800 }) {
@@ -34,22 +36,51 @@ const TICKER = [
 ]
 
 function BuzonPropuestas() {
+  const { isAdmin } = useAuth()
   const [area, setArea] = useState('')
   const [propuesta, setPropuesta] = useState('')
   const [enviando, setEnviando] = useState(false)
   const [enviado, setEnviado] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = (e) => {
+  // Admin panel state
+  const [showPanel, setShowPanel] = useState(false)
+  const [listaPropuestas, setListaPropuestas] = useState([])
+  const [cargando, setCargando] = useState(false)
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!area || !propuesta.trim()) return
-
     setEnviando(true)
-    setTimeout(() => {
-      setEnviando(false)
+    setError('')
+    try {
+      await sheetsApi.propuestas.enviar(area, propuesta.trim())
       setEnviado(true)
       setArea('')
       setPropuesta('')
-    }, 1500)
+    } catch (err) {
+      console.error('Error enviando propuesta:', err)
+      setError('Hubo un error al enviar. Intentá de nuevo.')
+    } finally {
+      setEnviando(false)
+    }
+  }
+
+  const cargarPropuestas = async () => {
+    setCargando(true)
+    try {
+      const data = await sheetsApi.propuestas.obtener()
+      setListaPropuestas(data)
+    } catch (err) {
+      console.error('Error cargando propuestas:', err)
+    } finally {
+      setCargando(false)
+    }
+  }
+
+  const togglePanel = () => {
+    if (!showPanel) cargarPropuestas()
+    setShowPanel(p => !p)
   }
 
   return (
@@ -91,7 +122,7 @@ function BuzonPropuestas() {
           lineHeight: 1.6,
           marginTop: '0.75rem'
         }}>
-          Queremos escuchar tus ideas para seguir mejorando. Contanos tu propuesta para el sindicato de forma 100% anónima y segura.
+          Queremos escuchar tus ideas para seguir mejorando. Contanos tu propuesta para la Lista Verde de forma 100% anónima y segura.
         </p>
         <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #86C873 50%, transparent)', borderRadius: 99, width: 140, margin: '0.75rem auto 0' }} />
       </div>
@@ -107,7 +138,7 @@ function BuzonPropuestas() {
         boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)'
       }}>
         {enviado ? (
-          <div style={{ textAlign: 'center', padding: '2rem 1rem' }} className="animate-fade-in">
+          <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
             <div style={{
               width: 64,
               height: 64,
@@ -229,6 +260,12 @@ function BuzonPropuestas() {
               />
             </div>
 
+            {error && (
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.8rem', color: '#e74c3c', margin: 0, textAlign: 'center' }}>
+                {error}
+              </p>
+            )}
+
             <button
               type="submit"
               disabled={enviando || !area || !propuesta.trim()}
@@ -256,13 +293,14 @@ function BuzonPropuestas() {
             >
               {enviando ? (
                 <>
-                  <span className="animate-spin" style={{
+                  <span style={{
                     width: 16,
                     height: 16,
                     border: '2.5px solid #050905',
                     borderTopColor: 'transparent',
                     borderRadius: '50%',
-                    display: 'inline-block'
+                    display: 'inline-block',
+                    animation: 'lb-spin 1s linear infinite'
                   }} />
                   Enviando...
                 </>
@@ -279,6 +317,124 @@ function BuzonPropuestas() {
           </form>
         )}
       </div>
+
+      {/* ── Panel Admin: Ver Propuestas ── */}
+      {isAdmin && (
+        <div style={{ width: '100%', maxWidth: 620, marginTop: '2rem' }}>
+          <button
+            onClick={togglePanel}
+            style={{
+              width: '100%',
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: '0.78rem',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              letterSpacing: '.12em',
+              background: showPanel ? 'rgba(134, 200, 115, 0.12)' : 'rgba(255,255,255,0.04)',
+              border: '1.5px solid rgba(134, 200, 115, 0.25)',
+              color: '#86C873',
+              padding: '0.9rem 1.25rem',
+              borderRadius: '14px',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.6rem',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(134, 200, 115, 0.15)'; e.currentTarget.style.borderColor = '#86C873' }}
+            onMouseLeave={e => { e.currentTarget.style.background = showPanel ? 'rgba(134, 200, 115, 0.12)' : 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(134, 200, 115, 0.25)' }}
+          >
+            📋 {showPanel ? 'Ocultar Propuestas' : 'Ver Propuestas Recibidas'}
+            <span style={{ fontSize: '0.65rem', opacity: 0.6 }}>({listaPropuestas.length})</span>
+          </button>
+
+          {showPanel && (
+            <div style={{
+              marginTop: '1rem',
+              background: 'rgba(10, 15, 10, 0.8)',
+              backdropFilter: 'blur(12px)',
+              border: '1.5px solid rgba(134, 200, 115, 0.2)',
+              borderRadius: '20px',
+              overflow: 'hidden',
+            }}>
+              {/* Header */}
+              <div style={{
+                padding: '1rem 1.5rem',
+                background: 'rgba(134, 200, 115, 0.06)',
+                borderBottom: '1px solid rgba(134, 200, 115, 0.15)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.72rem', fontWeight: 700, color: '#86C873', textTransform: 'uppercase', letterSpacing: '.12em' }}>
+                  Propuestas recibidas
+                </span>
+                <button
+                  onClick={cargarPropuestas}
+                  style={{
+                    fontFamily: "'DM Sans', sans-serif", fontSize: '0.65rem', fontWeight: 600,
+                    background: 'rgba(134, 200, 115, 0.1)', border: '1px solid rgba(134, 200, 115, 0.2)',
+                    color: '#86C873', padding: '5px 12px', borderRadius: 99, cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(134, 200, 115, 0.2)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(134, 200, 115, 0.1)'}
+                >
+                  ↻ Actualizar
+                </button>
+              </div>
+
+              {/* Content */}
+              <div style={{ maxHeight: 450, overflowY: 'auto', padding: '0.75rem' }}>
+                {cargando ? (
+                  <div style={{ textAlign: 'center', padding: '2rem', color: 'rgba(255,255,255,0.4)', fontFamily: "'DM Sans', sans-serif", fontSize: '0.85rem' }}>
+                    Cargando propuestas...
+                  </div>
+                ) : listaPropuestas.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '2rem', color: 'rgba(255,255,255,0.35)', fontFamily: "'DM Sans', sans-serif", fontSize: '0.85rem' }}>
+                    No hay propuestas aún.
+                  </div>
+                ) : (
+                  listaPropuestas.map((p, i) => (
+                    <div key={p.id || i} style={{
+                      padding: '1rem 1.25rem',
+                      marginBottom: '0.5rem',
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(134, 200, 115, 0.1)',
+                      borderRadius: '14px',
+                      transition: 'all 0.2s',
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <span style={{
+                          fontFamily: "'DM Sans', sans-serif", fontSize: '0.68rem', fontWeight: 700,
+                          color: '#86C873', textTransform: 'uppercase', letterSpacing: '.08em',
+                          background: 'rgba(134, 200, 115, 0.08)', padding: '3px 10px', borderRadius: 99,
+                          border: '1px solid rgba(134, 200, 115, 0.15)'
+                        }}>
+                          {p.area}
+                        </span>
+                        <span style={{
+                          fontFamily: "'DM Sans', sans-serif", fontSize: '0.62rem',
+                          color: 'rgba(255,255,255,0.3)'
+                        }}>
+                          {new Date(p.created_at).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        </span>
+                      </div>
+                      <p style={{
+                        fontFamily: "'DM Sans', sans-serif", fontSize: '0.84rem',
+                        color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, margin: 0
+                      }}>
+                        {p.propuesta}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </section>
   )
 }
@@ -384,6 +540,13 @@ export default function LuisBarrionuevoPage() {
           animation:lb-glow 3.5s ease-in-out infinite;
         }
 
+        .slogan-line {
+          height: 2px;
+          width: 40px;
+          border-radius: 99px;
+          flex-shrink: 0;
+        }
+
         /* Mobile */
         @media(max-width:1023px){
           .hero-grid{grid-template-columns:1fr !important}
@@ -395,6 +558,8 @@ export default function LuisBarrionuevoPage() {
         @media(max-width:640px){
           .lb-stats-row{flex-wrap:wrap; gap:.5rem}
           .lb-stat{min-width:calc(50% - .5rem)}
+          .slogan-line { display: none !important; }
+          .lb-slogan-wrap { justify-content: center !important; }
         }
       `}</style>
 
@@ -408,13 +573,25 @@ export default function LuisBarrionuevoPage() {
         padding:'.75rem 0',
       }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <img src="./imgprode/one-prode-blanco.png" alt="ONE Prode" style={{ height: 38, width: 'auto', display: 'block' }} />
-            <div style={{ width: 1, height: 28, background: 'rgba(134,200,115,.2)', flexShrink: 0 }} />
-            <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize: '.95rem', letterSpacing: '.07em', lineHeight: 1, userSelect: 'none' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <img
+              src="./imgprode/one-prode-blanco.png"
+              alt="ONE PRODE"
+              style={{
+                height: 'clamp(56px, 7.5vw, 96px)',
+                width: 'auto',
+                display: 'block',
+                filter: 'drop-shadow(0 2px 12px rgba(134, 200, 115, 0.5))',
+                transition: 'transform 0.3s ease',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)' }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'none' }}
+            />
+            <div style={{ width: 1, height: 'clamp(28px, 4vw, 40px)', background: 'rgba(134,200,115,.25)', flexShrink: 0 }} />
+            <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize: 'clamp(1.05rem, 2.5vw, 1.35rem)', letterSpacing: '.18em', lineHeight: 1, userSelect: 'none' }}>
               <span style={{ color: '#7BA3C0' }}>MOYANO </span>
               <span style={{ color: '#fff' }}>C</span>
-              <span style={{ color: '#F5C518' }}>O</span>
+              <span style={{ color: '#ebc32b' }}>O</span>
               <span style={{ color: '#fff' }}>N</span>
               <span style={{ color: '#7BA3C0' }}>DUCCIÓN</span>
             </div>
@@ -439,6 +616,7 @@ export default function LuisBarrionuevoPage() {
         position:'relative', minHeight:'100vh', overflow:'hidden',
         display:'flex', flexDirection:'column', justifyContent:'center',
         paddingTop:'clamp(80px,11vh,120px)',
+        paddingBottom:'90px',
         background:'linear-gradient(155deg,#050905 0%,#0a150a 45%,#0d1a0a 70%,#050905 100%)',
       }}>
 
@@ -514,7 +692,7 @@ export default function LuisBarrionuevoPage() {
             </div>
             <div style={{height:3, background:'linear-gradient(90deg,#7BA3C0,#F5C518 40%,#86C873 75%,transparent)', borderRadius:99, width:'clamp(280px,55vw,600px)', transformOrigin:'left', animation:'lb-line .8s .4s both'}} />
             <p style={{fontFamily:"'DM Sans',sans-serif", fontSize:'.65rem', fontWeight:700, letterSpacing:'.22em', textTransform:'uppercase', color:'rgba(255,255,255,.32)', margin:'.2rem 0 0'}}>
-              Sindicato de Camioneros · Tucumán · Argentina
+              Lista Verde · Tucumán · Argentina
             </p>
           </div>
 
@@ -557,12 +735,12 @@ export default function LuisBarrionuevoPage() {
               </div>
 
               {/* Eslogan con líneas */}
-              <div className="lb-u3" style={{display:'flex', alignItems:'center', gap:'.75rem', marginBottom:'1.4rem'}}>
-                <div style={{height:2, width:40, background:'linear-gradient(90deg,transparent,#F5C518)', borderRadius:99, flexShrink:0}} />
-                <p style={{fontFamily:"'DM Sans',sans-serif", fontSize:'clamp(.95rem,2vw,1.2rem)', fontStyle:'italic', fontWeight:500, color:'#A8E096', margin:0, whiteSpace:'nowrap'}}>
+              <div className="lb-u3 lb-slogan-wrap" style={{display:'flex', alignItems:'center', gap:'.75rem', marginBottom:'1.4rem'}}>
+                <div className="slogan-line" style={{background:'linear-gradient(90deg,transparent,#F5C518)'}} />
+                <p style={{fontFamily:"'DM Sans',sans-serif", fontSize:'clamp(.95rem,2vw,1.2rem)', fontStyle:'italic', fontWeight:500, color:'#A8E096', margin:0, textAlign: 'center'}}>
                   "Siempre con el trabajador"
                 </p>
-                <div style={{height:2, width:40, background:'linear-gradient(90deg,#F5C518,transparent)', borderRadius:99, flexShrink:0}} />
+                <div className="slogan-line" style={{background:'linear-gradient(90deg,#F5C518,transparent)'}} />
               </div>
 
               {/* Texto */}
@@ -576,7 +754,7 @@ export default function LuisBarrionuevoPage() {
                   { color:'#86C873', icon:'💰', title:'Defensa Salarial', desc:'Paritarias y viáticos que acompañen la realidad' },
                   { color:'#7BA3C0', icon:'🏥', title:'Salud y Familia',  desc:'Obra social mejorada en toda la provincia' },
                   { color:'#F5C518', icon:'🛡️', title:'Seguridad en Ruta',desc:'Paradores seguros en rutas estratégicas' },
-                  { color:'#86C873', icon:'🤝', title:'Participación',    desc:'Sindicato transparente y de puertas abiertas' },
+                  { color:'#86C873', icon:'🤝', title:'Participación',    desc:'Lista Verde transparente y de puertas abiertas' },
                 ].map(({ color, icon, title, desc }) => (
                   <div key={title} className="lb-eje">
                     <div style={{width:36, height:36, borderRadius:10, background:`${color}18`, border:`1px solid ${color}30`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'1.1rem', flexShrink:0}}>
@@ -621,244 +799,82 @@ export default function LuisBarrionuevoPage() {
               </div>
             </div>
 
-            {/* ── DERECHA — FOTO LIMPIA ── */}
-            <div className="photo-col" style={{position:'relative', display:'flex', justifyContent:'center', alignItems:'flex-end'}}>
-
-              {/* Anillos decorativos */}
-              <div style={{position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:380, height:380, border:'1px solid rgba(245,197,24,.1)', borderRadius:'50%', pointerEvents:'none', animation:'lb-spin 30s linear infinite'}} />
-              <div style={{position:'absolute', top:'50%', left:'50%', transform:'translate(-50%,-50%)', width:310, height:310, border:'1px dashed rgba(134,200,115,.1)', borderRadius:'50%', pointerEvents:'none', animation:'lb-spin 20s linear infinite reverse'}} />
-
-              {/* Glow */}
-              <div className="photo-glow" />
-
-              {/* Foto */}
-              <img src="./imgprode/luisbarrionuevo.png"
-                alt="Luis Barrionuevo Candidato Secretario General Camioneros Tucumán 2026"
-                className="lb-photo-anim lb-photo-img"
-                style={{
-                  position:'relative', zIndex:2,
-                  width:'100%', maxWidth:420, maxHeight:'68vh',
-                  objectFit:'contain', objectPosition:'top center',
-                  display:'block',
-                  filter:'drop-shadow(0 30px 60px rgba(0,0,0,.85)) drop-shadow(0 0 40px rgba(134,200,115,.12))',
-                }}
-              />
-            </div>
-          </div>
-
-          {/* ── NUEVO SEGMENTO — FICHA DETALLADA DEL CANDIDATO ── */}
-          <div id="ficha-candidato" style={{ marginTop: '6rem', padding: '4rem 1.5rem 5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 10, background: 'linear-gradient(180deg, rgba(134,200,115,0.01) 0%, rgba(10,15,10,0.4) 100%)', borderTop: '1px solid rgba(134,200,115,0.06)' }}>
-            
-            {/* Título de sección */}
-            <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-              <p style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: '0.68rem',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '.25em',
-                color: '#86C873',
-                margin: 0
+            {/* ── DERECHA — FOTO EN CARD/MARCO ── */}
+            <div className="photo-col" style={{position:'relative', display:'flex', justifyContent:'center', alignItems:'center'}}>
+              <div className="lb-photo-anim" style={{
+                background: 'linear-gradient(135deg, rgba(10, 15, 10, 0.95) 0%, rgba(20, 38, 20, 0.98) 100%)',
+                border: '1.5px solid rgba(134, 200, 115, 0.3)',
+                borderRadius: '24px',
+                boxShadow: '0 25px 60px rgba(0, 0, 0, 0.75), 0 0 40px rgba(134, 200, 115, 0.12)',
+                overflow: 'hidden',
+                width: '100%',
+                maxWidth: 380,
               }}>
-                Conocé a nuestro candidato
-              </p>
-              <h2 style={{
-                fontFamily: "'Bebas Neue', sans-serif",
-                fontSize: 'clamp(2rem, 5vw, 3.2rem)',
-                color: '#fff',
-                letterSpacing: '0.04em',
-                margin: '0.35rem 0 0'
-              }}>
-                TRAYECTORIA Y COMPROMISO
-              </h2>
-              <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #86C873 50%, transparent)', borderRadius: 99, width: 140, margin: '0.75rem auto 0' }} />
-            </div>
-
-            {/* Card Contenedora Principal */}
-            <div style={{
-              width: '100%',
-              maxWidth: 740,
-              background: 'linear-gradient(135deg, rgba(10, 15, 10, 0.95) 0%, rgba(20, 38, 20, 0.98) 100%)',
-              border: '1.5px solid rgba(134, 200, 115, 0.3)',
-              borderRadius: '24px',
-              boxShadow: '0 25px 60px rgba(0, 0, 0, 0.75), 0 0 40px rgba(134, 200, 115, 0.12)',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              
-              {/* Cabecera de la ficha */}
-              <div style={{
-                background: 'rgba(134, 200, 115, 0.08)',
-                padding: '0.9rem 1.5rem',
-                borderBottom: '1.5px solid rgba(134, 200, 115, 0.15)',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
-                <span style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: '0.68rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '.15em',
-                  color: '#86C873'
-                }}>
-                  Ficha Oficial de la Agrupación
-                </span>
-                <span style={{
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: '0.65rem',
-                  fontWeight: 600,
-                  color: 'rgba(255, 255, 255, 0.4)'
-                }}>
-                  Elecciones 2026
-                </span>
-              </div>
-
-              {/* Contenido en dos columnas (Foto / Info) */}
-              <div style={{
-                display: 'flex',
-                minHeight: 340
-              }} className="flex-col md:flex-row">
-                
-                {/* Columna Izquierda: Marco de la Foto */}
+                {/* Cabecera de la card */}
                 <div style={{
-                  flex: '1.05',
-                  background: 'radial-gradient(circle at center, rgba(134, 200, 115, 0.18) 0%, rgba(10, 15, 10, 0.95) 100%), #111811',
-                  borderRight: '1px solid rgba(134, 200, 115, 0.15)',
+                  background: 'rgba(134, 200, 115, 0.08)',
+                  padding: '0.7rem 1.25rem',
+                  borderBottom: '1px solid rgba(134, 200, 115, 0.15)',
                   display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'flex-end',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  minHeight: 300
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
                 }}>
-                  
-                  {/* Glow de fondo */}
-                  <div style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    width: '100%',
-                    height: '60%',
-                    background: 'linear-gradient(180deg, transparent, rgba(134, 200, 115, 0.35))',
-                    pointerEvents: 'none'
-                  }} />
-                  
-                  {/* Foto recortada */}
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.12em', color: '#86C873' }}>
+                    Candidato a Secretario General
+                  </span>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.58rem', fontWeight: 600, color: 'rgba(255, 255, 255, 0.4)' }}>
+                    Elecciones 2026
+                  </span>
+                </div>
+
+                {/* Foto */}
+                <div style={{
+                  background: 'radial-gradient(circle at center, rgba(134, 200, 115, 0.18) 0%, rgba(10, 15, 10, 0.95) 100%), #111811',
+                  display: 'flex', justifyContent: 'center', alignItems: 'flex-end',
+                  position: 'relative', overflow: 'hidden', minHeight: 320,
+                }}>
+                  <div style={{ position: 'absolute', bottom: 0, width: '100%', height: '60%', background: 'linear-gradient(180deg, transparent, rgba(134, 200, 115, 0.25))', pointerEvents: 'none' }} />
                   <img
                     src="./imgprode/luisbarrionuevo.png"
-                    alt="Luis Barrionuevo"
+                    alt="Luis Barrionuevo Candidato Secretario General Camioneros Tucumán 2026"
                     style={{
-                      width: '85%',
-                      height: 'auto',
-                      maxHeight: '100%',
-                      objectFit: 'contain',
-                      position: 'relative',
-                      zIndex: 2,
-                      filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.65))'
+                      width: '85%', height: 'auto', maxHeight: '100%',
+                      objectFit: 'contain', position: 'relative', zIndex: 2,
+                      filter: 'drop-shadow(0 15px 30px rgba(0,0,0,0.65))',
                     }}
                   />
                 </div>
 
-                {/* Columna Derecha: Información del Candidato */}
-                <div style={{
-                  flex: '1.25',
-                  padding: '2rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between'
-                }}>
-                  
-                  {/* Datos Personales */}
-                  <div>
-                    <div style={{
-                      fontFamily: "'Bebas Neue', sans-serif",
-                      fontSize: '2.1rem',
-                      color: '#fff',
-                      letterSpacing: '0.04em',
-                      lineHeight: 1.1,
-                      marginBottom: '0.2rem'
-                    }}>
-                      LUIS BARRIONUEVO
+                {/* Info del candidato */}
+                <div style={{ padding: '1.25rem 1.5rem', borderTop: '1px solid rgba(134, 200, 115, 0.15)', display: 'flex', flexDirection: 'column', gap: '0.55rem' }}>
+                  {[
+                    { label: 'Agrupación', val: 'Moyano Conducción', isMoyano: true },
+                    { label: 'Lucha Gremial', val: 'Siempre con el trabajador' },
+                    { label: 'Seccional', val: 'Tucumán' }
+                  ].map(({ label, val, isMoyano }) => (
+                    <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em' }}>
+                        {label}
+                      </span>
+                      <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.78rem', fontWeight: 600, color: isMoyano ? '#86C873' : '#fff' }}>
+                        {isMoyano ? (
+                          <>
+                            <span style={{ color: '#7BA3C0' }}>MOYANO </span>
+                            <span style={{ color: '#fff' }}>C</span>
+                            <span style={{ color: '#ebc32b' }}>O</span>
+                            <span style={{ color: '#fff' }}>N</span>
+                            <span style={{ color: '#7BA3C0' }}>DUCCIÓN</span>
+                          </>
+                        ) : val}
+                      </span>
                     </div>
-                    
-                    <div style={{
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontSize: '0.72rem',
-                      fontWeight: 700,
-                      color: '#86C873',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.08em',
-                      marginBottom: '1.25rem'
-                    }}>
-                      Candidato a Secretario General
-                    </div>
-
-                    <p style={{
-                      fontFamily: "'DM Sans', sans-serif",
-                      fontSize: '0.85rem',
-                      lineHeight: 1.65,
-                      color: 'rgba(255,255,255,0.72)',
-                      margin: 0
-                    }}>
-                      Líder indiscutido de Moyano Conducción en Tucumán. Forjado en el trabajo diario y con un compromiso inquebrantable para impulsar paritarias dignas, un servicio de salud óptimo y la presencia constante al lado de cada chofer y sus familias.
-                    </p>
-                  </div>
-
-                  {/* Atributos / Viñetas */}
-                  <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.65rem',
-                    borderTop: '1px solid rgba(255,255,255,0.1)',
-                    paddingTop: '1.25rem',
-                    marginTop: '1.5rem'
-                  }}>
-                    
-                    {[
-                      { label: 'Agrupación', val: 'Moyano Conducción' },
-                      { label: 'Lucha Gremial', val: 'Siempre con el trabajador' },
-                      { label: 'Seccional', val: 'Tucumán' }
-                    ].map(({ label, val }) => (
-                      <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{
-                          fontFamily: "'DM Sans', sans-serif",
-                          fontSize: '0.65rem',
-                          fontWeight: 700,
-                          textTransform: 'uppercase',
-                          color: 'rgba(255,255,255,0.4)',
-                          letterSpacing: '0.05em'
-                        }}>
-                          {label}
-                        </span>
-                        <span style={{
-                          fontFamily: "'DM Sans', sans-serif",
-                          fontSize: '0.78rem',
-                          fontWeight: 600,
-                          color: val === 'Moyano Conducción' ? '#86C873' : '#fff'
-                        }}>
-                          {val === 'Moyano Conducción' ? (
-                            <>
-                              <span style={{ color: '#7BA3C0' }}>MOYANO </span>
-                              <span style={{ color: '#fff' }}>C</span>
-                              <span style={{ color: '#ebc32b' }}>O</span>
-                              <span style={{ color: '#fff' }}>N</span>
-                              <span style={{ color: '#7BA3C0' }}>DUCCIÓN</span>
-                            </>
-                          ) : val}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
+                  ))}
                 </div>
-
               </div>
-
             </div>
           </div>
         </div>
+
 
         {/* Ticker band */}
         <div className="lb-u6" style={{marginTop:'3rem', position:'relative', zIndex:10}}>
@@ -917,10 +933,10 @@ export default function LuisBarrionuevoPage() {
               <span style={{ color: '#7BA3C0' }}>DUCCIÓN</span>
             </div>
             <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize: '.72rem', color: 'rgba(255,255,255,.25)', margin: '0 0 .9rem' }}>
-              © 2026 Sindicato de Camioneros Tucumán · Moyano Conducción · "Siempre con el trabajador"
+              © 2026 Lista Verde Tucumán · Moyano Conducción · "Siempre con el trabajador"
             </p>
             <Link to="/" style={{ fontFamily:"'DM Sans',sans-serif", fontSize: '.78rem', fontWeight: 600, color: '#86C873', textDecoration: 'none' }}>
-              ← Volver al Prode del Sindicato
+              ← Volver al Prode de la Lista Verde
             </Link>
           </div>
         </div>

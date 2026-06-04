@@ -327,22 +327,24 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Cartel de Alerta de Seguridad */}
-        <div className="bg-amber-50/90 backdrop-blur-sm border border-amber-200 rounded-2xl p-4 mb-6 flex items-start gap-3.5 shadow-sm animate-fade-in"
-          style={{ border: '1px solid rgba(217, 119, 6, 0.25)', background: 'rgba(254, 243, 199, 0.95)' }}>
-          <div className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 text-amber-700">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
+        {/* Cartel de Alerta de Seguridad - Solo se muestra si el correo sigue siendo el ficticio */}
+        {user?.email?.endsWith('@prodetalento.com') && (
+          <div className="bg-amber-50/90 backdrop-blur-sm border border-amber-200 rounded-2xl p-4 mb-6 flex items-start gap-3.5 shadow-sm animate-fade-in"
+            style={{ border: '1px solid rgba(217, 119, 6, 0.25)', background: 'rgba(254, 243, 199, 0.95)' }}>
+            <div className="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0 text-amber-700">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-display font-bold text-sm text-amber-900 m-0" style={{ letterSpacing: '.01em' }}>Recomendación de Seguridad</h4>
+              <p className="font-body text-xs text-amber-800 mt-1 leading-relaxed">
+                Recordá que, por motivos de seguridad, se solicita actualizar tu contraseña luego del primer ingreso. Podés cambiarla fácilmente ingresando a <Link to="/cambiar-password" className="font-bold underline hover:text-amber-950">Cambiar Contraseña</Link>.
+              </p>
+            </div>
           </div>
-          <div className="flex-1 min-w-0">
-            <h4 className="font-display font-bold text-sm text-amber-900 m-0" style={{ letterSpacing: '.01em' }}>Recomendación de Seguridad</h4>
-            <p className="font-body text-xs text-amber-800 mt-1 leading-relaxed">
-              Recordá que, por motivos de seguridad, se solicita actualizar tu contraseña luego del primer ingreso. Podés cambiarla fácilmente ingresando a <Link to="/cambiar-password" className="font-bold underline hover:text-amber-950">Cambiar Contraseña</Link>.
-            </p>
-          </div>
-        </div>
+        )}
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6 sm:mb-8 animate-fade-in delay-1">
           {esAdmin ? (

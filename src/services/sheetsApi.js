@@ -277,7 +277,17 @@ const auth = {
   login: async (emailOrDni, password) => {
     let email = emailOrDni.trim().toLowerCase()
     if (!email.includes('@')) {
-      email = `${email}@prodetalento.com`
+      try {
+        const { data: foundEmail } = await supabase.rpc('buscar_email_por_dni', { p_dni: email })
+        if (foundEmail) {
+          email = foundEmail
+        } else {
+          email = `${email}@prodetalento.com`
+        }
+      } catch (err) {
+        console.error('Error in buscar_email_por_dni RPC:', err)
+        email = `${email}@prodetalento.com`
+      }
     }
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -345,13 +355,33 @@ const auth = {
   },
 
   // Recuperación de contraseña (flujo Supabase nativo).
-  resetSolicitar: async (email) => {
+  resetSolicitar: async (emailOrDni) => {
+    let email = emailOrDni.trim().toLowerCase()
+    
+    // Si no contiene '@', asumimos que es DNI e intentamos buscar su email
+    if (!email.includes('@')) {
+      const { data: foundEmail, error: errRpc } = await supabase.rpc('buscar_email_por_dni', { p_dni: email })
+      if (errRpc) {
+        throw new Error('No se pudo verificar el DNI en el sistema.')
+      }
+      if (!foundEmail) {
+        throw new Error('El DNI ingresado no corresponde a ningún usuario registrado.')
+      }
+      email = foundEmail
+    }
+
+    // Verificar si es un correo ficticio (@prodetalento.com)
+    if (email.endsWith('@prodetalento.com')) {
+      throw new Error('Tu cuenta tiene un correo por defecto de DNI y no posee un email real registrado. Por favor, solicitá al administrador de tu empresa que realice un "Blanqueo de Clave" para recuperar tu acceso.')
+    }
+
     const redirectTo = `${window.location.origin}/reset-password`
     const { error } = await supabase.auth.resetPasswordForEmail(
-      email.trim().toLowerCase(),
+      email,
       { redirectTo }
     )
-    // Mensaje genérico (no revela si el email existe o no)
+    if (error) throw new Error(traducirErrorAuth(error))
+
     return {
       ok: true,
       message: 'Si el email está registrado, te enviamos un correo con instrucciones para restablecer tu contraseña.',
@@ -390,6 +420,30 @@ const auth = {
     return { ok: true, message: 'Tu contraseña se actualizó correctamente. Ya podés iniciar sesión.' }
   },
 
+  verificarDniRecuperacion: async (dni) => {
+    const { data: foundEmail, error: errRpc } = await supabase.rpc('buscar_email_por_dni', { p_dni: dni.trim() })
+    if (errRpc) throw new Error('Error al verificar el DNI.')
+    if (!foundEmail) throw new Error('El DNI ingresado no corresponde a ningún usuario registrado.')
+
+    const esFalso = foundEmail.endsWith('@prodetalento.com')
+    return {
+      ok: true,
+      email: foundEmail,
+      esFalso
+    }
+  },
+
+  recuperarAccesoPublico: async (dni, verificacion, nuevoEmail, nuevaPassword) => {
+    const { data, error } = await supabase.rpc('recuperar_acceso_publico', {
+      p_dni: dni.trim(),
+      p_verificacion: verificacion.trim(),
+      p_nuevo_email: nuevoEmail ? nuevoEmail.trim() : null,
+      p_nueva_password: nuevaPassword.trim()
+    })
+    if (error) throw new Error(error.message)
+    return { ok: true }
+  },
+
   /**
    * Cambio de contraseña para un usuario YA logueado (sin email).
    *
@@ -407,7 +461,7 @@ const auth = {
    * @param {string} newPassword     - contraseña nueva
    * @returns {Promise<{ok:true, message:string}>}
    */
-  cambiarPassword: async (currentPassword, newPassword) => {
+  cambiarPassword: async (currentPassword, newPassword, newEmail) => {
     // ── 1. Validaciones de entrada (mínimas necesarias) ──
     if (!currentPassword || !newPassword) {
       throw new Error('Completá la contraseña actual y la nueva.')
@@ -437,21 +491,33 @@ const auth = {
       throw new Error('La contraseña actual es incorrecta.')
     }
 
-    // ── 4. Generar y guardar el NUEVO hash (bcrypt vía GoTrue) ──
-    const { error: errUpd } = await supabase.auth.updateUser({ password: newPassword })
-    if (errUpd) {
-      throw new Error(traducirErrorAuth(errUpd))
+    // ── 4. Actualizar email y contraseña usando la función segura (RPC) ──
+    const targetEmail = newEmail && newEmail.trim() ? newEmail.trim().toLowerCase() : user.email
+    
+    // Validar formato de email
+    if (!targetEmail.includes('@') || targetEmail.length < 5) {
+      throw new Error('Ingresá un correo electrónico válido.')
     }
 
-    return { ok: true, message: 'Tu contraseña se actualizó correctamente.' }
+    const { data: resRpc, error: errRpc } = await supabase.rpc('cambiar_email_y_password', {
+      p_user_id: user.id,
+      p_new_email: targetEmail,
+      p_new_password: newPassword
+    })
+
+    if (errRpc) {
+      throw new Error('Error al actualizar datos: ' + errRpc.message)
+    }
+
+    return { ok: true, message: 'Tus datos se actualizaron correctamente.' }
   },
 }
 
 function traducirErrorAuth(error) {
   const msg = (error.message || '').toLowerCase()
-  if (msg.includes('invalid login credentials')) return 'Email o contraseña incorrectos'
+  if (msg.includes('invalid login credentials')) return 'DNI o contraseña incorrectos'
   if (msg.includes('email not confirmed')) return 'Tu cuenta no fue confirmada todavía'
-  if (msg.includes('user already registered')) return 'El email ya está registrado'
+  if (msg.includes('user already registered')) return 'El DNI ya está registrado'
   if (msg.includes('password should be')) return 'La contraseña debe tener al menos 6 caracteres'
   if (msg.includes('rate limit')) return 'Demasiados intentos. Probá nuevamente en unos minutos'
   return error.message || 'Error de autenticación'
@@ -516,6 +582,17 @@ const usuarios = {
     checkError(error, 'usuarios.rechazar')
     invalidateClientCache()
     return { ok: true, message: 'Usuario rechazado' }
+  },
+
+  restablecerPasswordDni: async (target_user_id) => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Sesión no válida o expirada.')
+    const { data, error } = await supabase.rpc('admin_reset_password_to_dni', {
+      p_admin_id: user.id,
+      p_target_id: target_user_id
+    })
+    checkError(error, 'usuarios.restablecerPasswordDni')
+    return { ok: true, message: 'La contraseña fue restablecida al DNI correctamente.' }
   },
 
   // Crear usuario manualmente (admin). Por ahora se hace via signUp normal,
@@ -1127,6 +1204,30 @@ supabase.auth.onAuthStateChange((event, _session) => {
 })
 
 // ════════════════════════════════════════════════════════════════
+// PROPUESTAS (buzón anónimo)
+// ════════════════════════════════════════════════════════════════
+
+const propuestas = {
+  async enviar(area, propuesta) {
+    const { data, error } = await supabase
+      .from('propuestas')
+      .insert([{ area, propuesta }])
+      .select()
+    if (error) throw error
+    return data
+  },
+
+  async obtener() {
+    const { data, error } = await supabase
+      .from('propuestas')
+      .select('*')
+      .order('created_at', { ascending: false })
+    if (error) throw error
+    return data || []
+  },
+}
+
+// ════════════════════════════════════════════════════════════════
 // EXPORT
 // ════════════════════════════════════════════════════════════════
 
@@ -1140,6 +1241,7 @@ const sheetsApi = {
   predicciones,
   grupos,
   areas,
+  propuestas,
   _token: { get: getToken, save: saveToken, clear: clearToken },
   _cache: { invalidate: invalidateClientCache },
   _supabase: supabase, // expuesto para casos avanzados (realtime, etc)

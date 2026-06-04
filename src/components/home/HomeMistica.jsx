@@ -117,7 +117,7 @@ export default function HomeMistica() {
               style={{ background: 'linear-gradient(135deg,#ebc32b,#c29a0e)', color: '#0a0f0a', boxShadow: '0 8px 24px rgba(235,195,43,.25)', textDecoration: 'none' }}
               onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 12px 32px rgba(235,195,43,.45)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
               onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 8px 24px rgba(235,195,43,.25)'; e.currentTarget.style.transform = '' }}>
-              Unirme al prode de la Scaloneta
+              Unirme al prode de la Lista Verde
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </Link>
             <p className="font-body text-[10px] text-white/40 uppercase tracking-widest mt-1">

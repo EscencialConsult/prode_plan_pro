@@ -31,7 +31,7 @@ export default function HomeNav() {
             src="./imgprode/one-prode-blanco.png"
             alt="ONE PRODE"
             style={{
-              height: 'clamp(54px, 9vw, 72px)',
+              height: 'clamp(56px, 7.5vw, 96px)',
               width: 'auto',
               display: 'block',
               filter: 'drop-shadow(0 2px 12px rgba(134, 200, 115, 0.5))',
@@ -40,8 +40,8 @@ export default function HomeNav() {
             onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)' }}
             onMouseLeave={e => { e.currentTarget.style.transform = 'none' }}
           />
-          <div style={{ width: 1, height: 26, background: 'rgba(134,200,115,.25)', flexShrink: 0 }} />
-          <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize: 'clamp(0.9rem, 2.2vw, 1.15rem)', letterSpacing: '.07em', lineHeight: 1, userSelect: 'none' }}>
+          <div style={{ width: 1, height: 'clamp(28px, 4vw, 40px)', background: 'rgba(134,200,115,.25)', flexShrink: 0 }} />
+          <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize: 'clamp(1.05rem, 2.5vw, 1.35rem)', letterSpacing: '.18em', lineHeight: 1, userSelect: 'none' }}>
             <span style={{ color: '#7BA3C0' }}>MOYANO </span>
             <span style={{ color: '#fff' }}>C</span>
             <span style={{ color: '#ebc32b' }}>O</span>

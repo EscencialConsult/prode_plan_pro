@@ -139,7 +139,7 @@ export default function HomeHero() {
                   <img
                     src="/imgprode/one-prode-blanco.png"
                     alt="Logo"
-                    style={{ height: 120, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(134,200,115,0.5))' }}
+                    style={{ height: 170, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(134,200,115,0.5))' }}
                   />
                 </div>
                 <div className="relative overflow-hidden rounded-xl aspect-[16/10] mb-4">

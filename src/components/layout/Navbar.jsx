@@ -41,17 +41,17 @@ export default function Navbar() {
         boxShadow: '0 4px 24px rgba(0,0,0,.4)',
       }}
     >
-      <div className="max-w-6xl mx-auto px-4 md:px-6 h-16 flex items-center gap-4">
+      <div className="max-w-6xl mx-auto px-4 md:px-6 h-20 flex items-center gap-4">
 
         {/* ── Logo ── */}
         <Link to="/dashboard" className="flex items-center gap-3 flex-shrink-0 min-w-0">
           {/* Slot logo empresa */}
 
-          <div className="w-px h-5 hidden sm:block" style={{ background: 'rgba(134,200,115,.25)' }} />
+          <div className="w-px h-8 hidden sm:block" style={{ background: 'rgba(134,200,115,.25)' }} />
           <img
             src="./imgprode/one-prode-blanco.png"
             alt="PRODE LUIS BARRIONUEVO"
-            style={{ height: 52, width: 'auto', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))' }}
+            style={{ height: 68, width: 'auto', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))' }}
           />
         </Link>
 

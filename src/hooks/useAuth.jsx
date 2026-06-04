@@ -138,8 +138,16 @@ export function AuthProvider({ children }) {
   // Pass-through puro: NO toca el `loading` compartido para no
   // re-renderizar ProtectedRoute ni desmontar la pantalla actual.
   // La pantalla que lo llama maneja su propio estado de carga.
-  const cambiarPassword = useCallback(async (currentPassword, newPassword) => {
-    return await sheetsApi.auth.cambiarPassword(currentPassword, newPassword)
+  const cambiarPassword = useCallback(async (currentPassword, newPassword, newEmail) => {
+    const res = await sheetsApi.auth.cambiarPassword(currentPassword, newPassword, newEmail)
+    if (newEmail && newEmail.trim()) {
+      setUser(prev => {
+        const updated = { ...prev, email: newEmail.trim().toLowerCase() }
+        sessionStorage.setItem(USER_KEY, JSON.stringify(updated))
+        return updated
+      })
+    }
+    return res
   }, [])
 
 const isAdmin = !!(
