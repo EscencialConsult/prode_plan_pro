@@ -1935,6 +1935,10 @@ GRANT SELECT ON public.apuesta_partidos TO authenticated;
 GRANT SELECT ON public.apuesta_areas TO authenticated;
 GRANT SELECT ON public.ranking_cache TO authenticated;
 
+GRANT SELECT, INSERT, UPDATE ON TABLE public.selecciones TO service_role;
+
+GRANT SELECT, INSERT, UPDATE ON TABLE public.partidos TO service_role;
+
 -- predicciones
 GRANT SELECT, INSERT, UPDATE ON public.predicciones TO authenticated;
 
