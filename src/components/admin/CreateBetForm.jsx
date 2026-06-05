@@ -24,7 +24,7 @@ function isTBD(m) {
     m.codigo_local === 'TBD' || m.codigo_visitante === 'TBD'
 }
 
-function estaDisponible(m) { return m.estado === 'programado' }
+function estaDisponible(m) { return true }
 
 function partidoYaTerminado(partido) {
   if (!partido.fecha_partido) return false
