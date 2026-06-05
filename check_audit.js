@@ -16,11 +16,12 @@ async function check() {
   await client.connect();
   try {
     const res = await client.query(`
-      SELECT prosrc 
-      FROM pg_proc 
-      WHERE proname = 'buscar_email_por_dni';
+      SELECT payload
+      FROM auth.audit_log_entries
+      ORDER BY created_at DESC
+      LIMIT 5;
     `);
-    console.log(res.rows[0]?.prosrc);
+    console.log(JSON.stringify(res.rows, null, 2));
   } catch (err) {
     console.error(err);
   } finally {

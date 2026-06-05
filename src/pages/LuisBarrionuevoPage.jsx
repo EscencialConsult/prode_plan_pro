@@ -439,10 +439,10 @@ export default function LuisBarrionuevoPage() {
               src="./imgprode/one-prode-blanco.png"
               alt="ONE PRODE"
               style={{
-                height: 'clamp(85px, 14vw, 100px)',
+                height: '52px',
                 width: 'auto',
                 display: 'block',
-                filter: 'drop-shadow(0 2px 12px rgba(134, 200, 115, 0.5))',
+                borderRadius: '8px',
                 transition: 'transform 0.3s ease',
               }}
               onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)' }}
@@ -465,8 +465,8 @@ export default function LuisBarrionuevoPage() {
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{width:14,height:14}}><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
               Prode
             </Link>
-            <Link to="/register" className="lb-btn-main" style={{padding:'8px 18px', fontSize:'.8rem'}}>
-              Registrarse
+            <Link to="/login" className="lb-btn-main" style={{padding:'8px 18px', fontSize:'.8rem'}}>
+              Iniciar sesión
             </Link>
           </div>
         </div>
@@ -654,8 +654,8 @@ export default function LuisBarrionuevoPage() {
                   Ver propuesta completa
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{width:16,height:16}}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </a>
-                <Link to="/register" className="lb-btn-out">
-                  Unirme al prode →
+                <Link to="/login" className="lb-btn-out">
+                  Ingresar al prode →
                 </Link>
               </div>
             </div>
@@ -770,31 +770,52 @@ export default function LuisBarrionuevoPage() {
       <footer style={{ background: '#050905', padding: '2.5rem 1.5rem 2rem', borderTop: '1px solid rgba(134,200,115,.1)' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
 
-          {/* Logos */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1.5rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-            <img src="/imgprode/one-prode-blanco.png" alt="ONE Prode" style={{ height: 26, width: 'auto', opacity: .8 }} />
-            <div style={{ width: 1, height: 24, background: 'rgba(134,200,115,.15)', flexShrink: 0 }} />
-            <img src="/imgprode/one-prode-blanco.png" alt="ONE" style={{ height: 20, width: 'auto', opacity: .6 }} />
-            <div style={{ width: 1, height: 24, background: 'rgba(134,200,115,.15)', flexShrink: 0 }} />
-            <a href="https://escencialconsultora.com.ar" target="_blank" rel="noopener noreferrer">
-              <img src="/img/escencial-logoblanco.png" alt="Escencial Consultora" style={{ height: 28, width: 'auto', opacity: .6, transition: 'opacity .2s' }}
-                onMouseEnter={e => e.currentTarget.style.opacity = 1}
-                onMouseLeave={e => e.currentTarget.style.opacity = .6} />
-            </a>
+          {/* Brand Row (Logo + Text side-by-side) */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '1.25rem',
+            flexWrap: 'wrap',
+            marginBottom: '1.5rem',
+          }}>
+            <div style={{
+              background: '#ffffff',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '110px',
+              width: '220px',
+              overflow: 'hidden',
+              boxShadow: '0 4px 24px rgba(255,255,255,0.22)',
+            }}>
+              <img
+                src="./imgprode/one-prode-talento-new2.png"
+                alt="Logo"
+                style={{
+                  height: '145%',
+                  width: 'auto',
+                  display: 'block',
+                  objectFit: 'contain',
+                }}
+              />
+            </div>
+            <div style={{ width: 1, height: '60px', background: 'rgba(134,200,115,.25)', flexShrink: 0 }} />
+            <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize: 'clamp(1.5rem, 5vw, 2.2rem)', letterSpacing: '.12em', lineHeight: 1, userSelect: 'none' }}>
+              <span style={{ color: '#7BA3C0' }}>MOYANO </span>
+              <span style={{ color: '#fff' }}>C</span>
+              <span style={{ color: '#ebc32b' }}>O</span>
+              <span style={{ color: '#fff' }}>N</span>
+              <span style={{ color: '#7BA3C0' }}>DUCCIÓN</span>
+            </div>
           </div>
 
           <div style={{ height: 1, background: 'linear-gradient(90deg,transparent,rgba(134,200,115,.15) 20%,rgba(134,200,115,.15) 80%,transparent)', marginBottom: '1.25rem' }} />
 
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontFamily:"'Bebas Neue',sans-serif", fontSize: '1.3rem', letterSpacing: '.08em', marginBottom: '.4rem' }}>
-              <span style={{ color: '#7BA3C0' }}>MOYANO </span>
-              <span style={{ color: '#fff' }}>C</span>
-              <span style={{ color: '#F5C518' }}>O</span>
-              <span style={{ color: '#fff' }}>N</span>
-              <span style={{ color: '#7BA3C0' }}>DUCCIÓN</span>
-            </div>
             <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize: '.72rem', color: 'rgba(255,255,255,.25)', margin: '0 0 .9rem' }}>
-              © 2026 Lista Verde Tucumán · Moyano Conducción · "Siempre con el trabajador"
+              © 2026 Lista Verde Tucumán · Luis Barrionuevo 2026 · "Siempre con el trabajador"
             </p>
             <Link to="/" style={{ fontFamily:"'DM Sans',sans-serif", fontSize: '.78rem', fontWeight: 600, color: '#86C873', textDecoration: 'none' }}>
               ← Volver al Prode de la Lista Verde

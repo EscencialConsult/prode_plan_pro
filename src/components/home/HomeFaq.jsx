@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const FAQS = [
-  { q: '¿Cómo me registro?', a: 'Hacé clic en "Registrarse", ingresá tu nombre y email y elegí una contraseña. Un administrador aprueba tu acceso — generalmente en minutos.' },
+  { q: '¿Cómo ingreso a la plataforma?', a: 'El registro de nuevos usuarios está cerrado. Si ya tenés una cuenta asignada, podés iniciar sesión directamente ingresando tu DNI como usuario y contraseña.' },
   { q: '¿Cómo cargo mis predicciones?', a: 'Una vez dentro, entrá a la sección "Apuestas", encontrá un partido abierto y cargá el resultado que creés que va a pasar. La apuesta cierra cuando arranca el partido.' },
   { q: '¿Cómo se calculan los puntos?', a: 'Acertar el resultado exacto suma más puntos que acertar solo quién gana. El sistema lo calcula automáticamente y actualiza el ranking después de cada partido.' },
   { q: '¿Puedo ver mis predicciones anteriores?', a: 'Sí. En "Mis Predicciones" encontrás el historial completo de tus pronósticos, cuántos acertaste y cómo evolucionó tu puntaje durante el torneo.' },
@@ -31,24 +31,7 @@ export default function HomeFaq() {
             <p className="font-body text-base leading-relaxed mb-10" style={{ color: '#4a6b50', maxWidth: '28rem' }}>
               Todo lo que necesitás saber para empezar a participar y sacarle el máximo a la plataforma.
             </p>
-            <Link to="/register"
-              className="inline-flex items-center gap-2 font-body font-bold text-sm px-7 py-4 rounded-full transition-all duration-300"
-              style={{ background: '#111811', color: '#fff', textDecoration: 'none', boxShadow: '0 4px 14px rgba(17,24,17,.2)' }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = '#1a241a'
-                e.currentTarget.style.transform = 'translateY(-2px)'
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(17,24,17,.3)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = '#111811'
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 4px 14px rgba(17,24,17,.2)'
-              }}>
-              Registrarme ahora
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-                <polyline points="9 18 15 12 9 6"/>
-              </svg>
-            </Link>
+
           </div>
 
           {/* Accordion */}

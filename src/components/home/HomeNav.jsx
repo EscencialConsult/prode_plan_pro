@@ -31,10 +31,10 @@ export default function HomeNav() {
             src="./imgprode/one-prode-blanco.png"
             alt="ONE PRODE"
             style={{
-              height: 'clamp(85px, 14vw, 100px)',
+              height: '80px',
               width: 'auto',
               display: 'block',
-              filter: 'drop-shadow(0 2px 12px rgba(134, 200, 115, 0.5))',
+              borderRadius: '8px',
               transition: 'transform 0.3s ease',
             }}
             onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.05)' }}
@@ -74,17 +74,11 @@ export default function HomeNav() {
 
         {/* Desktop CTAs */}
         <div className="hidden lg:flex items-center gap-3">
-          <Link to="/login" className="font-body font-semibold text-sm px-5 py-2.5 rounded-full transition-all"
-            style={{ color: 'rgba(255,255,255,.82)', border: '1.5px solid rgba(255,255,255,.22)', textDecoration: 'none' }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = '#86C873'; e.currentTarget.style.color = '#86C873' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.22)'; e.currentTarget.style.color = 'rgba(255,255,255,.82)' }}>
-            Iniciar sesión
-          </Link>
-          <Link to="/register" className="font-body font-bold text-sm px-5 py-2.5 rounded-full transition-all"
+          <Link to="/login" className="font-body font-bold text-sm px-6 py-2.5 rounded-full transition-all"
             style={{ background: 'linear-gradient(135deg,#86C873,#5A9E4A)', color: '#0a0f0a', boxShadow: '0 6px 20px rgba(134,200,115,.35)', textDecoration: 'none' }}
             onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 10px 28px rgba(134,200,115,.45)' }}
             onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 6px 20px rgba(134,200,115,.35)' }}>
-            Registrarse
+            Iniciar sesión
           </Link>
         </div>
 
@@ -119,14 +113,9 @@ export default function HomeNav() {
 
           <div className="pt-2 space-y-2">
             <Link to="/login" onClick={() => setOpen(false)}
-              className="block text-center py-3 rounded-full text-sm font-body font-semibold text-white"
-              style={{ border: '1.5px solid rgba(255,255,255,.2)', textDecoration: 'none' }}>
-              Iniciar sesión
-            </Link>
-            <Link to="/register" onClick={() => setOpen(false)}
               className="block text-center py-3 rounded-full text-sm font-body font-bold"
               style={{ background: 'linear-gradient(135deg,#86C873,#5A9E4A)', color: '#0a0f0a', textDecoration: 'none' }}>
-              Registrarse
+              Iniciar sesión
             </Link>
           </div>
         </div>

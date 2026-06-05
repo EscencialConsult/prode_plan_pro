@@ -15,7 +15,7 @@ export default function HomeFooter() {
           {/* Col 1: Brand sindical */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-              <img src="/imgprode/one-prode-blanco.png" alt="ONE Prode" style={{ height: 52, width: 'auto', display: 'block', opacity: .9 }} />
+              <img src="/imgprode/one-prode-blanco.png" alt="ONE Prode" style={{ height: '44px', width: 'auto', display: 'block', borderRadius: '6px' }} />
               <div>
                 <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: '1rem', letterSpacing: '.08em', lineHeight: 1.1 }}>
                   <span style={{ color: '#7BA3C0' }}>MOYANO </span>
@@ -78,7 +78,6 @@ export default function HomeFooter() {
             </p>
             <ul style={{ listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: '.6rem' }}>
               {[
-                { href: '/register', label: 'Crear cuenta' },
                 { href: '/login', label: 'Iniciar sesión' },
               ].map(({ href, label }) => (
                 <li key={label}>
@@ -100,7 +99,7 @@ export default function HomeFooter() {
               Desarrollado por
             </p>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.8rem' }}>
-              <img src="/imgprode/one-prode-blanco.png" alt="ONE Prode" style={{ height: 38, width: 'auto', opacity: .8 }} />
+              <img src="/imgprode/one-prode-blanco.png" alt="ONE Prode" style={{ height: '32px', width: 'auto', display: 'block', borderRadius: '6px' }} />
               <div style={{ width: 1, height: 30, background: 'rgba(134,200,115,.15)', flexShrink: 0 }} />
               <a href="https://escencialconsultora.com.ar" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display: 'inline-flex' }}>
                 <img src="./img/escencial-logoblanco.png" alt="Escencial Consultora"
@@ -127,7 +126,7 @@ export default function HomeFooter() {
             © 2026 ONE · Escencial · Lista Verde - Tucumán. Todos los derechos reservados.
           </span>
           <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: '.72rem', color: 'rgba(134,200,115,.3)', fontWeight: 600 }}>
-            V1.4.0
+            V1.5.0
           </span>
         </div>
       </div>

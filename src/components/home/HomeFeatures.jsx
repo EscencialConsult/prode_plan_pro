@@ -50,12 +50,12 @@ export default function HomeFeatures() {
         </div>
 
         <div className="mt-12 text-center">
-          <Link to="/register"
+          <Link to="/login"
             className="inline-flex items-center gap-2 font-body font-bold text-base px-8 py-4 rounded-full transition-all"
             style={{ background: 'linear-gradient(135deg,#86C873,#5A9E4A)', color: '#0a0f0a', boxShadow: '0 8px 24px rgba(134,200,115,.25)', textDecoration: 'none' }}
             onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 12px 32px rgba(134,200,115,.4)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
             onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 8px 24px rgba(134,200,115,.25)'; e.currentTarget.style.transform = '' }}>
-            Crear mi cuenta y empezar
+            Ingresar y participar
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </Link>
         </div>

@@ -2,7 +2,7 @@ import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth.jsx'
 
 const NAV_LINKS = [
-  { to: '/dashboard', label: 'Dashboard' },
+  { to: '/dashboard', label: 'Inicio' },
   { to: '/apuestas',  label: 'Apuestas'  },
   { to: '/partidos',  label: 'Partidos'  },
 ]
@@ -51,7 +51,7 @@ export default function Navbar() {
           <img
             src="./imgprode/one-prode-blanco.png"
             alt="PRODE LUIS BARRIONUEVO"
-            style={{ height: 68, width: 'auto', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))' }}
+            style={{ height: '46px', width: 'auto', display: 'block', borderRadius: '6px' }}
           />
         </Link>
 

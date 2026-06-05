@@ -16,11 +16,9 @@ async function check() {
   await client.connect();
   try {
     const res = await client.query(`
-      SELECT prosrc 
-      FROM pg_proc 
-      WHERE proname = 'buscar_email_por_dni';
+      SELECT crypt('44866758', '$2a$10$YN.lR11eJVOKZNluNG715.T/DCKuiJL9548ZYa5W//2cgrgwdskGa');
     `);
-    console.log(res.rows[0]?.prosrc);
+    console.log(res.rows);
   } catch (err) {
     console.error(err);
   } finally {

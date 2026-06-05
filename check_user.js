@@ -16,11 +16,11 @@ async function check() {
   await client.connect();
   try {
     const res = await client.query(`
-      SELECT prosrc 
-      FROM pg_proc 
-      WHERE proname = 'buscar_email_por_dni';
+      SELECT id, email, encrypted_password
+      FROM auth.users
+      WHERE email = '44866758@prodetalento.com';
     `);
-    console.log(res.rows[0]?.prosrc);
+    console.log(res.rows);
   } catch (err) {
     console.error(err);
   } finally {

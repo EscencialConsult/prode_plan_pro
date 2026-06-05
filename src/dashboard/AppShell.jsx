@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
 
 const NAV_ITEMS = [
-  { to: '/dashboard', label: 'Dashboard', icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg> },
+  { to: '/dashboard', label: 'Inicio', icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg> },
   { to: '/apuestas', label: 'Apuestas', icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" /><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" /></svg> },
   { to: '/partidos', label: 'Fixture', icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg> },
   { to: '/mis-predicciones', label: 'Mis Prodes', icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg> },
@@ -250,11 +250,10 @@ export default function AppShell({ children }) {
                 src="/imgprode/one-prode-gorro-blanco.png"
                 alt="PRODE"
                 style={{
-                  height: 58,
+                  height: '46px',
                   width: 'auto',
-                  filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))',
                   display: 'block',
-                  transform: 'translateY(4px)',
+                  borderRadius: '6px',
                 }}
               />
             </Link>
@@ -511,125 +510,7 @@ export default function AppShell({ children }) {
                   )}
                 </button>
 
-                {logoutState === 'confirm' && (
-                  <>
-                    <div
-                      onClick={cancelarLogout}
-                      style={{
-                        position: 'fixed',
-                        inset: 0,
-                        zIndex: 60,
-                        background: 'transparent',
-                      }}
-                    />
 
-                    <div
-                      className="pop-in"
-                      style={{
-                        position: 'absolute',
-                        top: 'calc(100% + 8px)',
-                        right: 0,
-                        zIndex: 61,
-                        minWidth: 240,
-                        background: '#fff',
-                        borderRadius: 12,
-                        boxShadow: '0 12px 32px rgba(17,24,17,.22), 0 0 0 1px rgba(17,24,17,.06)',
-                        padding: '.85rem .95rem',
-                        border: '1px solid #c8dbcc',
-                      }}
-                    >
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: -6,
-                          right: 22,
-                          width: 12,
-                          height: 12,
-                          background: '#fff',
-                          transform: 'rotate(45deg)',
-                          borderTop: '1px solid #c8dbcc',
-                          borderLeft: '1px solid #c8dbcc',
-                        }}
-                      />
-
-                      <p
-                        style={{
-                          fontFamily: "'Bebas Neue',sans-serif",
-                          fontSize: '1rem',
-                          color: '#111811',
-                          margin: '0 0 .15rem',
-                          letterSpacing: '.02em',
-                        }}
-                      >
-                        ¿Cerrar sesión?
-                      </p>
-
-                      <p
-                        style={{
-                          fontSize: '.76rem',
-                          color: '#4a6b50',
-                          margin: '0 0 .85rem',
-                          lineHeight: 1.4,
-                        }}
-                      >
-                        Vas a volver a la pantalla de inicio.
-                      </p>
-
-                      <div style={{ display: 'flex', gap: '.45rem', justifyContent: 'flex-end' }}>
-                        <button
-                          onClick={cancelarLogout}
-                          style={{
-                            background: 'transparent',
-                            border: '1px solid #c8dbcc',
-                            borderRadius: 7,
-                            padding: '.4rem .8rem',
-                            fontSize: '.74rem',
-                            fontWeight: 600,
-                            color: '#4a6b50',
-                            cursor: 'pointer',
-                            transition: 'all .14s',
-                          }}
-                          onMouseEnter={e => {
-                            e.currentTarget.style.borderColor = '#111811'
-                            e.currentTarget.style.color = '#111811'
-                          }}
-                          onMouseLeave={e => {
-                            e.currentTarget.style.borderColor = '#c8dbcc'
-                            e.currentTarget.style.color = '#4a6b50'
-                          }}
-                        >
-                          Cancelar
-                        </button>
-
-                        <button
-                          onClick={confirmarLogout}
-                          style={{
-                            background: '#ff4d6d',
-                            border: '1px solid #ff4d6d',
-                            borderRadius: 7,
-                            padding: '.4rem .9rem',
-                            fontSize: '.74rem',
-                            fontWeight: 700,
-                            color: '#fff',
-                            cursor: 'pointer',
-                            transition: 'all .14s',
-                            letterSpacing: '.02em',
-                          }}
-                          onMouseEnter={e => {
-                            e.currentTarget.style.background = '#e0354f'
-                            e.currentTarget.style.borderColor = '#e0354f'
-                          }}
-                          onMouseLeave={e => {
-                            e.currentTarget.style.background = '#ff4d6d'
-                            e.currentTarget.style.borderColor = '#ff4d6d'
-                          }}
-                        >
-                          Sí, salir
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                )}
               </div>
 
               <button
@@ -802,7 +683,7 @@ export default function AppShell({ children }) {
               }}
             >
               <div className="foot-left" style={{ display: 'flex', alignItems: 'center', gap: '.65rem', flexWrap: 'wrap' }}>
-                <img src="/imgprode/one-prode-blanco.png" alt="ONE Prode" style={{ height: 26, width: 'auto', display: 'block', opacity: .9 }} />
+                <img src="/imgprode/one-prode-blanco.png" alt="ONE Prode" style={{ height: '24px', width: 'auto', display: 'block', borderRadius: '4px' }} />
                 <span
                   style={{
                     fontFamily: "'Bebas Neue',sans-serif",
@@ -841,7 +722,7 @@ export default function AppShell({ children }) {
                   >
                     Desarrollado por
                   </span>
-                  <img src="/imgprode/one-prode-blanco.png" alt="ONE Prode" style={{ height: 20, width: 'auto', display: 'block', opacity: .8 }} />
+                  <img src="/imgprode/one-prode-blanco.png" alt="ONE Prode" style={{ height: '20px', width: 'auto', display: 'block', borderRadius: '4px' }} />
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}>
@@ -876,6 +757,109 @@ export default function AppShell({ children }) {
           </footer>
         </main>
       </div>
+
+      {logoutState === 'confirm' && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 999,
+            background: 'rgba(0,0,0,.65)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            backdropFilter: 'blur(4px)',
+          }}
+        >
+          <div
+            className="pop-in"
+            style={{
+              width: '90%',
+              maxWidth: 320,
+              background: '#fff',
+              borderRadius: 16,
+              boxShadow: '0 20px 40px rgba(0,0,0,.35)',
+              padding: '1.5rem',
+              border: '1px solid #c8dbcc',
+            }}
+          >
+            <p
+              style={{
+                fontFamily: "'Bebas Neue',sans-serif",
+                fontSize: '1.4rem',
+                color: '#111811',
+                margin: '0 0 .5rem',
+                letterSpacing: '.02em',
+              }}
+            >
+              ¿Cerrar sesión?
+            </p>
+
+            <p
+              style={{
+                fontSize: '.85rem',
+                color: '#4a6b50',
+                margin: '0 0 1.25rem',
+                lineHeight: 1.4,
+              }}
+            >
+              Vas a volver a la pantalla de inicio.
+            </p>
+
+            <div style={{ display: 'flex', gap: '.5rem', justifyContent: 'flex-end' }}>
+              <button
+                onClick={cancelarLogout}
+                style={{
+                  background: 'transparent',
+                  border: '1px solid #c8dbcc',
+                  borderRadius: 8,
+                  padding: '.5rem 1.1rem',
+                  fontSize: '.8rem',
+                  fontWeight: 600,
+                  color: '#4a6b50',
+                  cursor: 'pointer',
+                  transition: 'all .14s',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = '#111811'
+                  e.currentTarget.style.color = '#111811'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = '#c8dbcc'
+                  e.currentTarget.style.color = '#4a6b50'
+                }}
+              >
+                Cancelar
+              </button>
+
+              <button
+                onClick={confirmarLogout}
+                style={{
+                  background: '#ff4d6d',
+                  border: '1.5px solid #ff4d6d',
+                  borderRadius: 8,
+                  padding: '.5rem 1.2rem',
+                  fontSize: '.8rem',
+                  fontWeight: 700,
+                  color: '#fff',
+                  cursor: 'pointer',
+                  transition: 'all .14s',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = '#e0354f'
+                  e.currentTarget.style.borderColor = '#e0354f'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = '#ff4d6d'
+                  e.currentTarget.style.borderColor = '#ff4d6d'
+                }}
+              >
+                Sí, salir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {logoutState === 'redirect' && (
         <div

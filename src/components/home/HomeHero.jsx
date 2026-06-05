@@ -52,7 +52,7 @@ export default function HomeHero() {
                 </span>
                 <span style={{ color: 'rgba(255,255,255,.25)' }}>|</span>
                 <span className="text-[10px] sm:text-xs font-body font-bold uppercase tracking-widest text-white">
-                  ★ MOYANO CONDUCCIÓN
+                  ★ LISTA VERDE
                 </span>
               </div>
 
@@ -72,14 +72,14 @@ export default function HomeHero() {
                   CON LA SELECCIÓN
                 </h1>
                 <p className="text-sm sm:text-base font-body leading-relaxed max-w-xl" style={{ color: 'rgba(255,255,255,.75)' }}>
-                  Pronosticá los partidos, sumá puntos y competí con tus compañeros. El prode oficial impulsado por la agrupación <strong className="text-white">Moyano Conducción</strong> ya está activo.
+                  Pronosticá los partidos, sumá puntos y competi con tus compañeros. El prode oficial impulsado por La Lista Verde. Luis Barrionuevo 2026.
                 </p>
               </div>
 
               {/* Features inline */}
               <div className="grid sm:grid-cols-3 gap-4 py-2">
                 {[
-                  ['Moyano Conducción', 'Fuerza y Lealtad'],
+                  ['Luis Barrionuevo', 'Siempre con el trabajador'],
                   ['Más unión', 'Juntos por la victoria'],
                   ['Celeste y blanca', 'Pasión nacional'],
                 ].map(([label, sub]) => (
@@ -100,28 +100,22 @@ export default function HomeHero() {
 
               {/* Botones */}
               <div className="flex flex-col sm:flex-row gap-3">
-                <Link to="/register" className="font-body font-bold text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full inline-flex items-center justify-center gap-2 transition-all w-full sm:w-auto"
-                  style={{ background: 'linear-gradient(135deg,#7BA3C0,#4A84B0)', color: '#fff', boxShadow: '0 8px 24px rgba(123,163,192,.35)', textDecoration: 'none' }}
-                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 12px 32px rgba(123,163,192,.55)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                  onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 8px 24px rgba(123,163,192,.35)'; e.currentTarget.style.transform = '' }}>
-                  Crear mi cuenta
+                <Link to="/login" className="font-body font-bold text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full inline-flex items-center justify-center gap-2 transition-all w-full sm:w-auto"
+                  style={{ background: 'linear-gradient(135deg,#86C873,#5A9E4A)', color: '#0a0f0a', boxShadow: '0 8px 24px rgba(134,200,115,.25)', textDecoration: 'none' }}
+                  onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 12px 32px rgba(134,200,115,.45)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 8px 24px rgba(134,200,115,.25)'; e.currentTarget.style.transform = '' }}>
+                  Ingresar a mi cuenta
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                </Link>
-                <Link to="/login" className="font-body font-semibold text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full inline-flex items-center justify-center gap-2 transition-all w-full sm:w-auto"
-                  style={{ color: '#fff', border: '1.5px solid rgba(255,255,255,.25)', textDecoration: 'none' }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#7BA3C0'; e.currentTarget.style.color = '#7BA3C0' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.25)'; e.currentTarget.style.color = '#fff' }}>
-                  Ya tengo cuenta →
                 </Link>
               </div>
 
               {/* Alert box */}
               <div className="flex items-start gap-3 p-3 sm:p-4 rounded-lg max-w-xl"
-                style={{ background: 'linear-gradient(135deg,rgba(123,163,192,.18),rgba(10,15,10,.05))', border: '1px solid rgba(123,163,192,.35)', borderLeft: '3px solid #7BA3C0' }}>
-                <span className="text-xl shrink-0 mt-px text-[#7BA3C0]">★</span>
+                style={{ background: 'linear-gradient(135deg,rgba(134,200,115,.18),rgba(10,15,10,.05))', border: '1px solid rgba(134,200,115,.35)', borderLeft: '3px solid #86C873' }}>
+                <span className="text-xl shrink-0 mt-px text-[#86C873]">★</span>
                 <p className="text-xs sm:text-sm font-body leading-relaxed" style={{ color: 'rgba(255,255,255,.88)' }}>
-                  <strong className="text-white">PRODE MOYANO CONDUCCIÓN.</strong>{' '}
-                  El Mundial comienza el 11 de junio. Registrate antes de que arranque para sumarte a la jugada con toda la agrupación de Camioneros.
+                  <strong className="text-white">PRODE LISTA VERDE.</strong>{' '}
+                  El prode oficial ya está activo. Iniciá sesión con tu DNI para sumarte a la jugada con toda la agrupación.
                 </p>
               </div>
             </div>
@@ -139,7 +133,12 @@ export default function HomeHero() {
                   <img
                     src="/imgprode/one-prode-blanco.png"
                     alt="Logo"
-                    style={{ height: 170, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(134,200,115,0.5))' }}
+                    style={{
+                      height: 110,
+                      width: 'auto',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 15px rgba(0,0,0,0.25)',
+                    }}
                   />
                 </div>
                 <div className="relative overflow-hidden rounded-xl aspect-[16/10] mb-4">
@@ -155,7 +154,7 @@ export default function HomeHero() {
                 </div>
                 <div className="text-center px-2">
                   <p className="font-body font-bold text-sm text-[#7BA3C0] uppercase tracking-wider mb-2">
-                    Moyano Conducción
+                    Luis Barrionuevo
                   </p>
                   <p className="font-body text-xs sm:text-sm text-white/85 leading-relaxed">
                     Viví la pasión de nuestra selección en cada partido del mundial. ¡Sumá tus pronósticos y alentá con tus compañeros!

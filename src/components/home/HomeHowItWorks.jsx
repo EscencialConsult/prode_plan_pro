@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom'
 
 const STEPS = [
   {
-    n: '01', title: 'REGISTRATE',
-    desc: 'Ingresá con tu email. El administrador aprueba tu acceso en minutos y ya estás dentro del prode.',
+    n: '01', title: 'INGRESÁ',
+    desc: 'Iniciá sesión directamente con tu DNI y tu contraseña asignada para acceder al prode.',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
   },
   {
@@ -66,12 +66,12 @@ export default function HomeHowItWorks() {
         </div>
 
         <div className="text-center">
-          <Link to="/register"
+          <Link to="/login"
             className="inline-flex items-center gap-2 font-body font-bold text-base px-8 py-4 rounded-full transition-all"
             style={{ background: 'linear-gradient(135deg,#86C873,#5A9E4A)', color: '#0a0f0a', boxShadow: '0 8px 24px rgba(134,200,115,.28)', textDecoration: 'none' }}
             onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 12px 32px rgba(134,200,115,.4)'; e.currentTarget.style.transform = 'translateY(-2px)' }}
             onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 8px 24px rgba(134,200,115,.28)'; e.currentTarget.style.transform = '' }}>
-            Empezar ahora
+            Ingresar ahora
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </Link>
         </div>

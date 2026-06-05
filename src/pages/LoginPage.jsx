@@ -50,7 +50,7 @@ export default function LoginPage() {
         {/* ── TOP: logo empresa + marca ── */}
         <div className="relative z-10 flex flex-col items-center mb-6 lp-card">
           <img
-            src="./imgprode/one-prode-blanco.png"
+            src="./imgprode/one-prode-gorro-blanco.png"
             alt="ONE PRODE"
             style={{
               height: 'clamp(120px, 28vw, 160px)',
@@ -221,23 +221,7 @@ export default function LoginPage() {
               </button>
             </form>
 
-            {/* Divider o */}
-            <div className="flex items-center gap-3 my-5">
-              <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,.08)' }} />
-              <span className="font-body text-xs" style={{ color: 'rgba(255,255,255,.25)' }}>o</span>
-              <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,.08)' }} />
-            </div>
 
-            {/* Registrarse */}
-            <Link
-              to="/register"
-              className="block w-full font-body font-semibold text-sm py-3.5 rounded-full text-center transition-all"
-              style={{ border: '1px solid rgba(255,255,255,.18)', color: 'rgba(255,255,255,.7)', textDecoration: 'none' }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(134,200,115,.5)'; e.currentTarget.style.color = '#86C873'; e.currentTarget.style.background = 'rgba(134,200,115,.06)' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.18)'; e.currentTarget.style.color = 'rgba(255,255,255,.7)'; e.currentTarget.style.background = 'transparent' }}
-            >
-              No tengo cuenta — Registrarme
-            </Link>
           </div>
         </div>
 
