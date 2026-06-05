@@ -166,7 +166,7 @@ export default function ActiveUsersTab({
             }}
           >
             <span>Nombre</span>
-            <span>Email</span>
+            <span>DNI / Email</span>
             {isPro && <span>Área</span>}
             {isPro && <span>Tipo</span>}
             <span>Rol</span>
@@ -203,10 +203,17 @@ export default function ActiveUsersTab({
                   </p>
                 </div>
 
-                {/* Email */}
-                <p className="font-body text-sm truncate" style={{ color: '#4a6b50' }}>
-                  {u.email}
-                </p>
+                {/* DNI / Email */}
+                <div className="flex flex-col min-w-0">
+                  <p className="font-body text-sm font-semibold truncate" style={{ color: '#4a6b50' }}>
+                    {u.dni || u.email.split('@')[0]}
+                  </p>
+                  {!u.email.endsWith('@prodetalento.com') && (
+                    <p className="font-body text-xs truncate" style={{ color: '#8aaa8e' }}>
+                      {u.email}
+                    </p>
+                  )}
+                </div>
 
                 {/* Área */}
                 {isPro && (

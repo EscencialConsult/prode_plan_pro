@@ -82,7 +82,7 @@ function BetRow({ bet, onClose, onFinalize }) {
 
         {/* Actions */}
         <div className="flex flex-col gap-1.5 flex-shrink-0">
-          {isOpen && onClose && (
+          {bet.estado === 'abierta' && onClose && (
             <button
               onClick={() => onClose(bet.id)}
               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full font-body font-semibold transition-all"
@@ -242,7 +242,7 @@ export default function BetsListTab({ bets, loading, closeBet, finalizeBet, load
             <span className="font-display text-lg" style={{ color: '#4a6b50' }}>({closedBets.length})</span>
           </div>
           <div className="flex flex-col gap-3">
-            {closedBets.map(bet => (<BetRow key={bet.id} bet={bet} onFinalize={handleFinalize} />))}
+            {closedBets.map(bet => (<BetRow key={bet.id} bet={bet} onClose={handleClose} onFinalize={handleFinalize} />))}
           </div>
         </div>
       )}

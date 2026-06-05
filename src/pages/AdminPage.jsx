@@ -620,10 +620,16 @@ if (initialLoading) {
                         style={{ color: '#0a0f0a' }}>
                         {u.nombre}
                       </p>
-                      <p className="text-sm font-body truncate mb-1.5"
+                      <p className="text-sm font-body truncate mb-0.5"
                         style={{ color: '#4a6b50' }}>
-                        {u.email}
+                        DNI: {u.dni || u.email.split('@')[0]}
                       </p>
+                      {!u.email.endsWith('@prodetalento.com') && (
+                        <p className="text-xs font-body truncate mb-1.5"
+                          style={{ color: '#8aaa8e' }}>
+                          {u.email}
+                        </p>
+                      )}
                       <div className="flex items-center gap-2">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-body font-semibold uppercase tracking-wider"
                           style={{ 

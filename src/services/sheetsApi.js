@@ -727,7 +727,7 @@ const apuestas = {
 
   cerrar: async (apuesta_id) => {
     const { error } = await supabase
-      .from('apuestas').update({ estado: 'cerrada' }).eq('id', apuesta_id)
+      .from('apuestas').update({ estado: 'finalizada' }).eq('id', apuesta_id)
     checkError(error, 'apuestas.cerrar')
     invalidateClientCache()
     return { ok: true, message: 'Apuesta cerrada correctamente' }
@@ -931,7 +931,7 @@ const predicciones = {
     const esGrupal = apuesta?.tipo === 'grupos'
 
     // 2) Obtener ranking desde cache
-    const { data: ranking, error } = await supabase
+    let { data: ranking, error } = await supabase
       .from('ranking_cache')
       .select('*')
       .eq('apuesta_id', apuesta_id)
@@ -939,6 +939,23 @@ const predicciones = {
       .order('posicion', { ascending: true })
 
     checkError(error, 'predicciones.tabla')
+
+    if (!ranking || ranking.length === 0) {
+      try {
+        await supabase.rpc('refrescar_ranking', { p_apuesta_id: apuesta_id })
+        const { data: refetched, error: refetchError } = await supabase
+          .from('ranking_cache')
+          .select('*')
+          .eq('apuesta_id', apuesta_id)
+          .eq('es_grupal', esGrupal)
+          .order('posicion', { ascending: true })
+        if (!refetchError && refetched && refetched.length > 0) {
+          ranking = refetched
+        }
+      } catch (err) {
+        console.warn('Error al refrescar caché de ranking vacío:', err)
+      }
+    }
 
     const rankingArr = (ranking || []).map(r => {
       if (esGrupal) {
@@ -1010,60 +1027,26 @@ const predicciones = {
   tablaGlobal: async function (opciones = {}) {
     const currentUserId = opciones.user_id || ''
 
+    // 1) Consultar la vista pre-agregada en la base de datos
     const { data: ranking, error } = await supabase
-      .from('ranking_cache')
+      .from('ranking_global')
       .select('*')
-      .eq('es_grupal', false)
+      .order('posicion', { ascending: true })
 
     if (error) {
       console.error('Error fetching global ranking:', error)
       return { ok: false, error: error.message, tabla: [] }
     }
 
-    const agrupado = {}
-    for (const r of (ranking || [])) {
-      if (!r.user_id) continue
-      if (!agrupado[r.user_id]) {
-        agrupado[r.user_id] = {
-          user_id: r.user_id,
-          nombre: r.nombre || 'Participante',
-          puntos_totales: 0,
-          aciertos_exactos: 0,
-          aciertos_diferencia: 0,
-          aciertos_resultado: 0,
-          aciertos_clasificado: 0,
-          predicciones: 0,
-        }
-      }
-      const u = agrupado[r.user_id]
-      u.puntos_totales += (r.puntos_totales || 0)
-      u.aciertos_exactos += (r.aciertos_exactos || 0)
-      u.aciertos_diferencia += (r.aciertos_diferencia || 0)
-      u.aciertos_resultado += (r.aciertos_resultado || 0)
-      u.aciertos_clasificado += (r.aciertos_clasificado || 0)
-      u.predicciones += (r.predicciones || 0)
-    }
-
-    const sorted = Object.values(agrupado).sort((a, b) => b.puntos_totales - a.puntos_totales)
-
-    let pos = 1
-    const finalTabla = sorted.map((u, idx) => {
-      if (idx > 0 && u.puntos_totales < sorted[idx - 1].puntos_totales) {
-        pos = idx + 1
-      }
-      return {
-        ...u,
-        posicion: pos
-      }
-    })
-
+    const rankingArr = ranking || []
+    
     let miPosicion = null
     if (currentUserId) {
-      miPosicion = finalTabla.find(r => r.user_id === currentUserId) || null
+      miPosicion = rankingArr.find(r => r.user_id === currentUserId) || null
     }
 
     const limit = 200
-    const top = finalTabla.slice(0, limit)
+    const top = rankingArr.slice(0, limit)
     const estaEnTop = miPosicion ? Number(miPosicion.posicion) <= 3 : false
 
     return {
@@ -1071,7 +1054,7 @@ const predicciones = {
       apuesta_titulo: 'RANKING GLOBAL',
       apuesta_tipo: 'global',
       es_grupal: false,
-      total: finalTabla.length,
+      total: rankingArr.length,
       limit,
       tabla: top,
       mi_posicion: miPosicion,

@@ -83,7 +83,7 @@ function BetRow({ bet, onClose, onFinalize }) {
 
         {/* Actions */}
 <div className="flex flex-row sm:flex-col gap-1.5 flex-shrink-0 w-full sm:w-auto">
-  {isOpen && onClose && (
+  {bet.estado === 'abierta' && onClose && (
     <button
       onClick={() => onClose(bet.id)}
       className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-full font-body font-semibold transition-all w-full sm:w-auto"
@@ -116,7 +116,7 @@ export default function BetsTab({ bets, loading, createBet, matches, closeBet, f
   const confirm   = useConfirm()
 
   const openBets     = bets.filter(b => isBetOpen(b))
-  const closedBets   = bets.filter(b => b.estado === 'cerrada' && !isBetOpen(b))
+  const closedBets   = bets.filter(b => (b.estado === 'cerrada' || b.estado === 'abierta') && !isBetOpen(b))
   const finishedBets = bets.filter(b => b.estado === 'finalizada')
 
   async function handleClose(id) {
@@ -212,7 +212,7 @@ return (
               <span className="font-display text-lg" style={{ color: '#4a6b50' }}>({closedBets.length})</span>
             </div>
             <div className="flex flex-col gap-3">
-              {closedBets.map(bet => (<BetRow key={bet.id} bet={bet} onFinalize={handleFinalize} />))}
+              {closedBets.map(bet => (<BetRow key={bet.id} bet={bet} onClose={handleClose} onFinalize={handleFinalize} />))}
             </div>
           </div>
         )}

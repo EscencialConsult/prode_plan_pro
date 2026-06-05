@@ -106,7 +106,14 @@ export default function UsersTab({
                     </div>
                     <div className="min-w-0">
                       <p className="font-body font-semibold truncate" style={{ color: '#111811' }}>{u.nombre}</p>
-                      <p className="text-xs font-body truncate" style={{ color: '#4a6b50' }}>{u.email}</p>
+                      <p className="text-xs font-body truncate" style={{ color: '#4a6b50' }}>
+                        DNI: {u.dni || u.email.split('@')[0]}
+                      </p>
+                      {!u.email.endsWith('@prodetalento.com') && (
+                        <p className="text-xs font-body truncate" style={{ color: '#8aaa8e' }}>
+                          {u.email}
+                        </p>
+                      )}
                       <p className="font-body mt-0.5" style={{ fontSize: 10, color: '#8aaa8e' }}>
                         Registrado: {formatDate(u.fecha_registro)}
                       </p>
