@@ -1952,6 +1952,10 @@ GRANT INSERT ON public.apuestas TO authenticated;
 
 GRANT INSERT ON public.apuesta_partidos TO authenticated;
 
+GRANT SELECT, UPDATE ON public.predicciones TO service_role;
+
+GRANT ALL PRIVILEGES ON public.apuestas TO service_role;
+
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 

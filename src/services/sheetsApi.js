@@ -1192,9 +1192,11 @@ const bootstrap = {
 
 // ── Listener para invalidar cache cuando cambia la sesión ───
 supabase.auth.onAuthStateChange((event, _session) => {
-  if (event === 'SIGNED_OUT') {
+  if (event === 'SIGNED_OUT' || event === 'SIGNED_IN' || event === 'USER_UPDATED') {
     invalidateClientCache()
-    try { sessionStorage.removeItem('prode_user') } catch (e) { }
+    if (event === 'SIGNED_OUT') {
+      try { sessionStorage.removeItem('prode_user') } catch (e) { }
+    }
   }
 })
 
