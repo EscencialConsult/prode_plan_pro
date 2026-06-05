@@ -96,6 +96,16 @@ export default function LoginPage() {
               <p className="font-body text-sm mt-1.5" style={{ color: 'rgba(255,255,255,.45)' }}>
                 Ingresá para empezar a pronosticar con tu equipo.
               </p>
+
+              {/* Subtle Info Banner */}
+              <div className="mt-4 p-3 rounded-xl border border-white/10 bg-white/5 font-body text-[11px] text-white/60 flex flex-col gap-1 leading-normal">
+                <span>
+                  <strong style={{ color: '#86C873' }}>Importante:</strong> El juego no es monetizado, es por puntos no económicos.
+                </span>
+                <span>
+                  📢 Exclusivo solo para afiliados titulares camioneros.
+                </span>
+              </div>
             </div>
 
             {/* Divider */}

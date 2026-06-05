@@ -291,6 +291,11 @@ export default function DashboardPage() {
                     ? `Tenés ${activeBets.length} apuesta${activeBets.length > 1 ? 's' : ''} activa${activeBets.length > 1 ? 's' : ''} disponible${activeBets.length > 1 ? 's' : ''}.`
                     : 'Acá está el resumen de tu actividad en Prode Talento.'}
                 </p>
+                <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-white/50 font-body">
+                  <span>⚽ Competición por puntos, no monetizada</span>
+                  <span style={{ color: 'rgba(134,200,115,.4)' }}>|</span>
+                  <span>🚛 Solo para afiliados titulares</span>
+                </div>
                 {!esAdmin && (
                   <div className="mt-4 sm:mt-5 relative z-20">
                     <p className="font-body font-bold text-[10px] uppercase tracking-widest mb-2" style={{ color: 'rgba(134,200,115,.65)' }}>

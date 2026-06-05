@@ -31,7 +31,7 @@ export default function HomeFooter() {
             </div>
 
             <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: '.82rem', lineHeight: 1.7, color: 'rgba(255,255,255,.38)', maxWidth: '22rem', margin: '0 0 1.2rem' }}>
-              Sindicato de Camioneros de Tucumán — Plataforma de prode deportivo para afiliados y sus familias.
+              Plataforma de prode solo para afiliados titulares
             </p>
 
             {/* Badge eslogan */}
@@ -126,7 +126,7 @@ export default function HomeFooter() {
             © 2026 ONE · Escencial · Lista Verde - Tucumán. Todos los derechos reservados.
           </span>
           <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: '.72rem', color: 'rgba(134,200,115,.3)', fontWeight: 600 }}>
-            V1.5.0
+            V1.6.1
           </span>
         </div>
       </div>

@@ -110,13 +110,23 @@ export default function HomeHero() {
               </div>
 
               {/* Alert box */}
-              <div className="flex items-start gap-3 p-3 sm:p-4 rounded-lg max-w-xl"
+              <div className="flex flex-col gap-2 p-3 sm:p-4 rounded-lg max-w-xl"
                 style={{ background: 'linear-gradient(135deg,rgba(134,200,115,.18),rgba(10,15,10,.05))', border: '1px solid rgba(134,200,115,.35)', borderLeft: '3px solid #86C873' }}>
-                <span className="text-xl shrink-0 mt-px text-[#86C873]">★</span>
-                <p className="text-xs sm:text-sm font-body leading-relaxed" style={{ color: 'rgba(255,255,255,.88)' }}>
-                  <strong className="text-white">PRODE LISTA VERDE.</strong>{' '}
-                  El prode oficial ya está activo. Iniciá sesión con tu DNI para sumarte a la jugada con toda la agrupación.
-                </p>
+                <div className="flex items-start gap-3">
+                  <span className="text-xl shrink-0 mt-px text-[#86C873]">★</span>
+                  <p className="text-xs sm:text-sm font-body leading-relaxed" style={{ color: 'rgba(255,255,255,.88)' }}>
+                    <strong className="text-white">PRODE LISTA VERDE.</strong>{' '}
+                    El prode oficial ya está activo. Iniciá sesión con tu DNI para sumarte a la jugada con toda la agrupación.
+                  </p>
+                </div>
+                <div className="mt-1 pt-2 border-t border-white/10 flex flex-col gap-1 text-[11px] sm:text-xs text-white/60 font-body">
+                  <span>
+                    <strong className="text-[#86C873]">Importante:</strong> El juego no es monetizado, se compite por puntos, no por beneficios económicos.
+                  </span>
+                  <span>
+                    📢 Exclusivo solo para afiliados titulares camioneros.
+                  </span>
+                </div>
               </div>
             </div>
 
