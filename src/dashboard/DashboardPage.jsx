@@ -221,7 +221,8 @@ export default function DashboardPage() {
 
       // Limpiar borrador local de manera segura
       try {
-        localStorage.removeItem(`bet-${betId}-draft`)
+        const userId = user?.id || user?.user_id || 'anon'
+        localStorage.removeItem(`bet-${betId}-${userId}-draft`)
       } catch (e) { }
 
       // Recargar predicciones locales
