@@ -30,6 +30,10 @@ export default function AdminTabs({
       key: 'UsuariosActivos',
       label: 'Usuarios Activos',
     },
+    {
+      key: 'Propuestas',
+      label: 'Propuestas',
+    },
   ].filter(Boolean)
 
   return (

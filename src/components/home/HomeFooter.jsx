@@ -124,10 +124,10 @@ export default function HomeFooter() {
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '1.25rem 1.5rem' }}>
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '.75rem' }}>
           <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: '.72rem', color: 'rgba(255,255,255,.22)' }}>
-            © 2026 ONE · Escencial · Sindicato de Camioneros Tucumán. Todos los derechos reservados.
+            © 2026 ONE · Escencial · Lista Verde - Tucumán. Todos los derechos reservados.
           </span>
           <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: '.72rem', color: 'rgba(134,200,115,.3)', fontWeight: 600 }}>
-            V1.3.0
+            V1.4.0
           </span>
         </div>
       </div>

@@ -8,6 +8,7 @@ import { useToast, useConfirm } from '../hooks/useToast.jsx'
 
 import AdminHeader from '../components/admin/AdminHeader.jsx'
 import AdminTabs from '../components/admin/AdminTabs.jsx'
+import PropuestasTab from '../components/admin/PropuestasTab.jsx'
 import CreateBetTab from '../components/admin/CreateBetTab.jsx'
 import BetsListTab from '../components/admin/BetsListTab.jsx'
 import ActiveUsersTab from '../components/admin/ActiveUsersTab.jsx'
@@ -1007,6 +1008,11 @@ if (initialLoading) {
             activePageSize={activePageSize}
             isPro={isPro}
           />
+        )}
+
+        {/* TAB: Propuestas */}
+        {tab === 'Propuestas' && (
+          <PropuestasTab />
         )}
       </div>
     </AppShell>

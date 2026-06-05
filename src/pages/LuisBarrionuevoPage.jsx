@@ -42,12 +42,6 @@ function BuzonPropuestas() {
   const [enviando, setEnviando] = useState(false)
   const [enviado, setEnviado] = useState(false)
   const [error, setError] = useState('')
-
-  // Admin panel state
-  const [showPanel, setShowPanel] = useState(false)
-  const [listaPropuestas, setListaPropuestas] = useState([])
-  const [cargando, setCargando] = useState(false)
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!area || !propuesta.trim()) return
@@ -64,23 +58,6 @@ function BuzonPropuestas() {
     } finally {
       setEnviando(false)
     }
-  }
-
-  const cargarPropuestas = async () => {
-    setCargando(true)
-    try {
-      const data = await sheetsApi.propuestas.obtener()
-      setListaPropuestas(data)
-    } catch (err) {
-      console.error('Error cargando propuestas:', err)
-    } finally {
-      setCargando(false)
-    }
-  }
-
-  const togglePanel = () => {
-    if (!showPanel) cargarPropuestas()
-    setShowPanel(p => !p)
   }
 
   return (
@@ -318,123 +295,7 @@ function BuzonPropuestas() {
         )}
       </div>
 
-      {/* ── Panel Admin: Ver Propuestas ── */}
-      {isAdmin && (
-        <div style={{ width: '100%', maxWidth: 620, marginTop: '2rem' }}>
-          <button
-            onClick={togglePanel}
-            style={{
-              width: '100%',
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              textTransform: 'uppercase',
-              letterSpacing: '.12em',
-              background: showPanel ? 'rgba(134, 200, 115, 0.12)' : 'rgba(255,255,255,0.04)',
-              border: '1.5px solid rgba(134, 200, 115, 0.25)',
-              color: '#86C873',
-              padding: '0.9rem 1.25rem',
-              borderRadius: '14px',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.6rem',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(134, 200, 115, 0.15)'; e.currentTarget.style.borderColor = '#86C873' }}
-            onMouseLeave={e => { e.currentTarget.style.background = showPanel ? 'rgba(134, 200, 115, 0.12)' : 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = 'rgba(134, 200, 115, 0.25)' }}
-          >
-            📋 {showPanel ? 'Ocultar Propuestas' : 'Ver Propuestas Recibidas'}
-            <span style={{ fontSize: '0.65rem', opacity: 0.6 }}>({listaPropuestas.length})</span>
-          </button>
 
-          {showPanel && (
-            <div style={{
-              marginTop: '1rem',
-              background: 'rgba(10, 15, 10, 0.8)',
-              backdropFilter: 'blur(12px)',
-              border: '1.5px solid rgba(134, 200, 115, 0.2)',
-              borderRadius: '20px',
-              overflow: 'hidden',
-            }}>
-              {/* Header */}
-              <div style={{
-                padding: '1rem 1.5rem',
-                background: 'rgba(134, 200, 115, 0.06)',
-                borderBottom: '1px solid rgba(134, 200, 115, 0.15)',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.72rem', fontWeight: 700, color: '#86C873', textTransform: 'uppercase', letterSpacing: '.12em' }}>
-                  Propuestas recibidas
-                </span>
-                <button
-                  onClick={cargarPropuestas}
-                  style={{
-                    fontFamily: "'DM Sans', sans-serif", fontSize: '0.65rem', fontWeight: 600,
-                    background: 'rgba(134, 200, 115, 0.1)', border: '1px solid rgba(134, 200, 115, 0.2)',
-                    color: '#86C873', padding: '5px 12px', borderRadius: 99, cursor: 'pointer',
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(134, 200, 115, 0.2)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(134, 200, 115, 0.1)'}
-                >
-                  ↻ Actualizar
-                </button>
-              </div>
-
-              {/* Content */}
-              <div style={{ maxHeight: 450, overflowY: 'auto', padding: '0.75rem' }}>
-                {cargando ? (
-                  <div style={{ textAlign: 'center', padding: '2rem', color: 'rgba(255,255,255,0.4)', fontFamily: "'DM Sans', sans-serif", fontSize: '0.85rem' }}>
-                    Cargando propuestas...
-                  </div>
-                ) : listaPropuestas.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '2rem', color: 'rgba(255,255,255,0.35)', fontFamily: "'DM Sans', sans-serif", fontSize: '0.85rem' }}>
-                    No hay propuestas aún.
-                  </div>
-                ) : (
-                  listaPropuestas.map((p, i) => (
-                    <div key={p.id || i} style={{
-                      padding: '1rem 1.25rem',
-                      marginBottom: '0.5rem',
-                      background: 'rgba(255,255,255,0.03)',
-                      border: '1px solid rgba(134, 200, 115, 0.1)',
-                      borderRadius: '14px',
-                      transition: 'all 0.2s',
-                    }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                        <span style={{
-                          fontFamily: "'DM Sans', sans-serif", fontSize: '0.68rem', fontWeight: 700,
-                          color: '#86C873', textTransform: 'uppercase', letterSpacing: '.08em',
-                          background: 'rgba(134, 200, 115, 0.08)', padding: '3px 10px', borderRadius: 99,
-                          border: '1px solid rgba(134, 200, 115, 0.15)'
-                        }}>
-                          {p.area}
-                        </span>
-                        <span style={{
-                          fontFamily: "'DM Sans', sans-serif", fontSize: '0.62rem',
-                          color: 'rgba(255,255,255,0.3)'
-                        }}>
-                          {new Date(p.created_at).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                      </div>
-                      <p style={{
-                        fontFamily: "'DM Sans', sans-serif", fontSize: '0.84rem',
-                        color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, margin: 0
-                      }}>
-                        {p.propuesta}
-                      </p>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
     </section>
   )
 }
