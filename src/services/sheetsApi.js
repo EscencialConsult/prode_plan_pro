@@ -418,7 +418,24 @@ const auth = {
    * "tipo recovery" en este momento.
    */
   resetValidar: async (_token) => {
-    const { data, error } = await supabase.auth.getSession()
+    // Intentar obtener la sesión
+    let { data, error } = await supabase.auth.getSession()
+
+    // Si no hay sesión, pero la URL tiene "code" o "access_token",
+    // significa que Supabase está en proceso de intercambio de tokens.
+    // Damos un tiempo de espera de hasta 2.5 segundos (10 intentos de 250ms).
+    if (!data.session && (window.location.search.includes('code=') || window.location.hash.includes('access_token='))) {
+      for (let i = 0; i < 10; i++) {
+        await new Promise(resolve => setTimeout(resolve, 250))
+        const res = await supabase.auth.getSession()
+        if (res.data?.session) {
+          data = res.data
+          error = res.error
+          break
+        }
+      }
+    }
+
     if (error || !data.session) {
       throw new Error('El link de recuperación no es válido o ya expiró. Pedí uno nuevo desde la pantalla de login.')
     }

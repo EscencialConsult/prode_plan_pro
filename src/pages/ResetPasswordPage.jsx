@@ -18,15 +18,9 @@ export default function ResetPasswordPage() {
   const [error, setError]     = useState(null)
   const [done, setDone]       = useState(false)
 
-  // Validar el token al montar la pantalla
+  // Validar el token/sesión al montar la pantalla
   useEffect(() => {
-    if (!token) {
-      setErrorValidacion('El link no incluye un token de recuperación.')
-      setValidando(false)
-      return
-    }
-
-    sheetsApi.auth.resetValidar(token)
+    sheetsApi.auth.resetValidar()
       .then(data => {
         setTokenValido(true)
         setUserInfo({ email: data.email, nombre: data.nombre })
@@ -37,7 +31,7 @@ export default function ResetPasswordPage() {
       .finally(() => {
         setValidando(false)
       })
-  }, [token])
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -52,7 +46,7 @@ export default function ResetPasswordPage() {
 
     setLoading(true)
     try {
-      await sheetsApi.auth.resetConfirmar(token, form.password)
+      await sheetsApi.auth.resetConfirmar(null, form.password)
       setDone(true)
     } catch (err) {
       setError(err.message || 'No se pudo actualizar la contraseña.')
