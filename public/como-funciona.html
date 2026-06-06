@@ -75,6 +75,7 @@ section{padding:92px 0}
   content:"";position:absolute;inset:0;opacity:.16;
   background-image:linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px);
   background-size:46px 46px;mask:radial-gradient(120% 90% at 70% 0%,#000,transparent 75%);
+  pointer-events: none;
 }
 .hero .ball{position:absolute;right:-90px;top:-60px;width:420px;height:420px;border-radius:50%;
   background:radial-gradient(circle at 35% 30%, rgba(255,255,255,.22), transparent 60%);filter:blur(2px)}
@@ -153,6 +154,7 @@ section{padding:92px 0}
 .prize .rank{position:absolute;top:14px;right:16px;font-size:.7rem;font-weight:900;color:var(--blue);opacity:.6}
 .prize.tv .rank{color:#bfe4ff}
 .round-sep{height:1px;background:var(--line);margin:54px 0}
+.lbl-sub{font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin:0 0 16px}
 
 /* ---------- CRONOGRAMA ---------- */
 .cron{background:linear-gradient(180deg,#fff,var(--paper))}
@@ -185,6 +187,7 @@ section{padding:92px 0}
 /* ---------- CALLOUT ---------- */
 .callout{background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;border-radius:24px;padding:48px;text-align:center;position:relative;overflow:hidden}
 .callout:before{content:"";position:absolute;inset:0;opacity:.14;background-image:radial-gradient(circle,#fff 1.5px,transparent 1.5px);background-size:26px 26px}
+.callout:before{pointer-events: none}
 .callout h2{font-size:clamp(1.6rem,4vw,2.3rem);position:relative}
 .callout p{position:relative;margin:14px auto 26px;max-width:560px;color:#dcecf8;font-weight:500}
 .callout .btn{background:#fff;color:var(--blue-dark) !important;font-size:.95rem;padding:14px 30px}
@@ -212,10 +215,6 @@ footer{background:#fff;border-top:1px solid var(--line);padding:54px 0 40px}
       <div><b>PRODE Talento</b><span>CGCET · Mundial 2026</span></div>
     </div>
     <div class="nav-links" id="navlinks">
-      <a href="/" style="color:#0078C8;font-weight:800;display:inline-flex;align-items:center;gap:6px;margin-right:12px;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        Volver al Inicio
-      </a>
       <a href="#como">Cómo funciona</a>
       <a href="#premios">Premios</a>
       <a href="#cronograma">Cronograma</a>
@@ -238,10 +237,10 @@ footer{background:#fff;border-top:1px solid var(--line);padding:54px 0 40px}
       <span class="chip">📅 <b>11 jun → 19 jul 2026</b></span>
       <span class="chip">⚽ <b>104 partidos</b> · 48 selecciones</span>
       <span class="chip">🏆 <b>15 premios</b></span>
-      <span class="chip">🇦🇷 Apuestas especiales Argentina</span>
+      <span class="chip">🇦🇷 Especial Argentina · 3 partidos</span>
     </div>
     <div class="hero-cta">
-      <a class="btn" href="https://cgcet.prodetalento.com" target="_blank" rel="noopener">Cargar mis pronósticos</a>
+      <a class="btn" href="https://cgcet.prodetalento.com">Cargar mis pronósticos</a>
       <a class="btn-ghost" href="#premios">Ver los premios</a>
     </div>
     <div class="countdown" id="countdown">
@@ -278,13 +277,13 @@ footer{background:#fff;border-top:1px solid var(--line);padding:54px 0 40px}
       <div class="mcard alt reveal">
         <span class="bignum">02</span>
         <div class="tag">Lógica independiente</div>
-        <h3>Apuestas Especiales Argentina</h3>
-        <p>Los tres partidos de la Selección tienen su propio juego, con <b>premio instantáneo por encuentro</b>. No afectan el ranking general: son una competencia aparte para los picos de participación.</p>
+        <h3>Especial Argentina · 3 partidos</h3>
+        <p>Una <b>única competencia</b> sobre los tres partidos de la Selección. No afecta el ranking general: tu puntaje Argentina es el <b>promedio</b> de los tres encuentros y arma un solo ranking.</p>
         <ul>
-          <li>Una apuesta por cada partido de Argentina, con cierre propio.</li>
-          <li>Ganan quienes acierten el resultado exacto (o sumen más puntos) de ese partido.</li>
-          <li>Premios: camisetas de la Selección y pelotas de fútbol 11.</li>
-          <li>Cierre siempre 2 horas antes del inicio del partido.</li>
+          <li>Pronosticás Argelia, Austria y Jordania en una sola apuesta.</li>
+          <li>Puntaje Argentina = promedio de los puntos de los 3 partidos.</li>
+          <li>Los 5 premios se reparten entre los primeros de ese ranking.</li>
+          <li>Cierre único: 2 horas antes del primer partido (16/06 20:00).</li>
         </ul>
       </div>
     </div>
@@ -316,25 +315,27 @@ footer{background:#fff;border-top:1px solid var(--line);padding:54px 0 40px}
     <div class="sec-head reveal">
       <span class="eyebrow">Premios · 15 en total</span>
       <h2>Lo que está en juego</h2>
-      <p>El 40% del fondo se reparte en la fase de grupos para activar la participación desde el primer día, y el 60% más fuerte —los televisores— queda para la fase decisiva.</p>
+      <p>Hay premios fuertes desde la fase de grupos —incluido un televisor en la Especial Argentina— y los premios mayores se reservan para la fase decisiva, manteniendo la competencia viva hasta la final.</p>
     </div>
 
     <!-- Ronda 1 -->
     <div class="round-label reveal">
       <div class="rn">1</div>
-      <div><h3>Primera ronda · Fase de Grupos</h3><small>Cierre de carga: 11/06/2026 12:00 · entrega durante los grupos</small></div>
+      <div><h3>Primera ronda · Fase de Grupos</h3><small>Ranking general (cierre 11/06 12:00) + Especial Argentina (cierre 16/06 20:00)</small></div>
     </div>
+    <p class="lbl-sub reveal">Ranking general de la fase de grupos</p>
     <div class="prize-grid">
       <div class="prize gold reveal"><span class="rank">1°</span><span class="ico">🛒</span><div class="kind">Orden de compra</div><div class="val">$400.000</div><div class="sub">Marcantonio Deportes</div></div>
       <div class="prize gold reveal"><span class="rank">2°</span><span class="ico">🛒</span><div class="kind">Orden de compra</div><div class="val">$350.000</div><div class="sub">Marcantonio Deportes</div></div>
       <div class="prize gold reveal"><span class="rank">3°</span><span class="ico">🛒</span><div class="kind">Orden de compra</div><div class="val">$300.000</div><div class="sub">Marcantonio Deportes</div></div>
       <div class="prize gold reveal"><span class="rank">4°</span><span class="ico">🛒</span><div class="kind">Orden de compra</div><div class="val">$250.000</div><div class="sub">Marcantonio Deportes</div></div>
       <div class="prize gold reveal"><span class="rank">5°</span><span class="ico">🛒</span><div class="kind">Orden de compra</div><div class="val">$200.000</div><div class="sub">Marcantonio Deportes</div></div>
-      <div class="prize reveal"><span class="ico">👕</span><div class="kind">Especial Argentina</div><div class="val">Camiseta</div><div class="sub">Selección Argentina</div></div>
-      <div class="prize reveal"><span class="ico">👕</span><div class="kind">Especial Argentina</div><div class="val">Camiseta</div><div class="sub">Selección Argentina</div></div>
-      <div class="prize reveal"><span class="ico">👕</span><div class="kind">Especial Argentina</div><div class="val">Camiseta</div><div class="sub">Selección Argentina</div></div>
-      <div class="prize reveal"><span class="ico">⚽</span><div class="kind">Especial Argentina</div><div class="val">Pelota</div><div class="sub">Fútbol 11</div></div>
-      <div class="prize reveal"><span class="ico">⚽</span><div class="kind">Especial Argentina</div><div class="val">Pelota</div><div class="sub">Fútbol 11</div></div>
+    </div>
+    <p class="lbl-sub reveal" style="margin-top:30px">Especial Argentina · ranking por promedio de los 3 partidos</p>
+    <div class="prize-grid">
+      <div class="prize tv reveal"><span class="rank">1°</span><span class="ico">📺</span><div class="kind">Ranking Argentina</div><div class="val">Televisor 32"</div><div class="sub">Líder del promedio Argentina</div></div>
+      <div class="prize reveal"><span class="rank">2°</span><span class="ico">👕</span><div class="kind">Ranking Argentina</div><div class="val">Camiseta</div><div class="sub">Selección Argentina</div></div>
+      <div class="prize reveal"><span class="rank">3°</span><span class="ico">👕</span><div class="kind">Ranking Argentina</div><div class="val">Camiseta</div><div class="sub">Selección Argentina</div></div>
     </div>
 
     <div class="round-sep"></div>
@@ -342,14 +343,23 @@ footer{background:#fff;border-top:1px solid var(--line);padding:54px 0 40px}
     <!-- Ronda 2 -->
     <div class="round-label reveal">
       <div class="rn">2</div>
-      <div><h3>Segunda ronda · Eliminación Directa</h3><small>Cierre de carga: 28/06/2026 12:00 · acumulado hasta cada fase</small></div>
+      <div><h3>Segunda ronda · Eliminación Directa</h3><small>Cierre de carga: 28/06/2026 12:00 · ranking acumulado hasta cada fase</small></div>
     </div>
+    <p class="lbl-sub reveal">Sorteo de reactivación · inicio de eliminación (28/06)</p>
     <div class="prize-grid">
-      <div class="prize tv reveal"><span class="rank">Final</span><span class="ico">📺</span><div class="kind">Gran premio</div><div class="val">Televisor 55"</div><div class="sub">Campeón general del PRODE</div></div>
-      <div class="prize tv reveal"><span class="rank">Semis</span><span class="ico">📺</span><div class="kind">Premio</div><div class="val">Televisor 43"</div><div class="sub">2° acumulado a semifinales</div></div>
-      <div class="prize tv reveal"><span class="rank">Cuartos</span><span class="ico">📺</span><div class="kind">Premio</div><div class="val">Televisor 32"</div><div class="sub">Líder acumulado a cuartos</div></div>
-      <div class="prize gold reveal"><span class="ico">🛒</span><div class="kind">Orden de compra</div><div class="val">$350.000</div><div class="sub">Marcantonio Deportes</div></div>
-      <div class="prize gold reveal"><span class="ico">🛒</span><div class="kind">Orden de compra</div><div class="val">$300.000</div><div class="sub">Marcantonio Deportes</div></div>
+      <div class="prize gold reveal"><span class="ico">🛒</span><div class="kind">Orden de compra</div><div class="val">$300.000</div><div class="sub">Marcantonio Deportes · sorteo entre activos</div></div>
+    </div>
+    <p class="lbl-sub reveal" style="margin-top:30px">Cuartos de Final · ranking acumulado (09/07)</p>
+    <div class="prize-grid">
+      <div class="prize gold reveal"><span class="rank">1°</span><span class="ico">🛒</span><div class="kind">Orden de compra</div><div class="val">$350.000</div><div class="sub">Marcantonio Deportes</div></div>
+      <div class="prize reveal"><span class="rank">2°</span><span class="ico">👕</span><div class="kind">Cuartos de Final</div><div class="val">Camiseta</div><div class="sub">Selección Argentina</div></div>
+      <div class="prize reveal"><span class="rank">3°</span><span class="ico">⚽</span><div class="kind">Cuartos de Final</div><div class="val">Pelota</div><div class="sub">Fútbol 11</div></div>
+      <div class="prize reveal"><span class="rank">4°</span><span class="ico">⚽</span><div class="kind">Cuartos de Final</div><div class="val">Pelota</div><div class="sub">Fútbol 11</div></div>
+    </div>
+    <p class="lbl-sub reveal" style="margin-top:30px">Semifinales y Gran Final · los premios mayores</p>
+    <div class="prize-grid">
+      <div class="prize tv reveal"><span class="rank">Semis</span><span class="ico">📺</span><div class="kind">Premio</div><div class="val">Televisor 43"</div><div class="sub">Líder acumulado a semifinales (14/07)</div></div>
+      <div class="prize tv reveal"><span class="rank">Final</span><span class="ico">📺</span><div class="kind">Gran premio</div><div class="val">Televisor 55"</div><div class="sub">Campeón general del PRODE (19/07)</div></div>
     </div>
   </div>
 </section>
@@ -369,16 +379,16 @@ footer{background:#fff;border-top:1px solid var(--line);padding:54px 0 40px}
 
     <div class="timeline show" id="tl-general">
       <div class="tl-item"><div class="tl-date">11 jun<small>12:00 hs</small></div><div class="tl-body"><h4>Cierre · Fase de Grupos</h4><p>Se cargan todos los pronósticos de la fase de grupos antes del partido inaugural. Luego quedan bloqueados.</p><span class="tl-close">CIERRA 11/06 12:00</span><br><span class="tl-prize">$400k</span><span class="tl-prize">$350k</span><span class="tl-prize">$300k</span><span class="tl-prize">$250k</span><span class="tl-prize">$200k</span></div></div>
-      <div class="tl-item"><div class="tl-date">28 jun<small>12:00 hs</small></div><div class="tl-body"><h4>Cierre · Eliminación Directa</h4><p>Terminada la fase de grupos se conocen los cruces. Se completan dieciseisavos, octavos, cuartos, semis, final y campeón.</p><span class="tl-close">CIERRA 28/06 12:00</span><br><span class="tl-prize">$350k</span><span class="tl-prize">$300k</span></div></div>
-      <div class="tl-item"><div class="tl-date">09 jul<small>12:00 hs</small></div><div class="tl-body"><h4>Cierre · Cuartos de Final</h4><p>Corte del acumulado para definir al líder rumbo a cuartos (9 al 11 de julio).</p><span class="tl-close">CIERRA 09/07 12:00</span><br><span class="tl-prize">📺 TV 32"</span></div></div>
+      <div class="tl-item"><div class="tl-date">28 jun<small>12:00 hs</small></div><div class="tl-body"><h4>Cierre · Eliminación Directa</h4><p>Terminada la fase de grupos se conocen los cruces. Se completan dieciseisavos, octavos, cuartos, semis, final y campeón. Sorteo de reactivación entre activos.</p><span class="tl-close">CIERRA 28/06 12:00</span><br><span class="tl-prize">🛒 $300k (sorteo)</span></div></div>
+      <div class="tl-item"><div class="tl-date">09 jul<small>12:00 hs</small></div><div class="tl-body"><h4>Cierre · Cuartos de Final</h4><p>Corte del acumulado para premiar a los primeros rumbo a cuartos (9 al 11 de julio).</p><span class="tl-close">CIERRA 09/07 12:00</span><br><span class="tl-prize">🛒 $350k</span><span class="tl-prize">👕 Camiseta</span><span class="tl-prize">⚽ Pelota</span><span class="tl-prize">⚽ Pelota</span></div></div>
       <div class="tl-item"><div class="tl-date">14 jul<small>12:00 hs</small></div><div class="tl-body"><h4>Cierre · Semifinales</h4><p>Segundo corte del ranking acumulado (semifinales 14 y 15 de julio).</p><span class="tl-close">CIERRA 14/07 12:00</span><br><span class="tl-prize">📺 TV 43"</span></div></div>
       <div class="tl-item"><div class="tl-date">19 jul<small>12:00 hs</small></div><div class="tl-body"><h4>Cierre · Gran Final</h4><p>Definición del Campeón General del PRODE. La final se juega el 19 de julio en Nueva York/Nueva Jersey.</p><span class="tl-close">CIERRA 19/07 12:00</span><br><span class="tl-prize">📺 TV 55"</span></div></div>
     </div>
 
     <div class="timeline" id="tl-arg">
-      <div class="tl-item"><div class="tl-date">16 jun<small>Partido 22:00</small></div><div class="tl-body"><h4>🇦🇷 Argentina vs Argelia 🇩🇿</h4><p>Debut en el Grupo J · Kansas City. Cierre 2 horas antes del inicio.</p><span class="tl-close">CIERRA 16/06 20:00</span><br><span class="tl-prize">👕 Camiseta</span><span class="tl-prize">⚽ Pelota</span></div></div>
-      <div class="tl-item"><div class="tl-date">22 jun<small>Partido 14:00</small></div><div class="tl-body"><h4>🇦🇷 Argentina vs Austria 🇦🇹</h4><p>Segunda fecha · Dallas. Cierre 2 horas antes del inicio.</p><span class="tl-close">CIERRA 22/06 12:00</span><br><span class="tl-prize">👕 Camiseta</span><span class="tl-prize">⚽ Pelota</span></div></div>
-      <div class="tl-item"><div class="tl-date">27 jun<small>Partido 23:00</small></div><div class="tl-body"><h4>🇦🇷 Argentina vs Jordania 🇯🇴</h4><p>Cierre de la fase de grupos · Dallas. Cierre 2 horas antes del inicio.</p><span class="tl-close">CIERRA 27/06 21:00</span><br><span class="tl-prize">👕 Camiseta</span></div></div>
+      <div class="tl-item"><div class="tl-date">16 jun<small>Cierre 20:00 hs</small></div><div class="tl-body"><h4>Cierre · Apuesta Especial Argentina</h4><p>Pronosticás los 3 partidos de la Selección en una sola apuesta. Cierra 2 horas antes del primer partido (Argelia, 22:00).</p><span class="tl-close">CIERRA 16/06 20:00</span></div></div>
+      <div class="tl-item"><div class="tl-date">16 → 27 jun<small>Se juegan</small></div><div class="tl-body"><h4>Los 3 partidos de Argentina</h4><p>🇩🇿 Argelia 16/06 22:00 · 🇦🇹 Austria 22/06 14:00 · 🇯🇴 Jordania 27/06 23:00. Tu puntaje Argentina es el <b>promedio</b> de los tres.</p></div></div>
+      <div class="tl-item"><div class="tl-date">27 jun<small>Definición</small></div><div class="tl-body"><h4>Ranking Argentina y entrega de premios</h4><p>Al terminar Argentina vs Jordania se arma el ranking por promedio y se reparten los premios entre los primeros.</p><span class="tl-prize">📺 TV 32" 1°</span><span class="tl-prize">👕 Camiseta 2°</span><span class="tl-prize">👕 Camiseta 3°</span></div></div>
     </div>
   </div>
 </section>
@@ -405,7 +415,7 @@ footer{background:#fff;border-top:1px solid var(--line);padding:54px 0 40px}
         <li>Los pronósticos se cargan en <b>cgcet.prodetalento.com</b> antes del cierre de cada etapa indicado en el cronograma.</li>
         <li>Una vez alcanzado el cierre, los pronósticos quedan bloqueados y no pueden modificarse.</li>
         <li>Toda apuesta cargada fuera de término no participa por los premios de esa etapa.</li>
-        <li>Las apuestas especiales de Argentina cierran 2 horas antes del inicio de cada partido.</li>
+        <li>La apuesta especial de Argentina abarca los 3 partidos en una sola carga y cierra 2 horas antes del primer partido (16/06 20:00).</li>
       </ul>
     </div></details>
 
@@ -413,15 +423,15 @@ footer{background:#fff;border-top:1px solid var(--line);padding:54px 0 40px}
       <ul>
         <li>En el PRODE General los puntos se acumulan a lo largo de todo el torneo: no se reinician entre etapas.</li>
         <li>Se otorgan +5 puntos por marcador exacto, +3 por acertar la diferencia de gol y +1 por acertar el ganador o empate. Falla y sin predicción suman 0 (ver Sistema de puntos).</li>
-        <li>Las apuestas especiales de Argentina puntúan de forma independiente y no inciden en el ranking general.</li>
+        <li>La apuesta especial de Argentina puntúa de forma independiente y no incide en el ranking general: el puntaje Argentina es el promedio de los puntos obtenidos en los 3 partidos, y los premios se reparten entre los primeros de ese ranking (1° televisor 32", 2° y 3° camiseta de la Selección).</li>
         <li>El ranking se actualiza al finalizar cada jornada y queda visible para todos los participantes.</li>
       </ul>
     </div></details>
 
     <details class="acc reveal"><summary>4 · Determinación de ganadores y desempates <span class="plus">+</span></summary><div class="body">
       <ul>
-        <li>Resultan ganadores quienes encabecen el ranking acumulado al cierre de cada instancia premiada (grupos, cuartos, semifinales y final).</li>
-        <li>El sorteo de reactivación ($350.000 y $300.000) se realiza el 28/06/2026 entre todos los participantes activos en eliminación directa.</li>
+        <li>Resultan ganadores quienes encabecen el ranking acumulado al cierre de cada instancia premiada. En Cuartos se premia a los 4 primeros del acumulado (1° orden de compra $350.000, 2° camiseta, 3° y 4° pelota); en Semifinales y Final, al líder acumulado (TV 43" y TV 55").</li>
+        <li>El sorteo de reactivación (orden de compra $300.000) se realiza el 28/06/2026 entre todos los participantes activos en eliminación directa.</li>
         <li>Ante igualdad de puntos: 1) mayor cantidad de resultados exactos; 2) mayor cantidad de aciertos de ganador; 3) sorteo ante la comisión.</li>
       </ul>
     </div></details>
@@ -453,7 +463,7 @@ footer{background:#fff;border-top:1px solid var(--line);padding:54px 0 40px}
     <div class="callout reveal">
       <h2>Sumate al PRODE Talento</h2>
       <p>La fase de grupos cierra el <b>11 de junio a las 12:00</b>. Cargá tus pronósticos antes de esa hora y empezá a acumular puntos rumbo al televisor 55".</p>
-      <a class="btn" href="https://cgcet.prodetalento.com" target="_blank" rel="noopener">Cargar mis pronósticos</a>
+      <a class="btn" href="https://cgcet.prodetalento.com">Cargar mis pronósticos</a>
     </div>
   </div>
 </section>
