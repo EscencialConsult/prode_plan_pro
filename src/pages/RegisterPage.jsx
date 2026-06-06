@@ -48,12 +48,12 @@ export default function RegisterPage() {
     background: 'rgba(255,255,255,.06)',
     border: '1px solid rgba(255,255,255,.1)',
     color: '#fff',
-    caretColor: '#ebc32b',
+    caretColor: '#0057B8',
   }
   const onFocus = e => {
     e.target.style.borderColor = 'rgba(235,195,43,.55)'
     e.target.style.background  = 'rgba(235,195,43,.06)'
-    e.target.style.boxShadow   = '0 0 0 3px rgba(235,195,43,.1)'
+    e.target.style.boxShadow   = '0 0 0 3px rgba(255,255,255,.75)'
   }
   const onBlur = e => {
     e.target.style.borderColor = 'rgba(255,255,255,.1)'
@@ -98,7 +98,7 @@ export default function RegisterPage() {
         {/* ── Logo / Brand ── */}
         <div className="relative z-10 flex flex-col items-center mb-2 rp-card">
           <img
-            src="./imgprode/colegio-logo-blanco.png"
+            src="./imgprode/colegio-logo-celeste.png"
             alt="Prode Talento"
             style={{ height: 130, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,.6))' }}
           />
@@ -110,7 +110,7 @@ export default function RegisterPage() {
           style={{
             maxWidth: 440,
             background: 'linear-gradient(160deg, rgba(12,24,43,.92) 0%, rgba(5,9,15,.96) 100%)',
-            border: '1px solid rgba(235,195,43,.25)',
+            border: '1px solid rgba(255,255,255,.25)',
             borderRadius: 20,
             boxShadow: '0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(235,195,43,.08), inset 0 1px 0 rgba(255,255,255,.05)',
             backdropFilter: 'blur(24px)',
@@ -119,7 +119,7 @@ export default function RegisterPage() {
         >
           {/* Gold top accent */}
           <div className="rounded-t-[20px] h-0.5 w-full"
-            style={{ background: 'linear-gradient(90deg, transparent, #ebc32b 30%, #ebc32b 70%, transparent)' }} />
+            style={{ background: 'linear-gradient(90deg, transparent, #0057B8 30%, #0057B8 70%, transparent)' }} />
 
           <div className="px-8 py-8">
 
@@ -128,8 +128,8 @@ export default function RegisterPage() {
               <div className="text-center py-4">
                 {/* Check ring */}
                 <div className="rp-pop w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center"
-                  style={{ background: 'linear-gradient(135deg, rgba(235,195,43,.25), rgba(235,195,43,.1))', border: '2px solid rgba(235,195,43,.5)', boxShadow: '0 0 0 6px rgba(235,195,43,.08)' }}>
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  style={{ background: 'linear-gradient(135deg, rgba(255,255,255,.25), rgba(255,255,255,.75))', border: '2px solid rgba(235,195,43,.5)', boxShadow: '0 0 0 6px rgba(235,195,43,.08)' }}>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0057B8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
@@ -139,7 +139,7 @@ export default function RegisterPage() {
                 </h2>
 
                 <p className="font-body text-sm leading-relaxed mb-2 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.55)' }}>
-                  Tu cuenta está <strong style={{ color: '#ebc32b' }}>pendiente de aprobación</strong> por el administrador.
+                  Tu cuenta está <strong style={{ color: '#0057B8' }}>pendiente de aprobación</strong> por el administrador.
                 </p>
                 <p className="font-body text-sm leading-relaxed mb-8 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.4)' }}>
                   Te avisaremos cuando esté activa y ya puedas ingresar.
@@ -147,14 +147,14 @@ export default function RegisterPage() {
 
                 {/* Divider */}
                 <div className="h-px mb-6 mx-auto w-3/4"
-                  style={{ background: 'linear-gradient(90deg, transparent, rgba(235,195,43,.2), transparent)' }} />
+                  style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent)' }} />
 
                 <Link
                   to="/login"
                   className="inline-flex items-center gap-2 font-body font-bold text-sm px-6 py-3 rounded-full transition-all"
-                  style={{ background: '#ebc32b', color: '#05090f', textDecoration: 'none', boxShadow: '0 6px 20px rgba(235,195,43,.28)' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-1px)' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = '' }}
+                  style={{ background: '#0057B8', color: '#05090f', textDecoration: 'none', boxShadow: '0 6px 20px rgba(235,195,43,.28)' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#00479A'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#0057B8'; e.currentTarget.style.transform = '' }}
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
@@ -183,7 +183,7 @@ export default function RegisterPage() {
                 </div>
 
                 {/* Divider */}
-                <div className="h-px mb-7" style={{ background: 'linear-gradient(90deg, transparent, rgba(235,195,43,.2) 50%, transparent)' }} />
+                <div className="h-px mb-7" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,.2) 50%, transparent)' }} />
 
                 <form onSubmit={handleSubmit} className="space-y-4">
 
@@ -325,9 +325,9 @@ export default function RegisterPage() {
                     type="submit"
                     disabled={loading}
                     className="w-full font-body font-bold text-base py-4 rounded-full flex items-center justify-center gap-2 transition-all mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ background: '#ebc32b', color: '#05090f', boxShadow: '0 8px 28px rgba(235,195,43,.3)' }}
-                    onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(235,195,43,.45)' } }}
-                    onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(235,195,43,.3)' } }}
+                    style={{ background: '#0057B8', color: '#05090f', boxShadow: '0 8px 28px rgba(255,255,255,.25)' }}
+                    onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#00479A'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(255,255,255,.25)' } }}
+                    onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#0057B8'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(255,255,255,.25)' } }}
                   >
                     {loading ? (
                       <>
@@ -357,7 +357,7 @@ export default function RegisterPage() {
                   to="/login"
                   className="block w-full font-body font-semibold text-sm py-3.5 rounded-full text-center transition-all"
                   style={{ border: '1px solid rgba(255,255,255,.18)', color: 'rgba(255,255,255,.7)', textDecoration: 'none' }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(235,195,43,.5)'; e.currentTarget.style.color = '#ebc32b'; e.currentTarget.style.background = 'rgba(235,195,43,.06)' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(235,195,43,.5)'; e.currentTarget.style.color = '#0057B8'; e.currentTarget.style.background = 'rgba(235,195,43,.06)' }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.18)'; e.currentTarget.style.color = 'rgba(255,255,255,.7)'; e.currentTarget.style.background = 'transparent' }}
                 >
                   Ya tengo cuenta — Iniciar sesión
@@ -373,7 +373,7 @@ export default function RegisterPage() {
             <Link to="/"
               className="font-body text-sm flex items-center gap-1.5 transition-colors"
               style={{ color: 'rgba(255,255,255,.38)', textDecoration: 'none' }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#ebc32b' }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#0057B8' }}
               onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,.38)' }}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>

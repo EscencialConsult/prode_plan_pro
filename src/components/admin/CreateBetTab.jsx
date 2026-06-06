@@ -6,8 +6,8 @@ export default function CreateBetTab({ createBet, loading, matches }) {
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-          style={{ background: 'rgba(235,195,43,.12)', border: '1px solid rgba(235,195,43,.25)' }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c99f16" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          style={{ background: 'rgba(235,195,43,.12)', border: '1px solid rgba(255,255,255,.25)' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0057B8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>

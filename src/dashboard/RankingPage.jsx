@@ -24,7 +24,7 @@ function clasificar(p, ap) {
 
 const CAT_COLOR = {
   exacto: '#22c55e',
-  diferencia: '#ebc32b',
+  diferencia: '#0057B8',
   resultado: '#94a3b8',
   cero: '#f43f5e',
 }
@@ -47,7 +47,7 @@ const CSS = `
 .rk-row { display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;border-bottom:1px solid #f5f3ee;position:relative;transition:background .13s }
 .rk-row:hover { background:rgba(12,24,43,.03) }
 .rk-row.sel { background:#0c182b;border-bottom-color:rgba(255,255,255,.06) }
-.rk-row::before { content:'';position:absolute;left:0;top:25%;bottom:25%;width:3px;background:#ebc32b;border-radius:0 3px 3px 0;opacity:0;transition:opacity .13s }
+.rk-row::before { content:'';position:absolute;left:0;top:25%;bottom:25%;width:3px;background:#0057B8;border-radius:0 3px 3px 0;opacity:0;transition:opacity .13s }
 .rk-row.sel::before { opacity:1 }
 
 /* Panel derecho */
@@ -273,7 +273,7 @@ function SideSection({ label, dot, children }) {
 function BetRow({ bet, sel, onPick }) {
   const open = isOpen(bet)
   const fin = bet.estado === 'finalizada'
-  const col = fin ? '#ebc32b' : open ? '#22c55e' : '#475569'
+  const col = fin ? '#0057B8' : open ? '#22c55e' : '#475569'
   const parts = bet.partidos_ids ? bet.partidos_ids.split(',').filter(Boolean).length : 0
   return (
     <div className={`rk-row${sel ? ' sel' : ''}`} onClick={() => onPick(bet)}>
@@ -287,7 +287,7 @@ function BetRow({ bet, sel, onPick }) {
           {bet.participantes || 0} part · {parts} partidos
         </p>
       </div>
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={sel ? '#ebc32b' : '#c8d0dc'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={sel ? '#0057B8' : '#c8d0dc'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="9 18 15 12 9 6" />
       </svg>
     </div>
@@ -313,8 +313,8 @@ function Banner({ apuesta, meta, loading }) {
             {apuesta.titulo}
           </h2>
           {apuesta.premio && (
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(235,195,43,.1)', border: '1px solid rgba(235,195,43,.2)', borderRadius: 99, padding: '3px 10px' }}>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,.75)', border: '1px solid rgba(255,255,255,.2)', borderRadius: 99, padding: '3px 10px' }}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#0057B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" /><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
               </svg>
               <span style={{ fontSize: 10, color: 'rgba(235,195,43,.8)', fontWeight: 600 }}>{apuesta.premio}</span>
@@ -336,7 +336,7 @@ function Banner({ apuesta, meta, loading }) {
 function BannerStat({ n, label, gold }) {
   return (
     <div style={{ textAlign: 'center' }}>
-      <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, color: gold ? '#ebc32b' : 'rgba(255,255,255,.9)', margin: '0 0 1px', lineHeight: 1 }}>{n}</p>
+      <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, color: gold ? '#0057B8' : 'rgba(255,255,255,.9)', margin: '0 0 1px', lineHeight: 1 }}>{n}</p>
       <p style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '.14em', color: 'rgba(255,255,255,.35)', margin: 0 }}>{label}</p>
     </div>
   )
@@ -369,7 +369,7 @@ function Buscador({ q, setQ }) {
    PODIO
 ══════════════════════════════════════════ */
 const PODIO_CFG = {
-  0: { grad: 'linear-gradient(145deg,#f5d75a 0%,#c99f16 100%)', shadow: 'rgba(235,195,43,.5)', border: 'rgba(235,195,43,.7)', ring: 'rgba(235,195,43,.3)', emoji: '🥇', label: '1°' },
+  0: { grad: 'linear-gradient(145deg,#00479A 0%,#0057B8 100%)', shadow: 'rgba(235,195,43,.5)', border: 'rgba(235,195,43,.7)', ring: 'rgba(255,255,255,.25)', emoji: '🥇', label: '1°' },
   1: { grad: 'linear-gradient(145deg,#e2e8f0 0%,#94a3b8 100%)', shadow: 'rgba(148,163,184,.4)', border: 'rgba(148,163,184,.5)', ring: 'rgba(148,163,184,.2)', emoji: '🥈', label: '2°' },
   2: { grad: 'linear-gradient(145deg,#fed7aa 0%,#c2720e 100%)', shadow: 'rgba(194,114,14,.4)', border: 'rgba(194,114,14,.5)', ring: 'rgba(194,114,14,.2)', emoji: '🥉', label: '3°' },
 }
@@ -410,17 +410,17 @@ function Podio({ top, miId, esAdmin, expandido, detalles, apuesta, onToggle }) {
               onClick={puede ? () => onToggle(u.user_id) : undefined}
               style={{
                 background: '#fff',
-                border: `${isTop || isExp ? 2 : 1.5}px solid ${isExp ? '#ebc32b' : isTop ? cfg.border : '#e8e3db'}`,
+                border: `${isTop || isExp ? 2 : 1.5}px solid ${isExp ? '#0057B8' : isTop ? cfg.border : '#e8e3db'}`,
                 padding: isTop ? '20px 14px 14px' : '16px 12px 12px',
                 boxShadow: isTop
                   ? `0 0 0 4px ${cfg.ring}, 0 12px 40px ${cfg.shadow}`
-                  : isExp ? `0 0 0 3px rgba(235,195,43,.2)` : '0 2px 12px rgba(12,24,43,.06)',
+                  : isExp ? `0 0 0 3px rgba(255,255,255,.2)` : '0 2px 12px rgba(12,24,43,.06)',
                 cursor: puede ? 'pointer' : 'default',
               }}>
 
               {/* Badge posición */}
               {isTop && (
-                <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(90deg,#c99f16,#ebc32b)', color: '#fff', fontSize: 8, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', padding: '3px 14px', borderRadius: 99, whiteSpace: 'nowrap', boxShadow: '0 2px 10px rgba(235,195,43,.5)' }}>
+                <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(90deg,#0057B8,#0057B8)', color: '#fff', fontSize: 8, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', padding: '3px 14px', borderRadius: 99, whiteSpace: 'nowrap', boxShadow: '0 2px 10px rgba(235,195,43,.5)' }}>
                   ★ LÍDER
                 </div>
               )}
@@ -455,10 +455,10 @@ function Podio({ top, miId, esAdmin, expandido, detalles, apuesta, onToggle }) {
               {/* Puntos — el elemento más importante */}
               <div style={{
                 background: isTop ? 'linear-gradient(135deg,rgba(235,195,43,.12),rgba(235,195,43,.06))' : 'rgba(12,24,43,.04)',
-                border: isTop ? '1px solid rgba(235,195,43,.25)' : '1px solid #f0eadb',
+                border: isTop ? '1px solid rgba(255,255,255,.25)' : '1px solid #f0eadb',
                 borderRadius: 10, padding: '8px 0',
               }}>
-                <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: isTop ? 36 : 28, color: isTop ? '#c99f16' : '#0c182b', margin: 0, lineHeight: 1 }}>
+                <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: isTop ? 36 : 28, color: isTop ? '#0057B8' : '#0c182b', margin: 0, lineHeight: 1 }}>
                   {u.puntos_totales}
                 </p>
                 <p style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.14em', color: '#94a3b8', margin: '2px 0 0' }}>puntos</p>
@@ -466,9 +466,9 @@ function Podio({ top, miId, esAdmin, expandido, detalles, apuesta, onToggle }) {
 
               {/* CTA */}
               {puede && (
-                <button style={{ marginTop: 10, background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 10, fontWeight: 700, color: isExp ? '#c99f16' : '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3, width: '100%', padding: '4px 0', transition: 'color .14s' }}
-                  onMouseEnter={e => e.currentTarget.style.color = '#c99f16'}
-                  onMouseLeave={e => e.currentTarget.style.color = isExp ? '#c99f16' : '#94a3b8'}>
+                <button style={{ marginTop: 10, background: 'transparent', border: 'none', cursor: 'pointer', fontSize: 10, fontWeight: 700, color: isExp ? '#0057B8' : '#94a3b8', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3, width: '100%', padding: '4px 0', transition: 'color .14s' }}
+                  onMouseEnter={e => e.currentTarget.style.color = '#0057B8'}
+                  onMouseLeave={e => e.currentTarget.style.color = isExp ? '#0057B8' : '#94a3b8'}>
                   {isExp ? 'Ocultar detalle' : 'Ver detalle'}
                   <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
                     style={{ transform: isExp ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}>
@@ -535,20 +535,20 @@ function TablaResto({ filas, offset, tabla, hayQ, miId, esAdmin, expandido, deta
                 }}>
 
                 {/* Posición */}
-                <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, color: pos <= 3 ? '#ebc32b' : '#c8d0dc', lineHeight: 1 }}>{pos}</span>
+                <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, color: pos <= 3 ? '#0057B8' : '#c8d0dc', lineHeight: 1 }}>{pos}</span>
 
                 {/* Participante */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
                   <div style={{
                     width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
-                    background: me ? 'linear-gradient(135deg,#ebc32b,#c99f16)' : 'linear-gradient(135deg,#e2e8f0,#cbd5e1)',
+                    background: me ? 'linear-gradient(135deg,#0057B8,#1E78E8)' : 'linear-gradient(135deg,#e2e8f0,#cbd5e1)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontFamily: "'Bebas Neue',sans-serif", fontSize: 13,
                     color: me ? '#0c182b' : '#64748b',
-                    boxShadow: me ? '0 0 0 2px rgba(235,195,43,.3)' : 'none',
+                    boxShadow: me ? '0 0 0 2px rgba(255,255,255,.25)' : 'none',
                   }}>{initials(u.nombre)}</div>
                   <div style={{ minWidth: 0 }}>
-                    <p style={{ fontWeight: me ? 700 : 600, fontSize: 13, color: me ? '#c99f16' : '#0c182b', margin: '0 0 1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontWeight: me ? 700 : 600, fontSize: 13, color: me ? '#0057B8' : '#0c182b', margin: '0 0 1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {u.nombre}
                       {me && <span style={{ fontSize: 10, color: '#94a3b8', fontWeight: 400, marginLeft: 4 }}>(vos)</span>}
                     </p>
@@ -558,7 +558,7 @@ function TablaResto({ filas, offset, tabla, hayQ, miId, esAdmin, expandido, deta
 
                 {/* Aciertos */}
                 <div className="rk-hide-mob" style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
-                  {[['#22c55e', u.aciertos_exactos, 'Exactos'], ['#ebc32b', u.aciertos_diferencia || 0, 'Dif.'], ['#94a3b8', u.aciertos_resultado, 'Res.']].map(([c, n, t]) => (
+                  {[['#22c55e', u.aciertos_exactos, 'Exactos'], ['#0057B8', u.aciertos_diferencia || 0, 'Dif.'], ['#94a3b8', u.aciertos_resultado, 'Res.']].map(([c, n, t]) => (
                     <span key={t} title={t} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 11, fontWeight: 600, color: n > 0 ? c : '#cbd5e1' }}>
                       <span style={{ width: 6, height: 6, borderRadius: '50%', background: n > 0 ? c : '#e2e8f0', display: 'inline-block' }} />
                       {n}
@@ -574,7 +574,7 @@ function TablaResto({ filas, offset, tabla, hayQ, miId, esAdmin, expandido, deta
 
                 {/* Chevron */}
                 {puede
-                  ? <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={isExp ? '#ebc32b' : '#cbd5e1'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isExp ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}>
+                  ? <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={isExp ? '#0057B8' : '#cbd5e1'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isExp ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}>
                     <polyline points="6 9 12 15 18 9" />
                   </svg>
                   : <span />
@@ -603,9 +603,9 @@ function DetallePanel({ nombre, det, apuesta, onClose, inline, style: extraStyle
   const base = {
     borderRadius: inline ? 0 : 14,
     overflow: 'hidden',
-    border: inline ? 'none' : '2px solid rgba(235,195,43,.4)',
-    borderTop: inline ? '2px solid rgba(235,195,43,.25)' : undefined,
-    boxShadow: inline ? 'none' : '0 4px 24px rgba(235,195,43,.1)',
+    border: inline ? 'none' : '2px solid rgba(0,87,184,.4)',
+    borderTop: inline ? '2px solid rgba(255,255,255,.25)' : undefined,
+    boxShadow: inline ? 'none' : '0 4px 24px rgba(255,255,255,.75)',
     animation: 'rk-in .22s ease both',
     ...extraStyle,
   }
@@ -648,7 +648,7 @@ function DetallePanel({ nombre, det, apuesta, onClose, inline, style: extraStyle
       {/* Header */}
       <div style={{ background: 'linear-gradient(90deg,#0c182b,#17376a)', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(235,195,43,.15)', border: '1px solid rgba(235,195,43,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Bebas Neue',sans-serif", fontSize: 10, color: '#ebc32b' }}>
+          <div style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(235,195,43,.15)', border: '1px solid rgba(255,255,255,.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Bebas Neue',sans-serif", fontSize: 10, color: '#0057B8' }}>
             {initials(nombre)}
           </div>
           <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.12em', color: 'rgba(235,195,43,.85)' }}>{nombre}</span>
@@ -661,7 +661,7 @@ function DetallePanel({ nombre, det, apuesta, onClose, inline, style: extraStyle
         {/* Resumen chips */}
         {det.preds?.length > 0 && (
           <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-            {[['exacto', '#22c55e', 'Exactos'], ['diferencia', '#ebc32b', 'Diferencia'], ['resultado', '#94a3b8', 'Resultado'], ['fallos', '#f43f5e', 'Fallos']].map(([k, c, l]) => resumen[k] > 0 && (
+            {[['exacto', '#22c55e', 'Exactos'], ['diferencia', '#0057B8', 'Diferencia'], ['resultado', '#94a3b8', 'Resultado'], ['fallos', '#f43f5e', 'Fallos']].map(([k, c, l]) => resumen[k] > 0 && (
               <span key={k} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', borderRadius: 99, background: `${c}12`, border: `1px solid ${c}25`, fontSize: 10, fontWeight: 700, color: c }}>
                 <span style={{ width: 5, height: 5, borderRadius: '50%', background: c, display: 'inline-block' }} />
                 {resumen[k]} {l}
@@ -738,7 +738,7 @@ function FilaPartido({ partido, pred, apuesta }) {
       <div style={{ textAlign: 'center' }}>
         <p style={{ fontSize: 7, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.12em', color: '#b8c0cc', margin: '0 0 1px' }}>Pred.</p>
         {pred
-          ? <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 14, color: '#c99f16', margin: 0, lineHeight: 1 }}>{pred.pred_local}-{pred.pred_visitante}</p>
+          ? <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 14, color: '#0057B8', margin: 0, lineHeight: 1 }}>{pred.pred_local}-{pred.pred_visitante}</p>
           : <p style={{ fontSize: 10, color: '#b8c0cc', margin: 0, fontStyle: 'italic' }}>—</p>
         }
       </div>
@@ -771,26 +771,26 @@ function FilaPartido({ partido, pred, apuesta }) {
 function MiPosicion({ pos, apuesta, expandida, detalle, onToggle }) {
   return (
     <div style={{ position: 'sticky', bottom: 12, marginTop: 12, zIndex: 10 }}>
-      <div style={{ borderRadius: 13, overflow: 'hidden', boxShadow: '0 8px 32px rgba(12,24,43,.28)', border: '2px solid rgba(235,195,43,.45)' }}>
+      <div style={{ borderRadius: 13, overflow: 'hidden', boxShadow: '0 8px 32px rgba(12,24,43,.28)', border: '2px solid rgba(255,255,255,.25)' }}>
         <div onClick={onToggle} style={{
           display: 'grid', gridTemplateColumns: '44px 1fr 100px 68px 18px',
           padding: '10px 16px', gap: 8, alignItems: 'center',
           background: 'linear-gradient(90deg,#0c182b,#17376a)', cursor: 'pointer',
         }}>
-          <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, color: '#ebc32b' }}>#{pos.posicion}</span>
+          <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, color: '#0057B8' }}>#{pos.posicion}</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#ebc32b,#c99f16)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Bebas Neue',sans-serif", fontSize: 12, color: '#0c182b', flexShrink: 0 }}>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#0057B8,#1E78E8)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Bebas Neue',sans-serif", fontSize: 12, color: '#0c182b', flexShrink: 0 }}>
               {initials(pos.nombre)}
             </div>
             <div style={{ minWidth: 0 }}>
               <p style={{ fontWeight: 700, fontSize: 13, color: '#fff', margin: '0 0 1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {pos.nombre}<span style={{ fontSize: 10, color: '#ebc32b', fontWeight: 400, marginLeft: 4 }}>(vos)</span>
+                {pos.nombre}<span style={{ fontSize: 10, color: '#0057B8', fontWeight: 400, marginLeft: 4 }}>(vos)</span>
               </p>
               <p style={{ fontSize: 10, color: 'rgba(255,255,255,.4)', margin: 0 }}>{pos.predicciones} predicciones</p>
             </div>
           </div>
           <div className="rk-hide-mob" style={{ display: 'flex', justifyContent: 'center', gap: 8 }}>
-            {[['#22c55e', pos.aciertos_exactos], ['#ebc32b', pos.aciertos_diferencia || 0], ['rgba(255,255,255,.45)', pos.aciertos_resultado]].map(([c, n], i) => (
+            {[['#22c55e', pos.aciertos_exactos], ['#0057B8', pos.aciertos_diferencia || 0], ['rgba(255,255,255,.45)', pos.aciertos_resultado]].map(([c, n], i) => (
               <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 11, fontWeight: 600, color: n > 0 ? c : 'rgba(255,255,255,.2)' }}>
                 <span style={{ width: 6, height: 6, borderRadius: '50%', background: n > 0 ? c : 'rgba(255,255,255,.1)', display: 'inline-block' }} />
                 {n}
@@ -798,10 +798,10 @@ function MiPosicion({ pos, apuesta, expandida, detalle, onToggle }) {
             ))}
           </div>
           <div style={{ textAlign: 'center' }}>
-            <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 20, color: '#ebc32b' }}>{pos.puntos_totales}</span>
+            <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 20, color: '#0057B8' }}>{pos.puntos_totales}</span>
             <span style={{ fontSize: 8, color: 'rgba(255,255,255,.3)', marginLeft: 2, letterSpacing: '.1em', fontWeight: 700, display: 'block' }}>PTS</span>
           </div>
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#0057B8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
             style={{ transform: expandida ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}>
             <polyline points="6 9 12 15 18 9" />
           </svg>
@@ -824,7 +824,7 @@ function LeyendaPuntos({ apuesta, total, mostrando }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, fontSize: 10, color: '#94a3b8', paddingTop: 12, borderTop: '1px solid #e8e3db', marginTop: 12 }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-        {[['#22c55e', `Exacto +${e}pts`], ['#ebc32b', `Diferencia +${d}pts`], ['#94a3b8', `Resultado +${r}pt${r === 1 ? '' : 's'}`], ['#f43f5e', 'Sin acierto 0pts']].map(([c, l]) => (
+        {[['#22c55e', `Exacto +${e}pts`], ['#0057B8', `Diferencia +${d}pts`], ['#94a3b8', `Resultado +${r}pt${r === 1 ? '' : 's'}`], ['#f43f5e', 'Sin acierto 0pts']].map(([c, l]) => (
           <span key={l} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: c, display: 'inline-block' }} />
             {l}
@@ -851,7 +851,7 @@ function EmptySelect() {
       {/* Deco podio skeleton */}
       <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', opacity: .15, marginTop: 8, pointerEvents: 'none' }}>
         {[80, 110, 80].map((h, i) => (
-          <div key={i} style={{ width: 56, height: h, borderRadius: 12, background: `linear-gradient(180deg,${i === 1 ? '#ebc32b' : '#cbd5e1'},transparent)` }} />
+          <div key={i} style={{ width: 56, height: h, borderRadius: 12, background: `linear-gradient(180deg,${i === 1 ? '#0057B8' : '#cbd5e1'},transparent)` }} />
         ))}
       </div>
     </div>

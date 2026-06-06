@@ -37,7 +37,7 @@ export default function ActiveUsersTab({
           style={{
             background: loadingActiveUsers ? 'rgba(235,195,43,0.1)' : '#fff',
             border: '1.5px solid #f0eadb',
-            color: loadingActiveUsers ? '#c99f16' : '#5f6e8a',
+            color: loadingActiveUsers ? '#0057B8' : '#5f6e8a',
             boxShadow: '0 1px 0 rgba(10,18,38,0.03)',
           }}
         >
@@ -85,7 +85,7 @@ export default function ActiveUsersTab({
           }}
           className="px-5 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all"
           style={{
-            background: 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
+            background: 'linear-gradient(135deg, #0057B8 0%, #d4a017 100%)',
             color: '#0a1226',
             boxShadow: '0 2px 8px rgba(235,195,43,0.15)',
           }}
@@ -98,7 +98,7 @@ export default function ActiveUsersTab({
       {loadingActiveUsers && activeUsers.length === 0 ? (
         <div className="text-center py-20">
           <span className="inline-block w-10 h-10 border-3 border-t-transparent rounded-full animate-spin"
-            style={{ borderColor: '#ebc32b', borderTopColor: 'transparent' }} />
+            style={{ borderColor: '#0057B8', borderTopColor: 'transparent' }} />
           <p className="font-body text-sm mt-4" style={{ color: '#5f6e8a' }}>
             Cargando usuarios...
           </p>
@@ -137,7 +137,7 @@ export default function ActiveUsersTab({
             style={{
               gridTemplateColumns: '1.6fr 1.6fr 1fr 0.8fr 0.8fr 1fr',
               background: 'rgba(235,195,43,0.06)',
-              color: '#c99f16',
+              color: '#0057B8',
               borderBottom: '1px solid #f0eadb',
             }}
           >
@@ -167,7 +167,7 @@ export default function ActiveUsersTab({
                   <div
                     className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center font-display text-sm"
                     style={{
-                      background: 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
+                      background: 'linear-gradient(135deg, #0057B8 0%, #d4a017 100%)',
                       color: '#0a1226',
                     }}
                   >
@@ -197,7 +197,7 @@ export default function ActiveUsersTab({
                 <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-body font-semibold w-fit uppercase tracking-wider"
                   style={{
                     background: u.tipo_usuario === 'jefe' ? 'rgba(235,195,43,0.1)' : 'rgba(12,24,43,0.05)',
-                    color: u.tipo_usuario === 'jefe' ? '#c99f16' : '#5f6e8a',
+                    color: u.tipo_usuario === 'jefe' ? '#0057B8' : '#5f6e8a',
                     border: `1px solid ${u.tipo_usuario === 'jefe' ? 'rgba(235,195,43,0.25)' : 'rgba(12,24,43,0.1)'}`,
                   }}>
                   {u.tipo_usuario === 'jefe' ? 'Jefe' : 'General'}

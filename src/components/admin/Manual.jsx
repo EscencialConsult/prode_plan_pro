@@ -14,9 +14,9 @@ const C = {
   navySoft:  '#18243f',
   blueMed:   '#425b8b',
   blueSoft:  '#6e83ad',
-  gold:      '#ebc32b',
-  goldLt:    '#f5d75a',
-  goldDk:    '#c99f16',
+  gold:      '#0057B8',
+  goldLt:    '#00479A',
+  goldDk:    '#0057B8',
   cream:     '#faf7f0',
   cream2:    '#f0eadb',
   cream3:    '#e8e0c9',
@@ -125,7 +125,7 @@ function SectionHeader({ num, kicker, title, icon }) {
         </div>
         <div style={{
           height:2, marginTop:14, marginLeft:icon?56:0,
-          background:`linear-gradient(90deg,${C.gold} 0%,rgba(235,195,43,.4) 30%,rgba(235,195,43,0) 80%)`,
+          background:`linear-gradient(90deg,${C.gold} 0%,rgba(0,87,184,.4) 30%,rgba(235,195,43,0) 80%)`,
         }}/>
       </div>
     </div>
@@ -658,7 +658,7 @@ export default function Manual() {
                     <button key={s.id} onClick={()=>goTo(s.id)} style={{
                       display:'flex', alignItems:'center', gap:10,
                       width:'100%', padding:'7px 18px 7px 12px',
-                      background:active?'rgba(235,195,43,.1)':'transparent',
+                      background:active?'rgba(255,255,255,.75)':'transparent',
                       border:'none',
                       borderLeft:`2px solid ${active?C.gold:'transparent'}`,
                       cursor:'pointer', textAlign:'left',
@@ -717,7 +717,7 @@ export default function Manual() {
               GESTIONÁ EL<br/>
               <span style={{
                 color:C.goldDk,
-                textShadow:'0 0 32px rgba(235,195,43,.25)',
+                textShadow:'0 0 32px rgba(255,255,255,.25)',
               }}>TORNEO COMPLETO</span>
             </h1>
 
@@ -1184,7 +1184,7 @@ export default function Manual() {
               background:`linear-gradient(135deg,${C.navy} 0%,${C.navySoft} 100%)`,
               borderRadius:18, padding:'28px 28px 24px',
               margin:'32px 0',
-              border:`1px solid rgba(235,195,43,.3)`,
+              border:`1px solid rgba(255,255,255,.25)`,
               boxShadow:'0 18px 48px rgba(12,24,43,.25)',
             }}>
               {/* Glow decorativo */}

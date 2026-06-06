@@ -50,12 +50,12 @@ export default function CompletarPerfilPage() {
     background: 'rgba(255,255,255,.06)',
     border: '1px solid rgba(255,255,255,.1)',
     color: '#fff',
-    caretColor: '#ebc32b',
+    caretColor: '#0057B8',
   }
   const onFocus = e => {
     e.target.style.borderColor = 'rgba(235,195,43,.55)'
     e.target.style.background  = 'rgba(235,195,43,.06)'
-    e.target.style.boxShadow   = '0 0 0 3px rgba(235,195,43,.1)'
+    e.target.style.boxShadow   = '0 0 0 3px rgba(255,255,255,.75)'
   }
   const onBlur = e => {
     e.target.style.borderColor = 'rgba(255,255,255,.1)'
@@ -100,7 +100,7 @@ export default function CompletarPerfilPage() {
         {/* ── Logo ── */}
         <div className="relative z-10 flex flex-col items-center mb-2 cp-card">
           <img
-            src="./imgprode/colegio-logo-blanco.png"
+            src="./imgprode/colegio-logo-celeste.png"
             alt="Prode"
             style={{ height: 60, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,.6))' }}
           />
@@ -112,7 +112,7 @@ export default function CompletarPerfilPage() {
           style={{
             maxWidth: 440,
             background: 'linear-gradient(160deg, rgba(12,24,43,.92) 0%, rgba(5,9,15,.96) 100%)',
-            border: '1px solid rgba(235,195,43,.3)',
+            border: '1px solid rgba(255,255,255,.25)',
             borderRadius: 20,
             boxShadow: '0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(235,195,43,.08), inset 0 1px 0 rgba(255,255,255,.05)',
             backdropFilter: 'blur(24px)',
@@ -121,7 +121,7 @@ export default function CompletarPerfilPage() {
         >
           {/* Gold accent */}
           <div className="rounded-t-[20px] h-0.5 w-full"
-            style={{ background: 'linear-gradient(90deg, transparent, #ebc32b 30%, #ebc32b 70%, transparent)' }} />
+            style={{ background: 'linear-gradient(90deg, transparent, #0057B8 30%, #0057B8 70%, transparent)' }} />
 
           <div className="px-8 py-8">
 
@@ -131,11 +131,11 @@ export default function CompletarPerfilPage() {
                 {/* Badge primer ingreso */}
                 <div className="cp-badge flex items-center justify-center w-9 h-9 rounded-full flex-shrink-0"
                   style={{
-                    background: 'linear-gradient(135deg, rgba(235,195,43,.3), rgba(235,195,43,.1))',
+                    background: 'linear-gradient(135deg, rgba(255,255,255,.25), rgba(255,255,255,.75))',
                     border: '1.5px solid rgba(235,195,43,.55)',
-                    boxShadow: '0 0 16px rgba(235,195,43,.2)',
+                    boxShadow: '0 0 16px rgba(255,255,255,.2)',
                   }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0057B8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
                   </svg>
                 </div>
@@ -162,7 +162,7 @@ Indícanos dónde deseas recibir la aceptación y las comunicaciones del juego. 
 
             {/* Divider */}
             <div className="h-px mb-6"
-              style={{ background: 'linear-gradient(90deg, transparent, rgba(235,195,43,.2) 50%, transparent)' }} />
+              style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,.2) 50%, transparent)' }} />
 
             <form onSubmit={handleSubmit} className="space-y-4">
 
@@ -252,9 +252,9 @@ Indícanos dónde deseas recibir la aceptación y las comunicaciones del juego. 
                 type="submit"
                 disabled={loading}
                 className="w-full font-body font-bold text-base py-4 rounded-full flex items-center justify-center gap-2 transition-all mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{ background: '#ebc32b', color: '#05090f', boxShadow: '0 8px 28px rgba(235,195,43,.3)' }}
-                onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(235,195,43,.45)' } }}
-                onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(235,195,43,.3)' } }}
+                style={{ background: '#0057B8', color: '#05090f', boxShadow: '0 8px 28px rgba(255,255,255,.25)' }}
+                onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#00479A'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(255,255,255,.25)' } }}
+                onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#0057B8'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(255,255,255,.25)' } }}
               >
                 {loading ? (
                   <>

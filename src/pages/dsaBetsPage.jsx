@@ -70,7 +70,7 @@ export default function BetsPage() {
                   className="px-4 py-2 text-xs font-body font-bold uppercase tracking-wider rounded-lg transition-all"
                   style={{
                     background: active ? '#0c182b' : 'transparent',
-                    color: active ? '#ebc32b' : '#5f6e8a',
+                    color: active ? '#0057B8' : '#5f6e8a',
                     boxShadow: active ? '0 2px 8px rgba(12,24,43,.25)' : 'none',
                   }}
                   onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#0c182b' }}

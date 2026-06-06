@@ -222,9 +222,9 @@ a:hover {
   --lnd-navy-soft: #18243f;
   --lnd-blue-med:  #425b8b;
   --lnd-blue-soft: #6e83ad;
-  --lnd-gold:      #ebc32b;
-  --lnd-gold-lt:   #f5d75a;
-  --lnd-gold-dk:   #c99f16;
+  --lnd-gold:      #0057B8;
+  --lnd-gold-lt:   #00479A;
+  --lnd-gold-dk:   #0057B8;
   --lnd-cream:     #faf7f0;
   --lnd-cream-2:   #f0eadb;
   --lnd-ink-700:   #2b3a5a;
@@ -260,7 +260,7 @@ a:hover {
 .pulse-dot { animation: pulse-dot-anim 1.6s ease infinite; }
 
 /* Gold text glow */
-.gold-glow { text-shadow: 0 0 40px rgba(235,195,43,.45), 0 2px 0 rgba(0,0,0,.2); }
+.gold-glow { text-shadow: 0 0 40px rgba(255,255,255,.25), 0 2px 0 rgba(0,0,0,.2); }
 
 /* Nav link underline hover */
 .home-navlink { position: relative; font-size: .92rem; font-weight: 500; color: rgba(255,255,255,.75); transition: color .2s; text-decoration: none; }
@@ -407,7 +407,7 @@ body:has(.sh-in) {
   top: 20%;
   bottom: 20%;
   width: 3px;
-  background: #ebc32b;
+  background: #0057B8;
   border-radius: 0 3px 3px 0;
   opacity: 0;
   transition: opacity .14s;
@@ -475,7 +475,7 @@ body:has(.sh-in) {
   position: absolute;
   top: 0; right: 0;
   width: 220px; height: 100%;
-  background: radial-gradient(ellipse at 85% 50%, rgba(235,195,43,.2), transparent 65%);
+  background: radial-gradient(ellipse at 85% 50%, rgba(255,255,255,.2), transparent 65%);
   pointer-events: none;
 }
 .rk-banner-label {
@@ -497,7 +497,7 @@ body:has(.sh-in) {
 .rk-banner-stat-val {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 22px;
-  color: #ebc32b;
+  color: #0057B8;
   margin: 0;
   line-height: 1;
 }
@@ -532,7 +532,7 @@ body:has(.sh-in) {
   top: -13px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(90deg, #c99f16, #ebc32b);
+  background: linear-gradient(90deg, #0057B8, #0057B8);
   color: #fff;
   font-size: 8px;
   font-weight: 800;
@@ -622,7 +622,7 @@ body:has(.sh-in) {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .12em;
-  color: #ebc32b;
+  color: #0057B8;
   margin: 0;
   display: flex;
   align-items: center;
@@ -793,7 +793,7 @@ body:has(.sh-in) {
   white-space: nowrap;
   margin: 0 0 1px;
 }
-.rk-tabla-name.me { color: #c99f16; font-weight: 700; }
+.rk-tabla-name.me { color: #0057B8; font-weight: 700; }
 .rk-tabla-submeta {
   font-size: 10px;
   color: #5f6e8a;
@@ -919,7 +919,7 @@ body:has(.sh-in) {
 }
 .rk-mob-tab.active {
   background: #0c182b;
-  color: #ebc32b;
+  color: #0057B8;
   border-color: transparent;
 }
 

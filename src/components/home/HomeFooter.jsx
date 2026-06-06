@@ -18,7 +18,7 @@ export default function HomeFooter() {
               <img
                 src="./img/one-logocolor.png"
                 alt="ONE"
-                style={{ height:34, width:'auto', filter:'drop-shadow(0 2px 16px rgba(235,195,43,.3))', opacity:.96 }}
+                style={{ height:34, width:'auto', filter:'drop-shadow(0 2px 16px rgba(255,255,255,.25))', opacity:.96 }}
               />
               <div style={{ width:1, height:36, background:'rgba(235,195,43,.22)', flexShrink:0 }}/>
               <a href="https://escencialconsultora.com.ar" target="_blank" rel="noopener noreferrer" style={{ textDecoration:'none', display:'inline-flex' }}>
@@ -39,7 +39,7 @@ export default function HomeFooter() {
             <div style={{ display:'flex', gap:'.6rem' }}>
               <a href="https://wa.me/5491133588062" target="_blank" rel="noopener noreferrer"
                 style={{ width:32, height:32, borderRadius:8, background:'rgba(255,255,255,.05)', border:'1px solid rgba(255,255,255,.08)', display:'flex', alignItems:'center', justifyContent:'center', transition:'all .18s', textDecoration:'none' }}
-                onMouseEnter={e=>{ e.currentTarget.style.background='rgba(235,195,43,.12)'; e.currentTarget.style.borderColor='rgba(235,195,43,.3)' }}
+                onMouseEnter={e=>{ e.currentTarget.style.background='rgba(235,195,43,.12)'; e.currentTarget.style.borderColor='rgba(255,255,255,.25)' }}
                 onMouseLeave={e=>{ e.currentTarget.style.background='rgba(255,255,255,.05)'; e.currentTarget.style.borderColor='rgba(255,255,255,.08)' }}>
                 {/* WhatsApp icon */}
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -48,7 +48,7 @@ export default function HomeFooter() {
               </a>
               <a href="mailto:mferreyra@escencialconsult.com.ar"
                 style={{ width:32, height:32, borderRadius:8, background:'rgba(255,255,255,.05)', border:'1px solid rgba(255,255,255,.08)', display:'flex', alignItems:'center', justifyContent:'center', transition:'all .18s', textDecoration:'none' }}
-                onMouseEnter={e=>{ e.currentTarget.style.background='rgba(235,195,43,.12)'; e.currentTarget.style.borderColor='rgba(235,195,43,.3)' }}
+                onMouseEnter={e=>{ e.currentTarget.style.background='rgba(235,195,43,.12)'; e.currentTarget.style.borderColor='rgba(255,255,255,.25)' }}
                 onMouseLeave={e=>{ e.currentTarget.style.background='rgba(255,255,255,.05)'; e.currentTarget.style.borderColor='rgba(255,255,255,.08)' }}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
@@ -56,7 +56,7 @@ export default function HomeFooter() {
               </a>
               <a href="https://escencialconsultora.com.ar" target="_blank" rel="noopener noreferrer"
                 style={{ width:32, height:32, borderRadius:8, background:'rgba(255,255,255,.05)', border:'1px solid rgba(255,255,255,.08)', display:'flex', alignItems:'center', justifyContent:'center', transition:'all .18s', textDecoration:'none' }}
-                onMouseEnter={e=>{ e.currentTarget.style.background='rgba(235,195,43,.12)'; e.currentTarget.style.borderColor='rgba(235,195,43,.3)' }}
+                onMouseEnter={e=>{ e.currentTarget.style.background='rgba(235,195,43,.12)'; e.currentTarget.style.borderColor='rgba(255,255,255,.25)' }}
                 onMouseLeave={e=>{ e.currentTarget.style.background='rgba(255,255,255,.05)'; e.currentTarget.style.borderColor='rgba(255,255,255,.08)' }}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
@@ -79,7 +79,7 @@ export default function HomeFooter() {
               ].map(label => (
                 <li key={label}>
                   <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.84rem', color:'rgba(255,255,255,.45)', display:'inline-flex', alignItems:'center', gap:'.4rem' }}>
-                    <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(235,195,43,.3)', flexShrink:0 }}/>
+                    <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(255,255,255,.25)', flexShrink:0 }}/>
                     {label}
                   </span>
                 </li>
@@ -101,9 +101,9 @@ export default function HomeFooter() {
                 <li key={label}>
                   <a href={href} target="_blank" rel="noopener noreferrer"
                     style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.84rem', color:'rgba(255,255,255,.48)', textDecoration:'none', display:'inline-flex', alignItems:'center', gap:'.4rem', transition:'color .18s' }}
-                    onMouseEnter={e=>{ e.currentTarget.style.color='#ebc32b' }}
+                    onMouseEnter={e=>{ e.currentTarget.style.color='#0057B8' }}
                     onMouseLeave={e=>{ e.currentTarget.style.color='rgba(255,255,255,.48)' }}>
-                    <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(235,195,43,.3)', flexShrink:0 }}/>
+                    <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(255,255,255,.25)', flexShrink:0 }}/>
                     {label}
                   </a>
                 </li>
@@ -125,9 +125,9 @@ export default function HomeFooter() {
                 <li key={href}>
                   <a href={href} target="_blank" rel="noopener noreferrer"
                     style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.82rem', color:'rgba(255,255,255,.48)', textDecoration:'none', display:'inline-flex', alignItems:'center', gap:'.4rem', transition:'color .18s' }}
-                    onMouseEnter={e=>{ e.currentTarget.style.color='#ebc32b' }}
+                    onMouseEnter={e=>{ e.currentTarget.style.color='#0057B8' }}
                     onMouseLeave={e=>{ e.currentTarget.style.color='rgba(255,255,255,.48)' }}>
-                    <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(235,195,43,.3)', flexShrink:0 }}/>
+                    <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(255,255,255,.25)', flexShrink:0 }}/>
                     {label}
                   </a>
                 </li>
@@ -140,7 +140,7 @@ export default function HomeFooter() {
 
       {/* ── Divider ── */}
       <div style={{ maxWidth:1200, margin:'0 auto', padding:'0 1.5rem' }}>
-        <div style={{ height:1, background:'linear-gradient(90deg,transparent,rgba(235,195,43,.2) 20%,rgba(235,195,43,.2) 80%,transparent)' }}/>
+        <div style={{ height:1, background:'linear-gradient(90deg,transparent,rgba(255,255,255,.2) 20%,rgba(255,255,255,.2) 80%,transparent)' }}/>
       </div>
 
       {/* ── Bottom bar ── */}

@@ -22,7 +22,7 @@ export default function HomeFaq() {
           {/* Left */}
           <div className="lg:sticky" style={{ top: '7rem' }}>
             <span className="inline-flex items-center gap-2 font-body font-bold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-6"
-              style={{ border: '1.5px solid #ebc32b', color: '#c99f16', background: 'rgba(235,195,43,.12)' }}>
+              style={{ border: '1.5px solid #0057B8', color: '#0057B8', background: 'rgba(235,195,43,.12)' }}>
               Ayuda
             </span>
             <h2 className="font-display mb-6" style={{ fontSize: 'clamp(2.5rem,6vw,4.2rem)', color: '#0c182b', lineHeight: 0.95, letterSpacing: '.01em' }}>
@@ -62,9 +62,9 @@ export default function HomeFaq() {
                   key={i} 
                   className="rounded-2xl overflow-hidden bg-white transition-all duration-300"
                   style={{
-                    border: isOpen ? '2px solid #ebc32b' : isHovered ? '2px solid #f0eadb' : '2px solid transparent',
+                    border: isOpen ? '2px solid #0057B8' : isHovered ? '2px solid #f0eadb' : '2px solid transparent',
                     boxShadow: isOpen 
-                      ? '0 8px 24px rgba(235,195,43,.18), 0 2px 8px rgba(235,195,43,.1)' 
+                      ? '0 8px 24px rgba(235,195,43,.18), 0 2px 8px rgba(255,255,255,.75)' 
                       : isHovered 
                         ? '0 4px 12px rgba(12,24,43,.08)' 
                         : '0 2px 4px rgba(12,24,43,.04)',
@@ -85,7 +85,7 @@ export default function HomeFaq() {
                     <span 
                       className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300"
                       style={isOpen 
-                        ? { background: '#ebc32b', color: '#05090f', transform: 'rotate(180deg)' } 
+                        ? { background: '#0057B8', color: '#05090f', transform: 'rotate(180deg)' } 
                         : { background: isHovered ? '#f5edd5' : '#f0eadb', color: '#5f6e8a', transform: 'rotate(0deg)' }
                       }
                     >

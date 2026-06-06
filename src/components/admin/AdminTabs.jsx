@@ -51,7 +51,7 @@ export default function AdminTabs({
             className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-xs font-body font-bold uppercase tracking-wider transition-all"
             style={{
               background: active ? '#071A3A' : 'transparent',
-              color: active ? '#EBC32B' : '#6B7280',
+              color: active ? '#0057B8' : '#6B7280',
               border: active ? '1px solid rgba(235,195,43,0.45)' : '1px solid transparent',
             }}
           >
@@ -62,7 +62,7 @@ export default function AdminTabs({
                 className="inline-flex min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 text-[10px]"
                 style={{
                   background: active ? 'rgba(235,195,43,0.18)' : 'rgba(7,26,58,0.08)',
-                  color: active ? '#EBC32B' : '#071A3A',
+                  color: active ? '#0057B8' : '#071A3A',
                 }}
               >
                 {item.count}

@@ -13,7 +13,7 @@
   const ESTADO = {
     programado: { label:'Programado', color:'#5f6e8a', bg:'rgba(95,110,138,.07)', border:'rgba(95,110,138,.18)' },
     en_vivo:    { label:'EN VIVO',    color:'#e03252', bg:'rgba(224,50,82,.08)',  border:'rgba(224,50,82,.25)'  },
-    finalizado: { label:'Finalizado', color:'#c99f16', bg:'rgba(235,195,43,.08)', border:'rgba(235,195,43,.22)' },
+    finalizado: { label:'Finalizado', color:'#0057B8', bg:'rgba(235,195,43,.08)', border:'rgba(235,195,43,.22)' },
     cancelado:  { label:'Cancelado',  color:'#a8b2c4', bg:'rgba(168,178,196,.07)',border:'rgba(168,178,196,.2)' },
   }
   const FASES = {
@@ -23,14 +23,14 @@
 
   function Chip({ active, onClick, children }) {
     return (
-      <button onClick={onClick} style={{ padding:'.32rem .75rem', borderRadius:99, fontFamily:"'DM Sans',sans-serif", fontWeight:700, fontSize:'.72rem', textTransform:'uppercase', letterSpacing:'.05em', cursor:'pointer', transition:'all .15s', background:active?'#0c182b':'#fff', color:active?'#ebc32b':'#5f6e8a', border:active?'1px solid transparent':'1px solid #f0eadb', boxShadow:active?'0 2px 8px rgba(12,24,43,.18)':'none' }}>
+      <button onClick={onClick} style={{ padding:'.32rem .75rem', borderRadius:99, fontFamily:"'DM Sans',sans-serif", fontWeight:700, fontSize:'.72rem', textTransform:'uppercase', letterSpacing:'.05em', cursor:'pointer', transition:'all .15s', background:active?'#0c182b':'#fff', color:active?'#0057B8':'#5f6e8a', border:active?'1px solid transparent':'1px solid #f0eadb', boxShadow:active?'0 2px 8px rgba(12,24,43,.18)':'none' }}>
         {children}
       </button>
     )
   }
   function TabBtn({ active, onClick, icon, label }) {
     return (
-      <button onClick={onClick} style={{ display:'flex', alignItems:'center', gap:'.4rem', padding:'.52rem 1.1rem', borderRadius:10, border:'none', fontFamily:"'DM Sans',sans-serif", fontWeight:700, fontSize:'.78rem', textTransform:'uppercase', letterSpacing:'.05em', cursor:'pointer', transition:'all .17s', background:active?'#0c182b':'transparent', color:active?'#ebc32b':'#5f6e8a', boxShadow:active?'0 2px 10px rgba(12,24,43,.2)':'none' }}>
+      <button onClick={onClick} style={{ display:'flex', alignItems:'center', gap:'.4rem', padding:'.52rem 1.1rem', borderRadius:10, border:'none', fontFamily:"'DM Sans',sans-serif", fontWeight:700, fontSize:'.78rem', textTransform:'uppercase', letterSpacing:'.05em', cursor:'pointer', transition:'all .17s', background:active?'#0c182b':'transparent', color:active?'#0057B8':'#5f6e8a', boxShadow:active?'0 2px 10px rgba(12,24,43,.2)':'none' }}>
         {icon}{label}
       </button>
     )
@@ -46,7 +46,7 @@
       mute:     '#a8b2c4',
       line:     '#e7dec6',
       gold:     '#d4a017',
-      goldHi:   '#ebc32b',
+      goldHi:   '#0057B8',
       goldDeep: '#a87a0b',
       red:      '#e03252',
     }
@@ -340,7 +340,7 @@
     mute:     '#a8b2c4',
     line:     '#e7dec6',
     gold:     '#d4a017',
-    goldHi:   '#ebc32b',
+    goldHi:   '#0057B8',
     goldDeep: '#a87a0b',
     red:      '#e03252',
     green:    '#1b8a5a',
@@ -956,7 +956,7 @@
     letterSpacing:'.02em',
   }}>
     <span style={{color:'#0c182b'}}>CRONOGRAMA </span>
-    <span style={{color:'#ebc32b'}}>MUNDIALISTA</span>
+    <span style={{color:'#0057B8'}}>MUNDIALISTA</span>
   </h1>
   <p style={{ fontSize:'.84rem', color:'#5f6e8a', margin:0 }}>{matches?.length || 0} partidos del Mundial 2026</p>
 </div>

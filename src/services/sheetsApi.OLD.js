@@ -152,10 +152,10 @@ function mostrarAvisoSesionExpirada() {
       <div style="
         width: 56px; height: 56px; border-radius: 50%;
         background: rgba(235,195,43,.15);
-        border: 1px solid rgba(235,195,43,.4);
+        border: 1px solid rgba(0,87,184,.4);
         margin: 0 auto 1rem;
         display: flex; align-items: center; justify-content: center;">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0057B8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/>
           <polyline points="12 6 12 12 16 14"/>
         </svg>

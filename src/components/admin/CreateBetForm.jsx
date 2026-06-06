@@ -57,7 +57,7 @@ function Field({ label, error, ...props }) {
           color: '#0a1226' 
         }}
         onFocus={e => {
-          e.target.style.borderColor = error ? '#e03252' : '#ebc32b'
+          e.target.style.borderColor = error ? '#e03252' : '#0057B8'
           e.target.style.boxShadow = error 
             ? '0 0 0 3px rgba(224,50,82,.08)' 
             : '0 0 0 3px rgba(235,195,43,.08)'
@@ -86,12 +86,12 @@ function FilterChip({ active, onClick, children, disabled }) {
       style={{
         background: active ? '#0a1226' : '#fff',
         border: `1.5px solid ${active ? '#0a1226' : '#f0eadb'}`,
-        color: active ? '#ebc32b' : '#5f6e8a',
+        color: active ? '#0057B8' : '#5f6e8a',
       }}
       onMouseEnter={e => { 
         if (!active && !disabled) { 
-          e.currentTarget.style.borderColor = '#ebc32b'
-          e.currentTarget.style.color = '#c99f16'
+          e.currentTarget.style.borderColor = '#0057B8'
+          e.currentTarget.style.color = '#0057B8'
         } 
       }}
       onMouseLeave={e => { 
@@ -337,7 +337,7 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
             Partidos
           </span>
           <span className="font-body text-xs" style={{ color: '#a8b2c4' }}>
-            <span className="font-bold" style={{ color: seleccionados > 0 ? '#c99f16' : '#a8b2c4' }}>
+            <span className="font-bold" style={{ color: seleccionados > 0 ? '#0057B8' : '#a8b2c4' }}>
               {seleccionados}
             </span>
             {' / '}{partidosDisponibles.length} seleccionados
@@ -396,7 +396,7 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
           className="w-full px-4 py-3 rounded-xl font-body text-sm outline-none transition-all"
           style={{ background: '#fff', border: '1.5px solid #f0eadb', color: '#0a1226' }}
           onFocus={e => { 
-            e.target.style.borderColor = '#ebc32b'
+            e.target.style.borderColor = '#0057B8'
             e.target.style.boxShadow = '0 0 0 3px rgba(235,195,43,.08)' 
           }}
           onBlur={e => { 
@@ -408,9 +408,9 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
         {/* Acciones rápidas */}
         <div className="flex items-center justify-between gap-2 text-xs font-body">
           <button type="button" onClick={toggleVisibles} disabled={partidosFiltrados.length === 0}
-            className="transition-colors disabled:opacity-40 font-semibold" style={{ color: '#c99f16' }}
-            onMouseEnter={e => { if (partidosFiltrados.length > 0) e.currentTarget.style.color = '#ebc32b' }}
-            onMouseLeave={e => { e.currentTarget.style.color = '#c99f16' }}>
+            className="transition-colors disabled:opacity-40 font-semibold" style={{ color: '#0057B8' }}
+            onMouseEnter={e => { if (partidosFiltrados.length > 0) e.currentTarget.style.color = '#0057B8' }}
+            onMouseLeave={e => { e.currentTarget.style.color = '#0057B8' }}>
             {partidosFiltrados.every(m => form.partidos_ids.includes(m.id)) && partidosFiltrados.length > 0
               ? `✕ Deseleccionar visibles`
               : `✓ Seleccionar visibles`}
@@ -456,11 +456,11 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
                     style={{ background: 'linear-gradient(135deg, #0a1226 0%, #1a2540 100%)', borderBottom: '1px solid rgba(235,195,43,0.15)' }}>
                     <div className="flex items-center gap-2">
                       <span className="w-6 h-6 rounded-md flex items-center justify-center font-display font-bold text-xs"
-                        style={{ background: '#ebc32b', color: '#0a1226' }}>
+                        style={{ background: '#0057B8', color: '#0a1226' }}>
                         {gr.partidos.length}
                       </span>
                       <span className="font-body font-bold uppercase text-xs tracking-wider"
-                        style={{ color: '#ebc32b' }}>
+                        style={{ color: '#0057B8' }}>
                         {header}
                       </span>
                     </div>
@@ -508,8 +508,8 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
                         />
                         <span className="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center transition-all"
                           style={{
-                            border: `2px solid ${checked ? '#ebc32b' : '#e8dfd0'}`,
-                            background: checked ? '#ebc32b' : '#fff',
+                            border: `2px solid ${checked ? '#0057B8' : '#e8dfd0'}`,
+                            background: checked ? '#0057B8' : '#fff',
                           }}>
                           {checked && (
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#0a1226" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
@@ -580,7 +580,7 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
                   style={{
                     background: active ? '#0a1226' : '#fff',
                     border: `1.5px solid ${active ? '#0a1226' : '#f0eadb'}`,
-                    color: active ? '#ebc32b' : '#5f6e8a',
+                    color: active ? '#0057B8' : '#5f6e8a',
                   }}>
                   {t === 'grupos' ? 'Por Áreas' : 'Libre'}
                 </button>
@@ -593,15 +593,15 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
       {/* Info: en apuestas grupales, todas las áreas compiten automáticamente */}
       {isPro && form.type === 'grupos' && (
         <div className="flex items-start gap-3 p-4 rounded-xl"
-          style={{ border: '1.5px solid rgba(235,195,43,.2)', background: 'rgba(235,195,43,.04)' }}>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c99f16" strokeWidth="2"
+          style={{ border: '1.5px solid rgba(255,255,255,.2)', background: 'rgba(235,195,43,.04)' }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0057B8" strokeWidth="2"
             strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: 2 }}>
             <circle cx="12" cy="12" r="10" />
             <line x1="12" y1="16" x2="12" y2="12" />
             <line x1="12" y1="8" x2="12.01" y2="8" />
           </svg>
           <div style={{ flex: 1 }}>
-            <p className="font-body font-bold text-xs uppercase tracking-widest mb-1" style={{ color: '#c99f16' }}>
+            <p className="font-body font-bold text-xs uppercase tracking-widest mb-1" style={{ color: '#0057B8' }}>
               Apuesta por áreas
             </p>
             <p className="font-body text-sm" style={{ color: '#5f6e8a', lineHeight: 1.5 }}>
@@ -639,7 +639,7 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
           {primerPartido && !errorFecha && (
             <div className="flex items-start gap-2 px-3 py-2 rounded-lg"
               style={{ background: 'rgba(235,195,43,0.06)', border: '1px solid rgba(235,195,43,0.15)' }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c99f16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0057B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
                 <circle cx="12" cy="12" r="10"/>
                 <line x1="12" y1="16" x2="12" y2="12"/>
                 <line x1="12" y1="8" x2="12.01" y2="8"/>
@@ -659,7 +659,7 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
         className="w-full py-4 rounded-xl font-body font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         style={{
           background: canSubmit ? 'linear-gradient(135deg, #0a1226 0%, #1a2540 100%)' : 'rgba(12,24,43,.15)',
-          color: canSubmit ? '#ebc32b' : '#a8b2c4',
+          color: canSubmit ? '#0057B8' : '#a8b2c4',
           boxShadow: canSubmit ? '0 4px 16px rgba(10,18,38,.2)' : 'none',
         }}
         onMouseEnter={e => { 

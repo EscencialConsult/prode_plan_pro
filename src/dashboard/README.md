@@ -39,7 +39,7 @@ Las rutas en el Router NO cambian. Solo los imports.
 - Cards: `#fff` con borde `#f0eadb`
 - Navbar/Hero: `#0c182b` (navy)
 - Texto: `#0c182b` / `#5f6e8a` (muted)
-- Accent: `#ebc32b` / `#c99f16` (gold)
+- Accent: `#0057B8` / `#0057B8` (gold)
 - Éxito: `#1b8a5a` / Error: `#e03252`
 
 ## Notas

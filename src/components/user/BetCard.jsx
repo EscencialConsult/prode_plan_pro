@@ -21,8 +21,8 @@ const STATE_STYLES = {
     border: 'rgba(235,195,43,.35)',
     glow: '0 0 24px rgba(235,195,43,.08)',
     label: 'FINALIZADA',
-    color: '#c99f16',
-    bg: 'rgba(235,195,43,.1)',
+    color: '#0057B8',
+    bg: 'rgba(255,255,255,.75)',
   },
   cerrada: {
     border: 'rgba(30,59,110,.65)',

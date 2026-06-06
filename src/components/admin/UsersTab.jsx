@@ -10,7 +10,7 @@ function BtnGold({ children, onClick, disabled }) {
     <button
       type="button" onClick={onClick} disabled={disabled}
       className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full font-body font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-      style={{ background: '#0c182b', color: '#ebc32b', boxShadow: '0 4px 14px rgba(12,24,43,.2)' }}
+      style={{ background: '#0c182b', color: '#0057B8', boxShadow: '0 4px 14px rgba(12,24,43,.2)' }}
       onMouseEnter={e => { if (!disabled) { e.currentTarget.style.background = '#17376a'; e.currentTarget.style.transform = 'translateY(-1px)' } }}
       onMouseLeave={e => { if (!disabled) { e.currentTarget.style.background = '#0c182b'; e.currentTarget.style.transform = '' } }}
     >
@@ -65,7 +65,7 @@ export default function UsersTab({
       {/* Loading */}
       {loadingUsers && pendingUsers.length === 0 && (
         <div className="text-center py-16">
-          <span className="inline-block w-8 h-8 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: '#ebc32b' }} />
+          <span className="inline-block w-8 h-8 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: '#0057B8' }} />
           <p className="font-body text-sm mt-3" style={{ color: '#5f6e8a' }}>Cargando usuarios...</p>
         </div>
       )}
@@ -93,7 +93,7 @@ export default function UsersTab({
               <div key={u.id} className="rounded-2xl p-5 transition-all"
                 style={{
                   background: '#fff',
-                  border: `1px solid ${isApproving ? '#ebc32b' : '#f0eadb'}`,
+                  border: `1px solid ${isApproving ? '#0057B8' : '#f0eadb'}`,
                   boxShadow: '0 4px 16px rgba(12,24,43,.06)',
                 }}>
 
@@ -101,7 +101,7 @@ export default function UsersTab({
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-display text-lg"
-                      style={{ background: 'linear-gradient(135deg,#0c182b,#17376a)', color: '#ebc32b', boxShadow: '0 4px 12px rgba(12,24,43,.2)' }}>
+                      style={{ background: 'linear-gradient(135deg,#0c182b,#17376a)', color: '#0057B8', boxShadow: '0 4px 12px rgba(12,24,43,.2)' }}>
                       {getInitials(u.nombre)}
                     </div>
                     <div className="min-w-0">
@@ -141,7 +141,7 @@ export default function UsersTab({
                               style={{
                                 background: isActive ? '#0c182b' : '#faf7f0',
                                 border: `1px solid ${isActive ? '#0c182b' : '#e8dfd0'}`,
-                                color: isActive ? '#ebc32b' : '#0c182b',
+                                color: isActive ? '#0057B8' : '#0c182b',
                               }}>
                               <p className="font-body font-semibold text-sm">{opt.label}</p>
                               <p className="font-body text-xs mt-0.5" style={{ color: isActive ? 'rgba(235,195,43,.6)' : '#5f6e8a' }}>{opt.desc}</p>
@@ -156,7 +156,7 @@ export default function UsersTab({
                       <p className="font-body font-bold text-xs uppercase tracking-widest mb-2" style={{ color: '#5f6e8a' }}>Área</p>
                       {areas.length === 0 ? (
                         <p className="text-xs font-body p-3 rounded-xl"
-                          style={{ background: 'rgba(235,195,43,.06)', border: '1px solid rgba(235,195,43,.2)', color: '#c99f16' }}>
+                          style={{ background: 'rgba(235,195,43,.06)', border: '1px solid rgba(255,255,255,.2)', color: '#0057B8' }}>
                           ⚠ Todavía no hay áreas. Creá áreas primero para poder asignar usuarios.
                         </p>
                       ) : (
@@ -170,7 +170,7 @@ export default function UsersTab({
                                 style={{
                                   background: isActive ? '#0c182b' : 'transparent',
                                   border: `1px solid ${isActive ? '#0c182b' : '#e8dfd0'}`,
-                                  color: isActive ? '#ebc32b' : '#5f6e8a',
+                                  color: isActive ? '#0057B8' : '#5f6e8a',
                                 }}>
                                 {a.nombre}
                               </button>
