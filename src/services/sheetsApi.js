@@ -273,10 +273,30 @@ const sistema = {
 }
 
 // ── auth ──────────────────────────────────────────────────
+// ── Conversión CI ↔ email ─────────────────────────────────
+// Supabase autentica internamente por email. Los colaboradores NO
+// tienen email real: cada uno usa un email ficticio derivado de su CI
+// con formato {ci}@nibol.local. Los administradores SÍ tienen email real.
+// El formulario tiene un único campo "CI o correo": esta función decide
+// qué hacer con lo ingresado.
+const CI_EMAIL_DOMAIN = '@nibol.local'
+
+function ciToEmail(valor) {
+  const v = String(valor || '').trim()
+  // Si ya es un email (tiene @), usarlo tal cual → admins con email real
+  if (v.includes('@')) {
+    return v.toLowerCase()
+  }
+  // Si no, es un CI → armar el email ficticio
+  const norm = v.toLowerCase().replace(/\s+/g, '')
+  return `${norm}${CI_EMAIL_DOMAIN}`
+}
+
 const auth = {
-  login: async (email, password) => {
+  login: async (ciOEmail, password) => {
+    const email = ciToEmail(ciOEmail)
     const { data, error } = await supabase.auth.signInWithPassword({
-      email: email.trim().toLowerCase(),
+      email,
       password,
     })
     if (error) throw new Error(traducirErrorAuth(error))
@@ -1097,6 +1117,35 @@ const areas = {
   },
 }
 
+// ── config (clave/valor global de la empresa) ──────────────
+const config = {
+  /**
+   * Lee un valor de la tabla `config` por su clave.
+   * Devuelve el string `valor` o `null` si la clave no existe.
+   */
+  get: async (clave) => {
+    const { data, error } = await supabase
+      .from('config')
+      .select('valor')
+      .eq('clave', clave)
+      .maybeSingle()
+    if (error) return null
+    return data?.valor ?? null
+  },
+
+  /**
+   * Plan global de la empresa (config.plan_empresa).
+   * Es un valor único para toda la instalación, NO por usuario.
+   * Si no está configurado, se asume 'plan_basic' (mismo criterio
+   * que el trigger handle_new_user en la base).
+   */
+  getPlan: async () => {
+    const valor = await config.get('plan_empresa')
+    const plan = String(valor || '').trim().toLowerCase()
+    return plan || 'plan_basic'
+  },
+}
+
 // ── bootstrap (compat) ─────────────────────────────────────
 const bootstrap = {
   cargar: async () => {
@@ -1150,6 +1199,7 @@ const sheetsApi = {
   predicciones,
   grupos,
   areas,
+  config,
   _token: { get: getToken, save: saveToken, clear: clearToken },
   _cache: { invalidate: invalidateClientCache },
   _supabase: supabase, // expuesto para casos avanzados (realtime, etc)

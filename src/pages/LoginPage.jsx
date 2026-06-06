@@ -102,20 +102,20 @@ export default function LoginPage() {
 
               {/* Email */}
               <div>
-                <label htmlFor="email"
+                <label htmlFor="identificador"
                   className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
                   style={{ color: 'rgba(235,195,43,.8)' }}>
-                  Email
+                  CI o correo
                 </label>
                 <input
-                  id="email"
-                  type="email"
+                  id="identificador"
+                  type="text"
                   value={form.email}
                   onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                  placeholder="tu@empresa.com"
+                  placeholder="Tu CI o correo"
                   required
                   autoFocus
-                  autoComplete="email"
+                  autoComplete="username"
                   className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
                   style={{
                     background: 'rgba(255,255,255,.06)',
@@ -144,15 +144,6 @@ export default function LoginPage() {
                     style={{ color: 'rgba(235,195,43,.8)' }}>
                     Contraseña
                   </label>
-                  <Link
-                    to="/forgot-password"
-                    className="font-body text-xs transition-colors"
-                    style={{ color: 'rgba(255,255,255,.45)', textDecoration: 'none' }}
-                    onMouseEnter={e => { e.currentTarget.style.color = '#ebc32b' }}
-                    onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,.45)' }}
-                  >
-                    ¿Olvidaste tu contraseña?
-                  </Link>
                 </div>
                 <input
                   id="password"

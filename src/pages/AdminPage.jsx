@@ -275,6 +275,7 @@ if (initialLoading) {
           setTab={setTab}
           pendingCount={pendingUsers.length}
           activeBetsCount={bets.filter(b => b.estado === 'abierta').length}
+          showAreas={isPro}
         />
 
         {/* TAB 1: Nueva Apuesta */}
@@ -296,8 +297,8 @@ if (initialLoading) {
 />
         )}
 
-        {/* TAB: Áreas */}
-        {tab === 'Areas' && (
+        {/* TAB: Áreas (solo plan Pro) */}
+        {tab === 'Areas' && isPro && (
           <div className="grid gap-6">
             <div>
               <h3 className="font-display text-xl mb-4" style={{ color: '#0a1226' }}>

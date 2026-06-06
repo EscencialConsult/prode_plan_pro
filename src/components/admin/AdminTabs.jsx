@@ -5,6 +5,7 @@ export default function AdminTabs({
   setTab,
   pendingCount = 0,
   activeBetsCount = 0,
+  showAreas = true,
 }) {
   const tabs = [
     {
@@ -16,10 +17,12 @@ export default function AdminTabs({
       label: 'Apuestas Creadas',
       count: activeBetsCount,
     },
-    {
+    // La sección de Áreas solo existe en el plan Pro.
+    // En plan_basic no hay apuestas por áreas, así que se oculta.
+    ...(showAreas ? [{
       key: 'Areas',
       label: 'Áreas',
-    },
+    }] : []),
     {
       key: 'Usuarios',
       label: 'Usuarios',

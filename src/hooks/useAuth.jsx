@@ -25,6 +25,9 @@ export function AuthProvider({ children }) {
   })
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState(null)
+  // Plan GLOBAL de la empresa (config.plan_empresa). Es un único valor
+  // para toda la instalación, no por usuario. null mientras se carga.
+  const [planEmpresa, setPlanEmpresa] = useState(null)
 
   // Sincronizar el estado del user con la sesión real de Supabase.
   // - Al cargar: si hay sesión válida pero falta el perfil, lo cargamos.
@@ -90,6 +93,16 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
+  // Cargar el plan global de la empresa una sola vez (config.plan_empresa).
+  // No depende del usuario: es un valor de instalación.
+  useEffect(() => {
+    let cancelado = false
+    sheetsApi.config.getPlan()
+      .then(plan => { if (!cancelado) setPlanEmpresa(plan) })
+      .catch(() => { /* se mantiene el fallback a user.empresa */ })
+    return () => { cancelado = true }
+  }, [])
+
   const login = useCallback(async (email, password) => {
     setLoading(true)
     setError(null)
@@ -148,11 +161,16 @@ const isAdmin = !!(
     user?.es_admin === true
   )
 
-  // Plan de la empresa del usuario logueado.
-  // Si la columna empresa está vacía, se considera Plan_pro por defecto
-  // (mismo criterio que el backend en esPlanBasic_).
-  const empresa = String(user?.empresa || '').trim().toLowerCase()
-  const isPlanBasic = empresa === 'plan_basic'
+  // Plan GLOBAL de la empresa (config.plan_empresa). Es el plan de la
+  // instalación, igual para todos (incluidos los admins), no por usuario.
+  // Mientras carga el config usamos user.empresa como valor instantáneo
+  // (el trigger lo copia desde el mismo config al crear cada usuario),
+  // así no hay parpadeo. Default 'plan_basic' si todo viene vacío
+  // (mismo criterio que el trigger handle_new_user en la base).
+  const planResuelto = String(
+    planEmpresa || user?.empresa || 'plan_basic'
+  ).trim().toLowerCase()
+  const isPlanBasic = planResuelto === 'plan_basic'
   const isPro = !isPlanBasic
 
   return (
