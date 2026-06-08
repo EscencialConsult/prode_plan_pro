@@ -344,11 +344,12 @@ const auth = {
    * El DNI y teléfono se pasan en los metadatos para que
    * el trigger handle_new_user() los guarde en public.usuarios.
    */
-  registro: async (dni, nombre, email, telefono, password) => {
+  registro: async (dni, nombre, email, telefono, password, legajo = '') => {
     const dniClean    = String(dni).trim()
     const emailClean  = email.trim().toLowerCase()
     const nombreClean = nombre.trim()
     const telClean    = telefono.trim()
+    const legajoClean = String(legajo).trim()
 
     const { data, error } = await supabase.auth.signUp({
       email: emailClean,
@@ -358,6 +359,7 @@ const auth = {
           nombre:   nombreClean,
           dni:      dniClean,
           telefono: telClean,
+          legajo:   legajoClean,
         },
       },
     })
@@ -369,12 +371,17 @@ const auth = {
   },
 
   /**
-   * Valida un DNI contra el padrón antes de registrar (para mensajes claros).
-   * Devuelve: 'ya_registrado' | 'sin_padron' | 'habilitado' | 'no_habilitado'.
+   * Valida el LEGAJO contra el padrón antes de registrar (para mensajes claros).
+   * El login sigue siendo por DNI; el legajo solo valida la habilitación.
+   * Devuelve: 'dni_ya_registrado' | 'legajo_ya_usado' | 'sin_padron' | 'habilitado' | 'no_habilitado'.
    * Ante error, devuelve 'sin_padron' para no bloquear (la BD igual valida).
    */
-  validarDniRegistro: async (dni) => {
-    const { data, error } = await supabase.rpc('validar_dni_registro', { p_dni: String(dni).trim() })
+  validarLegajoRegistro: async (legajo, dni, email = '') => {
+    const { data, error } = await supabase.rpc('validar_legajo_registro', {
+      p_legajo: String(legajo).trim(),
+      p_dni: String(dni).trim(),
+      p_email: String(email).trim().toLowerCase(),
+    })
     if (error) return 'sin_padron'
     return data || 'sin_padron'
   },
@@ -402,6 +409,34 @@ const auth = {
       ok: true,
       message: 'Si el DNI está registrado, te enviamos un correo con instrucciones para restablecer tu contraseña.',
     }
+  },
+
+  /**
+   * Recuperación de contraseña SIN email: verifica DNI + legajo + email
+   * contra la cuenta y, si coinciden, cambia la contraseña en el acto.
+   */
+  /** Paso 1: verifica DNI + legajo + email. Devuelve { ok, nombre } sin cambiar nada. */
+  verificarRecuperacion: async (dni, legajo, email) => {
+    const { data, error } = await supabase.rpc('verificar_datos_recuperacion', {
+      p_dni: String(dni).trim(),
+      p_legajo: String(legajo).trim(),
+      p_email: String(email).trim().toLowerCase(),
+    })
+    if (error) throw new Error('No se pudo verificar. Intentá de nuevo.')
+    return data || { ok: false }
+  },
+
+  /** Paso 2: cambia la contraseña (re-verifica los 3 datos por seguridad). */
+  recuperarPassword: async (dni, legajo, email, newPassword) => {
+    const { data, error } = await supabase.rpc('recuperar_password', {
+      p_dni: String(dni).trim(),
+      p_legajo: String(legajo).trim(),
+      p_email: String(email).trim().toLowerCase(),
+      p_new_password: String(newPassword),
+    })
+    if (error) throw new Error('No se pudo cambiar la contraseña. Intentá de nuevo.')
+    if (!data?.ok) throw new Error(data?.error || 'No se pudo cambiar la contraseña')
+    return { ok: true }
   },
 
   /**
@@ -1141,9 +1176,11 @@ const bootstrap = {
 
 // ── Listener para invalidar cache cuando cambia la sesión ───
 supabase.auth.onAuthStateChange((event, _session) => {
-  if (event === 'SIGNED_OUT') {
+  if (event === 'SIGNED_OUT' || event === 'SIGNED_IN' || event === 'USER_UPDATED') {
     invalidateClientCache()
-    try { sessionStorage.removeItem('prode_user') } catch (e) { }
+    if (event === 'SIGNED_OUT') {
+      try { sessionStorage.removeItem('prode_user') } catch (e) { }
+    }
   }
 })
 

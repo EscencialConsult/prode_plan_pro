@@ -72,8 +72,10 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
     })
 
     // Paso 2 — Borrador rellena SOLO los partidos sin predicción en DB
+    const userId = user?.id || user?.user_id || 'anon'
+    const draftKey = `bet-${bet.id}-${userId}-draft`
     try {
-      const raw = localStorage.getItem(`bet-${bet.id}-draft`)
+      const raw = localStorage.getItem(draftKey)
       if (raw) {
         const { scores: dScores, clasificados: dClasif } = JSON.parse(raw)
         if (dScores) {
@@ -96,13 +98,15 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
 
     setScores(initialScores)
     setClasificados(initialClasif)
-  }, [bet?.id]) // ← Solo re-init cuando cambia la apuesta, no cada render
+  }, [bet?.id, user?.id, user?.user_id]) // ← re-init también si cambia el usuario
 
   // Guarda el borrador 2s después del último cambio (recovery anti-cierre accidental)
   useDebounce(() => {
     if (!bet?.id) return
+    const userId = user?.id || user?.user_id || 'anon'
+    const draftKey = `bet-${bet.id}-${userId}-draft`
     try {
-      localStorage.setItem(`bet-${bet.id}-draft`, JSON.stringify({ scores, clasificados }))
+      localStorage.setItem(draftKey, JSON.stringify({ scores, clasificados }))
     } catch (e) {
       console.warn('Error saving draft:', e)
     }

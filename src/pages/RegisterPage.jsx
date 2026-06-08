@@ -27,7 +27,7 @@ function validarEmail(raw) {
 }
 
 export default function RegisterPage() {
-  const [form, setForm]       = useState({ dni: '', nombre: '', email: '', telefono: '', password: '' })
+  const [form, setForm]       = useState({ dni: '', legajo: '', nombre: '', email: '', telefono: '', password: '' })
   const [done, setDone]       = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState(null)
@@ -43,7 +43,7 @@ export default function RegisterPage() {
     setError(null)
 
     // Todos los campos son obligatorios — no se puede dejar nada vacío
-    if (!form.dni.trim() || !form.nombre.trim() || !form.email.trim() ||
+    if (!form.dni.trim() || !form.legajo.trim() || !form.nombre.trim() || !form.email.trim() ||
         !form.telefono.trim() || !form.password.trim()) {
       setError('Completá todos los campos para continuar')
       return
@@ -53,6 +53,11 @@ export default function RegisterPage() {
     // DNI: 7-8 dígitos
     if (!/^\d{7,8}$/.test(form.dni.trim())) {
       setError('El DNI debe tener 7 u 8 dígitos numéricos')
+      return
+    }
+    // Legajo: alfanumérico (números y/o letras, admite - / .)
+    if (!/^[A-Za-z0-9][A-Za-z0-9\-/.]{0,29}$/.test(form.legajo.trim())) {
+      setError('Ingresá un número de legajo válido')
       return
     }
     // Nombre completo: nombre + apellido, solo letras
@@ -85,14 +90,22 @@ export default function RegisterPage() {
 
     setLoading(true)
     try {
-      // Validar el DNI contra el padrón (mensajes claros)
-      const estadoDni = await sheetsApi.auth.validarDniRegistro(form.dni.trim())
-      if (estadoDni === 'ya_registrado') {
+      // Validar el LEGAJO contra el padrón (el login sigue por DNI)
+      const estado = await sheetsApi.auth.validarLegajoRegistro(form.legajo.trim(), form.dni.trim(), form.email.trim())
+      if (estado === 'dni_ya_registrado') {
         setError('Ese DNI ya está registrado. Iniciá sesión con tu DNI.')
         return
       }
-      if (estadoDni === 'no_habilitado') {
-        setError('Tu DNI no está habilitado para registrarte. Contactá al sindicato.')
+      if (estado === 'email_ya_usado') {
+        setError('Ese email ya está registrado. Usá otro.')
+        return
+      }
+      if (estado === 'legajo_ya_usado') {
+        setError('Ese legajo ya tiene una cuenta. Iniciá sesión.')
+        return
+      }
+      if (estado === 'no_habilitado') {
+        setError('Tu legajo no está habilitado para registrarte. Contactá al sindicato.')
         return
       }
 
@@ -101,9 +114,10 @@ export default function RegisterPage() {
         form.nombre.trim(),
         form.email.trim(),
         form.telefono.trim(),
-        form.password
+        form.password,
+        form.legajo.trim()
       )
-      setAutoActivado(estadoDni === 'habilitado')
+      setAutoActivado(estado === 'habilitado')
       setDone(true)
     } catch (err) {
       setError(err.message || 'No se pudo completar el registro')
@@ -288,6 +302,31 @@ export default function RegisterPage() {
                     />
                     <p className="font-body text-xs mt-1.5" style={{ color: 'rgba(255,255,255,.28)' }}>
                       7 u 8 dígitos · Lo usarás para iniciar sesión
+                    </p>
+                  </div>
+
+                  {/* Legajo */}
+                  <div>
+                    <label htmlFor="reg-legajo"
+                      className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
+                      style={{ color: 'rgba(235,195,43,.8)' }}>
+                      Legajo <span style={{ color: 'rgba(235,195,43,.5)', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>— para validar tu afiliación</span>
+                    </label>
+                    <input
+                      id="reg-legajo"
+                      type="text"
+                      value={form.legajo}
+                      onChange={e => setForm(p => ({ ...p, legajo: e.target.value.slice(0, 30) }))}
+                      placeholder="Ej: A-1045"
+                      required
+                      autoComplete="off"
+                      className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
+                      style={inputStyle}
+                      onFocus={onFocus}
+                      onBlur={onBlur}
+                    />
+                    <p className="font-body text-xs mt-1.5" style={{ color: 'rgba(255,255,255,.28)' }}>
+                      Tu número de legajo del sindicato
                     </p>
                   </div>
 

@@ -222,9 +222,10 @@ export default function DashboardPage() {
         area_id: esGrupal ? areaUsuario : null,
       })
 
-      // Limpiar borrador local de manera segura
+      // Limpiar borrador local de manera segura (por usuario)
       try {
-        localStorage.removeItem(`bet-${betId}-draft`)
+        const userId = user?.id || user?.user_id || 'anon'
+        localStorage.removeItem(`bet-${betId}-${userId}-draft`)
       } catch (e) { }
 
       // Recargar predicciones locales
