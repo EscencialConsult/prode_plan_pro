@@ -907,6 +907,49 @@
 
   export { TablaGrupos }
 
+  // Aviso que se muestra en la pestaña Eliminatoria mientras no haya
+  // cruces con equipos definidos (todos los partidos siguen en TBD).
+  function EliminatoriaProximamente() {
+    return (
+      <div
+        className="relative overflow-hidden rounded-[20px] px-8 py-16 text-center"
+        style={{
+          background: `linear-gradient(135deg, ${C.ink} 0%, ${C.inkSoft} 100%)`,
+          color: C.cream,
+        }}
+      >
+        <div
+          className="absolute inset-x-0 top-0 h-[2px]"
+          style={{ background: `linear-gradient(90deg, transparent, ${C.gold}, transparent)` }}
+        />
+        <div
+          className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full"
+          style={{ background: `${C.gold}20`, border: `1px solid ${C.gold}50` }}
+        >
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke={C.goldHi} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+            <path d="M4 22h16" />
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+          </svg>
+        </div>
+        <p
+          className="mb-1.5 text-[1.15rem] font-black tracking-tight"
+          style={{ fontFamily: "'DM Sans',sans-serif", color: C.creamHi, letterSpacing: '-0.02em' }}
+        >
+          Eliminatorias por definirse
+        </p>
+        <p
+          className="mx-auto max-w-md text-[0.82rem] leading-relaxed"
+          style={{ fontFamily: "'DM Sans',sans-serif", color: C.mute }}
+        >
+          El cuadro de eliminación directa se habilitará cuando termine la fase de grupos
+          y se conozcan los clasificados. Los cruces aparecerán acá automáticamente.
+        </p>
+      </div>
+    )
+  }
+
   export default function FixturePage() {
     // ✅ CAMBIO: useFixtureSWR() en lugar de useBets()
     // Esto hace que los datos se carguen desde localStorage (al instante)
@@ -918,13 +961,28 @@
     const [estadoFilter, setEstadoFilter] = useState('')
     const [search, setSearch] = useState('')
 
-  const fases = useMemo(()=>[...new Set((matches || []).map(m=>m.fase).filter(Boolean))],[matches])  
-  const filtered = useMemo(()=>(matches || []).filter(m=>{
+  // Para la pestaña Fixture: ocultar partidos sin equipos definidos (TBD),
+  // como las eliminatorias que todavía no tienen rivales. Cuando el Mundial
+  // avance y se definan los cruces, aparecerán automáticamente.
+  const matchesFixture = useMemo(
+    () => (matches || []).filter(m => m.equipo_local && m.equipo_visitante),
+    [matches]
+  )
+
+  // ¿Hay al menos un partido de eliminatoria con equipos definidos?
+  // Si no, la pestaña Eliminatoria muestra el aviso de "próximamente".
+  const hayEliminatorias = useMemo(
+    () => (matches || []).some(m => m.fase && m.fase !== 'grupos' && m.equipo_local && m.equipo_visitante),
+    [matches]
+  )
+
+  const fases = useMemo(()=>[...new Set(matchesFixture.map(m=>m.fase).filter(Boolean))],[matchesFixture])
+  const filtered = useMemo(()=>matchesFixture.filter(m=>{
       if(faseFilter && m.fase!==faseFilter) return false
       if(estadoFilter && m.estado!==estadoFilter) return false
       if(search){const s=search.toLowerCase();if(!m.equipo_local?.toLowerCase().includes(s)&&!m.equipo_visitante?.toLowerCase().includes(s)) return false}
       return true
-    }),[matches,faseFilter,estadoFilter,search])
+    }),[matchesFixture,faseFilter,estadoFilter,search])
     
     const groups = useMemo(()=>{
       const map={}
@@ -1013,7 +1071,13 @@
 
           {!loading && tab==='grupos' && <div className="din"><TablaGrupos matches={matches}/></div>}
 
-          {!loading && tab==='Eliminatoria' && <div className="din"><Eliminatorias matches={matches}/></div>}
+          {!loading && tab==='Eliminatoria' && (
+            <div className="din">
+              {hayEliminatorias
+                ? <Eliminatorias matches={matches}/>
+                : <EliminatoriaProximamente/>}
+            </div>
+          )}
 
         </div>
       </AppShell>
