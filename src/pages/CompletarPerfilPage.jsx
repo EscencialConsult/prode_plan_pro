@@ -9,7 +9,7 @@ export default function CompletarPerfilPage() {
   const [form, setForm]       = useState({
     nombre:   user?.nombre || '',
     email:    '',          // siempre vacío al inicio para obligar al usuario a ingresarlo
-    telefono: user?.telefono || '',
+    telefono: '',          // siempre vacío al inicio para obligar al usuario a ingresarlo
   })
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState(null)
