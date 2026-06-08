@@ -102,6 +102,12 @@ export default function RankingPageAdmin() {
   const [globalMeta, setGlobalMeta] = useState({})
   const [globalLoading, setGlobalLoading] = useState(false)
 
+  // ── Multi-select: ranking combinado (suma de varias apuestas) ──
+  const [selectedIds, setSelectedIds]       = useState(new Set())
+  const [tablaAcumulada, setTablaAcumulada] = useState([])
+  const [loadingAcum, setLoadingAcum]       = useState(false)
+  const modoAcumulado = selectedIds.size > 1
+
   useEffect(() => {
     cargarRankingGlobal()
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -131,6 +137,9 @@ export default function RankingPageAdmin() {
     setExpandedUser(null); setPredicciones({}); setLoadingUser(null)
 
     try {
+      // Refrescar el cache de esta apuesta para mostrar datos al instante.
+      // Si falla (ej: falta el GRANT en la base), seguimos con lo que haya.
+      try { await sheetsApi.predicciones.refrescarRanking(bet.id) } catch (_) {}
       const [rT, rA] = await Promise.all([sheetsApi.predicciones.tabla(bet.id, {
         limit: 200,
         user_id: user?.id || user?.user_id,
@@ -141,6 +150,69 @@ export default function RankingPageAdmin() {
       setSel(prev => ({ ...(prev || bet), ...rA.apuesta }))
     } catch (e) { toast.error('Error cargando ranking: ' + e.message) }
     finally { setLoading(false) }
+  }
+
+  // ── Tildar/destildar una apuesta del multi-select ──────────
+  function toggleBet(bet) {
+    let nextSize, nextId
+    setSelectedIds(prev => {
+      const next = new Set(prev)
+      if (next.has(bet.id)) next.delete(bet.id)
+      else next.add(bet.id)
+      nextSize = next.size
+      if (next.size === 1) nextId = [...next][0]
+      return next
+    })
+    setTablaAcumulada([])
+    setTimeout(() => {
+      if (nextSize === 0) {
+        setSel(null); setTabla([]); setMeta({})
+      } else if (nextSize === 1 && nextId) {
+        const sola = bets.find(b => b.id === nextId)
+        if (sola) { setSel(null); cargarRanking(sola) }
+      } else {
+        setSel(null); setTabla([]); setMeta({})
+      }
+    }, 20)
+  }
+
+  // ── Calcular el ranking combinado (suma de las seleccionadas) ──
+  // Junta la tabla de cada apuesta y suma los puntos por usuario.
+  async function cargarAcumulado() {
+    if (selectedIds.size < 2) return
+    setLoadingAcum(true); setTablaAcumulada([])
+    try {
+      // Refrescar el cache de cada apuesta antes de sumar (no-bloqueante:
+      // si falta el GRANT, usa lo que haya en cache).
+      await Promise.all(
+        [...selectedIds].map(id => sheetsApi.predicciones.refrescarRanking(id).catch(() => {}))
+      )
+      const resultados = await Promise.all(
+        [...selectedIds].map(id => sheetsApi.predicciones.tabla(id, { limit: 200 }))
+      )
+      const mapa = {}
+      resultados.forEach(r => {
+        (r.tabla || []).forEach(u => {
+          if (!mapa[u.user_id]) mapa[u.user_id] = {
+            user_id: u.user_id, nombre: u.nombre,
+            puntos_totales: 0, predicciones: 0,
+            aciertos_exactos: 0, aciertos_diferencia: 0, aciertos_resultado: 0,
+          }
+          const e = mapa[u.user_id]
+          e.puntos_totales      += parseInt(u.puntos_totales)      || 0
+          e.predicciones        += parseInt(u.predicciones)        || 0
+          e.aciertos_exactos    += parseInt(u.aciertos_exactos)    || 0
+          e.aciertos_diferencia += parseInt(u.aciertos_diferencia) || 0
+          e.aciertos_resultado  += parseInt(u.aciertos_resultado)  || 0
+        })
+      })
+      setTablaAcumulada(
+        Object.values(mapa)
+          .sort((a, b) => b.puntos_totales - a.puntos_totales)
+          .map((u, i) => ({ ...u, posicion: i + 1 }))
+      )
+    } catch (e) { toast.error('Error calculando ranking combinado: ' + e.message) }
+    finally { setLoadingAcum(false) }
   }
 
   async function toggleUser(userId) {
@@ -210,11 +282,36 @@ export default function RankingPageAdmin() {
         <div className="rk-shell" style={{ display: 'flex', height: 'calc(100vh - 200px)', minHeight: 520, borderRadius: 20, overflow: 'hidden', boxShadow: '0 8px 48px rgba(12,24,43,.14)' }}>
 
           <div className="rk-sidebar">
-            <div style={{ padding: '20px 16px 14px', borderBottom: '1px solid #f0eadb' }}>
-              <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 11, letterSpacing: '.2em', color: '#94a3b8', margin: '0 0 10px' }}>APUESTAS</p>
-              <div style={{ display: 'flex', gap: 6 }}>
+            <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #f0eadb' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 11, letterSpacing: '.2em', color: '#94a3b8', margin: 0 }}>APUESTAS</p>
+                {selectedIds.size > 0 && (
+                  <span style={{ fontSize: 9, fontWeight: 700, background: 'rgba(235,195,43,.15)', color: '#c99f16', border: '1px solid rgba(235,195,43,.35)', borderRadius: 99, padding: '2px 8px' }}>
+                    {selectedIds.size} sel.
+                  </span>
+                )}
+              </div>
+              <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
                 <Pill color="#22c55e" label={`${bets.filter(b => isOpen(b)).length} activas`} />
                 <Pill color="#64748b" label={`${bets.filter(b => !isOpen(b)).length} cerradas`} />
+              </div>
+              <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => { setSelectedIds(new Set(bets.map(b => b.id))); setTablaAcumulada([]); setSel(null); setTabla([]); setMeta({}) }}
+                  style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', padding: '3px 8px', borderRadius: 6, border: '1px solid #e0d8cc', background: '#fff', color: '#5f6e8a', cursor: 'pointer', transition: 'all .14s' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#0c182b'; e.currentTarget.style.color = '#0c182b' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = '#e0d8cc'; e.currentTarget.style.color = '#5f6e8a' }}>
+                  Selec. todas
+                </button>
+                {selectedIds.size > 0 && (
+                  <button
+                    onClick={() => { setSelectedIds(new Set()); setSel(null); setTabla([]); setMeta({}); setTablaAcumulada([]) }}
+                    style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.08em', padding: '3px 8px', borderRadius: 6, border: '1px solid rgba(224,50,82,.3)', background: '#fff', color: '#e03252', cursor: 'pointer', transition: 'all .14s' }}
+                    onMouseEnter={e => e.currentTarget.style.background = 'rgba(224,50,82,.06)'}
+                    onMouseLeave={e => e.currentTarget.style.background = '#fff'}>
+                    Limpiar
+                  </button>
+                )}
               </div>
             </div>
 
@@ -228,13 +325,13 @@ export default function RankingPageAdmin() {
                   {bets.filter(b => isOpen(b)).length > 0 && (
                     <SideSection label="Activas" dot="#22c55e">
                       {bets.filter(b => isOpen(b)).map(b => (
-                        <BetRow key={b.id} bet={b} sel={sel?.id === b.id} onPick={cargarRanking} />
+                        <BetRow key={b.id} bet={b} checked={selectedIds.has(b.id)} onToggle={toggleBet} />
                       ))}
                     </SideSection>
                   )}
                   <SideSection label="Historial">
                     {bets.filter(b => !isOpen(b)).map(b => (
-                      <BetRow key={b.id} bet={b} sel={sel?.id === b.id} onPick={cargarRanking} />
+                      <BetRow key={b.id} bet={b} checked={selectedIds.has(b.id)} onToggle={toggleBet} />
                     ))}
                   </SideSection>
                 </>
@@ -244,14 +341,52 @@ export default function RankingPageAdmin() {
 
           <div className="rk-content" style={{ padding: '24px 32px 32px' }}>
 
-            {!sel ? (
+            {selectedIds.size === 0 ? (
               <RankingGlobalAdmin
                 tabla={globalTabla}
                 meta={globalMeta}
                 loading={globalLoading}
                 onRefresh={cargarRankingGlobal}
               />
-            ) : (
+            ) : modoAcumulado && tablaAcumulada.length === 0 && !loadingAcum ? (
+              <PromptAcumulado count={selectedIds.size} onCalcular={cargarAcumulado} />
+            ) : modoAcumulado ? (
+              <div className="rk-in">
+                <BannerAcumulado count={selectedIds.size} bets={bets} selectedIds={selectedIds} />
+                {loadingAcum ? (
+                  <SkeletonContent />
+                ) : tablaAcumulada.length === 0 ? (
+                  <SinParticipantes />
+                ) : (
+                  <>
+                    <Podio
+                      top={tablaAcumulada.slice(0, 3)}
+                      miId={null}
+                      apuesta={null}
+                      expandedUser={null}
+                      loadingUser={null}
+                      onToggle={() => {}}
+                      showDetail={false}
+                    />
+                    {tablaAcumulada.length > 3 && (
+                      <OtrosParticipantes
+                        tabla={tablaAcumulada}
+                        user={user}
+                        apuesta={null}
+                        expandedUser={null}
+                        loadingUser={null}
+                        predicciones={{}}
+                        onToggle={() => {}}
+                        showDetail={false}
+                      />
+                    )}
+                    <div style={{ textAlign: 'center', paddingTop: 12, borderTop: '1px solid #e8e3db', marginTop: 16, fontSize: 10, color: '#94a3b8' }}>
+                      {tablaAcumulada.length} participantes · suma de {selectedIds.size} apuestas
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : sel ? (
               <div className="rk-in">
 
                 <Banner apuesta={sel} meta={meta} loading={loading} />
@@ -297,7 +432,7 @@ export default function RankingPageAdmin() {
                   </>
                 )}
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
@@ -328,25 +463,35 @@ function SideSection({ label, dot, children }) {
   )
 }
 
-function BetRow({ bet, sel, onPick }) {
+function BetRow({ bet, checked, onToggle }) {
   const open = isOpen(bet)
   const fin = bet.estado === 'finalizada'
   const col = fin ? '#ebc32b' : open ? '#22c55e' : '#475569'
   const parts = bet.partidos_ids ? bet.partidos_ids.split(',').filter(Boolean).length : 0
   return (
-    <div className={`rk-row${sel ? ' sel' : ''}`} onClick={() => onPick(bet)}>
-      <div style={{ width: 7, height: 7, borderRadius: '50%', background: col, flexShrink: 0, boxShadow: open ? `0 0 6px ${col}` : sel ? `0 0 4px ${col}` : 'none' }} />
+    <div className={`rk-row${checked ? ' sel' : ''}`} onClick={() => onToggle(bet)}>
+      <div style={{
+        width: 16, height: 16, borderRadius: 4, flexShrink: 0,
+        border: `1.5px solid ${checked ? '#ebc32b' : '#c8d0dc'}`,
+        background: checked ? '#ebc32b' : 'transparent',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        transition: 'all .13s',
+      }}>
+        {checked && (
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#05090f" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        )}
+      </div>
+      <div style={{ width: 7, height: 7, borderRadius: '50%', background: col, flexShrink: 0, boxShadow: open ? `0 0 6px ${col}` : 'none' }} />
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: 12, fontWeight: 600, color: sel ? '#fff' : '#0c182b', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <p style={{ fontSize: 12, fontWeight: 600, color: checked ? '#fff' : '#0c182b', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {bet.titulo}
         </p>
-        <p style={{ fontSize: 10, color: '#94a3b8', margin: 0 }}>
+        <p style={{ fontSize: 10, color: checked ? 'rgba(255,255,255,.55)' : '#94a3b8', margin: 0 }}>
           {bet.participantes || 0} part · {parts} partidos
         </p>
       </div>
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={sel ? '#ebc32b' : '#c8d0dc'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="9 18 15 12 9 6" />
-      </svg>
     </div>
   )
 }
@@ -880,6 +1025,57 @@ function GlobalFullTable({ tabla }) {
   )
 }
 
+/* ══════════════════════════════════════════
+   RANKING COMBINADO (multi-select)
+══════════════════════════════════════════ */
+function PromptAcumulado({ count, onCalcular }) {
+  return (
+    <div className="rk-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', minHeight: 380, padding: '2rem' }}>
+      <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(235,195,43,.12)', border: '1px solid rgba(235,195,43,.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 18 }}>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c99f16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
+          <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+        </svg>
+      </div>
+      <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 24, color: '#0c182b', margin: '0 0 6px', letterSpacing: '.03em' }}>RANKING COMBINADO</p>
+      <p style={{ fontSize: 13, color: '#5f6e8a', margin: '0 0 20px', maxWidth: 360, lineHeight: 1.5 }}>
+        Seleccionaste <strong>{count}</strong> apuestas. Se sumarán los puntos de todas para obtener un único ganador.
+      </p>
+      <button
+        onClick={onCalcular}
+        style={{ background: '#ebc32b', color: '#05090f', border: 'none', borderRadius: 99, padding: '.7rem 1.6rem', fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '0 8px 24px rgba(235,195,43,.3)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+        Calcular ranking combinado
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+        </svg>
+      </button>
+    </div>
+  )
+}
+
+function BannerAcumulado({ count, bets, selectedIds }) {
+  const nombres = bets.filter(b => selectedIds.has(b.id)).map(b => b.titulo)
+  return (
+    <div style={{ borderRadius: 14, marginBottom: 24, background: 'linear-gradient(125deg,#0c182b 0%,#1a3060 100%)', padding: '18px 22px', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: 'rgba(235,195,43,.08)', pointerEvents: 'none' }} />
+      <div style={{ position: 'relative' }}>
+        <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: 'rgba(235,195,43,.55)', display: 'block', marginBottom: 4 }}>
+          RANKING COMBINADO
+        </span>
+        <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(22px,3vw,32px)', color: '#fff', margin: '0 0 8px', letterSpacing: '.02em', lineHeight: 1 }}>
+          {count} APUESTAS SUMADAS
+        </h2>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          {nombres.slice(0, 6).map((n, i) => (
+            <span key={i} style={{ fontSize: 10, color: 'rgba(235,195,43,.85)', background: 'rgba(235,195,43,.1)', border: '1px solid rgba(235,195,43,.2)', borderRadius: 99, padding: '2px 10px' }}>{n}</span>
+          ))}
+          {nombres.length > 6 && <span style={{ fontSize: 10, color: 'rgba(255,255,255,.5)', padding: '2px 4px' }}>+{nombres.length - 6} más</span>}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function SinParticipantes() {
   return (
     <div style={{ textAlign: 'center', padding: '48px 24px', background: '#fff', borderRadius: 14, border: '1.5px solid #e8e3db' }}>
@@ -902,7 +1098,7 @@ function SkeletonContent() {
 /* ══════════════════════════════════════════
    OTROS PARTICIPANTES
 ══════════════════════════════════════════ */
-function OtrosParticipantes({ tabla, user, apuesta, expandedUser, loadingUser, predicciones, onToggle }) {
+function OtrosParticipantes({ tabla, user, apuesta, expandedUser, loadingUser, predicciones, onToggle, showDetail = true }) {
   const [exp, setExp] = useState(() => {
     try {
       return JSON.parse(sessionStorage.getItem('otros_participantes_expanded')) ?? true
@@ -1009,27 +1205,29 @@ function OtrosParticipantes({ tabla, user, apuesta, expandedUser, loadingUser, p
 
                   <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 15, fontWeight: 700, color: '#0c182b', textAlign: 'right' }}>{u.puntos_totales}</div>
 
-                  <button
-                    onClick={() => onToggle(u.user_id)}
-                    disabled={isLoading}
-                    className={`rk-detail-btn rk-detail-btn-mini ${isExpanded ? 'active' : ''}`}
-                  >
-                    {isLoading ? (
-                      <><span className="rk-spinner" /></>
-                    ) : isExpanded ? (
-                      <>Ocultar
-                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="18 15 12 9 6 15" />
-                        </svg>
-                      </>
-                    ) : (
-                      <>Ver
-                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="6 9 12 15 18 9" />
-                        </svg>
-                      </>
-                    )}
-                  </button>
+                  {showDetail ? (
+                    <button
+                      onClick={() => onToggle(u.user_id)}
+                      disabled={isLoading}
+                      className={`rk-detail-btn rk-detail-btn-mini ${isExpanded ? 'active' : ''}`}
+                    >
+                      {isLoading ? (
+                        <><span className="rk-spinner" /></>
+                      ) : isExpanded ? (
+                        <>Ocultar
+                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="18 15 12 9 6 15" />
+                          </svg>
+                        </>
+                      ) : (
+                        <>Ver
+                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="6 9 12 15 18 9" />
+                          </svg>
+                        </>
+                      )}
+                    </button>
+                  ) : <span />}
                 </div>
 
                 {isExpanded && (

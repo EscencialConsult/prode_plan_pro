@@ -798,6 +798,16 @@ const predicciones = {
     return result
   },
 
+  // Refresca el ranking_cache de una apuesta puntual (uso admin).
+  // Recalcula su tabla de posiciones desde las predicciones actuales,
+  // para que el ranking individual/combinado tenga datos al instante
+  // sin esperar al cron externo. Requiere GRANT EXECUTE a authenticated.
+  refrescarRanking: async (apuesta_id) => {
+    const { error } = await supabase.rpc('refrescar_ranking', { p_apuesta_id: apuesta_id })
+    if (error) throw new Error(error.message)
+    return { ok: true }
+  },
+
   mias: async (apuesta_id = '', user_id = '') => {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('No autenticado')
