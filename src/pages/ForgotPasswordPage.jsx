@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import sheetsApi from '../services/sheetsApi.js'
+import AlianzaLogo from '../components/brand/AlianzaLogo.jsx'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail]     = useState('')
@@ -47,7 +48,7 @@ export default function ForgotPasswordPage() {
       >
         {/* Gold glow top-left */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{
-          background: 'radial-gradient(ellipse 55% 45% at 20% 25%, rgba(235,195,43,.16), transparent 55%)'
+          background: 'radial-gradient(ellipse 55% 45% at 20% 25%, rgba(166, 201, 52,.16), transparent 55%)'
         }} />
         {/* Blue glow bottom-right */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{
@@ -55,12 +56,8 @@ export default function ForgotPasswordPage() {
         }} />
 
         {/* ── TOP: logo ── */}
-        <div className="relative z-10 flex flex-col items-center mb-6 lp-card">
-          <img
-            src="./imgprode/one-prode-talento-new3.png"
-            alt="Prode Talento"
-            style={{ height: 52, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,.6))' }}
-          />
+        <div className="relative z-10 flex flex-col items-center mb-6 lp-card" style={{ filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.5))' }}>
+          <AlianzaLogo size={140} light />
         </div>
 
         {/* ── CARD ── */}
@@ -69,16 +66,16 @@ export default function ForgotPasswordPage() {
           style={{
             maxWidth: 420,
             background: 'linear-gradient(160deg, rgba(12,24,43,.92) 0%, rgba(5,9,15,.96) 100%)',
-            border: '1px solid rgba(235,195,43,.25)',
+            border: '1px solid rgba(166, 201, 52,.25)',
             borderRadius: 20,
-            boxShadow: '0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(235,195,43,.08), inset 0 1px 0 rgba(255,255,255,.05)',
+            boxShadow: '0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(166, 201, 52,.08), inset 0 1px 0 rgba(255,255,255,.05)',
             backdropFilter: 'blur(24px)',
             animationDelay: '.1s',
           }}
         >
           {/* Gold top accent line */}
           <div className="rounded-t-[20px] h-0.5 w-full"
-            style={{ background: 'linear-gradient(90deg, transparent, #ebc32b 30%, #ebc32b 70%, transparent)' }} />
+            style={{ background: 'linear-gradient(90deg, transparent, #A6C934 30%, #A6C934 70%, transparent)' }} />
 
           <div className="px-8 py-8">
 
@@ -88,11 +85,11 @@ export default function ForgotPasswordPage() {
                 <div
                   className="w-16 h-16 mx-auto mb-5 rounded-full flex items-center justify-center"
                   style={{
-                    background: 'rgba(235,195,43,.12)',
-                    border: '2px solid rgba(235,195,43,.45)',
+                    background: 'rgba(166, 201, 52,.12)',
+                    border: '2px solid rgba(166, 201, 52,.45)',
                   }}
                 >
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#A6C934" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                     <polyline points="22,6 12,13 2,6" />
                   </svg>
@@ -112,9 +109,9 @@ export default function ForgotPasswordPage() {
                 <Link
                   to="/login"
                   className="inline-block font-body font-semibold text-sm transition-colors"
-                  style={{ color: '#ebc32b', textDecoration: 'none' }}
-                  onMouseEnter={e => { e.currentTarget.style.color = '#f5d75a' }}
-                  onMouseLeave={e => { e.currentTarget.style.color = '#ebc32b' }}
+                  style={{ color: '#A6C934', textDecoration: 'none' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#bde04b' }}
+                  onMouseLeave={e => { e.currentTarget.style.color = '#A6C934' }}
                 >
                   ← Volver al login
                 </Link>
@@ -126,7 +123,7 @@ export default function ForgotPasswordPage() {
                   <div className="flex items-center gap-2 mb-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-400 lp-pulse" />
                     <span className="font-body text-xs uppercase tracking-widest font-bold"
-                      style={{ color: 'rgba(235,195,43,.7)' }}>
+                      style={{ color: 'rgba(166, 201, 52,.7)' }}>
                       Recuperar acceso
                     </span>
                   </div>
@@ -141,7 +138,7 @@ export default function ForgotPasswordPage() {
 
                 {/* Divider */}
                 <div className="h-px mb-6"
-                  style={{ background: 'linear-gradient(90deg, transparent, rgba(235,195,43,.2) 50%, transparent)' }} />
+                  style={{ background: 'linear-gradient(90deg, transparent, rgba(166, 201, 52,.2) 50%, transparent)' }} />
 
                 <form onSubmit={handleSubmit} className="space-y-4">
 
@@ -149,7 +146,7 @@ export default function ForgotPasswordPage() {
                   <div>
                     <label htmlFor="email"
                       className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
-                      style={{ color: 'rgba(235,195,43,.8)' }}>
+                      style={{ color: 'rgba(166, 201, 52,.8)' }}>
                       Email
                     </label>
                     <input
@@ -166,12 +163,12 @@ export default function ForgotPasswordPage() {
                         background: 'rgba(255,255,255,.06)',
                         border: '1px solid rgba(255,255,255,.1)',
                         color: '#fff',
-                        caretColor: '#ebc32b',
+                        caretColor: '#A6C934',
                       }}
                       onFocus={e => {
-                        e.target.style.borderColor = 'rgba(235,195,43,.55)'
-                        e.target.style.background = 'rgba(235,195,43,.06)'
-                        e.target.style.boxShadow = '0 0 0 3px rgba(235,195,43,.1)'
+                        e.target.style.borderColor = 'rgba(166, 201, 52,.55)'
+                        e.target.style.background = 'rgba(166, 201, 52,.06)'
+                        e.target.style.boxShadow = '0 0 0 3px rgba(166, 201, 52,.1)'
                       }}
                       onBlur={e => {
                         e.target.style.borderColor = 'rgba(255,255,255,.1)'
@@ -197,9 +194,9 @@ export default function ForgotPasswordPage() {
                     type="submit"
                     disabled={loading}
                     className="w-full font-body font-bold text-base py-4 rounded-full flex items-center justify-center gap-2 transition-all mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ background: '#ebc32b', color: '#05090f', boxShadow: '0 8px 28px rgba(235,195,43,.3)' }}
-                    onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(235,195,43,.45)' } }}
-                    onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(235,195,43,.3)' } }}
+                    style={{ background: '#A6C934', color: '#040D1D', boxShadow: '0 8px 28px rgba(166, 201, 52,.3)' }}
+                    onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#bde04b'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(166, 201, 52,.45)' } }}
+                    onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#A6C934'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(166, 201, 52,.3)' } }}
                   >
                     {loading ? (
                       <>
@@ -229,7 +226,7 @@ export default function ForgotPasswordPage() {
                   to="/login"
                   className="block w-full font-body font-semibold text-sm py-3.5 rounded-full text-center transition-all"
                   style={{ border: '1px solid rgba(255,255,255,.18)', color: 'rgba(255,255,255,.7)', textDecoration: 'none' }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(235,195,43,.5)'; e.currentTarget.style.color = '#ebc32b'; e.currentTarget.style.background = 'rgba(235,195,43,.06)' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(166, 201, 52,.5)'; e.currentTarget.style.color = '#A6C934'; e.currentTarget.style.background = 'rgba(166, 201, 52,.06)' }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.18)'; e.currentTarget.style.color = 'rgba(255,255,255,.7)'; e.currentTarget.style.background = 'transparent' }}
                 >
                   ← Volver al login

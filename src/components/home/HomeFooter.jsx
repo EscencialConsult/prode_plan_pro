@@ -1,85 +1,92 @@
-import { Link } from 'react-router-dom'
+import { Mail, Globe, ChevronRight } from 'lucide-react'
+import AlianzaMark from '../brand/AlianzaMark.jsx'
+import AlianzaWordmark from '../brand/AlianzaWordmark.jsx'
 
 export default function HomeFooter() {
+  const torneoLinks = [
+    { label: 'Reglamento del Torneo', href: '#' },
+    { label: 'Fixture Oficial', href: '#/partidos' },
+    { label: 'Tabla de Posiciones', href: '#/ranking' },
+    { label: 'Premios y Premiaciones', href: '#' }
+  ]
+
+  const valoresLinks = [
+    'Solidez y Respaldo',
+    'Cercanía y Confianza',
+    'Innovación Constante',
+    'Compromiso Social'
+  ]
+
+  const institucionalLinks = [
+    { label: 'Portal Corporativo', href: 'https://www.alianzaseguros.com.ar' },
+    { label: 'Código de Ética', href: '#' },
+    { label: 'Políticas de Privacidad', href: '#' },
+    { label: 'Términos de Uso', href: '#' }
+  ]
+
   return (
-    <footer style={{ background: '#05090f', position: 'relative', overflow: 'hidden' }}>
+    <footer className="relative overflow-hidden bg-[#040D1D] text-slate-300 border-t border-slate-900/60 font-body">
+      {/* Decorative Brand Ambient Glow */}
+      <div 
+        className="absolute bottom-0 left-0 w-[400px] h-[250px] bg-gradient-to-tr from-accent/10 via-primary/5 to-transparent blur-3xl pointer-events-none rounded-full"
+        style={{ transform: 'translate(-10%, 20%)' }}
+      />
+      <div 
+        className="absolute top-0 right-0 w-[300px] h-[200px] bg-gradient-to-bl from-primary/8 via-transparent to-transparent blur-3xl pointer-events-none rounded-full"
+        style={{ transform: 'translate(10%, -20%)' }}
+      />
 
-      {/* Glow ambiental de fondo */}
-      <div style={{ position:'absolute', bottom:0, left:0, width:400, height:250, background:'radial-gradient(ellipse at 0% 100%,rgba(11,74,110,.18),transparent 65%)', pointerEvents:'none' }}/>
-
-      {/* ── Cuerpo principal ── */}
-      <div style={{ maxWidth:1200, margin:'0 auto', padding:'3.5rem 1.5rem 2.5rem' }}>
-        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))', gap:'2.5rem' }}>
-
-          {/* Col 1: Brand */}
-          <div>
-            {/* Logos ONE + Escencial */}
-            <div style={{ display:'flex', alignItems:'center', gap:'1rem', marginBottom:'1.25rem' }}>
-              <img
-                src="./img/one-logocolor.png"
-                alt="ONE"
-                style={{ height:34, width:'auto', filter:'drop-shadow(0 2px 16px rgba(235,195,43,.3))', opacity:.96 }}
-              />
-              <div style={{ width:1, height:36, background:'rgba(235,195,43,.22)', flexShrink:0 }}/>
-              <a href="https://escencialconsultora.com.ar" target="_blank" rel="noopener noreferrer" style={{ textDecoration:'none', display:'inline-flex' }}>
-                <img
-                  src="./img/escencial-logoblanco.png"
-                  alt="Escencial Consultora"
-                  style={{ height:42, width:'auto', opacity:.82, filter:'drop-shadow(0 2px 10px rgba(0,0,0,.6))', transition:'opacity .18s' }}
-                  onMouseEnter={e=>{ e.currentTarget.style.opacity=1 }}
-                  onMouseLeave={e=>{ e.currentTarget.style.opacity=.82 }}
-                />
-              </a>
+      {/* Main Body Grid */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 pt-16 pb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-y-12 gap-x-8">
+          
+          {/* Column 1: Brand block (Spans 4 columns) */}
+          <div className="lg:col-span-4 flex flex-col space-y-6">
+            <div className="flex items-center gap-3">
+              <AlianzaMark size={36} />
+              <div className="flex flex-col justify-center lineHeight-1">
+                <AlianzaWordmark size={18} color="#fff" />
+                <span className="font-sans text-[8px] font-bold tracking-[0.05em] uppercase text-slate-400">
+                  Grupo Asegurador
+                </span>
+              </div>
             </div>
 
-            <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.82rem', lineHeight:1.7, color:'rgba(255,255,255,.42)', maxWidth:'22rem', margin:'0 0 1.2rem' }}>
-              Consultora especializada en Recursos Humanos. Clima laboral, evaluación de personas y cultura organizacional.
+            <p className="text-[13px] text-slate-400 leading-relaxed max-w-sm">
+              Alianza Grupo Asegurador. Más de 75 años brindando solidez y confianza en el mercado. Comprometidos con el desarrollo integral y la cercanía con nuestros clientes y colaboradores.
             </p>
-            {/* Social / contacto rápido */}
-            <div style={{ display:'flex', gap:'.6rem' }}>
-              <a href="https://wa.me/5491133588062" target="_blank" rel="noopener noreferrer"
-                style={{ width:32, height:32, borderRadius:8, background:'rgba(255,255,255,.05)', border:'1px solid rgba(255,255,255,.08)', display:'flex', alignItems:'center', justifyContent:'center', transition:'all .18s', textDecoration:'none' }}
-                onMouseEnter={e=>{ e.currentTarget.style.background='rgba(235,195,43,.12)'; e.currentTarget.style.borderColor='rgba(235,195,43,.3)' }}
-                onMouseLeave={e=>{ e.currentTarget.style.background='rgba(255,255,255,.05)'; e.currentTarget.style.borderColor='rgba(255,255,255,.08)' }}>
-                {/* WhatsApp icon */}
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-                </svg>
-              </a>
-              <a href="mailto:mferreyra@escencialconsult.com.ar"
-                style={{ width:32, height:32, borderRadius:8, background:'rgba(255,255,255,.05)', border:'1px solid rgba(255,255,255,.08)', display:'flex', alignItems:'center', justifyContent:'center', transition:'all .18s', textDecoration:'none' }}
-                onMouseEnter={e=>{ e.currentTarget.style.background='rgba(235,195,43,.12)'; e.currentTarget.style.borderColor='rgba(235,195,43,.3)' }}
-                onMouseLeave={e=>{ e.currentTarget.style.background='rgba(255,255,255,.05)'; e.currentTarget.style.borderColor='rgba(255,255,255,.08)' }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
-                </svg>
-              </a>
-              <a href="https://escencialconsultora.com.ar" target="_blank" rel="noopener noreferrer"
-                style={{ width:32, height:32, borderRadius:8, background:'rgba(255,255,255,.05)', border:'1px solid rgba(255,255,255,.08)', display:'flex', alignItems:'center', justifyContent:'center', transition:'all .18s', textDecoration:'none' }}
-                onMouseEnter={e=>{ e.currentTarget.style.background='rgba(235,195,43,.12)'; e.currentTarget.style.borderColor='rgba(235,195,43,.3)' }}
-                onMouseLeave={e=>{ e.currentTarget.style.background='rgba(255,255,255,.05)'; e.currentTarget.style.borderColor='rgba(255,255,255,.08)' }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.5)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
-                </svg>
-              </a>
-            </div>
           </div>
 
-          {/* Col 2: Servicios */}
-          <div>
-            <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.2em', color:'rgba(235,195,43,.7)', margin:'0 0 1.1rem' }}>
-              Servicios
-            </p>
-            <ul style={{ listStyle:'none', margin:0, padding:0, display:'flex', flexDirection:'column', gap:'.6rem' }}>
-              {[
-                'Clima laboral',
-                'Evaluación de personas',
-                'Cultura organizacional',
-                'Capacitación y desarrollo',
-              ].map(label => (
+          {/* Column 2: Torneo (Spans 3 columns) */}
+          <div className="lg:col-span-3 flex flex-col">
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent mb-6 font-sans">
+              El Torneo
+            </h3>
+            <ul className="space-y-4">
+              {torneoLinks.map(({ label, href }) => (
                 <li key={label}>
-                  <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.84rem', color:'rgba(255,255,255,.45)', display:'inline-flex', alignItems:'center', gap:'.4rem' }}>
-                    <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(235,195,43,.3)', flexShrink:0 }}/>
+                  <a
+                    href={href}
+                    className="group inline-flex items-center gap-2 text-sm text-slate-400 hover:text-accent transition-colors duration-200 focus-visible:outline-none focus-visible:text-accent rounded"
+                  >
+                    <ChevronRight className="w-3.5 h-3.5 text-accent/50 group-hover:text-accent group-hover:translate-x-0.5 transition-transform" />
+                    <span>{label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 3: Valores (Spans 2 columns) */}
+          <div className="lg:col-span-2 flex flex-col">
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent mb-6 font-sans">
+              Valores
+            </h3>
+            <ul className="space-y-4">
+              {valoresLinks.map((label) => (
+                <li key={label}>
+                  <span className="group inline-flex items-center gap-2.5 text-sm text-slate-400 hover:text-slate-200 transition-colors duration-200 cursor-default">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent/40 group-hover:bg-accent group-hover:scale-125 transition-all duration-200" />
                     {label}
                   </span>
                 </li>
@@ -87,88 +94,57 @@ export default function HomeFooter() {
             </ul>
           </div>
 
-          {/* Col 3: ONE */}
-          <div>
-            <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.2em', color:'rgba(235,195,43,.7)', margin:'0 0 1.1rem' }}>
-              ONE Human-Tech
-            </p>
-            <ul style={{ listStyle:'none', margin:0, padding:0, display:'flex', flexDirection:'column', gap:'.6rem' }}>
-              {[
-                { href:'https://escencialconsultora.com.ar', label:'Nuestra empresa' },
-                { href:'https://escencialconsultora.com.ar', label:'Quiénes somos' },
-                { href:'https://escencialconsultora.com.ar', label:'Plataformas ONE' },
-              ].map(({ href, label }) => (
+          {/* Column 4: Institucional (Spans 3 columns) */}
+          <div className="lg:col-span-3 flex flex-col">
+            <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-accent mb-6 font-sans">
+              Institucional
+            </h3>
+            <ul className="space-y-4">
+              {institucionalLinks.map(({ label, href }) => (
                 <li key={label}>
-                  <a href={href} target="_blank" rel="noopener noreferrer"
-                    style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.84rem', color:'rgba(255,255,255,.48)', textDecoration:'none', display:'inline-flex', alignItems:'center', gap:'.4rem', transition:'color .18s' }}
-                    onMouseEnter={e=>{ e.currentTarget.style.color='#ebc32b' }}
-                    onMouseLeave={e=>{ e.currentTarget.style.color='rgba(255,255,255,.48)' }}>
-                    <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(235,195,43,.3)', flexShrink:0 }}/>
-                    {label}
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group inline-flex items-center gap-2 text-sm text-slate-400 hover:text-accent transition-colors duration-200 focus-visible:outline-none focus-visible:text-accent rounded"
+                  >
+                    <ChevronRight className="w-3.5 h-3.5 text-accent/50 group-hover:text-accent group-hover:translate-x-0.5 transition-transform" />
+                    <span>{label}</span>
                   </a>
                 </li>
               ))}
             </ul>
           </div>
-
-          {/* Col 4: Contacto */}
-          <div>
-            <p style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.65rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'.2em', color:'rgba(235,195,43,.7)', margin:'0 0 1.1rem' }}>
-              Contacto
-            </p>
-            <ul style={{ listStyle:'none', margin:0, padding:0, display:'flex', flexDirection:'column', gap:'.6rem' }}>
-              {[
-                { href:'mailto:mferreyra@escencialconsult.com.ar', label:'mferreyra@escencialconsult.com.ar' },
-                { href:'https://wa.me/5491133588062',              label:'+54 9 11 3358-8062' },
-                { href:'https://escencialconsultora.com.ar',       label:'escencialconsultora.com.ar' },
-              ].map(({ href, label }) => (
-                <li key={href}>
-                  <a href={href} target="_blank" rel="noopener noreferrer"
-                    style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.82rem', color:'rgba(255,255,255,.48)', textDecoration:'none', display:'inline-flex', alignItems:'center', gap:'.4rem', transition:'color .18s' }}
-                    onMouseEnter={e=>{ e.currentTarget.style.color='#ebc32b' }}
-                    onMouseLeave={e=>{ e.currentTarget.style.color='rgba(255,255,255,.48)' }}>
-                    <span style={{ width:4, height:4, borderRadius:'50%', background:'rgba(235,195,43,.3)', flexShrink:0 }}/>
-                    {label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
         </div>
       </div>
 
-      {/* ── Divider ── */}
-      <div style={{ maxWidth:1200, margin:'0 auto', padding:'0 1.5rem' }}>
-        <div style={{ height:1, background:'linear-gradient(90deg,transparent,rgba(235,195,43,.2) 20%,rgba(235,195,43,.2) 80%,transparent)' }}/>
+      {/* Divider */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-slate-800/80 to-transparent" />
       </div>
 
-      {/* ── Bottom bar ── */}
-      <div style={{ maxWidth:1200, margin:'0 auto', padding:'1.25rem 1.5rem' }}>
-        <div style={{ display:'flex', flexWrap:'wrap', alignItems:'center', justifyContent:'space-between', gap:'.75rem' }}>
-
-          {/* Izq: copyright */}
-          <div style={{ display:'flex', alignItems:'center', gap:'.85rem' }}>
-            <img src="./img/one-icononegro.png" alt="" style={{ width:18, height:18, objectFit:'contain', opacity:.25 }}/>
-            <span style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.72rem', color:'rgba(255,255,255,.25)' }}>
-              © 2026 ONE · Escencial. Todos los derechos reservados.
+      {/* Bottom Bar */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* Copyright info */}
+          <div className="flex items-center gap-3">
+            <AlianzaMark size={16} className="opacity-30 select-none pointer-events-none brightness-0 invert" />
+            <span className="text-xs text-slate-500 font-sans">
+              © {new Date().getFullYear()} Alianza Grupo Asegurador. Todos los derechos reservados.
             </span>
           </div>
 
-          {/* Der: legal */}
-          <div style={{ display:'flex', alignItems:'center', gap:'1.25rem' }}>
-            {['V1.1.0'].map(t => (
-              <span key={t} style={{ fontFamily:"'DM Sans',sans-serif", fontSize:'.72rem', color:'rgba(255,255,255,.22)', cursor:'pointer', transition:'color .18s' }}
-                onMouseEnter={e=>{ e.currentTarget.style.color='rgba(255,255,255,.5)' }}
-                onMouseLeave={e=>{ e.currentTarget.style.color='rgba(255,255,255,.22)' }}>
-                {t}
-              </span>
-            ))}
+          {/* Version / platform info */}
+          <div className="flex items-center gap-3 text-xs text-slate-500 font-sans">
+            <span className="opacity-50">Plataforma ONE Prode</span>
+            <span 
+              className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-900/60 border border-slate-800 text-slate-500"
+            >
+              V1.2.0
+            </span>
           </div>
-
         </div>
       </div>
-
     </footer>
   )
 }

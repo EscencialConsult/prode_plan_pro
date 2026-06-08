@@ -24,7 +24,7 @@ const C = {
   mute:     '#a8b2c4',
   line:     '#e7dec6',
   gold:     '#d4a017',
-  goldHi:   '#ebc32b',
+  goldHi:   '#A6C934',
   goldDeep: '#a87a0b',
   red:      '#e03252',
 }
@@ -213,7 +213,7 @@ function MatchCard({ match, faseLabel }) {
         className="flex items-center justify-between gap-2"
         style={{
           padding: compact ? '6px 10px' : '8px 14px',
-          background: `linear-gradient(180deg, ${C.creamHi} 0%, #ffffff 100%)`,
+          background: `linear-gradient(180deg, ${C.goldHi}12 0%, #ffffff 100%)`,
           borderBottom: `1px solid ${C.line}`,
         }}
       >

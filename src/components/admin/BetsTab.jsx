@@ -6,7 +6,7 @@ function getBetStatus(bet) {
   if (bet.estado === 'abierta' && isBetOpen(bet))
     return { color: '#1b8a5a', bg: 'rgba(27,138,90,.08)', border: 'rgba(27,138,90,.2)', label: 'Activa', dot: true }
   if (bet.estado === 'finalizada')
-    return { color: '#c99f16', bg: 'rgba(235,195,43,.1)', border: 'rgba(235,195,43,.25)', label: 'Finalizada', dot: false }
+    return { color: '#8fae27', bg: 'rgba(166,201,52,.1)', border: 'rgba(166,201,52,.25)', label: 'Finalizada', dot: false }
   if (bet.estado === 'cerrada')
     return { color: '#5f6e8a', bg: 'rgba(95,110,138,.06)', border: 'rgba(95,110,138,.15)', label: 'Cerrada', dot: false }
   return { color: '#5f6e8a', bg: 'rgba(95,110,138,.06)', border: 'rgba(95,110,138,.12)', label: bet.estado || '—', dot: false }
@@ -62,7 +62,7 @@ function BetRow({ bet, onClose, onFinalize }) {
               </span>
             )}
             {bet.premio && (
-              <span className="flex items-center gap-1 text-xs font-body" style={{ color: '#c99f16' }}>
+              <span className="flex items-center gap-1 text-xs font-body" style={{ color: '#8fae27' }}>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
                 {bet.premio}
               </span>
@@ -98,9 +98,9 @@ function BetRow({ bet, onClose, onFinalize }) {
     <button
       onClick={() => onFinalize(bet.id)}
       className="inline-flex items-center justify-center gap-1 px-3 py-1.5 rounded-full font-body font-semibold transition-all w-full sm:w-auto"
-      style={{ fontSize: 11, background: 'rgba(235,195,43,.1)', border: '1px solid rgba(235,195,43,.35)', color: '#c99f16' }}
-      onMouseEnter={e => { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.color = '#05090f' }}
-      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(235,195,43,.1)'; e.currentTarget.style.color = '#c99f16' }}
+      style={{ fontSize: 11, background: 'rgba(166,201,52,.1)', border: '1px solid rgba(166,201,52,.35)', color: '#8fae27' }}
+      onMouseEnter={e => { e.currentTarget.style.background = '#A6C934'; e.currentTarget.style.color = '#05090f' }}
+      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(166,201,52,.1)'; e.currentTarget.style.color = '#8fae27' }}
     >
       Finalizar
     </button>
@@ -159,8 +159,8 @@ return (
 >
         <div className="flex items-center gap-3 mb-6">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-            style={{ background: 'rgba(235,195,43,.12)', border: '1px solid rgba(235,195,43,.25)' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c99f16" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            style={{ background: 'rgba(166,201,52,.12)', border: '1px solid rgba(166,201,52,.25)' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8fae27" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
             </svg>
           </div>
@@ -174,7 +174,7 @@ return (
 
         {loading && bets.length === 0 && (
           <div className="text-center py-16">
-            <span className="inline-block w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#ebc32b' }} />
+            <span className="inline-block w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#A6C934' }} />
             <p className="font-body text-sm mt-3" style={{ color: '#5f6e8a' }}>Cargando apuestas...</p>
           </div>
         )}
@@ -182,8 +182,8 @@ return (
         {!loading && bets.length === 0 && (
           <div className="rounded-2xl p-12 text-center" style={{ background: '#fff', border: '1px dashed #e8dfd0' }}>
             <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
-              style={{ background: 'rgba(235,195,43,.08)', border: '1px solid rgba(235,195,43,.2)' }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c99f16" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              style={{ background: 'rgba(166,201,52,.08)', border: '1px solid rgba(166,201,52,.2)' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8fae27" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
               </svg>
             </div>
@@ -221,7 +221,7 @@ return (
           <div>
             <div className="flex items-center gap-2 mb-3">
               <h3 className="font-display text-xl" style={{ color: '#0c182b', letterSpacing: '.02em' }}>FINALIZADAS</h3>
-              <span className="font-display text-lg" style={{ color: '#c99f16' }}>({finishedBets.length})</span>
+              <span className="font-display text-lg" style={{ color: '#8fae27' }}>({finishedBets.length})</span>
             </div>
             <div className="flex flex-col gap-3">
               {finishedBets.map(bet => (<BetRow key={bet.id} bet={bet} />))}

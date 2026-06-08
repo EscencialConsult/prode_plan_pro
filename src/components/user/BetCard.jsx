@@ -18,11 +18,11 @@ const STATE_STYLES = {
     bg: 'rgba(66,91,139,.18)',
   },
   finalizada: {
-    border: 'rgba(235,195,43,.35)',
-    glow: '0 0 24px rgba(235,195,43,.08)',
+    border: 'rgba(166,201,52,.35)',
+    glow: '0 0 24px rgba(166,201,52,.08)',
     label: 'FINALIZADA',
-    color: '#c99f16',
-    bg: 'rgba(235,195,43,.1)',
+    color: '#8fae27',
+    bg: 'rgba(166,201,52,.1)',
   },
   cerrada: {
     border: 'rgba(30,59,110,.65)',

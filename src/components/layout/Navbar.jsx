@@ -1,5 +1,7 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth.jsx'
+import AlianzaMark from '../brand/AlianzaMark.jsx'
+import AlianzaWordmark from '../brand/AlianzaWordmark.jsx'
 
 const NAV_LINKS = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -28,7 +30,7 @@ export default function Navbar() {
     }`
 
   const linkStyle = isActive => isActive
-    ? { background: 'rgba(235,195,43,.15)', color: '#ebc32b', border: '1px solid rgba(235,195,43,.3)' }
+    ? { background: 'rgba(166, 201, 52,.15)', color: '#A6C934', border: '1px solid rgba(166, 201, 52,.3)' }
     : { color: 'rgba(255,255,255,.55)', border: '1px solid transparent' }
 
   return (
@@ -37,22 +39,21 @@ export default function Navbar() {
       style={{
         background: 'rgba(5,9,15,.94)',
         backdropFilter: 'blur(16px)',
-        borderBottom: '1px solid rgba(235,195,43,.12)',
+        borderBottom: '1px solid rgba(166, 201, 52,.12)',
         boxShadow: '0 4px 24px rgba(0,0,0,.4)',
       }}
     >
       <div className="max-w-6xl mx-auto px-4 md:px-6 h-16 flex items-center gap-4">
 
         {/* ── Logo ── */}
-        <Link to="/dashboard" className="flex items-center gap-3 flex-shrink-0 min-w-0">
-          {/* Slot logo empresa */}
-
-          <div className="w-px h-5 hidden sm:block" style={{ background: 'rgba(235,195,43,.25)' }} />
-          <img
-            src="./imgprode/one-prode-talento-new3.png"
-            alt="Prode Talento"
-            style={{ height: 32, width: 'auto', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))' }}
-          />
+        <Link to="/dashboard" className="flex items-center gap-2 flex-shrink-0 min-w-0" style={{ textDecoration: 'none', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.4))' }}>
+          <AlianzaMark size={32} />
+          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
+            <AlianzaWordmark size={16} color="#fff" />
+            <span style={{ fontFamily: "Inter, sans-serif", fontSize: '7px', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)' }}>
+              Grupo Asegurador
+            </span>
+          </div>
         </Link>
 
         {/* ── Links ── */}
@@ -81,8 +82,8 @@ export default function Navbar() {
             <NavLink key={link.to} to={link.to}
               className={({ isActive }) => linkClass({ isActive })}
               style={({ isActive }) => isActive
-                ? { background: 'rgba(235,195,43,.2)', color: '#ebc32b', border: '1px solid rgba(235,195,43,.4)', fontWeight: 700 }
-                : { color: 'rgba(235,195,43,.6)', border: '1px solid transparent' }
+                ? { background: 'rgba(166, 201, 52,.2)', color: '#A6C934', border: '1px solid rgba(166, 201, 52,.4)', fontWeight: 700 }
+                : { color: 'rgba(166, 201, 52,.6)', border: '1px solid transparent' }
               }
             >
               {link.label}
@@ -96,7 +97,7 @@ export default function Navbar() {
             {/* Avatar + nombre */}
             <div className="hidden sm:flex items-center gap-2">
               <div className="w-7 h-7 rounded-full flex items-center justify-center font-display text-xs"
-                style={{ background: 'linear-gradient(135deg,#ebc32b,#c99f16)', color: '#05090f', boxShadow: '0 2px 8px rgba(235,195,43,.3)' }}>
+                style={{ background: 'linear-gradient(135deg,#A6C934,#0E5DA8)', color: '#040D1D', boxShadow: '0 2px 8px rgba(166, 201, 52,.3)' }}>
                 {(user.nombre || '?')[0].toUpperCase()}
               </div>
               <span className="font-body text-sm" style={{ color: 'rgba(255,255,255,.55)' }}>
