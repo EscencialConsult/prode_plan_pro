@@ -1,0 +1,31 @@
+<svg viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer blue chevron -->
+  <path
+    d="M 42 6
+       Q 50 1 58 6
+       L 96 52
+       Q 99.5 56 96.5 58
+       H 77
+       Q 74.5 58 73.5 56
+       L 53.5 39
+       Q 50 36 46.5 39
+       L 26.5 56
+       Q 25.5 58 23 58
+       H 3.5
+       Q 0.5 56 4 52
+       Z"
+    fill="#0E5DA8"
+  />
+
+  <!-- Inner green rounded triangle -->
+  <path
+    d="M 47.5 42
+       Q 50 39 52.5 42
+       L 65 55
+       Q 67 58 64 58
+       H 36
+       Q 33 58 35 55
+       Z"
+    fill="#A6C934"
+  />
+</svg>
