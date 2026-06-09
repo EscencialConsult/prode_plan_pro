@@ -126,7 +126,7 @@ export default function HomeFooter() {
             © 2026 ONE · Escencial · Lista Verde - Tucumán. Todos los derechos reservados.
           </span>
           <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: '.72rem', color: 'rgba(134,200,115,.3)', fontWeight: 600 }}>
-            V1.6.1
+            V1.6.2
           </span>
         </div>
       </div>

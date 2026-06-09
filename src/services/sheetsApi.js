@@ -600,6 +600,16 @@ const usuarios = {
   crear: async (_data) => {
     throw new Error('Función "crear usuario manual" todavía no implementada en la versión Supabase. Pedí al usuario que se registre normalmente y aprobalo.')
   },
+
+  actualizarMisDatos: async (celular, email) => {
+    const { data, error } = await supabase.rpc('actualizar_mis_datos', {
+      p_celular: celular,
+      p_email: email,
+    })
+    checkError(error, 'usuarios.actualizarMisDatos')
+    invalidateClientCache()
+    return data
+  },
 }
 
 // ── apuestas ──────────────────────────────────────────────
