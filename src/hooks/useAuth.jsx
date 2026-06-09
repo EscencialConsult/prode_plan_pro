@@ -149,10 +149,11 @@ const isAdmin = !!(
   )
 
   // Plan de la empresa del usuario logueado.
-  // Si la columna empresa está vacía, se considera Plan_pro por defecto
-  // (mismo criterio que el backend en esPlanBasic_).
+  // Criterio idéntico al backend (función plan_basic()):
+  //   empresa = 'plan_pro'              → Pro
+  //   empresa = 'plan_basic', '' o null → Basic (por defecto restrictivo)
   const empresa = String(user?.empresa || '').trim().toLowerCase()
-  const isPlanBasic = empresa === 'plan_basic'
+  const isPlanBasic = empresa !== 'plan_pro'
   const isPro = !isPlanBasic
 
   return (

@@ -75,6 +75,9 @@ export default function AdminPage() {
   const [newArea, setNewArea] = useState({ nombre: '', descripcion: '' })
   const [savingArea, setSavingArea] = useState(false)
 
+  /* ── Plan de empresa ──────────────────────────────────── */
+  const [cambiandoPlan, setCambiandoPlan] = useState(false)
+
 /* ── Efectos ──────────────────────────────────────────── */
 
 /* ── Carga inicial ──────────────────────────────────────── */
@@ -158,6 +161,30 @@ useEffect(() => {
     if (!ok) return
     try { await sheetsApi.areas.toggle_activa(area.id); await loadAreasAll() }
     catch (e) { toast.error('Error: ' + e.message) }
+  }
+
+  /* ── Funciones: Plan de empresa ──────────────────────── */
+  async function handleCambiarPlan(nuevoPlan) {
+    const label = nuevoPlan === 'plan_pro' ? 'Plan Pro' : 'Plan Basic'
+    const ok = await confirm({
+      titulo: `¿Cambiar a ${label}?`,
+      mensaje: 'Esta acción actualiza el plan de TODOS los usuarios registrados en esta empresa.',
+      confirmarTxt: `Sí, cambiar a ${label}`,
+      tipo: 'warning',
+    })
+    if (!ok) return
+    setCambiandoPlan(true)
+    try {
+      const { data, error } = await sheetsApi._supabase
+        .rpc('set_plan_empresa', { p_plan: nuevoPlan })
+      if (error) throw error
+      toast.success(`Plan cambiado a ${label}. ${data.usuarios_actualizados} usuarios actualizados.`)
+      toast.info('Los usuarios con sesión activa deben cerrar sesión y volver a ingresar para que el cambio se aplique.')
+    } catch (e) {
+      toast.error('Error al cambiar el plan: ' + e.message)
+    } finally {
+      setCambiandoPlan(false)
+    }
   }
 
   /* ── Funciones: Usuarios ──────────────────────────────── */
@@ -447,6 +474,57 @@ if (initialLoading) {
                 </div>
               )}
             </div>
+
+            {/* ── Plan de empresa ─────────────────────────── */}
+            <div
+              className="rounded-2xl p-6"
+              style={{
+                background: '#fff',
+                border: '1px solid rgba(235,195,43,0.2)',
+                boxShadow: '0 4px 16px rgba(12,24,43,.06)',
+              }}
+            >
+              <p className="text-[11px] font-body font-bold uppercase tracking-[0.15em] mb-1"
+                 style={{ color: '#c99f16' }}>
+                Plan de empresa
+              </p>
+              <p className="text-sm font-body mb-4" style={{ color: '#5f6e8a' }}>
+                Plan actual:{' '}
+                <strong style={{ color: '#0a1226' }}>
+                  {isPro ? 'Plan Pro' : 'Plan Basic'}
+                </strong>
+                <span className="ml-2 text-xs" style={{ color: '#94a3b8' }}>
+                  · Cambiar el plan actualiza a todos los usuarios registrados
+                </span>
+              </p>
+              <div className="flex gap-3 flex-wrap">
+                <button
+                  onClick={() => handleCambiarPlan('plan_pro')}
+                  disabled={cambiandoPlan || isPro}
+                  className="px-5 py-2 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all disabled:opacity-40"
+                  style={{
+                    background: isPro ? 'rgba(235,195,43,0.08)' : 'linear-gradient(135deg,#ebc32b 0%,#d4a017 100%)',
+                    color: isPro ? '#c99f16' : '#0a1226',
+                    border: isPro ? '1px solid rgba(235,195,43,0.3)' : 'none',
+                  }}
+                >
+                  {cambiandoPlan ? 'Cambiando...' : 'Activar Plan Pro'}
+                </button>
+                <button
+                  onClick={() => handleCambiarPlan('plan_basic')}
+                  disabled={cambiandoPlan || !isPro}
+                  className="px-5 py-2 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all disabled:opacity-40"
+                  style={{
+                    background: 'transparent',
+                    color: '#5f6e8a',
+                    border: '1px solid rgba(95,110,138,0.3)',
+                  }}
+                >
+                  {cambiandoPlan ? 'Cambiando...' : 'Volver a Plan Basic'}
+                </button>
+              </div>
+            </div>
+
           </div>
         )}
 

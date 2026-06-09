@@ -829,6 +829,18 @@ const predicciones = {
     return { ok: true, predicciones: data || [], mis: data || [] }
   },
 
+  deArea: async (apuesta_id, area_id) => {
+    let q = supabase
+      .from('predicciones')
+      .select('*, usuarios(nombre)')
+      .eq('area_id', area_id)
+    if (apuesta_id) q = q.eq('apuesta_id', apuesta_id)
+    const { data, error } = await q
+    checkError(error, 'predicciones.deArea')
+    return { ok: true, predicciones: data || [] }
+  },
+
+
   // Alias por compatibilidad (RankingPage.jsx usa este nombre)
   porUsuario: async function (apuesta_id, user_id) {
     return this.deUsuario(apuesta_id, user_id)
@@ -1026,6 +1038,44 @@ const predicciones = {
       tabla,
       mi_posicion: miPosicion,
       esta_en_top: estaEnTop,
+    }
+  },
+
+  /**
+   * Ranking global acumulado por área.
+   * Suma de puntos de TODAS las apuestas cerradas/finalizadas,
+   * agrupados por área. Solo tiene datos en plan_pro.
+   *
+   * @param {{ limit?: number }} opciones
+   */
+  rankingGlobalAreas: async (opciones = {}) => {
+    const limit = Math.min(parseInt(opciones.limit) || 50, 200)
+
+    const [tablaResult, totalResult] = await Promise.all([
+      supabase
+        .from('ranking_global_areas_cache')
+        .select('*')
+        .order('posicion', { ascending: true })
+        .limit(limit),
+      supabase
+        .from('ranking_global_areas_cache')
+        .select('*', { count: 'exact', head: true }),
+    ])
+
+    checkError(tablaResult.error, 'predicciones.rankingGlobalAreas (tabla)')
+    checkError(totalResult.error, 'predicciones.rankingGlobalAreas (total)')
+
+    return {
+      ok: true,
+      total: totalResult.count || 0,
+      tabla: (tablaResult.data || []).map(r => ({
+        area_id:               r.area_id,
+        nombre:                r.area_nombre,
+        puntos_totales:        r.puntos_totales,
+        miembros_participantes: r.miembros_participantes,
+        predicciones:          r.predicciones,
+        posicion:              r.posicion,
+      })),
     }
   },
 }
