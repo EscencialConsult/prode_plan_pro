@@ -1,5 +1,11 @@
-﻿import { isBetOpen, timeLeft } from '../../utils/index.js'
+﻿import { useState } from 'react'
+import { isBetOpen, timeLeft } from '../../utils/index.js'
 import { useToast, useConfirm } from '../../hooks/useToast.jsx'
+import sheetsApi from '../../services/sheetsApi.js'
+
+function getInitials(name = '') {
+  return name.trim().split(/\s+/).slice(0, 2).map(n => n[0]?.toUpperCase() || '').join('')
+}
 
 function getBetStatus(bet) {
   if (bet.estado === 'abierta' && isBetOpen(bet))
@@ -16,6 +22,27 @@ function BetRow({ bet, onClose, onFinalize }) {
   const matchCount = bet.partidos_ids ? bet.partidos_ids.split(',').filter(Boolean).length : (bet.partidos?.length || 0)
   const remaining = bet.fecha_cierre ? timeLeft(bet.fecha_cierre) : null
   const isOpen = isBetOpen(bet)
+
+  const [showParticipants, setShowParticipants] = useState(false)
+  const [participants, setParticipants] = useState([])
+  const [loadingParticipants, setLoadingParticipants] = useState(false)
+
+  async function handleToggleParticipants(e) {
+    e.stopPropagation()
+    if (showParticipants) { setShowParticipants(false); return }
+    setShowParticipants(true)
+    if (participants.length === 0) {
+      setLoadingParticipants(true)
+      try {
+        const r = await sheetsApi.predicciones.participantesApuesta(bet.id)
+        setParticipants(r.participantes || [])
+      } catch (err) {
+        console.error('Error cargando participantes:', err)
+      } finally {
+        setLoadingParticipants(false)
+      }
+    }
+  }
 
   return (
     <div
@@ -73,9 +100,24 @@ function BetRow({ bet, onClose, onFinalize }) {
               </span>
             )}
             {bet.participantes > 0 && (
-              <span className="text-xs font-body" style={{ color: '#a8b2c4' }}>
+              <button
+                onClick={handleToggleParticipants}
+                className="flex items-center gap-1 text-xs font-body transition-colors"
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: 0, color: showParticipants ? '#0ea5e9' : '#a8b2c4' }}
+              >
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
                 {bet.participantes} participantes
-              </span>
+                <svg
+                  width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                  strokeLinecap="round" strokeLinejoin="round"
+                  style={{ transform: showParticipants ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform .2s' }}
+                >
+                  <polyline points="6 9 12 15 18 9"/>
+                </svg>
+              </button>
             )}
           </div>
         </div>
@@ -106,6 +148,42 @@ function BetRow({ bet, onClose, onFinalize }) {
           )}
         </div>
       </div>
+
+      {/* Panel de participantes */}
+      {showParticipants && (
+        <div className="mt-3 pt-3" style={{ borderTop: '1px solid rgba(125,211,252,.15)' }}>
+          <p className="text-[10px] font-body font-bold uppercase tracking-wider mb-2.5" style={{ color: '#0ea5e9' }}>
+            Ya cargaron sus predicciones
+          </p>
+          {loadingParticipants ? (
+            <div className="flex items-center gap-2 py-2">
+              <span className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#7dd3fc', borderTopColor: 'transparent' }} />
+              <span className="text-xs font-body" style={{ color: '#5f6e8a' }}>Cargando...</span>
+            </div>
+          ) : participants.length === 0 ? (
+            <p className="text-xs font-body" style={{ color: '#a8b2c4' }}>Nadie apostó todavía.</p>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {participants.map(p => (
+                <div
+                  key={p.user_id}
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
+                  style={{ background: 'rgba(125,211,252,.08)', border: '1px solid rgba(125,211,252,.2)' }}
+                  title={p.email || p.nombre}
+                >
+                  <div
+                    className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-display font-bold flex-shrink-0"
+                    style={{ background: 'linear-gradient(135deg,#7dd3fc,#d4a017)', color: '#0a1226' }}
+                  >
+                    {getInitials(p.nombre)}
+                  </div>
+                  <span className="text-xs font-body" style={{ color: '#0c182b' }}>{p.nombre}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

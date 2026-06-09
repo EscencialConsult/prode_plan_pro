@@ -834,6 +834,28 @@ const predicciones = {
     return this.deUsuario(apuesta_id, user_id)
   },
 
+  participantesApuesta: async (apuesta_id) => {
+    const { data, error } = await supabase
+      .from('predicciones')
+      .select('user_id, usuarios!predicciones_user_id_fkey(nombre, email)')
+      .eq('apuesta_id', apuesta_id)
+    checkError(error, 'predicciones.participantesApuesta')
+    const seen = new Set()
+    const participantes = []
+    for (const row of (data || [])) {
+      if (!seen.has(row.user_id)) {
+        seen.add(row.user_id)
+        participantes.push({
+          user_id: row.user_id,
+          nombre: row.usuarios?.nombre || 'Sin nombre',
+          email: row.usuarios?.email || '',
+        })
+      }
+    }
+    participantes.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'))
+    return { ok: true, participantes, total: participantes.length }
+  },
+
   /**
    * Tabla de ranking. Usa la vista ranking_apuestas (creada en Supabase).
    * Devuelve formato compatible con el frontend actual.
