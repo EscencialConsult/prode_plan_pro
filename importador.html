@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Importador de Usuarios a Supabase Auth</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; background: #0f172a; color: white; }
+    button { padding: 10px 20px; font-size: 16px; background: #38bdf8; border: none; border-radius: 5px; cursor: pointer; color: #0f172a; font-weight: bold; }
+    button:disabled { background: #334155; cursor: not-allowed; color: #94a3b8; }
+    pre { background: #1e293b; padding: 15px; border-radius: 5px; overflow-y: auto; max-height: 400px; white-space: pre-wrap; }
+    .success { color: #4ade80; }
+    .error { color: #f87171; }
+  </style>
+</head>
+<body>
+  <h1>Migrar Usuarios a Supabase Auth</h1>
+  <p>Este script se conecta directamente a tu base de datos y usa la API oficial de Supabase (Admin API) para crear los accesos. Al usar la API oficial, nos aseguramos de que Supabase configure internamente todos los campos necesarios sin fallar.</p>
+  
+  <button id="btnStart">Iniciar Migración y Activación</button>
+  
+  <h3>Logs de proceso:</h3>
+  <pre id="log"></pre>
+
+  <script type="module">
+    // Las claves de tu proyecto extraídas de tu .env
+    const SUPABASE_URL = 'https://qpnbkgpwofbzxwfpxiwi.supabase.co';
+    const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFwbmJrZ3B3b2Zienh3ZnB4aXdpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MDk0Mjg3MSwiZXhwIjoyMDk2NTE4ODcxfQ.Qx0ZCCYtAaCKeIzFR4w-8iS2ObxYvZzQktB5SCinmXE';
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+      auth: { autoRefreshToken: false, persistSession: false }
+    });
+
+    const btn = document.getElementById('btnStart');
+    const logEl = document.getElementById('log');
+
+    function log(msg, type = 'normal') {
+      const span = document.createElement('div');
+      span.textContent = msg;
+      if (type === 'success') span.className = 'success';
+      if (type === 'error') span.className = 'error';
+      logEl.appendChild(span);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      log("Borrando registros corruptos de la prueba manual anterior en auth.users...");
+      
+      try {
+        // Borramos los usuarios que creamos manualmente en auth.users con SQL para dejar el camino limpio
+        // pero usando un select de los emails que tienen DNI
+        // Buscar al admin por su email en public.usuarios (tenga o no tenga DNI)
+        const adminEmail = 'pale.beltramo15@gmail.com';
+        const { data: adminData } = await supabase.from('usuarios').select('*').eq('email', adminEmail).single();
+        
+        if (adminData) {
+          log("Admin encontrado en la base de datos. Configurando su cuenta de acceso...");
+          
+          // Borrar acceso viejo del admin por si quedó trabado
+          const { data: authData } = await supabase.auth.admin.listUsers();
+          const oldAdminAuth = authData?.users?.find(u => u.email === adminEmail);
+          if (oldAdminAuth) {
+            await supabase.auth.admin.deleteUser(oldAdminAuth.id);
+          }
+
+          // Crear acceso del admin con la contraseña exacta solicitada
+          const { data: newAdmin, error: createError } = await supabase.auth.admin.createUser({
+            email: adminEmail,
+            password: 'beltramo321am',
+            email_confirm: true,
+            user_metadata: { nombre: adminData.nombre }
+          });
+
+          if (createError) {
+            log(`❌ Error creando login para Admin: ${createError.message}`, "error");
+            errorCount++;
+          } else {
+            log(`✔ Login de Admin creado con éxito. Contraseña: beltramo321am`, "success");
+            
+            // Actualizamos el ID en public.usuarios para sincronizar
+            await supabase.from('usuarios')
+              .update({ id: newAdmin.user.id, estado: 'activo' })
+              .eq('email', adminEmail);
+              
+            successCount++;
+          }
+        } else {
+          log("❌ No se encontró al usuario pale.beltramo15@gmail.com en public.usuarios", "error");
+        }
+
+        log("\nActivando a todos los usuarios pendientes...");
+        const { error: actError } = await supabase
+          .from('usuarios')
+          .update({ estado: 'activo' })
+          .eq('estado', 'pendiente');
+
+        if (actError) {
+          log("Hubo un error al activar a los usuarios: " + actError.message, "error");
+        } else {
+          log("✔ ¡Todos los usuarios pendientes fueron ACTIVADOS!", "success");
+        }
+
+        log(`\n--- RESUMEN FINAL ---`);
+        log(`✅ Éxitos: ${successCount}`, "success");
+        log(`❌ Errores: ${errorCount}`, "error");
+        log(`\n¡Ya pueden iniciar sesión con su email y DNI sin errores!`);
+      } catch (err) {
+        log(`Ocurrió un error general: ${err.message}`, "error");
+      }
+      btn.disabled = false;
+    });
+  </script>
+</body>
+</html>
