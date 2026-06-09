@@ -85,7 +85,7 @@ function mostrarAvisoSesionExpirada() {
   const overlay = document.createElement('div')
   overlay.style.cssText = `
     position: fixed; inset: 0; z-index: 99999;
-    background: rgba(12,24,43,.85);
+    background: rgba(31,31,35,.85);
     backdrop-filter: blur(4px);
     display: flex; align-items: center; justify-content: center;
     font-family: 'DM Sans', sans-serif;
@@ -98,11 +98,11 @@ function mostrarAvisoSesionExpirada() {
     <div style="text-align: center; color: #fff; max-width: 320px; padding: 1.5rem;">
       <div style="
         width: 56px; height: 56px; border-radius: 50%;
-        background: rgba(235,195,43,.15);
-        border: 1px solid rgba(235,195,43,.4);
+        background: rgba(192,39,39,.15);
+        border: 1px solid rgba(192,39,39,.4);
         margin: 0 auto 1rem;
         display: flex; align-items: center; justify-content: center;">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c02727" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/>
           <polyline points="12 6 12 12 16 14"/>
         </svg>

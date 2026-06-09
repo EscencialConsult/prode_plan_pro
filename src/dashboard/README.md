@@ -34,12 +34,12 @@ import RankingPage          from './dashboard/RankingPage.jsx'
 
 Las rutas en el Router NO cambian. Solo los imports.
 
-## Paleta usada (misma que homepage)
-- Fondo: `#faf7f0`
-- Cards: `#fff` con borde `#f0eadb`
-- Navbar/Hero: `#0c182b` (navy)
-- Texto: `#0c182b` / `#5f6e8a` (muted)
-- Accent: `#ebc32b` / `#c99f16` (gold)
+## Paleta usada (misma que homepage — Bercovich)
+- Fondo: `#f4f4f5`
+- Cards: `#fff` con borde `#e4e4e7`
+- Navbar/Hero: `#1f1f23` (carbón)
+- Texto: `#1f1f23` / `#6e6f73` (muted)
+- Accent: `#c02727` / `#9e1f1f` (rojo)
 - Éxito: `#1b8a5a` / Error: `#e03252`
 
 ## Notas

@@ -14,20 +14,20 @@ const FEATURES = [
 export default function HomeFeatures() {
   return (
     /* position relative para el wave absolute */
-    <section id="funcionalidades" className="relative" style={{ background: '#0c182b', paddingTop: '5.5rem', paddingBottom: '6rem' }}>
+    <section id="funcionalidades" className="relative" style={{ background: '#ffffff', paddingTop: '5.5rem', paddingBottom: '6rem' }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 1.5rem' }}>
 
         <div className="grid lg:grid-cols-2 gap-10 items-end mb-14">
           <div>
             <span className="inline-flex items-center gap-2 font-body font-bold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-5"
-              style={{ border: '1px solid #ebc32b', color: '#ebc32b', background: 'rgba(235,195,43,.1)' }}>
+              style={{ border: '1px solid rgba(192,39,39,.3)', color: '#c02727', background: 'rgba(192,39,39,.06)' }}>
               Todo lo que incluye
             </span>
-            <h2 className="font-display text-white" style={{ fontSize: 'clamp(2.4rem,6vw,4rem)', lineHeight: 1, letterSpacing: '.01em' }}>
-              UNA PLATAFORMA<br /><span style={{ color: '#ebc32b' }}>COMPLETA</span>
+            <h2 className="font-display" style={{ fontSize: 'clamp(2.4rem,6vw,4rem)', lineHeight: 1, letterSpacing: '.01em', color: '#232327' }}>
+              UNA PLATAFORMA<br /><span style={{ color: '#c02727' }}>COMPLETA</span>
             </h2>
           </div>
-          <p className="font-body text-base leading-relaxed" style={{ color: '#a8b2c4' }}>
+          <p className="font-body text-base leading-relaxed" style={{ color: '#5a5b5f' }}>
             Todo lo que necesitás para participar, seguir el torneo y competir con tu equipo está en un solo lugar.
           </p>
         </div>
@@ -35,16 +35,16 @@ export default function HomeFeatures() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {FEATURES.map(({ title, desc, icon }) => (
             <div key={title} className="rounded-xl p-5 transition-all duration-300"
-              style={{ background: 'linear-gradient(155deg,rgba(66,91,139,.22),rgba(66,91,139,.05))', border: '1px solid rgba(235,195,43,.18)' }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = '#ebc32b'; e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 20px 48px rgba(0,0,0,.4)' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(235,195,43,.18)'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
+              style={{ background: '#f4f4f5', border: '1px solid #e4e4e7' }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = '#c02727'; e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 14px 36px rgba(0,0,0,.08)' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = '#e4e4e7'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '' }}
             >
               <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
-                style={{ background: 'linear-gradient(135deg,#0c182b,#425b8b)', color: '#ebc32b' }}>
+                style={{ background: '#ffffff', border: '1px solid #e4e4e7', color: '#c02727' }}>
                 {icon}
               </div>
-              <h3 className="font-body font-semibold text-sm text-white mb-2">{title}</h3>
-              <p className="font-body text-xs leading-relaxed" style={{ color: '#a8b2c4' }}>{desc}</p>
+              <h3 className="font-body font-semibold text-sm mb-2" style={{ color: '#232327' }}>{title}</h3>
+              <p className="font-body text-xs leading-relaxed" style={{ color: '#5a5b5f' }}>{desc}</p>
             </div>
           ))}
         </div>
@@ -52,23 +52,14 @@ export default function HomeFeatures() {
         <div className="mt-12 text-center">
           <Link to="/register"
             className="inline-flex items-center gap-2 font-body font-bold text-base px-8 py-4 rounded-full transition-all"
-            style={{ background: '#ebc32b', color: '#05090f', boxShadow: '0 8px 24px rgba(235,195,43,.25)', textDecoration: 'none' }}
-            onMouseEnter={e => { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-            onMouseLeave={e => { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = '' }}>
+            style={{ background: '#c02727', color: '#fff', boxShadow: '0 8px 22px rgba(192,39,39,.25)', textDecoration: 'none' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#a81f1f'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#c02727'; e.currentTarget.style.transform = '' }}>
             Crear mi cuenta y empezar
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </Link>
         </div>
       </div>
-
-      {/* ── WAVE: features (#0c182b) → FAQ (#faf7f0)
-          rect = navy (esta sección), path fill = cream (siguiente sección)
-          ESTE ERA EL PROBLEMA: sin rect, el área transparente mostraba #05090f del wrapper */}
-      <svg className="absolute bottom-0 left-0 w-full" style={{ display: 'block', height: 80, marginBottom: -2 }}
-        viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="1440" height="80" fill="#0c182b" />
-        <path d="M0,30 C320,80 640,0 960,38 C1120,55 1320,22 1440,32 L1440,80 L0,80 Z" fill="#faf7f0" />
-      </svg>
     </section>
   )
 }

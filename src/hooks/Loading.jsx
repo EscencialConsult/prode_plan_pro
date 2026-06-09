@@ -5,7 +5,7 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
       : "absolute inset-0 z-50 flex items-center justify-center"
     }
     style={{ 
-      background: 'rgba(10, 18, 38, 0.90)',
+      background: 'rgba(20,20,22,0.90)',
       backdropFilter: 'blur(14px)',
       WebkitBackdropFilter: 'blur(14px)'
     }}>
@@ -33,10 +33,10 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
         
         @keyframes shimmer {
           0%, 100% { 
-            boxShadow: 0 0 20px rgba(235, 195, 43, 0.3), 0 0 40px rgba(235, 195, 43, 0.1);
+            boxShadow: 0 0 20px rgba(192,39,39, 0.3), 0 0 40px rgba(192,39,39, 0.1);
           }
           50% { 
-            boxShadow: 0 0 30px rgba(235, 195, 43, 0.5), 0 0 60px rgba(235, 195, 43, 0.2);
+            boxShadow: 0 0 30px rgba(192,39,39, 0.5), 0 0 60px rgba(192,39,39, 0.2);
           }
         }
         
@@ -103,7 +103,7 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
       {/* Glow de fondo dorado */}
       <div className="absolute w-80 h-80 rounded-full pointer-events-none"
         style={{
-          background: 'radial-gradient(circle, rgba(235, 195, 43, 0.12) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(192,39,39, 0.12) 0%, transparent 70%)',
           filter: 'blur(70px)',
           animation: 'pulse 3.5s ease-in-out infinite',
           top: '50%',
@@ -121,8 +121,8 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
           {/* Anillo exterior - delgado con glow sutil */}
           <div className="absolute inset-0 rounded-full border-2 opacity-60"
             style={{
-              borderColor: 'rgba(235, 195, 43, 0.4)',
-              boxShadow: '0 0 15px rgba(235, 195, 43, 0.2)',
+              borderColor: 'rgba(192,39,39, 0.4)',
+              boxShadow: '0 0 15px rgba(192,39,39, 0.2)',
               animation: 'spin 3.5s linear infinite'
             }} 
           />
@@ -131,8 +131,8 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
           <div className="absolute rounded-full border-2 opacity-85"
             style={{
               inset: '14px',
-              borderColor: '#ebc32b',
-              boxShadow: '0 0 25px rgba(235, 195, 43, 0.3), inset 0 0 15px rgba(235, 195, 43, 0.05)',
+              borderColor: '#c02727',
+              boxShadow: '0 0 25px rgba(192,39,39, 0.3), inset 0 0 15px rgba(192,39,39, 0.05)',
               animation: 'spinReverse 2.2s linear infinite'
             }} 
           />
@@ -142,7 +142,7 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
             style={{
               height: '140px',
               top: '-20px',
-              background: 'linear-gradient(180deg, transparent 0%, rgba(235, 195, 43, 0.6) 50%, transparent 100%)',
+              background: 'linear-gradient(180deg, transparent 0%, rgba(192,39,39, 0.6) 50%, transparent 100%)',
               animation: 'scanLine 3s ease-in-out infinite'
             }}
           />
@@ -151,8 +151,8 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
           <div className="absolute rounded-full"
             style={{
               inset: '48px',
-              background: 'linear-gradient(135deg, rgba(235, 195, 43, 0.25) 0%, rgba(235, 195, 43, 0.08) 100%)',
-              boxShadow: '0 0 40px rgba(235, 195, 43, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.1)',
+              background: 'linear-gradient(135deg, rgba(192,39,39, 0.25) 0%, rgba(192,39,39, 0.08) 100%)',
+              boxShadow: '0 0 40px rgba(192,39,39, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.1)',
               animation: 'shimmer 2.5s ease-in-out infinite'
             }} 
           />
@@ -160,16 +160,16 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
           {/* Partículas orbitales */}
           <div className="absolute top-1/2 left-1/2 w-2 h-2 rounded-full -translate-x-1/2 -translate-y-1/2"
             style={{
-              background: 'radial-gradient(circle, rgba(235, 195, 43, 1) 0%, rgba(235, 195, 43, 0.6) 100%)',
-              boxShadow: '0 0 12px rgba(235, 195, 43, 0.9)',
+              background: 'radial-gradient(circle, rgba(192,39,39, 1) 0%, rgba(192,39,39, 0.6) 100%)',
+              boxShadow: '0 0 12px rgba(192,39,39, 0.9)',
               transformOrigin: '0 0',
               animation: 'orbitParticle 3.5s linear infinite'
             }} 
           />
           <div className="absolute top-1/2 left-1/2 w-2 h-2 rounded-full -translate-x-1/2 -translate-y-1/2"
             style={{
-              background: 'radial-gradient(circle, rgba(235, 195, 43, 1) 0%, rgba(235, 195, 43, 0.6) 100%)',
-              boxShadow: '0 0 12px rgba(235, 195, 43, 0.9)',
+              background: 'radial-gradient(circle, rgba(192,39,39, 1) 0%, rgba(192,39,39, 0.6) 100%)',
+              boxShadow: '0 0 12px rgba(192,39,39, 0.9)',
               transformOrigin: '0 0',
               animation: 'orbitParticle 3.5s linear infinite 1.75s'
             }} 
@@ -185,8 +185,8 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
             }}>
             <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
               <path d="M6 0L11.1962 3.5V10.5L6 14L0.803848 10.5V3.5L6 0Z" 
-                fill="rgba(235, 195, 43, 0.15)" 
-                stroke="#ebc32b" 
+                fill="rgba(192,39,39, 0.15)" 
+                stroke="#c02727" 
                 strokeWidth="1"/>
             </svg>
           </div>
@@ -199,8 +199,8 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
             }}>
             <svg width="10" height="12" viewBox="0 0 12 14" fill="none">
               <path d="M6 0L11.1962 3.5V10.5L6 14L0.803848 10.5V3.5L6 0Z" 
-                fill="rgba(235, 195, 43, 0.12)" 
-                stroke="#ebc32b" 
+                fill="rgba(192,39,39, 0.12)" 
+                stroke="#c02727" 
                 strokeWidth="0.8"/>
             </svg>
           </div>
@@ -213,8 +213,8 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
             }}>
             <svg width="8" height="10" viewBox="0 0 12 14" fill="none">
               <path d="M6 0L11.1962 3.5V10.5L6 14L0.803848 10.5V3.5L6 0Z" 
-                fill="rgba(235, 195, 43, 0.1)" 
-                stroke="#ebc32b" 
+                fill="rgba(192,39,39, 0.1)" 
+                stroke="#c02727" 
                 strokeWidth="0.6"/>
             </svg>
           </div>
@@ -223,19 +223,19 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 pointer-events-none">
             <div className="absolute inset-0 rounded-full"
               style={{
-                border: '1px solid rgba(235, 195, 43, 0.6)',
+                border: '1px solid rgba(192,39,39, 0.6)',
                 animation: 'radialPulse 2s ease-out infinite'
               }}
             />
             <div className="absolute inset-0 rounded-full"
               style={{
-                border: '1px solid rgba(235, 195, 43, 0.6)',
+                border: '1px solid rgba(192,39,39, 0.6)',
                 animation: 'radialPulse 2s ease-out infinite 0.6s'
               }}
             />
             <div className="absolute inset-0 rounded-full"
               style={{
-                border: '1px solid rgba(235, 195, 43, 0.6)',
+                border: '1px solid rgba(192,39,39, 0.6)',
                 animation: 'radialPulse 2s ease-out infinite 1.2s'
               }}
             />
@@ -246,7 +246,7 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
             <div className="absolute inset-0 rounded-full border opacity-40"
               style={{ 
                 borderWidth: '1.5px',
-                borderColor: 'rgba(235, 195, 43, 0.5)',
+                borderColor: 'rgba(192,39,39, 0.5)',
                 animation: 'expandPulse 2.5s ease-out infinite'
               }} 
             />
@@ -257,8 +257,8 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
         <div className="text-center relative">
           <p className="font-semibold text-sm tracking-wider uppercase" 
             style={{ 
-              color: '#ebc32b',
-              textShadow: '0 0 15px rgba(235, 195, 43, 0.4)',
+              color: '#c02727',
+              textShadow: '0 0 15px rgba(192,39,39, 0.4)',
               letterSpacing: '0.18em',
               fontWeight: 600
             }}>
@@ -269,22 +269,22 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
           <div className="flex gap-2 justify-center mt-3.5">
             <div className="w-1.5 h-1.5 rounded-full"
               style={{ 
-                background: 'linear-gradient(135deg, #ebc32b 0%, rgba(235, 195, 43, 0.7) 100%)',
-                boxShadow: '0 0 10px rgba(235, 195, 43, 0.5)',
+                background: 'linear-gradient(135deg, #c02727 0%, rgba(192,39,39, 0.7) 100%)',
+                boxShadow: '0 0 10px rgba(192,39,39, 0.5)',
                 animation: 'pulse 1.3s ease-in-out 0s infinite'
               }} 
             />
             <div className="w-1.5 h-1.5 rounded-full"
               style={{ 
-                background: 'linear-gradient(135deg, #ebc32b 0%, rgba(235, 195, 43, 0.7) 100%)',
-                boxShadow: '0 0 10px rgba(235, 195, 43, 0.5)',
+                background: 'linear-gradient(135deg, #c02727 0%, rgba(192,39,39, 0.7) 100%)',
+                boxShadow: '0 0 10px rgba(192,39,39, 0.5)',
                 animation: 'pulse 1.3s ease-in-out 0.22s infinite'
               }} 
             />
             <div className="w-1.5 h-1.5 rounded-full"
               style={{ 
-                background: 'linear-gradient(135deg, #ebc32b 0%, rgba(235, 195, 43, 0.7) 100%)',
-                boxShadow: '0 0 10px rgba(235, 195, 43, 0.5)',
+                background: 'linear-gradient(135deg, #c02727 0%, rgba(192,39,39, 0.7) 100%)',
+                boxShadow: '0 0 10px rgba(192,39,39, 0.5)',
                 animation: 'pulse 1.3s ease-in-out 0.44s infinite'
               }} 
             />

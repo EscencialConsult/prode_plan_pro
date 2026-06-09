@@ -54,10 +54,10 @@ function ToastItem({ toast, onClose }) {
 
   const STYLES = {
     success: {
-      bg: 'linear-gradient(135deg, #0c182b 0%, #0f2145 100%)',
-      border: 'rgba(34, 217, 223, 0.4)',
-      color: '#22d9df',
-      iconBg: 'rgba(34, 217, 223, 0.15)',
+      bg: 'linear-gradient(135deg, #1f1f23 0%, #2b2b30 100%)',
+      border: 'rgba(192,39,39, 0.4)',
+      color: '#c02727',
+      iconBg: 'rgba(192,39,39, 0.15)',
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="20 6 9 17 4 12" />
@@ -65,7 +65,7 @@ function ToastItem({ toast, onClose }) {
       ),
     },
     error: {
-      bg: 'linear-gradient(135deg, #0c182b 0%, #1f0f15 100%)',
+      bg: 'linear-gradient(135deg, #1f1f23 0%, #1f0f15 100%)',
       border: 'rgba(255, 77, 109, 0.4)',
       color: '#ff4d6d',
       iconBg: 'rgba(255, 77, 109, 0.15)',
@@ -78,10 +78,10 @@ function ToastItem({ toast, onClose }) {
       ),
     },
     info: {
-      bg: 'linear-gradient(135deg, #0c182b 0%, #0f2145 100%)',
-      border: 'rgba(235, 195, 43, 0.4)',
-      color: '#ebc32b',
-      iconBg: 'rgba(235, 195, 43, 0.15)',
+      bg: 'linear-gradient(135deg, #1f1f23 0%, #2b2b30 100%)',
+      border: 'rgba(192,39,39, 0.4)',
+      color: '#c02727',
+      iconBg: 'rgba(192,39,39, 0.15)',
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />
@@ -91,9 +91,9 @@ function ToastItem({ toast, onClose }) {
       ),
     },
     loading: {
-      bg: 'linear-gradient(135deg, #0c182b 0%, #0f2145 100%)',
+      bg: 'linear-gradient(135deg, #1f1f23 0%, #2b2b30 100%)',
       border: 'rgba(132, 153, 194, 0.4)',
-      color: '#8499c2',
+      color: '#9a9ba0',
       iconBg: 'rgba(132, 153, 194, 0.15)',
       icon: (
         <span style={{ width: 16, height: 16, border: '2px solid currentColor', borderTopColor: 'transparent', borderRadius: '50%', animation: 'tc-spin .8s linear infinite', display: 'inline-block' }} />
@@ -108,7 +108,7 @@ function ToastItem({ toast, onClose }) {
       minWidth: 280, maxWidth: 420,
       padding: '.85rem 1rem', borderRadius: 12,
       background: s.bg, border: `1px solid ${s.border}`,
-      boxShadow: '0 10px 40px rgba(0,0,0,.45), 0 0 24px rgba(34,217,223,.08)',
+      boxShadow: '0 10px 40px rgba(0,0,0,.45), 0 0 24px rgba(192,39,39,.08)',
       display: 'flex', alignItems: 'flex-start', gap: '.7rem',
       fontFamily: "'DM Sans', sans-serif",
       animation: 'tc-toast-in .3s ease both',
@@ -163,11 +163,11 @@ function ConfirmDialog({ opts, onResolve }) {
       ),
     },
     warning: {
-      iconBg: 'rgba(235, 195, 43, 0.15)',
-      iconColor: '#ebc32b',
-      btnBg: 'linear-gradient(135deg, #ebc32b 0%, #c99f16 100%)',
-      btnColor: '#05090f',
-      btnShadow: '0 6px 24px rgba(235,195,43,.35)',
+      iconBg: 'rgba(192,39,39,0.15)',
+      iconColor: '#c02727',
+      btnBg: 'linear-gradient(135deg, #c02727 0%, #9e1f1f 100%)',
+      btnColor: '#ffffff',
+      btnShadow: '0 6px 24px rgba(192,39,39,.35)',
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />
@@ -176,11 +176,11 @@ function ConfirmDialog({ opts, onResolve }) {
       ),
     },
     info: {
-      iconBg: 'rgba(34, 217, 223, 0.15)',
-      iconColor: '#22d9df',
-      btnBg: 'linear-gradient(135deg, #22d9df 0%, #7af5f8 100%)',
-      btnColor: '#020F27',
-      btnShadow: '0 6px 24px rgba(34,217,223,.35)',
+      iconBg: 'rgba(192,39,39,0.15)',
+      iconColor: '#c02727',
+      btnBg: 'linear-gradient(135deg, #c02727 0%, #9e1f1f 100%)',
+      btnColor: '#ffffff',
+      btnShadow: '0 6px 24px rgba(192,39,39,.35)',
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />
@@ -208,7 +208,7 @@ function ConfirmDialog({ opts, onResolve }) {
       style={{
         position: 'fixed', inset: 0, top: 0, left: 0, right: 0, bottom: 0,
         width: '100vw', height: '100vh',
-        background: 'rgba(2,15,39,0.8)',
+        background: 'rgba(20,20,22,0.8)',
         backdropFilter: 'blur(8px)',
         WebkitBackdropFilter: 'blur(8px)',
         zIndex: 999998,
@@ -221,8 +221,8 @@ function ConfirmDialog({ opts, onResolve }) {
         onClick={e => e.stopPropagation()}
         style={{
           width: '100%', maxWidth: 440,
-          background: 'linear-gradient(145deg, rgba(15,43,79,0.98) 0%, rgba(15,33,69,0.98) 100%)',
-          border: '1px solid rgba(34,217,223,0.15)',
+          background: 'linear-gradient(145deg, rgba(31,31,35,0.98) 0%, rgba(31,31,35,0.98) 100%)',
+          border: '1px solid rgba(192,39,39,0.15)',
           borderRadius: 16,
           boxShadow: '0 25px 80px rgba(0,0,0,0.6)',
           padding: '1.5rem',
@@ -255,7 +255,7 @@ function ConfirmDialog({ opts, onResolve }) {
         {opts.mensaje && (
           <p style={{
             margin: '.5rem 0 1.5rem', textAlign: 'center',
-            fontSize: '.9rem', color: '#8499c2',
+            fontSize: '.9rem', color: '#9a9ba0',
             lineHeight: 1.5,
           }}>
             {opts.mensaje}
@@ -273,12 +273,12 @@ function ConfirmDialog({ opts, onResolve }) {
               fontFamily: "'DM Sans', sans-serif",
               fontWeight: 600, fontSize: 14,
               background: 'transparent',
-              border: '1px solid rgba(132,153,194,0.2)',
-              color: '#8499c2',
+              border: '1px solid rgba(154,155,160,0.2)',
+              color: '#9a9ba0',
               cursor: 'pointer', transition: 'all .15s',
             }}
             onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'; e.currentTarget.style.color = '#fff' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(132,153,194,0.2)'; e.currentTarget.style.color = '#8499c2' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(154,155,160,0.2)'; e.currentTarget.style.color = '#9a9ba0' }}
           >
             {opts.cancelarTxt || 'Cancelar'}
           </button>

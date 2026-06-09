@@ -20,11 +20,11 @@ export default function ActiveUsersTab({
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
           <h2 className="font-display text-2xl md:text-3xl tracking-wide"
-            style={{ color: '#0a1226', letterSpacing: '0.02em' }}>
+            style={{ color: '#1f1f23', letterSpacing: '0.02em' }}>
             USUARIOS ACTIVOS
           </h2>
           {activeTotal > 0 && (
-            <p className="text-sm font-body mt-1.5" style={{ color: '#5f6e8a' }}>
+            <p className="text-sm font-body mt-1.5" style={{ color: '#6e6f73' }}>
               {activeTotal} {activeTotal === 1 ? 'usuario aprobado' : 'usuarios aprobados'}
             </p>
           )}
@@ -35,9 +35,9 @@ export default function ActiveUsersTab({
           disabled={loadingActiveUsers}
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all disabled:opacity-50"
           style={{
-            background: loadingActiveUsers ? 'rgba(235,195,43,0.1)' : '#fff',
-            border: '1.5px solid #f0eadb',
-            color: loadingActiveUsers ? '#c99f16' : '#5f6e8a',
+            background: loadingActiveUsers ? 'rgba(192,39,39,0.1)' : '#fff',
+            border: '1.5px solid #faecec',
+            color: loadingActiveUsers ? '#9e1f1f' : '#6e6f73',
             boxShadow: '0 1px 0 rgba(10,18,38,0.03)',
           }}
         >
@@ -74,8 +74,8 @@ export default function ActiveUsersTab({
           className="w-full px-4 py-2.5 rounded-xl font-body text-sm outline-none border transition-all"
           style={{
             background: '#fff',
-            border: '1.5px solid #f0eadb',
-            color: '#0c182b',
+            border: '1.5px solid #faecec',
+            color: '#1f1f23',
           }}
         />
         <button
@@ -85,9 +85,9 @@ export default function ActiveUsersTab({
           }}
           className="px-5 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all"
           style={{
-            background: 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
-            color: '#0a1226',
-            boxShadow: '0 2px 8px rgba(235,195,43,0.15)',
+            background: 'linear-gradient(135deg, #c02727 0%, #9e1f1f 100%)',
+            color: '#ffffff',
+            boxShadow: '0 2px 8px rgba(192,39,39,0.15)',
           }}
         >
           Buscar
@@ -98,8 +98,8 @@ export default function ActiveUsersTab({
       {loadingActiveUsers && activeUsers.length === 0 ? (
         <div className="text-center py-20">
           <span className="inline-block w-10 h-10 border-3 border-t-transparent rounded-full animate-spin"
-            style={{ borderColor: '#ebc32b', borderTopColor: 'transparent' }} />
-          <p className="font-body text-sm mt-4" style={{ color: '#5f6e8a' }}>
+            style={{ borderColor: '#c02727', borderTopColor: 'transparent' }} />
+          <p className="font-body text-sm mt-4" style={{ color: '#6e6f73' }}>
             Cargando usuarios...
           </p>
         </div>
@@ -109,14 +109,14 @@ export default function ActiveUsersTab({
           className="rounded-2xl p-16 text-center"
           style={{
             background: '#fff',
-            border: '1.5px dashed #f0eadb',
+            border: '1.5px dashed #faecec',
             boxShadow: '0 1px 0 rgba(10,18,38,0.03)',
           }}
         >
-          <p className="font-body font-semibold text-lg mb-2" style={{ color: '#0a1226' }}>
+          <p className="font-body font-semibold text-lg mb-2" style={{ color: '#1f1f23' }}>
             Todavía no hay usuarios activos
           </p>
-          <p className="font-body text-sm max-w-md mx-auto" style={{ color: '#5f6e8a' }}>
+          <p className="font-body text-sm max-w-md mx-auto" style={{ color: '#6e6f73' }}>
             A medida que apruebes solicitudes pendientes, los usuarios van a aparecer acá.
           </p>
         </div>
@@ -127,7 +127,7 @@ export default function ActiveUsersTab({
             className="rounded-2xl overflow-hidden"
           style={{
             background: '#fff',
-            border: '1.5px solid #f0eadb',
+            border: '1.5px solid #faecec',
             boxShadow: '0 1px 0 rgba(10,18,38,0.03)',
           }}
         >
@@ -136,9 +136,9 @@ export default function ActiveUsersTab({
             className="hidden md:grid gap-3 px-5 py-3 text-[10px] font-body font-bold uppercase tracking-[0.15em]"
             style={{
               gridTemplateColumns: '1.6fr 1.6fr 1fr 0.8fr 0.8fr 1fr',
-              background: 'rgba(235,195,43,0.06)',
-              color: '#c99f16',
-              borderBottom: '1px solid #f0eadb',
+              background: 'rgba(192,39,39,0.06)',
+              color: '#9e1f1f',
+              borderBottom: '1px solid #faecec',
             }}
           >
             <span>Nombre</span>
@@ -167,19 +167,19 @@ export default function ActiveUsersTab({
                   <div
                     className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center font-display text-sm"
                     style={{
-                      background: 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
-                      color: '#0a1226',
+                      background: 'linear-gradient(135deg, #c02727 0%, #9e1f1f 100%)',
+                      color: '#ffffff',
                     }}
                   >
                     {getInitials(u.nombre)}
                   </div>
-                  <p className="font-body font-bold text-sm truncate" style={{ color: '#0a1226' }}>
+                  <p className="font-body font-bold text-sm truncate" style={{ color: '#1f1f23' }}>
                     {u.nombre}
                   </p>
                 </div>
 
                 {/* Email */}
-                <p className="font-body text-sm truncate" style={{ color: '#5f6e8a' }}>
+                <p className="font-body text-sm truncate" style={{ color: '#6e6f73' }}>
                   {u.email}
                 </p>
 
@@ -196,9 +196,9 @@ export default function ActiveUsersTab({
                 {/* Tipo usuario */}
                 <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-body font-semibold w-fit uppercase tracking-wider"
                   style={{
-                    background: u.tipo_usuario === 'jefe' ? 'rgba(235,195,43,0.1)' : 'rgba(12,24,43,0.05)',
-                    color: u.tipo_usuario === 'jefe' ? '#c99f16' : '#5f6e8a',
-                    border: `1px solid ${u.tipo_usuario === 'jefe' ? 'rgba(235,195,43,0.25)' : 'rgba(12,24,43,0.1)'}`,
+                    background: u.tipo_usuario === 'jefe' ? 'rgba(192,39,39,0.1)' : 'rgba(31,31,35,0.05)',
+                    color: u.tipo_usuario === 'jefe' ? '#9e1f1f' : '#6e6f73',
+                    border: `1px solid ${u.tipo_usuario === 'jefe' ? 'rgba(192,39,39,0.25)' : 'rgba(31,31,35,0.1)'}`,
                   }}>
                   {u.tipo_usuario === 'jefe' ? 'Jefe' : 'General'}
                 </span>
@@ -206,15 +206,15 @@ export default function ActiveUsersTab({
                 {/* Rol */}
                 <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-body font-semibold w-fit uppercase tracking-wider"
                   style={{
-                    background: u.rol === 'admin' ? 'rgba(224,50,82,0.07)' : 'rgba(12,24,43,0.05)',
-                    color: u.rol === 'admin' ? '#e03252' : '#5f6e8a',
-                    border: `1px solid ${u.rol === 'admin' ? 'rgba(224,50,82,0.2)' : 'rgba(12,24,43,0.1)'}`,
+                    background: u.rol === 'admin' ? 'rgba(224,50,82,0.07)' : 'rgba(31,31,35,0.05)',
+                    color: u.rol === 'admin' ? '#e03252' : '#6e6f73',
+                    border: `1px solid ${u.rol === 'admin' ? 'rgba(224,50,82,0.2)' : 'rgba(31,31,35,0.1)'}`,
                   }}>
                   {u.rol}
                 </span>
 
                 {/* Fecha */}
-                <p className="font-body text-xs" style={{ color: '#5f6e8a' }}>
+                <p className="font-body text-xs" style={{ color: '#6e6f73' }}>
                   {formatDate(u.fecha_registro)}
                 </p>
               </div>
@@ -225,7 +225,7 @@ export default function ActiveUsersTab({
         {/* Pagination controls for Active Users */}
         {activeTotal > activePageSize && (
           <div className="flex items-center justify-between mt-6 px-2">
-            <span className="text-xs font-body" style={{ color: '#5f6e8a' }}>
+            <span className="text-xs font-body" style={{ color: '#6e6f73' }}>
               Mostrando {activePage * activePageSize + 1} - {Math.min((activePage + 1) * activePageSize, activeTotal)} de {activeTotal}
             </span>
             <div className="flex gap-2">
@@ -237,7 +237,7 @@ export default function ActiveUsersTab({
                   loadActiveUsers(newPage, activeSearch)
                 }}
                 className="px-3 py-1.5 rounded-lg text-xs font-bold border transition-all disabled:opacity-40"
-                style={{ background: '#fff', borderColor: '#f0eadb', color: '#5f6e8a' }}
+                style={{ background: '#fff', borderColor: '#faecec', color: '#6e6f73' }}
               >
                 Anterior
               </button>
@@ -249,7 +249,7 @@ export default function ActiveUsersTab({
                   loadActiveUsers(newPage, activeSearch)
                 }}
                 className="px-3 py-1.5 rounded-lg text-xs font-bold border transition-all disabled:opacity-40"
-                style={{ background: '#fff', borderColor: '#f0eadb', color: '#5f6e8a' }}
+                style={{ background: '#fff', borderColor: '#faecec', color: '#6e6f73' }}
               >
                 Siguiente
               </button>

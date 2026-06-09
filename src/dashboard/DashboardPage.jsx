@@ -16,22 +16,22 @@ import sheetsApi from '../services/sheetsApi.js'
 import { useToast } from '../hooks/useToast.jsx'
 
 function StatCard({ label, value, sub, icon, gold = false, live = false }) {
-  const accentColor = live ? '#e03252' : gold ? '#c99f16' : '#425b8b'
-  const borderColor = live ? 'rgba(224,50,82,.2)' : gold ? 'rgba(201,159,22,.3)' : '#f0eadb'
-  const iconBg = live ? 'rgba(224,50,82,.08)' : gold ? 'rgba(235,195,43,.1)' : 'rgba(66,91,139,.08)'
+  const accentColor = live ? '#e03252' : gold ? '#9e1f1f' : '#6e6f73'
+  const borderColor = live ? 'rgba(224,50,82,.2)' : gold ? 'rgba(158,31,31,.3)' : '#e4e4e7'
+  const iconBg = live ? 'rgba(224,50,82,.08)' : gold ? 'rgba(192,39,39,.1)' : 'rgba(110,111,115,.08)'
   return (
     <div className="rounded-2xl p-5 flex flex-col gap-3 transition-all"
-      style={{ background: '#fff', border: `1px solid ${borderColor}`, boxShadow: '0 1px 0 rgba(12,24,43,.04)' }}
-      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 10px 28px rgba(12,24,43,.1)' }}
-      onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 1px 0 rgba(12,24,43,.04)' }}
+      style={{ background: '#fff', border: `1px solid ${borderColor}`, boxShadow: '0 1px 0 rgba(31,31,35,.04)' }}
+      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = '0 10px 28px rgba(31,31,35,.1)' }}
+      onMouseLeave={e => { e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 1px 0 rgba(31,31,35,.04)' }}
     >
       <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: iconBg }}>
         <div style={{ color: accentColor }}>{icon}</div>
       </div>
       <div>
         <p className="font-display leading-none mb-1" style={{ fontSize: 'clamp(2.2rem,5vw,3rem)', color: accentColor }}>{value}</p>
-        <p className="font-body font-bold text-xs uppercase tracking-widest" style={{ color: '#a8b2c4' }}>{label}</p>
-        {sub && <p className="font-body text-xs mt-0.5" style={{ color: '#a8b2c4' }}>{sub}</p>}
+        <p className="font-body font-bold text-xs uppercase tracking-widest" style={{ color: '#a9a9ae' }}>{label}</p>
+        {sub && <p className="font-body text-xs mt-0.5" style={{ color: '#a9a9ae' }}>{sub}</p>}
       </div>
     </div>
   )
@@ -46,21 +46,21 @@ function BetRow({ bet, onPredict }) {
     <div
       onClick={() => onPredict(bet)}
       className="flex items-center gap-3 p-3.5 rounded-xl transition-all group cursor-pointer"
-      style={{ background: '#fff', border: '1px solid #f0eadb', boxShadow: '0 1px 0 rgba(12,24,43,.04)' }}
-      onMouseEnter={e => { e.currentTarget.style.background = '#fffdf5'; e.currentTarget.style.borderColor = '#ebc32b'; e.currentTarget.style.transform = 'translateX(3px)' }}
-      onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#f0eadb'; e.currentTarget.style.transform = '' }}
+      style={{ background: '#fff', border: '1px solid #e4e4e7', boxShadow: '0 1px 0 rgba(31,31,35,.04)' }}
+      onMouseEnter={e => { e.currentTarget.style.background = '#faecec'; e.currentTarget.style.borderColor = '#c02727'; e.currentTarget.style.transform = 'translateX(3px)' }}
+      onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#e4e4e7'; e.currentTarget.style.transform = '' }}
     >
       <span className="w-2 h-2 rounded-full flex-shrink-0"
-        style={{ background: hasLive ? '#e03252' : '#ebc32b', boxShadow: hasLive ? '0 0 8px rgba(224,50,82,.5)' : '0 0 6px rgba(235,195,43,.5)' }} />
+        style={{ background: hasLive ? '#e03252' : '#c02727', boxShadow: hasLive ? '0 0 8px rgba(224,50,82,.5)' : '0 0 6px rgba(192,39,39,.5)' }} />
       <div className="flex-1 min-w-0">
-        <p className="font-body font-semibold text-sm truncate" style={{ color: '#0c182b' }}>{bet.titulo}</p>
-        <p className="font-body text-xs mt-0.5" style={{ color: '#5f6e8a' }}>
+        <p className="font-body font-semibold text-sm truncate" style={{ color: '#1f1f23' }}>{bet.titulo}</p>
+        <p className="font-body text-xs mt-0.5" style={{ color: '#6e6f73' }}>
           {matchCount} {matchCount === 1 ? 'partido' : 'partidos'}
           {bet.premio && <span> · 🏆 {bet.premio}</span>}
         </p>
       </div>
-      <span className="font-body text-xs font-semibold flex-shrink-0" style={{ color: closingSoon ? '#c99f16' : '#0c182b' }}>{remaining}</span>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a8b2c4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 transition-transform group-hover:translate-x-1">
+      <span className="font-body text-xs font-semibold flex-shrink-0" style={{ color: closingSoon ? '#9e1f1f' : '#1f1f23' }}>{remaining}</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a9a9ae" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 transition-transform group-hover:translate-x-1">
         <polyline points="9 18 15 12 9 6" />
       </svg>
     </div>
@@ -83,26 +83,26 @@ function LiveCard({ bet, predictions, onPredict }) {
         <span className="font-body font-bold text-xs uppercase tracking-widest" style={{ color: '#e03252' }}>
           {liveMatch?.minuto ? `EN VIVO · ${liveMatch.minuto}'` : 'EN VIVO'}
         </span>
-        <span className="font-body text-xs ml-auto truncate" style={{ color: '#5f6e8a' }}>{bet.titulo}</span>
+        <span className="font-body text-xs ml-auto truncate" style={{ color: '#6e6f73' }}>{bet.titulo}</span>
       </div>
       {liveMatch && (
         <div className="flex items-center gap-4">
           <div className="flex-1">
-            <p className="font-body font-semibold text-sm truncate" style={{ color: '#0c182b' }}>
-              {liveMatch.equipo_local} <span style={{ color: '#a8b2c4' }}>vs</span> {liveMatch.equipo_visitante}
+            <p className="font-body font-semibold text-sm truncate" style={{ color: '#1f1f23' }}>
+              {liveMatch.equipo_local} <span style={{ color: '#a9a9ae' }}>vs</span> {liveMatch.equipo_visitante}
             </p>
           </div>
           <div className="flex items-center gap-4 flex-shrink-0">
             <div className="text-center">
-              <p style={{ fontSize: 9, color: '#a8b2c4', textTransform: 'uppercase', letterSpacing: '.1em' }} className="font-body mb-0.5">Mi pred.</p>
-              <p className="font-display text-xl leading-none" style={{ color: '#c99f16' }}>
+              <p style={{ fontSize: 9, color: '#a9a9ae', textTransform: 'uppercase', letterSpacing: '.1em' }} className="font-body mb-0.5">Mi pred.</p>
+              <p className="font-display text-xl leading-none" style={{ color: '#9e1f1f' }}>
                 {myPred ? `${myPred.pred_local}-${myPred.pred_visitante}` : '—'}
               </p>
             </div>
-            <div className="w-px h-8" style={{ background: '#f0eadb' }} />
+            <div className="w-px h-8" style={{ background: '#e4e4e7' }} />
             <div className="text-center">
-              <p style={{ fontSize: 9, color: '#a8b2c4', textTransform: 'uppercase', letterSpacing: '.1em' }} className="font-body mb-0.5">Real</p>
-              <p className="font-display text-xl leading-none" style={{ color: '#0c182b' }}>
+              <p style={{ fontSize: 9, color: '#a9a9ae', textTransform: 'uppercase', letterSpacing: '.1em' }} className="font-body mb-0.5">Real</p>
+              <p className="font-display text-xl leading-none" style={{ color: '#1f1f23' }}>
                 {liveMatch.goles_local ?? 0}-{liveMatch.goles_visitante ?? 0}
               </p>
             </div>
@@ -116,18 +116,18 @@ function LiveCard({ bet, predictions, onPredict }) {
 function Empty({ icon, text, sub, to, cta }) {
   return (
     <div className="flex flex-col items-center justify-center py-10 px-4 text-center rounded-2xl"
-      style={{ background: '#fff', border: '1.5px dashed #f0eadb' }}>
+      style={{ background: '#fff', border: '1.5px dashed #e4e4e7' }}>
       <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
-        style={{ background: 'rgba(235,195,43,.08)', border: '1px solid rgba(235,195,43,.2)' }}>
-        <div style={{ color: '#c99f16' }}>{icon}</div>
+        style={{ background: 'rgba(192,39,39,.08)', border: '1px solid rgba(192,39,39,.2)' }}>
+        <div style={{ color: '#9e1f1f' }}>{icon}</div>
       </div>
-      <p className="font-body font-semibold text-sm" style={{ color: '#5f6e8a' }}>{text}</p>
-      {sub && <p className="font-body text-xs mt-1" style={{ color: '#a8b2c4' }}>{sub}</p>}
+      <p className="font-body font-semibold text-sm" style={{ color: '#6e6f73' }}>{text}</p>
+      {sub && <p className="font-body text-xs mt-1" style={{ color: '#a9a9ae' }}>{sub}</p>}
       {to && cta && (
         <Link to={to} className="mt-4 inline-flex items-center gap-1.5 font-body font-bold text-xs uppercase tracking-widest px-4 py-2 rounded-full transition-all"
-          style={{ background: '#ebc32b', color: '#05090f', textDecoration: 'none' }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#f5d75a' }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#ebc32b' }}>
+          style={{ background: '#c02727', color: '#ffffff', textDecoration: 'none' }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#d83a3a' }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#c02727' }}>
           {cta}
         </Link>
       )}
@@ -138,12 +138,12 @@ function Empty({ icon, text, sub, to, cta }) {
 function SectionHead({ title, to, cta }) {
   return (
     <div className="flex items-center justify-between mb-4">
-      <h2 className="font-display" style={{ fontSize: '1.5rem', color: '#0c182b', letterSpacing: '.02em' }}>{title}</h2>
+      <h2 className="font-display" style={{ fontSize: '1.5rem', color: '#1f1f23', letterSpacing: '.02em' }}>{title}</h2>
       {to && (
         <Link to={to} className="font-body font-semibold text-xs flex items-center gap-1.5 transition-colors"
-          style={{ color: '#c99f16', textDecoration: 'none' }}
-          onMouseEnter={e => { e.currentTarget.style.color = '#0c182b' }}
-          onMouseLeave={e => { e.currentTarget.style.color = '#c99f16' }}>
+          style={{ color: '#9e1f1f', textDecoration: 'none' }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#1f1f23' }}
+          onMouseLeave={e => { e.currentTarget.style.color = '#9e1f1f' }}>
           {cta}
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
@@ -249,20 +249,20 @@ export default function DashboardPage() {
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '2rem 1.5rem 3rem' }}>
 
         <div className="rounded-2xl p-6 md:p-8 mb-8 relative overflow-hidden animate-fade-in"
-          style={{ background: '#0c182b', border: '1px solid rgba(235,195,43,.2)', boxShadow: '0 12px 40px rgba(12,24,43,.15)' }}>
+          style={{ background: '#1f1f23', border: '1px solid rgba(192,39,39,.2)', boxShadow: '0 12px 40px rgba(31,31,35,.15)' }}>
           <div className="absolute top-0 right-0 w-64 h-64 pointer-events-none"
-            style={{ background: 'radial-gradient(circle at 80% 20%, rgba(235,195,43,.12), transparent 65%)' }} />
+            style={{ background: 'radial-gradient(circle at 80% 20%, rgba(192,39,39,.12), transparent 65%)' }} />
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-5">
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse-live" />
-                <span className="font-body font-bold text-xs uppercase tracking-widest" style={{ color: 'rgba(235,195,43,.7)' }}>
+                <span className="font-body font-bold text-xs uppercase tracking-widest" style={{ color: 'rgba(192,39,39,.7)' }}>
                   Mundial 2026
                 </span>
               </div>
               <h1 className="font-display leading-none mb-1" style={{ fontSize: 'clamp(2.2rem,6vw,3.5rem)', letterSpacing: '.02em' }}>
                 <span className="text-white">HOLA, </span>
-                <span style={{ color: '#ebc32b' }}>{nombre}</span>
+                <span style={{ color: '#c02727' }}>{nombre}</span>
               </h1>
               <p className="font-body text-sm" style={{ color: 'rgba(255,255,255,.45)' }}>
                 {activeBets.length > 0
@@ -273,9 +273,9 @@ export default function DashboardPage() {
             <div className="flex gap-2 flex-shrink-0">
               <Link to="/partidos"
                 className="inline-flex items-center gap-2 font-body font-bold text-sm px-5 py-3 rounded-full transition-all"
-                style={{ background: '#ebc32b', color: '#05090f', boxShadow: '0 6px 20px rgba(235,195,43,.3)', textDecoration: 'none' }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-1px)' }}
-                onMouseLeave={e => { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = '' }}>
+                style={{ background: '#c02727', color: '#ffffff', boxShadow: '0 6px 20px rgba(192,39,39,.3)', textDecoration: 'none' }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#d83a3a'; e.currentTarget.style.transform = 'translateY(-1px)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#c02727'; e.currentTarget.style.transform = '' }}>
                 Fixture
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
@@ -284,7 +284,7 @@ export default function DashboardPage() {
               <Link to="/ranking"
                 className="inline-flex items-center gap-2 font-body font-semibold text-sm px-5 py-3 rounded-full transition-all"
                 style={{ border: '1px solid rgba(255,255,255,.2)', color: 'rgba(255,255,255,.7)', textDecoration: 'none' }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(235,195,43,.4)'; e.currentTarget.style.color = '#ebc32b' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(192,39,39,.4)'; e.currentTarget.style.color = '#c02727' }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.2)'; e.currentTarget.style.color = 'rgba(255,255,255,.7)' }}>
                 Ranking
               </Link>
@@ -333,9 +333,9 @@ export default function DashboardPage() {
                 {activeBets.slice(0, 5).map(bet => <BetRow key={bet.id} bet={bet} onPredict={handlePredict} />)}
                 {activeBets.length > 5 && (
                   <Link to="/apuestas" className="text-center font-body text-sm py-2 transition-colors"
-                    style={{ color: '#c99f16', textDecoration: 'none' }}
-                    onMouseEnter={e => { e.currentTarget.style.color = '#0c182b' }}
-                    onMouseLeave={e => { e.currentTarget.style.color = '#c99f16' }}>
+                    style={{ color: '#9e1f1f', textDecoration: 'none' }}
+                    onMouseEnter={e => { e.currentTarget.style.color = '#1f1f23' }}
+                    onMouseLeave={e => { e.currentTarget.style.color = '#9e1f1f' }}>
                     +{activeBets.length - 5} más →
                   </Link>
                 )}
@@ -354,19 +354,19 @@ export default function DashboardPage() {
               ].map(({ to, label, sub, icon }) => (
                 <Link key={to} to={to}
                   className="flex items-center gap-3 p-3.5 rounded-xl transition-all group"
-                  style={{ background: '#fff', border: '1px solid #f0eadb', textDecoration: 'none', boxShadow: '0 1px 0 rgba(12,24,43,.04)' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#fffdf5'; e.currentTarget.style.borderColor = '#ebc32b'; e.currentTarget.style.transform = 'translateX(3px)' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#f0eadb'; e.currentTarget.style.transform = '' }}
+                  style={{ background: '#fff', border: '1px solid #e4e4e7', textDecoration: 'none', boxShadow: '0 1px 0 rgba(31,31,35,.04)' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#faecec'; e.currentTarget.style.borderColor = '#c02727'; e.currentTarget.style.transform = 'translateX(3px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#e4e4e7'; e.currentTarget.style.transform = '' }}
                 >
                   <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: 'linear-gradient(135deg,#0c182b,#425b8b)', color: '#ebc32b' }}>
+                    style={{ background: 'linear-gradient(135deg,#1f1f23,#6e6f73)', color: '#c02727' }}>
                     {icon}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-body font-semibold text-sm" style={{ color: '#0c182b' }}>{label}</p>
-                    <p className="font-body text-xs" style={{ color: '#5f6e8a' }}>{sub}</p>
+                    <p className="font-body font-semibold text-sm" style={{ color: '#1f1f23' }}>{label}</p>
+                    <p className="font-body text-xs" style={{ color: '#6e6f73' }}>{sub}</p>
                   </div>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a8b2c4" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a9a9ae" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
                     className="flex-shrink-0 transition-transform group-hover:translate-x-1">
                     <polyline points="9 18 15 12 9 6" />
                   </svg>

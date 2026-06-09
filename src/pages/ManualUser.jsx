@@ -9,20 +9,20 @@ import AppShell from '../dashboard/AppShell.jsx'
 
 /* ── Paleta ── */
 const C = {
-  navyDeep:  '#05090f',
-  navy:      '#0c182b',
-  navySoft:  '#18243f',
-  blueMed:   '#425b8b',
-  blueSoft:  '#6e83ad',
-  gold:      '#ebc32b',
-  goldLt:    '#f5d75a',
-  goldDk:    '#c99f16',
-  cream:     '#faf7f0',
-  cream2:    '#f0eadb',
+  navyDeep:  '#141416',
+  navy:      '#1f1f23',
+  navySoft:  '#2b2b30',
+  blueMed:   '#6e6f73',
+  blueSoft:  '#9a9ba0',
+  gold:      '#c02727',
+  goldLt:    '#d83a3a',
+  goldDk:    '#9e1f1f',
+  cream:     '#f4f4f5',
+  cream2:    '#e4e4e7',
   cream3:    '#e8e0c9',
-  ink700:    '#2b3a5a',
-  ink500:    '#5f6e8a',
-  ink300:    '#a8b2c4',
+  ink700:    '#3a3a40',
+  ink500:    '#6e6f73',
+  ink300:    '#a9a9ae',
   red:       '#b8452e',
   green:     '#1b8a5a',
   white:     '#ffffff',
@@ -66,7 +66,7 @@ function SectionHeader({ num, kicker, title, icon }) {
         position:'absolute', top:-18, left:-4,
         fontFamily:"'Bebas Neue',sans-serif",
         fontSize:120, lineHeight:.85, letterSpacing:'.02em',
-        color:'rgba(12,24,43,.05)',
+        color:'rgba(31,31,35,.05)',
         pointerEvents:'none', userSelect:'none',
         zIndex:0,
       }}>{num}</span>
@@ -88,9 +88,9 @@ function SectionHeader({ num, kicker, title, icon }) {
             <div style={{
               width:42, height:42, borderRadius:12, flexShrink:0,
               background:`linear-gradient(135deg,${C.navy},${C.navySoft})`,
-              border:`1px solid rgba(235,195,43,.35)`,
+              border:`1px solid rgba(192,39,39,.35)`,
               display:'flex', alignItems:'center', justifyContent:'center',
-              boxShadow:'0 6px 18px rgba(12,24,43,.18)',
+              boxShadow:'0 6px 18px rgba(31,31,35,.18)',
               marginTop:4,
             }}>{icon}</div>
           )}
@@ -103,7 +103,7 @@ function SectionHeader({ num, kicker, title, icon }) {
         </div>
         <div style={{
           height:2, marginTop:14, marginLeft:icon?56:0,
-          background:`linear-gradient(90deg,${C.gold} 0%,rgba(235,195,43,.4) 30%,rgba(235,195,43,0) 80%)`,
+          background:`linear-gradient(90deg,${C.gold} 0%,rgba(192,39,39,.4) 30%,rgba(192,39,39,0) 80%)`,
         }}/>
       </div>
     </div>
@@ -113,8 +113,8 @@ function SectionHeader({ num, kicker, title, icon }) {
 function Callout({ type='info', title, children }) {
   const variants = {
     tip:    { accent:C.green,   bg:'rgba(27,138,90,.06)',  ic:'✓', tone:'CONSEJO' },
-    warn:   { accent:C.goldDk,  bg:'rgba(235,195,43,.08)', ic:'!', tone:'IMPORTANTE' },
-    info:   { accent:C.blueMed, bg:'rgba(66,91,139,.06)',  ic:'i', tone:'NOTA' },
+    warn:   { accent:C.goldDk,  bg:'rgba(192,39,39,.08)', ic:'!', tone:'IMPORTANTE' },
+    info:   { accent:C.blueMed, bg:'rgba(110,111,115,.06)',  ic:'i', tone:'NOTA' },
     danger: { accent:C.red,     bg:'rgba(184,69,46,.06)',  ic:'⚠', tone:'CUIDADO' },
   }
   const v = variants[type] || variants.info
@@ -163,7 +163,7 @@ function StateCard({ tag, tagColor, name, desc, accent=C.gold }) {
       transition:'all .22s ease',
       overflow:'hidden',
     }}
-      onMouseEnter={e=>{ e.currentTarget.style.borderColor=accent; e.currentTarget.style.transform='translateY(-3px)'; e.currentTarget.style.boxShadow=`0 14px 32px rgba(12,24,43,.1), 0 0 0 1px ${accent}33` }}
+      onMouseEnter={e=>{ e.currentTarget.style.borderColor=accent; e.currentTarget.style.transform='translateY(-3px)'; e.currentTarget.style.boxShadow=`0 14px 32px rgba(31,31,35,.1), 0 0 0 1px ${accent}33` }}
       onMouseLeave={e=>{ e.currentTarget.style.borderColor=C.cream2; e.currentTarget.style.transform='none'; e.currentTarget.style.boxShadow='none' }}>
       <div style={{
         position:'absolute', top:0, left:0, right:0, height:2,
@@ -314,8 +314,8 @@ export default function ManualUser() {
         <div style={{
           position:'absolute', inset:0, pointerEvents:'none', overflow:'hidden',
           background:`
-            radial-gradient(ellipse 600px 400px at 90% 5%, rgba(235,195,43,.08), transparent 60%),
-            radial-gradient(ellipse 500px 600px at 5% 60%, rgba(66,91,139,.05), transparent 60%)
+            radial-gradient(ellipse 600px 400px at 90% 5%, rgba(192,39,39,.08), transparent 60%),
+            radial-gradient(ellipse 500px 600px at 5% 60%, rgba(110,111,115,.05), transparent 60%)
           `,
         }}/>
 
@@ -352,8 +352,8 @@ export default function ManualUser() {
                 fontSize:9, fontWeight:700,
                 textTransform:'uppercase', letterSpacing:'.16em',
                 color:C.goldDk,
-                background:'rgba(235,195,43,.12)',
-                border:`1px solid rgba(235,195,43,.35)`,
+                background:'rgba(192,39,39,.12)',
+                border:`1px solid rgba(192,39,39,.35)`,
                 borderRadius:99, padding:'3px 10px',
               }}>
                 <span style={{ width:5, height:5, borderRadius:'50%', background:C.gold }}/>
@@ -377,14 +377,14 @@ export default function ManualUser() {
                       <button key={s.id} onClick={()=>goTo(s.id)} style={{
                         display:'flex', alignItems:'center', gap:10,
                         width:'100%', padding:'7px 18px 7px 12px',
-                        background:active?'rgba(235,195,43,.1)':'transparent',
+                        background:active?'rgba(192,39,39,.1)':'transparent',
                         border:'none',
                         borderLeft:`2px solid ${active?C.gold:'transparent'}`,
                         cursor:'pointer', textAlign:'left',
                         transition:'all .15s ease',
                         fontFamily:"'DM Sans',sans-serif",
                       }}
-                        onMouseEnter={e=>{ if(!active){ e.currentTarget.style.background='rgba(235,195,43,.05)' }}}
+                        onMouseEnter={e=>{ if(!active){ e.currentTarget.style.background='rgba(192,39,39,.05)' }}}
                         onMouseLeave={e=>{ if(!active){ e.currentTarget.style.background='transparent' }}}>
                         <span style={{
                           fontFamily:"'Bebas Neue',sans-serif", fontSize:12,
@@ -434,7 +434,7 @@ export default function ManualUser() {
                 PARTICIPÁ Y<br/>
                 <span style={{
                   color:C.goldDk,
-                  textShadow:'0 0 32px rgba(235,195,43,.25)',
+                  textShadow:'0 0 32px rgba(192,39,39,.25)',
                 }}>GANÁ PREMIOS</span>
               </h1>
 

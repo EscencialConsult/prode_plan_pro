@@ -16,16 +16,16 @@ import { useMemo, useState } from 'react'
 // 🎨 PALETA — crema · azul medianoche · dorado · negro
 // ──────────────────────────────────────────────────────────────────
 const C = {
-  cream:    '#f7f1e1',
-  creamHi:  '#fcf8ec',
-  ink:      '#0a1226',  // azul medianoche
-  inkSoft:  '#1a2540',
-  steel:    '#5f6e8a',
-  mute:     '#a8b2c4',
-  line:     '#e7dec6',
-  gold:     '#d4a017',
-  goldHi:   '#ebc32b',
-  goldDeep: '#a87a0b',
+  cream:    '#f0f0f2',
+  creamHi:  '#fafafa',
+  ink:      '#141416',
+  inkSoft:  '#1f1f23',
+  steel:    '#6e6f73',
+  mute:     '#a9a9ae',
+  line:     '#c9cacd',
+  gold:     '#9e1f1f',
+  goldHi:   '#c02727',
+  goldDeep: '#9e1f1f',
   red:      '#e03252',
 }
 

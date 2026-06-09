@@ -27,7 +27,7 @@ function StatCard({ label, value, color = 'var(--color-accent)' }) {
         <div
             className="rounded-xl p-4 transition-all hover:translate-y-[-2px]"
             style={{
-                background: 'linear-gradient(145deg, rgba(15,43,79,0.85) 0%, rgba(15,33,69,0.9) 100%)',
+                background: 'linear-gradient(145deg, rgba(31,31,35,0.85) 0%, rgba(27,27,31,0.9) 100%)',
                 border: '1px solid var(--color-border)',
                 boxShadow: '0 6px 20px rgba(0,0,0,0.25)',
             }}
@@ -66,7 +66,7 @@ function PartidoRow({ match, pred }) {
         <div
             className="rounded-lg p-3"
             style={{
-                background: 'rgba(2,15,39,0.4)',
+                background: 'rgba(20,20,22,0.4)',
                 border: `1px solid ${isLive ? 'rgba(255,61,113,0.25)' : 'var(--color-border)'}`,
             }}
         >
@@ -155,13 +155,13 @@ function BetCardItem({ bet, predsDeLaApuesta, expanded, onToggle }) {
     const estado = bet.estado === 'finalizada'
         ? { label: 'FINALIZADA', color: 'var(--color-warn)', bg: 'rgba(244,180,42,0.1)', border: 'rgba(244,180,42,0.3)' }
         : open
-            ? { label: 'ACTIVA', color: 'var(--color-accent)', bg: 'rgba(34,217,223,0.1)', border: 'rgba(34,217,223,0.3)' }
+            ? { label: 'ACTIVA', color: 'var(--color-accent)', bg: 'rgba(192,39,39,0.1)', border: 'rgba(192,39,39,0.3)' }
             : { label: 'CERRADA', color: 'var(--color-text-muted)', bg: 'rgba(132,153,194,0.1)', border: 'var(--color-border)' }
 
     const esGrupal = bet.tipo === 'grupos'
     const tipo = esGrupal
         ? { label: 'GRUPAL', color: 'var(--color-warn)', bg: 'rgba(244,180,42,0.1)', border: 'rgba(244,180,42,0.3)' }
-        : { label: 'INDIVIDUAL', color: 'var(--color-accent)', bg: 'rgba(34,217,223,0.08)', border: 'rgba(34,217,223,0.25)' }
+        : { label: 'INDIVIDUAL', color: 'var(--color-accent)', bg: 'rgba(192,39,39,0.08)', border: 'rgba(192,39,39,0.25)' }
 
     // Contar predicciones de este bet
     const partidosIds = bet.partidos?.map(p => p.id) || []
@@ -179,9 +179,9 @@ function BetCardItem({ bet, predsDeLaApuesta, expanded, onToggle }) {
         <div
             className="rounded-xl overflow-hidden transition-all"
             style={{
-                background: 'linear-gradient(145deg, rgba(15,43,79,0.85) 0%, rgba(15,33,69,0.9) 100%)',
-                border: `1px solid ${expanded ? 'rgba(34,217,223,0.4)' : 'var(--color-border)'}`,
-                boxShadow: expanded ? '0 10px 30px rgba(0,0,0,0.35), 0 0 24px rgba(34,217,223,0.08)' : '0 6px 20px rgba(0,0,0,0.25)',
+                background: 'linear-gradient(145deg, rgba(31,31,35,0.85) 0%, rgba(27,27,31,0.9) 100%)',
+                border: `1px solid ${expanded ? 'rgba(192,39,39,0.4)' : 'var(--color-border)'}`,
+                boxShadow: expanded ? '0 10px 30px rgba(0,0,0,0.35), 0 0 24px rgba(192,39,39,0.08)' : '0 6px 20px rgba(0,0,0,0.25)',
             }}
         >
             {/* Header clickeable */}
@@ -419,7 +419,7 @@ export default function MisPrediccionesPage() {
             ) : betsFiltradas.length === 0 ? (
                 <div
                     className="rounded-2xl p-12 text-center animate-fade-in"
-                    style={{ background: 'rgba(15,43,79,0.4)', border: '1px dashed var(--color-border)' }}
+                    style={{ background: 'rgba(31,31,35,0.4)', border: '1px dashed var(--color-border)' }}
                 >
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-faint)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-4">
                         <path d="M9 11H3v10h6V11zM15 3h-6v18h6V3zM21 7h-6v14h6V7z" />

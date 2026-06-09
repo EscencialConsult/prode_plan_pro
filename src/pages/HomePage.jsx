@@ -8,7 +8,7 @@ import HomeFooter     from '../components/home/HomeFooter'
 
 export default function HomePage() {
   return (
-    <div className="overflow-x-hidden" style={{ background: 'var(--lnd-navy-deep)' }}>
+    <div className="overflow-x-hidden" style={{ background: '#f4f4f5' }}>
       <HomeNav />
       <HomeHero />
       <HomeStrip />

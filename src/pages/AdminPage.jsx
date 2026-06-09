@@ -26,7 +26,7 @@ function getInitials(name = '') {
 }
 
 function getBetStatusColor(bet) {
-  if (isBetOpen(bet)) return { color: 'var(--color-accent)', bg: 'rgba(34,217,223,0.12)', border: 'rgba(34,217,223,0.4)', label: 'Activa' }
+  if (isBetOpen(bet)) return { color: 'var(--color-accent)', bg: 'rgba(192,39,39,0.12)', border: 'rgba(192,39,39,0.4)', label: 'Activa' }
   if (bet.estado === 'finalizada') return { color: 'var(--color-warn)', bg: 'rgba(244,180,42,0.1)', border: 'rgba(244,180,42,0.3)', label: 'Finalizada' }
   return { color: 'var(--color-text-muted)', bg: 'rgba(132,153,194,0.1)', border: 'var(--color-border)', label: 'Cerrada' }
 }
@@ -268,7 +268,7 @@ if (initialLoading) {
 
         {/* Divider */}
         <div className="mb-6 h-px"
-          style={{ background: 'linear-gradient(90deg,transparent,rgba(235,195,43,.25) 30%,rgba(235,195,43,.25) 70%,transparent)' }} />
+          style={{ background: 'linear-gradient(90deg,transparent,rgba(192,39,39,.25) 30%,rgba(192,39,39,.25) 70%,transparent)' }} />
 
         <AdminTabs
           tab={tab}
@@ -305,7 +305,7 @@ if (initialLoading) {
               </h3>
               <form onSubmit={handleCreateArea} className="space-y-3">
                 <div>
-                  <label className="text-[11px] font-body font-bold uppercase tracking-[0.15em] mb-2 block" style={{ color: '#c99f16' }}>
+                  <label className="text-[11px] font-body font-bold uppercase tracking-[0.15em] mb-2 block" style={{ color: '#9e1f1f' }}>
                     Nombre del área *
                   </label>
                   <input
@@ -314,11 +314,11 @@ if (initialLoading) {
                     onChange={e => setNewArea({ ...newArea, nombre: e.target.value })}
                     placeholder="Ej: Recursos Humanos"
                     className="w-full px-4 py-3 rounded-xl font-body text-sm outline-none"
-                    style={{ background: '#fff', border: '1px solid #e8dfd0', color: '#0c182b' }}
+                    style={{ background: '#fff', border: '1px solid #e8dfd0', color: '#1f1f23' }}
                   />
                 </div>
                 <div>
-                  <label className="text-[11px] font-body font-bold uppercase tracking-[0.15em] mb-2 block" style={{ color: '#c99f16' }}>
+                  <label className="text-[11px] font-body font-bold uppercase tracking-[0.15em] mb-2 block" style={{ color: '#9e1f1f' }}>
                     Descripción (opcional)
                   </label>
                   <textarea
@@ -327,7 +327,7 @@ if (initialLoading) {
                     placeholder="Descripción breve del área"
                     rows={2}
                     className="w-full px-4 py-3 rounded-xl font-body text-sm outline-none resize-none"
-                    style={{ background: '#fff', border: '1px solid #e8dfd0', color: '#0c182b' }}
+                    style={{ background: '#fff', border: '1px solid #e8dfd0', color: '#1f1f23' }}
                   />
                 </div>
                 <button
@@ -335,8 +335,8 @@ if (initialLoading) {
                   disabled={savingArea || !newArea.nombre.trim()}
                   className="px-6 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all disabled:opacity-40"
                   style={{
-                    background: 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
-                    color: '#0a1226',
+                    background: 'linear-gradient(135deg, #c02727 0%, #9e1f1f 100%)',
+                    color: '#ffffff',
                   }}
                 >
                   {savingArea ? 'Guardando...' : 'Crear área'}
@@ -349,17 +349,17 @@ if (initialLoading) {
               className="rounded-2xl p-6"
               style={{
                 background: '#fff',
-                border: '1px solid #f0eadb',
-                boxShadow: '0 4px 16px rgba(12,24,43,.06)',
+                border: '1px solid #e4e4e7',
+                boxShadow: '0 4px 16px rgba(31,31,35,.06)',
               }}
             >
               <h3 className="font-display text-xl mb-4" style={{ color: '#0a1226' }}>
                 Áreas existentes ({areasAll.length})
               </h3>
               {loadingAreas ? (
-                <p className="text-sm font-body" style={{ color: '#5f6e8a' }}>Cargando...</p>
+                <p className="text-sm font-body" style={{ color: '#6e6f73' }}>Cargando...</p>
               ) : areasAll.length === 0 ? (
-                <p className="text-sm font-body" style={{ color: '#5f6e8a' }}>
+                <p className="text-sm font-body" style={{ color: '#6e6f73' }}>
                   Todavía no hay áreas creadas.
                 </p>
               ) : (
@@ -369,8 +369,8 @@ if (initialLoading) {
                       key={a.id}
                       className="flex items-center justify-between gap-3 p-4 rounded-xl"
                       style={{
-                        background: a.activa ? 'rgba(235,195,43,0.05)' : 'rgba(95,110,138,0.04)',
-                        border: `1px solid ${a.activa ? 'rgba(235,195,43,0.15)' : 'rgba(95,110,138,0.15)'}`,
+                        background: a.activa ? 'rgba(192,39,39,0.05)' : 'rgba(95,110,138,0.04)',
+                        border: `1px solid ${a.activa ? 'rgba(192,39,39,0.15)' : 'rgba(95,110,138,0.15)'}`,
                       }}
                     >
                       {editingArea?.id === a.id ? (
@@ -380,28 +380,28 @@ if (initialLoading) {
                             value={editingArea.nombre}
                             onChange={e => setEditingArea({ ...editingArea, nombre: e.target.value })}
                             className="w-full px-3 py-2 rounded-lg text-sm"
-                            style={{ background: '#fff', border: '1px solid #e8dfd0', color: '#0c182b' }}
+                            style={{ background: '#fff', border: '1px solid #e8dfd0', color: '#1f1f23' }}
                           />
                           <textarea
                             value={editingArea.descripcion || ''}
                             onChange={e => setEditingArea({ ...editingArea, descripcion: e.target.value })}
                             rows={2}
                             className="w-full px-3 py-2 rounded-lg text-sm resize-none"
-                            style={{ background: '#fff', border: '1px solid #e8dfd0', color: '#0c182b' }}
+                            style={{ background: '#fff', border: '1px solid #e8dfd0', color: '#1f1f23' }}
                           />
                           <div className="flex gap-2">
                             <button
                               onClick={handleSaveEdit}
                               disabled={savingArea}
                               className="px-4 py-1.5 rounded-lg text-xs font-bold"
-                              style={{ background: '#ebc32b', color: '#0a1226' }}
+                              style={{ background: '#c02727', color: '#ffffff' }}
                             >
                               Guardar
                             </button>
                             <button
                               onClick={() => setEditingArea(null)}
                               className="px-4 py-1.5 rounded-lg text-xs"
-                              style={{ background: 'transparent', border: '1px solid #e8dfd0', color: '#5f6e8a' }}
+                              style={{ background: 'transparent', border: '1px solid #e8dfd0', color: '#6e6f73' }}
                             >
                               Cancelar
                             </button>
@@ -415,7 +415,7 @@ if (initialLoading) {
                               {!a.activa && <span className="ml-2 text-xs font-normal">(inactiva)</span>}
                             </p>
                             {a.descripcion && (
-                              <p className="text-xs font-body mt-1" style={{ color: '#5f6e8a' }}>
+                              <p className="text-xs font-body mt-1" style={{ color: '#6e6f73' }}>
                                 {a.descripcion}
                               </p>
                             )}
@@ -424,7 +424,7 @@ if (initialLoading) {
                             <button
                               onClick={() => setEditingArea({ id: a.id, nombre: a.nombre, descripcion: a.descripcion || '' })}
                               className="px-3 py-1.5 rounded-lg text-xs font-body"
-                              style={{ background: 'transparent', border: '1px solid rgba(12,24,43,.2)', color: '#5f6e8a' }}
+                              style={{ background: 'transparent', border: '1px solid rgba(31,31,35,.2)', color: '#6e6f73' }}
                             >
                               Editar
                             </button>
@@ -462,7 +462,7 @@ if (initialLoading) {
         </h2>
         {pendingTotal > 0 && (
           <p className="text-sm font-body mt-1.5"
-            style={{ color: '#5f6e8a' }}>
+            style={{ color: '#6e6f73' }}>
             {pendingTotal} {pendingTotal === 1 ? 'solicitud pendiente' : 'solicitudes pendientes'} de aprobación
           </p>
         )}
@@ -473,22 +473,22 @@ if (initialLoading) {
         disabled={loadingUsers}
         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all disabled:opacity-50"
         style={{
-          background: loadingUsers ? 'rgba(235,195,43,0.1)' : '#fff',
-          border: '1.5px solid #f0eadb',
-          color: loadingUsers ? '#c99f16' : '#5f6e8a',
+          background: loadingUsers ? 'rgba(192,39,39,0.1)' : '#fff',
+          border: '1.5px solid #e4e4e7',
+          color: loadingUsers ? '#9e1f1f' : '#6e6f73',
           boxShadow: '0 1px 0 rgba(10,18,38,0.03)',
         }}
         onMouseEnter={e => {
           if (!loadingUsers) {
-            e.currentTarget.style.borderColor = '#ebc32b'
-            e.currentTarget.style.color = '#c99f16'
+            e.currentTarget.style.borderColor = '#c02727'
+            e.currentTarget.style.color = '#9e1f1f'
             e.currentTarget.style.transform = 'translateY(-1px)'
-            e.currentTarget.style.boxShadow = '0 4px 12px rgba(235,195,43,0.15)'
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(192,39,39,0.15)'
           }
         }}
         onMouseLeave={e => {
-          e.currentTarget.style.borderColor = '#f0eadb'
-          e.currentTarget.style.color = '#5f6e8a'
+          e.currentTarget.style.borderColor = '#e4e4e7'
+          e.currentTarget.style.color = '#6e6f73'
           e.currentTarget.style.transform = 'translateY(0)'
           e.currentTarget.style.boxShadow = '0 1px 0 rgba(10,18,38,0.03)'
         }}
@@ -526,8 +526,8 @@ if (initialLoading) {
         className="w-full px-4 py-2.5 rounded-xl font-body text-sm outline-none border transition-all"
         style={{
           background: '#fff',
-          border: '1.5px solid #f0eadb',
-          color: '#0c182b',
+          border: '1.5px solid #e4e4e7',
+          color: '#1f1f23',
         }}
       />
       <button
@@ -537,9 +537,9 @@ if (initialLoading) {
         }}
         className="px-5 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all"
         style={{
-          background: 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
-          color: '#0a1226',
-          boxShadow: '0 2px 8px rgba(235,195,43,0.15)',
+          background: 'linear-gradient(135deg, #c02727 0%, #9e1f1f 100%)',
+          color: '#ffffff',
+          boxShadow: '0 2px 8px rgba(192,39,39,0.15)',
         }}
       >
         Buscar
@@ -550,8 +550,8 @@ if (initialLoading) {
     {loadingUsers && pendingUsers.length === 0 ? (
       <div className="text-center py-20">
         <span className="inline-block w-10 h-10 border-3 border-t-transparent rounded-full animate-spin"
-          style={{ borderColor: '#ebc32b', borderTopColor: 'transparent' }} />
-        <p className="font-body text-sm mt-4" style={{ color: '#5f6e8a' }}>
+          style={{ borderColor: '#c02727', borderTopColor: 'transparent' }} />
+        <p className="font-body text-sm mt-4" style={{ color: '#6e6f73' }}>
           Cargando usuarios...
         </p>
       </div>
@@ -561,20 +561,20 @@ if (initialLoading) {
         className="rounded-2xl p-16 text-center"
         style={{
           background: '#fff',
-          border: '1.5px dashed #f0eadb',
+          border: '1.5px dashed #e4e4e7',
           boxShadow: '0 1px 0 rgba(10,18,38,0.03)',
         }}
       >
         <div className="w-16 h-16 mx-auto mb-5 rounded-2xl flex items-center justify-center"
-          style={{ background: 'rgba(235,195,43,0.08)', border: '1px solid rgba(235,195,43,0.2)' }}>
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#c99f16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          style={{ background: 'rgba(192,39,39,0.08)', border: '1px solid rgba(192,39,39,0.2)' }}>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9e1f1f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M20 6L9 17l-5-5" />
           </svg>
         </div>
         <p className="font-body font-semibold text-lg mb-2" style={{ color: '#0a1226' }}>
           Todo aprobado
         </p>
-        <p className="font-body text-sm max-w-md mx-auto" style={{ color: '#5f6e8a' }}>
+        <p className="font-body text-sm max-w-md mx-auto" style={{ color: '#6e6f73' }}>
           No hay usuarios pendientes de aprobación. Las nuevas solicitudes aparecerán acá automáticamente.
         </p>
       </div>
@@ -592,7 +592,7 @@ if (initialLoading) {
               className="rounded-2xl overflow-hidden transition-all"
               style={{
                 background: '#fff',
-                border: `1.5px solid ${isApproving ? '#ebc32b' : isRejecting ? '#ff4d6d' : '#f0eadb'}`,
+                border: `1.5px solid ${isApproving ? '#c02727' : isRejecting ? '#ff4d6d' : '#e4e4e7'}`,
                 boxShadow: isApproving || isRejecting 
                   ? '0 8px 24px rgba(10,18,38,0.12)' 
                   : '0 1px 0 rgba(10,18,38,0.03)',
@@ -606,9 +606,9 @@ if (initialLoading) {
                     <div
                       className="flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center font-display text-xl tracking-wide"
                       style={{
-                        background: 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
-                        color: '#0a1226',
-                        boxShadow: '0 4px 12px rgba(235,195,43,0.25)',
+                        background: 'linear-gradient(135deg, #c02727 0%, #9e1f1f 100%)',
+                        color: '#ffffff',
+                        boxShadow: '0 4px 12px rgba(192,39,39,0.25)',
                       }}
                     >
                       {getInitials(u.nombre)}
@@ -620,15 +620,15 @@ if (initialLoading) {
                         {u.nombre}
                       </p>
                       <p className="text-sm font-body truncate mb-1.5"
-                        style={{ color: '#5f6e8a' }}>
+                        style={{ color: '#6e6f73' }}>
                         {u.email}
                       </p>
                       <div className="flex items-center gap-2">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-body font-semibold uppercase tracking-wider"
                           style={{ 
-                            background: 'rgba(235,195,43,0.08)', 
-                            color: '#c99f16',
-                            border: '1px solid rgba(235,195,43,0.2)'
+                            background: 'rgba(192,39,39,0.08)', 
+                            color: '#9e1f1f',
+                            border: '1px solid rgba(192,39,39,0.2)'
                           }}>
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <circle cx="12" cy="12" r="10" />
@@ -646,16 +646,16 @@ if (initialLoading) {
                         onClick={() => setApprovingUser({ id: u.id, area_id: '', tipo_usuario: 'general' })}
                         className="px-5 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all"
                         style={{
-                          background: 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
-                          color: '#0a1226',
-                          boxShadow: '0 2px 8px rgba(235,195,43,0.25)',
+                          background: 'linear-gradient(135deg, #c02727 0%, #9e1f1f 100%)',
+                          color: '#ffffff',
+                          boxShadow: '0 2px 8px rgba(192,39,39,0.25)',
                         }}
                         onMouseEnter={e => {
-                          e.currentTarget.style.boxShadow = '0 4px 16px rgba(235,195,43,0.4)'
+                          e.currentTarget.style.boxShadow = '0 4px 16px rgba(192,39,39,0.4)'
                           e.currentTarget.style.transform = 'translateY(-2px)'
                         }}
                         onMouseLeave={e => {
-                          e.currentTarget.style.boxShadow = '0 2px 8px rgba(235,195,43,0.25)'
+                          e.currentTarget.style.boxShadow = '0 2px 8px rgba(192,39,39,0.25)'
                           e.currentTarget.style.transform = 'translateY(0)'
                         }}
                       >
@@ -705,7 +705,7 @@ if (initialLoading) {
                         <p className="font-body font-bold text-sm mb-1" style={{ color: '#0a1226' }}>
                           ¿Estás seguro de rechazar este usuario?
                         </p>
-                        <p className="text-xs font-body" style={{ color: '#5f6e8a' }}>
+                        <p className="text-xs font-body" style={{ color: '#6e6f73' }}>
                           Esta acción eliminará permanentemente la solicitud de <strong style={{ color: '#0a1226' }}>{u.nombre}</strong>. No se podrá deshacer.
                         </p>
                       </div>
@@ -718,8 +718,8 @@ if (initialLoading) {
                         className="px-4 py-2 rounded-lg text-xs font-body font-semibold uppercase tracking-wider transition-all disabled:opacity-50"
                         style={{
                           background: '#fff',
-                          border: '1px solid #f0eadb',
-                          color: '#5f6e8a',
+                          border: '1px solid #e4e4e7',
+                          color: '#6e6f73',
                         }}
                       >
                         Cancelar
@@ -769,7 +769,7 @@ if (initialLoading) {
                     {isPro && (
                       <div>
                         <p className="text-[11px] font-body font-bold uppercase tracking-[0.15em] mb-3 flex items-center gap-2"
-                          style={{ color: '#c99f16' }}>
+                          style={{ color: '#9e1f1f' }}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                             <circle cx="12" cy="7" r="4" />
@@ -786,9 +786,9 @@ if (initialLoading) {
                                 onClick={() => setApprovingUser({ ...approvingUser, tipo_usuario: val })}
                                 className="px-4 py-2 rounded-full text-xs font-body font-bold transition-all"
                                 style={{
-                                  background: sel ? '#ebc32b' : '#fff',
-                                  border: `1.5px solid ${sel ? '#ebc32b' : '#f0eadb'}`,
-                                  color: sel ? '#0a1226' : '#5f6e8a',
+                                  background: sel ? '#c02727' : '#fff',
+                                  border: `1.5px solid ${sel ? '#c02727' : '#e4e4e7'}`,
+                                  color: sel ? '#ffffff' : '#6e6f73',
                                 }}
                               >
                                 {label}
@@ -797,7 +797,7 @@ if (initialLoading) {
                           })}
                         </div>
                         {approvingUser.tipo_usuario === 'jefe' && (
-                          <p className="text-[10px] font-body mt-2" style={{ color: '#c99f16' }}>
+                          <p className="text-[10px] font-body mt-2" style={{ color: '#9e1f1f' }}>
                             ⚠️ El área es obligatoria para jefes. Solo puede haber un jefe por área.
                           </p>
                         )}
@@ -807,8 +807,8 @@ if (initialLoading) {
                     <div
                       className="rounded-xl p-5 flex flex-col gap-5"
                       style={{
-                        background: 'rgba(235,195,43,0.04)',
-                        border: '1.5px solid rgba(235,195,43,0.15)',
+                        background: 'rgba(192,39,39,0.04)',
+                        border: '1.5px solid rgba(192,39,39,0.15)',
                       }}
                     >
 
@@ -816,7 +816,7 @@ if (initialLoading) {
                     {isPro && (
                       <div>
                         <p className="text-[11px] font-body font-bold uppercase tracking-[0.15em] mb-3 flex items-center gap-2"
-                          style={{ color: '#c99f16' }}>
+                          style={{ color: '#9e1f1f' }}>
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                             <rect x="3" y="3" width="7" height="7" />
                             <rect x="14" y="3" width="7" height="7" />
@@ -842,7 +842,7 @@ if (initialLoading) {
                                 <p className="text-xs font-body font-semibold mb-1" style={{ color: '#0a1226' }}>
                                   No hay áreas disponibles
                                 </p>
-                                <p className="text-[10px] font-body" style={{ color: '#5f6e8a' }}>
+                                <p className="text-[10px] font-body" style={{ color: '#6e6f73' }}>
                                   Creá áreas primero en la sección de Gestión para poder asignar usuarios.
                                 </p>
                               </div>
@@ -859,9 +859,9 @@ if (initialLoading) {
                                   onClick={() => setApprovingUser({ ...approvingUser, area_id: a.id })}
                                   className="px-4 py-2 rounded-full text-xs font-body font-bold transition-all"
                                   style={{
-                                    background: isActive ? '#ebc32b' : '#fff',
-                                    border: `1.5px solid ${isActive ? '#ebc32b' : '#f0eadb'}`,
-                                    color: isActive ? '#0a1226' : '#5f6e8a',
+                                    background: isActive ? '#c02727' : '#fff',
+                                    border: `1.5px solid ${isActive ? '#c02727' : '#e4e4e7'}`,
+                                    color: isActive ? '#ffffff' : '#6e6f73',
                                   }}
                                 >
                                   {a.nombre}
@@ -878,12 +878,12 @@ if (initialLoading) {
                       <div
                         className="p-4 rounded-xl"
                         style={{
-                          background: 'rgba(235,195,43,0.06)',
-                          border: '1px solid rgba(235,195,43,0.15)',
+                          background: 'rgba(192,39,39,0.06)',
+                          border: '1px solid rgba(192,39,39,0.15)',
                         }}
                       >
-                        <p className="text-xs font-body flex items-start gap-2" style={{ color: '#5f6e8a' }}>
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c99f16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
+                        <p className="text-xs font-body flex items-start gap-2" style={{ color: '#6e6f73' }}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9e1f1f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
                             <circle cx="12" cy="12" r="10" />
                             <line x1="12" y1="16" x2="12" y2="12" />
                             <line x1="12" y1="8" x2="12.01" y2="8" />
@@ -901,8 +901,8 @@ if (initialLoading) {
                         className="px-5 py-2.5 rounded-xl text-xs font-body font-semibold uppercase tracking-wider transition-all disabled:opacity-50"
                         style={{
                           background: '#fff',
-                          border: '1.5px solid #f0eadb',
-                          color: '#5f6e8a',
+                          border: '1.5px solid #e4e4e7',
+                          color: '#6e6f73',
                         }}
                       >
                         Cancelar
@@ -913,10 +913,10 @@ if (initialLoading) {
                         className="px-6 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed relative overflow-hidden"
                         style={{
                           background: approvingInProgress 
-                            ? 'rgba(235,195,43,0.3)' 
-                            : 'linear-gradient(135deg, #ebc32b 0%, #d4a017 100%)',
-                          color: '#0a1226',
-                          boxShadow: approvingInProgress ? 'none' : '0 2px 8px rgba(235,195,43,0.25)',
+                            ? 'rgba(192,39,39,0.3)' 
+                            : 'linear-gradient(135deg, #c02727 0%, #9e1f1f 100%)',
+                          color: '#ffffff',
+                          boxShadow: approvingInProgress ? 'none' : '0 2px 8px rgba(192,39,39,0.25)',
                         }}
                       >
                         {approvingInProgress && (
@@ -956,7 +956,7 @@ if (initialLoading) {
       {/* Pagination controls for Pending Users */}
       {pendingTotal > pendingPageSize && (
         <div className="flex items-center justify-between mt-6 px-2">
-          <span className="text-xs font-body" style={{ color: '#5f6e8a' }}>
+          <span className="text-xs font-body" style={{ color: '#6e6f73' }}>
             Mostrando {pendingPage * pendingPageSize + 1} - {Math.min((pendingPage + 1) * pendingPageSize, pendingTotal)} de {pendingTotal}
           </span>
           <div className="flex gap-2">
@@ -968,7 +968,7 @@ if (initialLoading) {
                 loadPendingUsers(newPage, pendingSearch)
               }}
               className="px-3 py-1.5 rounded-lg text-xs font-bold border transition-all disabled:opacity-40"
-              style={{ background: '#fff', borderColor: '#f0eadb', color: '#5f6e8a' }}
+              style={{ background: '#fff', borderColor: '#e4e4e7', color: '#6e6f73' }}
             >
               Anterior
             </button>
@@ -980,7 +980,7 @@ if (initialLoading) {
                 loadPendingUsers(newPage, pendingSearch)
               }}
               className="px-3 py-1.5 rounded-lg text-xs font-bold border transition-all disabled:opacity-40"
-              style={{ background: '#fff', borderColor: '#f0eadb', color: '#5f6e8a' }}
+              style={{ background: '#fff', borderColor: '#e4e4e7', color: '#6e6f73' }}
             >
               Siguiente
             </button>
