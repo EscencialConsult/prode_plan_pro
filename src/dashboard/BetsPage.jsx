@@ -1,4 +1,4 @@
-/**
+﻿/**
  * BetsPage.jsx — Fondo crema, cards blancas, navy+gold
  * Ubicación: src/dashboard/BetsPage.jsx
  *
@@ -37,14 +37,14 @@ const STATE={
   en_vivo:   {label:'EN VIVO',  color:'#e03252', bg:'rgba(224,50,82,.08)',  border:'rgba(224,50,82,.25)'},
   abierta:   {label:'ABIERTA',  color:'#1b8a5a', bg:'rgba(27,138,90,.08)', border:'rgba(27,138,90,.22)'},
   cerrada:   {label:'CERRADA',  color:'#5f6e8a', bg:'rgba(95,110,138,.07)',border:'rgba(95,110,138,.18)'},
-  finalizada:{label:'FINALIZADA',color:'#c99f16',bg:'rgba(235,195,43,.08)',border:'rgba(235,195,43,.22)'},
+  finalizada:{label:'FINALIZADA',color:'#0ea5e9',bg:'rgba(125,211,252,.08)',border:'rgba(125,211,252,.22)'},
 }
 
 /* Toast simple */
 function Toast({msg,ok}){
   if(!msg)return null
   return(
-    <div style={{position:'fixed',top:'1.2rem',right:'1.2rem',zIndex:999,padding:'.75rem 1.1rem',borderRadius:12,background:ok?'#0c182b':'#fff',border:`1px solid ${ok?'rgba(235,195,43,.4)':'rgba(224,50,82,.3)'}`,boxShadow:'0 8px 28px rgba(12,24,43,.15)',display:'flex',alignItems:'center',gap:'.55rem',fontFamily:"'DM Sans',sans-serif",fontSize:'.84rem',fontWeight:600,color:ok?'#ebc32b':'#e03252',animation:'tin .3s ease both'}}>
+    <div style={{position:'fixed',top:'1.2rem',right:'1.2rem',zIndex:999,padding:'.75rem 1.1rem',borderRadius:12,background:ok?'#0c182b':'#fff',border:`1px solid ${ok?'rgba(125,211,252,.4)':'rgba(224,50,82,.3)'}`,boxShadow:'0 8px 28px rgba(12,24,43,.15)',display:'flex',alignItems:'center',gap:'.55rem',fontFamily:"'DM Sans',sans-serif",fontSize:'.84rem',fontWeight:600,color:ok?'#7dd3fc':'#e03252',animation:'tin .3s ease both'}}>
       {ok
         ?<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         :<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -95,11 +95,11 @@ function BetCard({bet,predsMap,onPredict}){
             const pred=predsMap?.[m.id]
             const fin=m.estado==='finalizado'||m.estado==='en_vivo'
             return(
-              <div key={m.id} style={{display:'grid',gridTemplateColumns:'1fr auto 1fr',alignItems:'center',gap:'.6rem',padding:'.55rem .75rem',borderRadius:9,background:pred?'rgba(235,195,43,.05)':'rgba(12,24,43,.02)',border:pred?'1px solid rgba(235,195,43,.2)':'1px solid #f0eadb'}}>
+              <div key={m.id} style={{display:'grid',gridTemplateColumns:'1fr auto 1fr',alignItems:'center',gap:'.6rem',padding:'.55rem .75rem',borderRadius:9,background:pred?'rgba(125,211,252,.05)':'rgba(12,24,43,.02)',border:pred?'1px solid rgba(125,211,252,.2)':'1px solid #f0eadb'}}>
                 <span style={{fontWeight:500,fontSize:'.8rem',color:'#0c182b',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{m.equipo_local}</span>
                 <div style={{textAlign:'center',minWidth:60}}>
                   {pred?(
-                    <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.05rem',color:'#c99f16',letterSpacing:'.04em'}}>{pred.pred_local} - {pred.pred_visitante}</span>
+                    <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.05rem',color:'#0ea5e9',letterSpacing:'.04em'}}>{pred.pred_local} - {pred.pred_visitante}</span>
                   ):(
                     <span style={{fontSize:'.75rem',color:'#a8b2c4'}}>— vs —</span>
                   )}
@@ -127,9 +127,9 @@ function BetCard({bet,predsMap,onPredict}){
           {bet.participantes>0&&<span style={{...MUTED,fontSize:'.72rem'}}>{bet.participantes} participantes</span>}
         </div>
         {canPredict&&(
-          <button onClick={()=>onPredict(bet)} style={{fontWeight:700,fontSize:'.8rem',padding:'.55rem 1.1rem',borderRadius:99,border:'none',background:'#ebc32b',color:'#05090f',cursor:'pointer',transition:'all .17s',boxShadow:'0 4px 14px rgba(235,195,43,.25)',whiteSpace:'nowrap'}}
-            onMouseEnter={e=>{e.currentTarget.style.background='#f5d75a';e.currentTarget.style.transform='translateY(-1px)'}}
-            onMouseLeave={e=>{e.currentTarget.style.background='#ebc32b';e.currentTarget.style.transform=''}}>
+          <button onClick={()=>onPredict(bet)} style={{fontWeight:700,fontSize:'.8rem',padding:'.55rem 1.1rem',borderRadius:99,border:'none',background:'#7dd3fc',color:'#05090f',cursor:'pointer',transition:'all .17s',boxShadow:'0 4px 14px rgba(125,211,252,.25)',whiteSpace:'nowrap'}}
+            onMouseEnter={e=>{e.currentTarget.style.background='#bae6fd';e.currentTarget.style.transform='translateY(-1px)'}}
+            onMouseLeave={e=>{e.currentTarget.style.background='#7dd3fc';e.currentTarget.style.transform=''}}>
             {anyPred?'Editar prode':'Cargar prode'}
           </button>
         )}
@@ -242,7 +242,7 @@ const filtered = bets.filter(b => {
                   className="px-4 py-2 text-xs font-body font-bold uppercase tracking-wider rounded-lg transition-all"
                   style={{
                     background: active ? '#0c182b' : 'transparent',
-                    color: active ? '#ebc32b' : '#5f6e8a',
+                    color: active ? '#7dd3fc' : '#5f6e8a',
                     boxShadow: active ? '0 2px 8px rgba(12,24,43,.25)' : 'none',
                   }}
                   onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#0c182b' }}
@@ -267,7 +267,7 @@ const filtered = bets.filter(b => {
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                 style={{ background: 'linear-gradient(135deg,#0c182b,#425b8b)' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7dd3fc" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                 </svg>
               </div>
@@ -294,7 +294,7 @@ const filtered = bets.filter(b => {
                 {[
                   { pts: 1, titulo: 'Resultado',       desc: 'Acertás quién gana, pierde o empata',           accent: '#425b8b', bg: 'rgba(66,91,139,.06)',   border: 'rgba(66,91,139,.2)'   },
                   { pts: 3, titulo: 'Res. + diferencia', desc: 'Acertás resultado y diferencia de goles',      accent: '#0c182b', bg: 'rgba(12,24,43,.04)',    border: 'rgba(12,24,43,.12)'   },
-                  { pts: 5, titulo: 'Marcador exacto',  desc: 'Acertás el resultado final exacto del partido', accent: '#c99f16', bg: 'rgba(235,195,43,.07)',  border: 'rgba(235,195,43,.28)' },
+                  { pts: 5, titulo: 'Marcador exacto',  desc: 'Acertás el resultado final exacto del partido', accent: '#0ea5e9', bg: 'rgba(125,211,252,.07)',  border: 'rgba(125,211,252,.28)' },
                 ].map(({ pts, titulo, desc, accent, bg, border }) => (
                   <div key={pts} className="flex items-center gap-3 rounded-xl p-4"
                     style={{ background: bg, border: `1px solid ${border}` }}>
@@ -330,7 +330,7 @@ const filtered = bets.filter(b => {
                     <div key={titulo} className="flex items-center gap-3 rounded-lg p-2.5" style={{ background: '#fff', border: '1px solid #f0eadb' }}>
                       <div className="flex flex-col items-center justify-center flex-shrink-0"
                         style={{ width: 38, height: 38, borderRadius: 8, background: 'rgba(244,180,42,.1)', border: '1px solid rgba(244,180,42,.3)' }}>
-                        <span className="font-display leading-none" style={{ fontSize: '1.25rem', color: '#c99f16' }}>{pts}</span>
+                        <span className="font-display leading-none" style={{ fontSize: '1.25rem', color: '#0ea5e9' }}>{pts}</span>
                       </div>
                       <div className="min-w-0">
                         <p className="font-body font-bold text-xs m-0 mb-0.5" style={{ color: '#0c182b' }}>{titulo}</p>

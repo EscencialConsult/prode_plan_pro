@@ -32,7 +32,7 @@ const CSS = `
 .rk-row { display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;border-bottom:1px solid #f5f3ee;position:relative;transition:background .13s }
 .rk-row:hover { background:rgba(12,24,43,.03) }
 .rk-row.sel { background:#0c182b;border-bottom-color:rgba(255,255,255,.06) }
-.rk-row::before { content:'';position:absolute;left:0;top:25%;bottom:25%;width:3px;background:#ebc32b;border-radius:0 3px 3px 0;opacity:0;transition:opacity .13s }
+.rk-row::before { content:'';position:absolute;left:0;top:25%;bottom:25%;width:3px;background:#7dd3fc;border-radius:0 3px 3px 0;opacity:0;transition:opacity .13s }
 .rk-row.sel::before { opacity:1 }
 
 /* Panel derecho */
@@ -62,14 +62,14 @@ const CSS = `
   background:rgba(12,24,43,.06);color:#0c182b;
 }
 .rk-detail-btn-podio:hover:not(:disabled) { background:rgba(12,24,43,.12) }
-.rk-detail-btn-podio.active { background:#0c182b;color:#ebc32b }
+.rk-detail-btn-podio.active { background:#0c182b;color:#7dd3fc }
 
 .rk-detail-btn-mini {
   background:rgba(12,24,43,.05);color:#5f6e8a;
   font-size:8px;padding:4px 8px;
 }
 .rk-detail-btn-mini:hover:not(:disabled) { background:rgba(12,24,43,.1);color:#0c182b }
-.rk-detail-btn-mini.active { background:#0c182b;color:#ebc32b }
+.rk-detail-btn-mini.active { background:#0c182b;color:#7dd3fc }
 
 /* Mobile */
 @media(max-width:720px) {
@@ -200,7 +200,7 @@ export default function RankingPageAdmin() {
             letterSpacing: '.02em',
           }}>
             <span style={{ color: '#0c182b' }}>RANKING </span>
-            <span style={{ color: '#ebc32b' }}>ADMIN</span>
+            <span style={{ color: '#7dd3fc' }}>ADMIN</span>
           </h1>
           <p style={{ fontSize: '.84rem', color: '#5f6e8a', margin: 0 }}>
             {sel ? sel.titulo : 'Ranking global acumulado · Seleccioná una apuesta para ver el detalle individual'}
@@ -225,6 +225,21 @@ export default function RankingPageAdmin() {
                 </div>
               ) : (
                 <>
+                  <div className={`rk-row${!sel ? ' sel' : ''}`} onClick={() => setSel(null)}>
+                    <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#0ea5e9', flexShrink: 0, boxShadow: !sel ? '0 0 6px #0ea5e9' : 'none' }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: 12, fontWeight: 600, color: !sel ? '#fff' : '#0c182b', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        Ranking Global Acumulado
+                      </p>
+                      <p style={{ fontSize: 10, color: '#94a3b8', margin: 0 }}>
+                        Todas las apuestas
+                      </p>
+                    </div>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={!sel ? '#7dd3fc' : '#c8d0dc'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                  </div>
+
                   {bets.filter(b => isOpen(b)).length > 0 && (
                     <SideSection label="Activas" dot="#22c55e">
                       {bets.filter(b => isOpen(b)).map(b => (
@@ -331,7 +346,7 @@ function SideSection({ label, dot, children }) {
 function BetRow({ bet, sel, onPick }) {
   const open = isOpen(bet)
   const fin = bet.estado === 'finalizada'
-  const col = fin ? '#ebc32b' : open ? '#22c55e' : '#475569'
+  const col = fin ? '#7dd3fc' : open ? '#22c55e' : '#475569'
   const parts = bet.partidos_ids ? bet.partidos_ids.split(',').filter(Boolean).length : 0
   return (
     <div className={`rk-row${sel ? ' sel' : ''}`} onClick={() => onPick(bet)}>
@@ -344,7 +359,7 @@ function BetRow({ bet, sel, onPick }) {
           {bet.participantes || 0} part · {parts} partidos
         </p>
       </div>
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={sel ? '#ebc32b' : '#c8d0dc'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={sel ? '#7dd3fc' : '#c8d0dc'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="9 18 15 12 9 6" />
       </svg>
     </div>
@@ -357,23 +372,23 @@ function BetRow({ bet, sel, onPick }) {
 function Banner({ apuesta, meta, loading }) {
   return (
     <div style={{ borderRadius: 14, marginBottom: 24, background: 'linear-gradient(125deg,#0c182b 0%,#1a3060 100%)', padding: '18px 22px', position: 'relative', overflow: 'hidden' }}>
-      <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: 'rgba(235,195,43,.08)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: -40, right: 80, width: 120, height: 120, borderRadius: '50%', background: 'rgba(235,195,43,.05)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: 'rgba(125,211,252,.08)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: -40, right: 80, width: 120, height: 120, borderRadius: '50%', background: 'rgba(125,211,252,.05)', pointerEvents: 'none' }} />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, position: 'relative' }}>
         <div>
-          <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: 'rgba(235,195,43,.55)', display: 'block', marginBottom: 4 }}>
+          <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: 'rgba(125,211,252,.55)', display: 'block', marginBottom: 4 }}>
             TABLA DE POSICIONES
           </span>
           <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(22px,3vw,32px)', color: '#fff', margin: '0 0 6px', letterSpacing: '.02em', lineHeight: 1 }}>
             {apuesta.titulo}
           </h2>
           {apuesta.premio && (
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(235,195,43,.1)', border: '1px solid rgba(235,195,43,.2)', borderRadius: 99, padding: '3px 10px' }}>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(125,211,252,.1)', border: '1px solid rgba(125,211,252,.2)', borderRadius: 99, padding: '3px 10px' }}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#7dd3fc" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" /><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
               </svg>
-              <span style={{ fontSize: 10, color: 'rgba(235,195,43,.8)', fontWeight: 600 }}>{apuesta.premio}</span>
+              <span style={{ fontSize: 10, color: 'rgba(125,211,252,.8)', fontWeight: 600 }}>{apuesta.premio}</span>
             </div>
           )}
         </div>
@@ -391,7 +406,7 @@ function Banner({ apuesta, meta, loading }) {
 function BannerStat({ n, label, gold }) {
   return (
     <div style={{ textAlign: 'center' }}>
-      <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, color: gold ? '#ebc32b' : 'rgba(255,255,255,.9)', margin: '0 0 1px', lineHeight: 1 }}>{n}</p>
+      <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, color: gold ? '#7dd3fc' : 'rgba(255,255,255,.9)', margin: '0 0 1px', lineHeight: 1 }}>{n}</p>
       <p style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '.14em', color: 'rgba(255,255,255,.35)', margin: 0 }}>{label}</p>
     </div>
   )
@@ -401,7 +416,7 @@ function BannerStat({ n, label, gold }) {
    PODIO
 ══════════════════════════════════════════ */
 const PODIO_CFG = {
-  0: { grad: 'linear-gradient(145deg,#f5d75a 0%,#c99f16 100%)', shadow: 'rgba(235,195,43,.5)', border: 'rgba(235,195,43,.7)', ring: 'rgba(235,195,43,.3)', emoji: '🥇', label: '1°' },
+  0: { grad: 'linear-gradient(145deg,#bae6fd 0%,#0ea5e9 100%)', shadow: 'rgba(125,211,252,.5)', border: 'rgba(125,211,252,.7)', ring: 'rgba(125,211,252,.3)', emoji: '🥇', label: '1°' },
   1: { grad: 'linear-gradient(145deg,#e2e8f0 0%,#94a3b8 100%)', shadow: 'rgba(148,163,184,.4)', border: 'rgba(148,163,184,.5)', ring: 'rgba(148,163,184,.2)', emoji: '🥈', label: '2°' },
   2: { grad: 'linear-gradient(145deg,#fed7aa 0%,#c2720e 100%)', shadow: 'rgba(194,114,14,.4)', border: 'rgba(194,114,14,.5)', ring: 'rgba(194,114,14,.2)', emoji: '🥉', label: '3°' },
 }
@@ -447,7 +462,7 @@ function Podio({ top, miId, apuesta, expandedUser, loadingUser, onToggle, showDe
               }}>
 
               {isTop && (
-                <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(90deg,#c99f16,#ebc32b)', color: '#fff', fontSize: 8, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', padding: '3px 14px', borderRadius: 99, whiteSpace: 'nowrap', boxShadow: '0 2px 10px rgba(235,195,43,.5)' }}>
+                <div style={{ position: 'absolute', top: -13, left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(90deg,#0ea5e9,#7dd3fc)', color: '#fff', fontSize: 8, fontWeight: 800, letterSpacing: '.16em', textTransform: 'uppercase', padding: '3px 14px', borderRadius: 99, whiteSpace: 'nowrap', boxShadow: '0 2px 10px rgba(125,211,252,.5)' }}>
                   ★ LÍDER
                 </div>
               )}
@@ -476,12 +491,12 @@ function Podio({ top, miId, apuesta, expandedUser, loadingUser, onToggle, showDe
               </p>
 
               <div style={{
-                background: isTop ? 'linear-gradient(135deg,rgba(235,195,43,.12),rgba(235,195,43,.06))' : 'rgba(12,24,43,.04)',
-                border: isTop ? '1px solid rgba(235,195,43,.25)' : '1px solid #f0eadb',
+                background: isTop ? 'linear-gradient(135deg,rgba(125,211,252,.12),rgba(125,211,252,.06))' : 'rgba(12,24,43,.04)',
+                border: isTop ? '1px solid rgba(125,211,252,.25)' : '1px solid #f0eadb',
                 borderRadius: 10, padding: '8px 0',
                 marginBottom: showDetail ? 10 : 0,
               }}>
-                <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: isTop ? 36 : 28, color: isTop ? '#c99f16' : '#0c182b', margin: 0, lineHeight: 1 }}>
+                <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: isTop ? 36 : 28, color: isTop ? '#0ea5e9' : '#0c182b', margin: 0, lineHeight: 1 }}>
                   {u.puntos_totales}
                 </p>
                 <p style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.14em', color: '#94a3b8', margin: '2px 0 0' }}>puntos</p>
@@ -626,7 +641,7 @@ function PrediccionRow({ pred, apuesta }) {
     if (puntosDlBackend === ptsExacto) {
       borderC = '#22c55e40'; bgC = '#22c55e0a'; badge = { c: '#22c55e', label: `+${puntosDlBackend}` }
     } else if (puntosDlBackend === ptsDif) {
-      borderC = '#ebc32b40'; bgC = '#ebc32b0a'; badge = { c: '#ebc32b', label: `+${puntosDlBackend}` }
+      borderC = '#7dd3fc40'; bgC = '#7dd3fc0a'; badge = { c: '#7dd3fc', label: `+${puntosDlBackend}` }
     } else if (puntosDlBackend === ptsRes) {
       borderC = '#94a3b830'; bgC = '#94a3b808'; badge = { c: '#94a3b8', label: `+${puntosDlBackend}` }
     } else if (puntosDlBackend === 0) {
@@ -646,7 +661,7 @@ function PrediccionRow({ pred, apuesta }) {
       (predLocal === predVisit && realLocal === realVisit)
 
     if (exacto) { borderC = '#22c55e40'; bgC = '#22c55e0a'; badge = { c: '#22c55e', label: `+${ptsExacto}` } }
-    else if (dif) { borderC = '#ebc32b40'; bgC = '#ebc32b0a'; badge = { c: '#ebc32b', label: `+${ptsDif}` } }
+    else if (dif) { borderC = '#7dd3fc40'; bgC = '#7dd3fc0a'; badge = { c: '#7dd3fc', label: `+${ptsDif}` } }
     else if (resultado) { borderC = '#94a3b830'; bgC = '#94a3b808'; badge = { c: '#94a3b8', label: `+${ptsRes}` } }
     else { borderC = '#f43f5e30'; bgC = '#f43f5e08'; badge = { c: '#f43f5e', label: '0' } }
   }
@@ -731,7 +746,7 @@ function LeyendaPuntos({ apuesta, total }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, fontSize: 10, color: '#94a3b8', paddingTop: 12, borderTop: '1px solid #e8e3db', marginTop: 12 }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-        {[['#22c55e', `Exacto +${e}pts`], ['#ebc32b', `Diferencia +${d}pts`], ['#94a3b8', `Resultado +${r}pt${r === 1 ? '' : 's'}`], ['#f43f5e', 'Sin acierto 0pts']].map(([c, l]) => (
+        {[['#22c55e', `Exacto +${e}pts`], ['#7dd3fc', `Diferencia +${d}pts`], ['#94a3b8', `Resultado +${r}pt${r === 1 ? '' : 's'}`], ['#f43f5e', 'Sin acierto 0pts']].map(([c, l]) => (
           <span key={l} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: c, display: 'inline-block' }} />
             {l}
@@ -751,10 +766,10 @@ function RankingGlobalAdmin({ tabla, meta, loading, onRefresh }) {
     <div className="rk-in">
       {/* Header */}
       <div style={{ borderRadius: 14, marginBottom: 24, background: 'linear-gradient(125deg,#0c182b 0%,#1a3060 100%)', padding: '18px 22px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: 'rgba(235,195,43,.08)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: 'rgba(125,211,252,.08)', pointerEvents: 'none' }} />
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, position: 'relative' }}>
           <div>
-            <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: 'rgba(235,195,43,.55)', display: 'block', marginBottom: 4 }}>RANKING GLOBAL ACUMULADO</span>
+            <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: 'rgba(125,211,252,.55)', display: 'block', marginBottom: 4 }}>RANKING GLOBAL ACUMULADO</span>
             <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(22px,3vw,32px)', color: '#fff', margin: '0 0 6px', letterSpacing: '.02em', lineHeight: 1 }}>Todas las apuestas</h2>
             <p style={{ fontSize: 11, color: 'rgba(255,255,255,.4)', margin: 0 }}>Suma de puntos de apuestas cerradas y finalizadas · Vista de administrador</p>
           </div>
@@ -864,7 +879,7 @@ function GlobalFullTable({ tabla }) {
                 <p style={{ fontSize: 9, color: '#c8d0dc', margin: 0 }}>{u.predicciones} pred · {u.apuestas_participadas || '—'} apuestas</p>
               </div>
               <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-start' }}>
-                {[{ v: u.aciertos_exactos, c: '#22c55e' }, { v: u.aciertos_diferencia || 0, c: '#ebc32b' }].map((x, i) => (
+                {[{ v: u.aciertos_exactos, c: '#22c55e' }, { v: u.aciertos_diferencia || 0, c: '#7dd3fc' }].map((x, i) => (
                   x.v > 0 && (
                     <span key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: 5, background: `${x.c}12`, border: `1px solid ${x.c}25`, fontSize: 9, fontWeight: 600, color: x.c }}>{x.v}</span>
                   )
@@ -959,9 +974,9 @@ function OtrosParticipantes({ tabla, user, apuesta, expandedUser, loadingUser, p
 
             return (
               <div key={u.user_id} style={{
-                background: isMe ? 'rgba(235,195,43,.1)' : '#fff',
-                border: isMe ? '1.5px solid #ebc32b' : '1px solid #f5f3ee',
-                boxShadow: isMe ? '0 0 0 1px rgba(235,195,43,.3), 0 2px 8px rgba(235,195,43,.12)' : 'none',
+                background: isMe ? 'rgba(125,211,252,.1)' : '#fff',
+                border: isMe ? '1.5px solid #7dd3fc' : '1px solid #f5f3ee',
+                boxShadow: isMe ? '0 0 0 1px rgba(125,211,252,.3), 0 2px 8px rgba(125,211,252,.12)' : 'none',
                 borderRadius: 10,
                 overflow: 'hidden',
                 transition: 'all .15s',
@@ -977,16 +992,16 @@ function OtrosParticipantes({ tabla, user, apuesta, expandedUser, loadingUser, p
                   <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, fontWeight: 700, color: '#94a3b8', textAlign: 'center' }}>#{idx + 4}</span>
 
                   <div style={{ minWidth: 0 }}>
-                    <p style={{ fontWeight: isMe ? 700 : 500, fontSize: 11, color: isMe ? '#ebc32b' : '#0c182b', margin: '0 0 1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontWeight: isMe ? 700 : 500, fontSize: 11, color: isMe ? '#7dd3fc' : '#0c182b', margin: '0 0 1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {u.nombre}
                       {isMe && (
                         <span style={{
                           fontSize: 8,
-                          color: '#ebc32b',
+                          color: '#7dd3fc',
                           marginLeft: 6,
                           fontWeight: 700,
-                          background: 'rgba(235,195,43,.15)',
-                          border: '1px solid rgba(235,195,43,.3)',
+                          background: 'rgba(125,211,252,.15)',
+                          border: '1px solid rgba(125,211,252,.3)',
                           padding: '1px 5px',
                           borderRadius: 3,
                           textTransform: 'uppercase',
@@ -1000,7 +1015,7 @@ function OtrosParticipantes({ tabla, user, apuesta, expandedUser, loadingUser, p
                   </div>
 
                   <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-start' }}>
-                    {[{ v: u.aciertos_exactos, c: '#22c55e' }, { v: u.aciertos_diferencia || 0, c: '#ebc32b' }].map((x, i) => (
+                    {[{ v: u.aciertos_exactos, c: '#22c55e' }, { v: u.aciertos_diferencia || 0, c: '#7dd3fc' }].map((x, i) => (
                       x.v > 0 && (
                         <span key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: 5, background: `${x.c}12`, border: `1px solid ${x.c}25`, fontSize: 9, fontWeight: 600, color: x.c }}>{x.v}</span>
                       )

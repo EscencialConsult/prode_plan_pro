@@ -1,11 +1,11 @@
-import { isBetOpen, timeLeft } from '../../utils/index.js'
+﻿import { isBetOpen, timeLeft } from '../../utils/index.js'
 import { useToast, useConfirm } from '../../hooks/useToast.jsx'
 
 function getBetStatus(bet) {
   if (bet.estado === 'abierta' && isBetOpen(bet))
     return { color: '#1b8a5a', bg: 'rgba(27,138,90,.08)', border: 'rgba(27,138,90,.2)', label: 'Activa', dot: true }
   if (bet.estado === 'finalizada')
-    return { color: '#c99f16', bg: 'rgba(235,195,43,.1)', border: 'rgba(235,195,43,.25)', label: 'Finalizada', dot: false }
+    return { color: '#0ea5e9', bg: 'rgba(125,211,252,.1)', border: 'rgba(125,211,252,.25)', label: 'Finalizada', dot: false }
   if (bet.estado === 'cerrada')
     return { color: '#5f6e8a', bg: 'rgba(95,110,138,.06)', border: 'rgba(95,110,138,.15)', label: 'Cerrada', dot: false }
   return { color: '#5f6e8a', bg: 'rgba(95,110,138,.06)', border: 'rgba(95,110,138,.12)', label: bet.estado || '—', dot: false }
@@ -61,7 +61,7 @@ function BetRow({ bet, onClose, onFinalize }) {
               </span>
             )}
             {bet.premio && (
-              <span className="flex items-center gap-1 text-xs font-body" style={{ color: '#c99f16' }}>
+              <span className="flex items-center gap-1 text-xs font-body" style={{ color: '#0ea5e9' }}>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
                 {bet.premio}
               </span>
@@ -97,9 +97,9 @@ function BetRow({ bet, onClose, onFinalize }) {
             <button
               onClick={() => onFinalize(bet.id)}
               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full font-body font-bold transition-all"
-              style={{ fontSize: 11, background: 'rgba(235,195,43,.1)', border: '1px solid rgba(235,195,43,.35)', color: '#c99f16' }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.color = '#05090f' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(235,195,43,.1)'; e.currentTarget.style.color = '#c99f16' }}
+              style={{ fontSize: 11, background: 'rgba(125,211,252,.1)', border: '1px solid rgba(125,211,252,.35)', color: '#0ea5e9' }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#7dd3fc'; e.currentTarget.style.color = '#05090f' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(125,211,252,.1)'; e.currentTarget.style.color = '#0ea5e9' }}
             >
               Finalizar
             </button>
@@ -147,7 +147,7 @@ export default function BetsListTab({ bets, loading, closeBet, finalizeBet }) {
 
       {loading && bets.length === 0 && (
         <div className="text-center py-16">
-          <span className="inline-block w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#ebc32b' }} />
+          <span className="inline-block w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#7dd3fc' }} />
           <p className="font-body text-sm mt-3" style={{ color: '#5f6e8a' }}>Cargando apuestas...</p>
         </div>
       )}
@@ -155,8 +155,8 @@ export default function BetsListTab({ bets, loading, closeBet, finalizeBet }) {
       {!loading && bets.length === 0 && (
         <div className="rounded-2xl p-12 text-center" style={{ background: '#fff', border: '1px dashed #e8dfd0' }}>
           <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
-            style={{ background: 'rgba(235,195,43,.08)', border: '1px solid rgba(235,195,43,.2)' }}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c99f16" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            style={{ background: 'rgba(125,211,252,.08)', border: '1px solid rgba(125,211,252,.2)' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
               <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
               <path d="M4 22h16" />
@@ -200,7 +200,7 @@ export default function BetsListTab({ bets, loading, closeBet, finalizeBet }) {
         <div>
           <div className="flex items-center gap-2 mb-3">
             <h3 className="font-display text-xl" style={{ color: '#0c182b', letterSpacing: '.02em' }}>FINALIZADAS</h3>
-            <span className="font-display text-lg" style={{ color: '#c99f16' }}>({finishedBets.length})</span>
+            <span className="font-display text-lg" style={{ color: '#0ea5e9' }}>({finishedBets.length})</span>
           </div>
           <div className="flex flex-col gap-3">
             {finishedBets.map(bet => (<BetRow key={bet.id} bet={bet} />))}

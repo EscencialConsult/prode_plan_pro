@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    PRODE ONE — API Client (OPTIMIZADO + DIRECTO A APPS SCRIPT)
    - Llama directo a Apps Script (sin pasar por Netlify Function).
    - Cachea respuestas GET en memoria del cliente.
@@ -151,11 +151,11 @@ function mostrarAvisoSesionExpirada() {
     <div style="text-align: center; color: #fff; max-width: 320px; padding: 1.5rem;">
       <div style="
         width: 56px; height: 56px; border-radius: 50%;
-        background: rgba(235,195,43,.15);
-        border: 1px solid rgba(235,195,43,.4);
+        background: rgba(125,211,252,.15);
+        border: 1px solid rgba(125,211,252,.4);
         margin: 0 auto 1rem;
         display: flex; align-items: center; justify-content: center;">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7dd3fc" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/>
           <polyline points="12 6 12 12 16 14"/>
         </svg>

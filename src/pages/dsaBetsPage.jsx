@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import AppShell from '../dashboard/AppShell.jsx'
 import BetCard from '../components/user/BetCard.jsx'
 import PredictModal from '../components/user/PredictModal.jsx'
@@ -70,7 +70,7 @@ export default function BetsPage() {
                   className="px-4 py-2 text-xs font-body font-bold uppercase tracking-wider rounded-lg transition-all"
                   style={{
                     background: active ? '#0c182b' : 'transparent',
-                    color: active ? '#ebc32b' : '#5f6e8a',
+                    color: active ? '#7dd3fc' : '#5f6e8a',
                     boxShadow: active ? '0 2px 8px rgba(12,24,43,.25)' : 'none',
                   }}
                   onMouseEnter={e => { if (!active) e.currentTarget.style.color = '#0c182b' }}

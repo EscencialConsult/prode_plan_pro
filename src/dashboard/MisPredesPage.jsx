@@ -1,4 +1,4 @@
-/**
+﻿/**
  * MisPredesPage.jsx — Fondo crema, cards blancas, navy+gold
  * Ubicación: src/dashboard/MisPredesPage.jsx
  *
@@ -84,7 +84,7 @@ function PartidoRow({match,pred}){
         {pred?(
           <div style={{textAlign:'center'}}>
             <p style={{fontSize:'.58rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.1em',color:'#a8b2c4',margin:'0 0 2px'}}>{pred.es_grupal?'Área':'Tu predicción'}</p>
-            <p style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.2rem',color:'#c99f16',margin:0,lineHeight:1}}>{pred.pred_local} - {pred.pred_visitante}</p>
+            <p style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.2rem',color:'#0ea5e9',margin:0,lineHeight:1}}>{pred.pred_local} - {pred.pred_visitante}</p>
           </div>
         ):(
           <p style={{...MUTED,fontSize:'.72rem',textAlign:'center',margin:0}}>Sin predicción</p>
@@ -96,7 +96,7 @@ function PartidoRow({match,pred}){
               <p style={{fontSize:'.58rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.1em',color:'#a8b2c4',margin:'0 0 2px'}}>{live?'En vivo':'Resultado'}</p>
               <p style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.2rem',color:live?'#e03252':'#0c182b',margin:0,lineHeight:1}}>{match.goles_local} - {match.goles_visitante}</p>
               {tienePenales && (
-                <p style={{fontSize:'.6rem',fontWeight:700,color:'#c99f16',margin:'2px 0 0',textTransform:'uppercase',letterSpacing:'.06em'}}>
+                <p style={{fontSize:'.6rem',fontWeight:700,color:'#0ea5e9',margin:'2px 0 0',textTransform:'uppercase',letterSpacing:'.06em'}}>
                   pen {match.penales_local}-{match.penales_visit}
                 </p>
               )}
@@ -122,7 +122,7 @@ function PartidoRow({match,pred}){
               <span style={{fontSize:'.58rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em',color:'#a8b2c4'}}>
                 Tu clasif.:
               </span>
-              <span style={{fontWeight:700, color: clasifRealCode ? (aciertoClasif ? '#1b8a5a' : '#e03252') : '#c99f16'}}>
+              <span style={{fontWeight:700, color: clasifRealCode ? (aciertoClasif ? '#1b8a5a' : '#e03252') : '#0ea5e9'}}>
                 {nombreDesdeCodigo(match, clasifPred)}
               </span>
               {clasifRealCode && (aciertoClasif
@@ -193,7 +193,7 @@ export default function MisPredesPage(){
 
         {/* Stats */}
         <div className="din" style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:'.85rem',marginBottom:'1.75rem',animationDelay:'60ms'}}>
-          <StatCard label="Puntos totales" value={loading?'—':totalPts} color="#c99f16"/>
+          <StatCard label="Puntos totales" value={loading?'—':totalPts} color="#0ea5e9"/>
           <StatCard label="Predicciones" value={loading?'—':totalPred} color="#425b8b"/>
           <StatCard label="Exactos" value={loading?'—':totalExactos} color="#1b8a5a"/>
           <StatCard label="Apuestas" value={loading?'—':betsConPred.length} color="#0c182b"/>
@@ -202,7 +202,7 @@ export default function MisPredesPage(){
         {/* Filtros */}
         <div className="din" style={{display:'flex',gap:'.3rem',marginBottom:'1.4rem',animationDelay:'80ms'}}>
           {[{k:'todas',l:'Todas'},{k:'con',l:`Con predicción (${betsConPred.length})`},{k:'sin',l:`Sin predicción (${betsSinPred.length})`}].map(({k,l})=>(
-            <button key={k} onClick={()=>setFiltro(k)} style={{padding:'.34rem .82rem',borderRadius:99,fontFamily:"'DM Sans',sans-serif",fontWeight:700,fontSize:'.72rem',textTransform:'uppercase',letterSpacing:'.05em',cursor:'pointer',transition:'all .15s',background:filtro===k?'#0c182b':'#fff',color:filtro===k?'#ebc32b':'#5f6e8a',border:filtro===k?'1px solid transparent':'1px solid #f0eadb',boxShadow:filtro===k?'0 2px 8px rgba(12,24,43,.18)':'none'}}>
+            <button key={k} onClick={()=>setFiltro(k)} style={{padding:'.34rem .82rem',borderRadius:99,fontFamily:"'DM Sans',sans-serif",fontWeight:700,fontSize:'.72rem',textTransform:'uppercase',letterSpacing:'.05em',cursor:'pointer',transition:'all .15s',background:filtro===k?'#0c182b':'#fff',color:filtro===k?'#7dd3fc':'#5f6e8a',border:filtro===k?'1px solid transparent':'1px solid #f0eadb',boxShadow:filtro===k?'0 2px 8px rgba(12,24,43,.18)':'none'}}>
               {l}
             </button>
           ))}
@@ -260,9 +260,9 @@ export default function MisPredesPage(){
                         ))}
                       </div>
                       {isOpenBet&&(
-                        <Link to="/apuestas" style={{display:'block',textAlign:'center',marginTop:'1rem',padding:'.55rem',fontFamily:"'DM Sans',sans-serif",fontSize:'.8rem',fontWeight:700,color:'#c99f16',textDecoration:'none',borderRadius:99,border:'1px solid rgba(235,195,43,.3)',background:'rgba(235,195,43,.06)',transition:'all .17s'}}
-                          onMouseEnter={e=>{e.currentTarget.style.background='rgba(235,195,43,.12)'}}
-                          onMouseLeave={e=>{e.currentTarget.style.background='rgba(235,195,43,.06)'}}>
+                        <Link to="/apuestas" style={{display:'block',textAlign:'center',marginTop:'1rem',padding:'.55rem',fontFamily:"'DM Sans',sans-serif",fontSize:'.8rem',fontWeight:700,color:'#0ea5e9',textDecoration:'none',borderRadius:99,border:'1px solid rgba(125,211,252,.3)',background:'rgba(125,211,252,.06)',transition:'all .17s'}}
+                          onMouseEnter={e=>{e.currentTarget.style.background='rgba(125,211,252,.12)'}}
+                          onMouseLeave={e=>{e.currentTarget.style.background='rgba(125,211,252,.06)'}}>
                           Editar predicciones →
                         </Link>
                       )}

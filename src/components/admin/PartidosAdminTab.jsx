@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+﻿import { useState, useMemo } from 'react'
 import sheetsApi from '../../services/sheetsApi.js'
 import { fmtFecha } from '../../utils/index.js'
 import { useToast } from '../../hooks/useToast.jsx'
@@ -12,7 +12,7 @@ const LABEL_FASE = {
 const ESTADO_COLORS = {
   programado:  { color: '#5f6e8a', bg: 'rgba(255,255,255,.06)', border: 'rgba(255,255,255,.12)', label: 'Programado' },
   en_vivo:     { color: '#ff4d6d', bg: 'rgba(255,77,109,.12)',  border: 'rgba(255,77,109,.35)',  label: 'EN VIVO' },
-  finalizado:  { color: '#ebc32b', bg: 'rgba(235,195,43,.1)',   border: 'rgba(235,195,43,.3)',   label: 'Finalizado' },
+  finalizado:  { color: '#7dd3fc', bg: 'rgba(125,211,252,.1)',   border: 'rgba(125,211,252,.3)',   label: 'Finalizado' },
   cancelado:   { color: '#a8b2c4', bg: 'rgba(255,255,255,.04)', border: 'rgba(255,255,255,.1)',  label: 'Cancelado' },
 }
 
@@ -107,7 +107,7 @@ function EditScoreModal({ match, onClose, onSave }) {
           <span className="text-white font-semibold">{match.equipo_visitante}</span>
         </p>
         {match.fase && (
-          <p className="font-body text-[10px] text-center mb-4 uppercase tracking-widest" style={{ color: elim ? '#ebc32b' : '#a8b2c4' }}>
+          <p className="font-body text-[10px] text-center mb-4 uppercase tracking-widest" style={{ color: elim ? '#7dd3fc' : '#a8b2c4' }}>
             {LABEL_FASE[match.fase] || match.fase}
             {elim && ' · Eliminación directa'}
           </p>
@@ -124,8 +124,8 @@ function EditScoreModal({ match, onClose, onSave }) {
               type="number" min="0" max="99" value={local}
               onChange={e => setLocal(e.target.value)}
               className="w-full px-3 py-3 rounded-xl font-display text-2xl text-center outline-none transition-all"
-              style={{ background: '#faf7f0', border: '1px solid #e8dfd0', color: '#ebc32b' }}
-              onFocus={e => { e.target.style.borderColor = 'rgba(235,195,43,.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(235,195,43,.1)' }}
+              style={{ background: '#faf7f0', border: '1px solid #e8dfd0', color: '#7dd3fc' }}
+              onFocus={e => { e.target.style.borderColor = 'rgba(125,211,252,.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(125,211,252,.1)' }}
               onBlur={e  => { e.target.style.borderColor = 'rgba(255,255,255,.12)'; e.target.style.boxShadow = 'none' }}
             />
           </div>
@@ -136,8 +136,8 @@ function EditScoreModal({ match, onClose, onSave }) {
               type="number" min="0" max="99" value={visitante}
               onChange={e => setVisit(e.target.value)}
               className="w-full px-3 py-3 rounded-xl font-display text-2xl text-center outline-none transition-all"
-              style={{ background: '#faf7f0', border: '1px solid #e8dfd0', color: '#ebc32b' }}
-              onFocus={e => { e.target.style.borderColor = 'rgba(235,195,43,.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(235,195,43,.1)' }}
+              style={{ background: '#faf7f0', border: '1px solid #e8dfd0', color: '#7dd3fc' }}
+              onFocus={e => { e.target.style.borderColor = 'rgba(125,211,252,.5)'; e.target.style.boxShadow = '0 0 0 3px rgba(125,211,252,.1)' }}
               onBlur={e  => { e.target.style.borderColor = 'rgba(255,255,255,.12)'; e.target.style.boxShadow = 'none' }}
             />
           </div>
@@ -167,12 +167,12 @@ function EditScoreModal({ match, onClose, onSave }) {
 
         {/* PENALES — solo si eliminatoria + finalizado + empate */}
         {debeMostrarPenales && (
-          <div className="mb-5 p-3 rounded-xl" style={{ background: 'rgba(235,195,43,.06)', border: '1px solid rgba(235,195,43,.25)' }}>
+          <div className="mb-5 p-3 rounded-xl" style={{ background: 'rgba(125,211,252,.06)', border: '1px solid rgba(125,211,252,.25)' }}>
             <div className="flex items-center gap-2 mb-2">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7dd3fc" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
               </svg>
-              <p className="font-body text-xs uppercase tracking-widest font-bold" style={{ color: '#ebc32b' }}>
+              <p className="font-body text-xs uppercase tracking-widest font-bold" style={{ color: '#7dd3fc' }}>
                 Definición por penales
               </p>
             </div>
@@ -221,9 +221,9 @@ function EditScoreModal({ match, onClose, onSave }) {
           </button>
           <button onClick={handleSave} disabled={saving}
             className="flex-1 py-2.5 rounded-xl font-body font-bold text-sm transition-all disabled:opacity-50"
-            style={{ background: 'linear-gradient(135deg,#ebc32b,#c99f16)', color: '#05090f', boxShadow: '0 4px 16px rgba(235,195,43,.3)' }}
-            onMouseEnter={e => { if (!saving) e.currentTarget.style.boxShadow = '0 6px 24px rgba(235,195,43,.5)' }}
-            onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(235,195,43,.3)' }}>
+            style={{ background: 'linear-gradient(135deg,#7dd3fc,#0ea5e9)', color: '#05090f', boxShadow: '0 4px 16px rgba(125,211,252,.3)' }}
+            onMouseEnter={e => { if (!saving) e.currentTarget.style.boxShadow = '0 6px 24px rgba(125,211,252,.5)' }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(125,211,252,.3)' }}>
             {saving ? 'Guardando...' : 'Guardar'}
           </button>
         </div>
@@ -276,7 +276,7 @@ export default function PartidosAdminTab({ matches, loadBets }) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-4 flex-wrap">
           <h2 className="font-display text-2xl text-white" style={{ letterSpacing: '.02em' }}>
-            PARTIDOS <span style={{ color: '#ebc32b' }}>({matches.length})</span>
+            PARTIDOS <span style={{ color: '#7dd3fc' }}>({matches.length})</span>
           </h2>
           <div className="flex items-center gap-3">
             {liveCount > 0 && (
@@ -293,9 +293,9 @@ export default function PartidosAdminTab({ matches, loadBets }) {
           onClick={handleSync}
           disabled={syncing}
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-body font-bold text-xs uppercase tracking-wider transition-all disabled:opacity-50"
-          style={{ background: 'rgba(235,195,43,.1)', border: '1px solid rgba(235,195,43,.3)', color: '#ebc32b' }}
-          onMouseEnter={e => { if (!syncing) { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.color = '#05090f' } }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(235,195,43,.1)'; e.currentTarget.style.color = '#ebc32b' }}
+          style={{ background: 'rgba(125,211,252,.1)', border: '1px solid rgba(125,211,252,.3)', color: '#7dd3fc' }}
+          onMouseEnter={e => { if (!syncing) { e.currentTarget.style.background = '#7dd3fc'; e.currentTarget.style.color = '#05090f' } }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(125,211,252,.1)'; e.currentTarget.style.color = '#7dd3fc' }}
         >
           {syncing
             ? <span className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full" style={{ animation: 'spin .8s linear infinite' }} />
@@ -319,8 +319,8 @@ export default function PartidosAdminTab({ matches, loadBets }) {
                 className="px-3 py-1 rounded-full font-body font-semibold transition-all whitespace-nowrap"
                 style={{
                   fontSize: 11,
-                  background: filtroFase === f ? '#ebc32b' : 'rgba(255,255,255,.06)',
-                  border: `1px solid ${filtroFase === f ? '#ebc32b' : 'rgba(255,255,255,.12)'}`,
+                  background: filtroFase === f ? '#7dd3fc' : 'rgba(255,255,255,.06)',
+                  border: `1px solid ${filtroFase === f ? '#7dd3fc' : 'rgba(255,255,255,.12)'}`,
                   color: filtroFase === f ? '#05090f' : 'rgba(255,255,255,.5)',
                 }}>
                 {f === 'todas' ? 'Todas' : (LABEL_FASE[f] || f)}
@@ -340,8 +340,8 @@ export default function PartidosAdminTab({ matches, loadBets }) {
                 className="px-3 py-1 rounded-full font-body font-semibold transition-all whitespace-nowrap"
                 style={{
                   fontSize: 11,
-                  background: isActive ? (s?.bg || '#ebc32b') : 'rgba(255,255,255,.06)',
-                  border: `1px solid ${isActive ? (s?.border || '#ebc32b') : 'rgba(255,255,255,.12)'}`,
+                  background: isActive ? (s?.bg || '#7dd3fc') : 'rgba(255,255,255,.06)',
+                  border: `1px solid ${isActive ? (s?.border || '#7dd3fc') : 'rgba(255,255,255,.12)'}`,
                   color: isActive ? (s?.color || '#05090f') : 'rgba(255,255,255,.5)',
                 }}>
                 {est === 'todos' ? 'Todos' : (s?.label || est)}
@@ -359,7 +359,7 @@ export default function PartidosAdminTab({ matches, loadBets }) {
       {/* Lista */}
       {filtered.length === 0 ? (
         <div className="rounded-2xl p-12 text-center"
-          style={{ background: 'rgba(66,91,139,.08)', border: '1px dashed rgba(235,195,43,.2)' }}>
+          style={{ background: 'rgba(66,91,139,.08)', border: '1px dashed rgba(125,211,252,.2)' }}>
           <p className="font-body text-sm font-semibold" style={{ color: '#5f6e8a' }}>
             No hay partidos con estos filtros.
           </p>
@@ -386,14 +386,14 @@ export default function PartidosAdminTab({ matches, loadBets }) {
                   background: '#fff',
                   border: `1px solid ${isLive ? 'rgba(255,77,109,.3)' : 'rgba(255,255,255,.07)'}`,
                 }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(235,195,43,.25)'; e.currentTarget.style.background = 'linear-gradient(155deg,rgba(66,91,139,.22),rgba(66,91,139,.08))' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(125,211,252,.25)'; e.currentTarget.style.background = 'linear-gradient(155deg,rgba(66,91,139,.22),rgba(66,91,139,.08))' }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = isLive ? 'rgba(255,77,109,.3)' : 'rgba(255,255,255,.07)'; e.currentTarget.style.background = 'linear-gradient(155deg,rgba(66,91,139,.15),rgba(66,91,139,.04))' }}
               >
                 <div className="flex items-center gap-3">
                   {/* Fase / estado */}
                   <div className="flex flex-col gap-0.5 flex-shrink-0 w-24 hidden sm:flex">
                     {faseLabel && (
-                      <span className="text-[9px] font-semibold uppercase tracking-wider font-body" style={{ color: elim ? '#ebc32b' : '#a8b2c4' }}>
+                      <span className="text-[9px] font-semibold uppercase tracking-wider font-body" style={{ color: elim ? '#7dd3fc' : '#a8b2c4' }}>
                         {faseLabel}
                       </span>
                     )}
@@ -419,7 +419,7 @@ export default function PartidosAdminTab({ matches, loadBets }) {
                         <span className="font-display text-sm" style={{ color: '#a8b2c4' }}>- : -</span>
                       ) : (
                         <>
-                          <span className="font-display text-base" style={{ color: isLive ? '#ff4d6d' : '#ebc32b' }}>
+                          <span className="font-display text-base" style={{ color: isLive ? '#ff4d6d' : '#7dd3fc' }}>
                             {match.goles_local ?? 0} : {match.goles_visitante ?? 0}
                           </span>
                           {tienePenales && (
@@ -463,9 +463,9 @@ export default function PartidosAdminTab({ matches, loadBets }) {
                     <button
                       onClick={() => setEditingMatch(match)}
                       className="w-7 h-7 rounded-lg flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
-                      style={{ background: 'rgba(235,195,43,.1)', border: '1px solid #f0eadb', color: '#ebc32b' }}
-                      onMouseEnter={e => { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.color = '#05090f' }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(235,195,43,.1)'; e.currentTarget.style.color = '#ebc32b' }}
+                      style={{ background: 'rgba(125,211,252,.1)', border: '1px solid #f0eadb', color: '#7dd3fc' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = '#7dd3fc'; e.currentTarget.style.color = '#05090f' }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'rgba(125,211,252,.1)'; e.currentTarget.style.color = '#7dd3fc' }}
                       title="Editar resultado"
                     >
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>

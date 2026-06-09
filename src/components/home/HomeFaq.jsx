@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const FAQS = [
@@ -22,7 +22,7 @@ export default function HomeFaq() {
           {/* Left */}
           <div className="lg:sticky" style={{ top: '7rem' }}>
             <span className="inline-flex items-center gap-2 font-body font-bold text-xs uppercase tracking-widest px-4 py-2 rounded-full mb-6"
-              style={{ border: '1.5px solid #ebc32b', color: '#c99f16', background: 'rgba(235,195,43,.12)' }}>
+              style={{ border: '1.5px solid #7dd3fc', color: '#0ea5e9', background: 'rgba(125,211,252,.12)' }}>
               Ayuda
             </span>
             <h2 className="font-display mb-6" style={{ fontSize: 'clamp(2.5rem,6vw,4.2rem)', color: '#0c182b', lineHeight: 0.95, letterSpacing: '.01em' }}>
@@ -62,9 +62,9 @@ export default function HomeFaq() {
                   key={i} 
                   className="rounded-2xl overflow-hidden bg-white transition-all duration-300"
                   style={{
-                    border: isOpen ? '2px solid #ebc32b' : isHovered ? '2px solid #f0eadb' : '2px solid transparent',
+                    border: isOpen ? '2px solid #7dd3fc' : isHovered ? '2px solid #f0eadb' : '2px solid transparent',
                     boxShadow: isOpen 
-                      ? '0 8px 24px rgba(235,195,43,.18), 0 2px 8px rgba(235,195,43,.1)' 
+                      ? '0 8px 24px rgba(125,211,252,.18), 0 2px 8px rgba(125,211,252,.1)' 
                       : isHovered 
                         ? '0 4px 12px rgba(12,24,43,.08)' 
                         : '0 2px 4px rgba(12,24,43,.04)',
@@ -75,7 +75,7 @@ export default function HomeFaq() {
                 >
                   <button
                     className="w-full flex items-start justify-between gap-4 text-left px-6 py-5 transition-colors duration-200"
-                    style={{ background: isOpen ? 'rgba(235,195,43,.03)' : 'transparent' }}
+                    style={{ background: isOpen ? 'rgba(125,211,252,.03)' : 'transparent' }}
                     onClick={() => setOpen(isOpen ? -1 : i)}
                   >
                     <span className="font-body font-bold text-base leading-snug"
@@ -85,7 +85,7 @@ export default function HomeFaq() {
                     <span 
                       className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-300"
                       style={isOpen 
-                        ? { background: '#ebc32b', color: '#05090f', transform: 'rotate(180deg)' } 
+                        ? { background: '#7dd3fc', color: '#05090f', transform: 'rotate(180deg)' } 
                         : { background: isHovered ? '#f5edd5' : '#f0eadb', color: '#5f6e8a', transform: 'rotate(0deg)' }
                       }
                     >

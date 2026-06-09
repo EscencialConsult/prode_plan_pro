@@ -1,4 +1,4 @@
-import { timeLeft, isBetOpen } from '../../utils/index.js'
+﻿import { timeLeft, isBetOpen } from '../../utils/index.js'
 import { useAuth } from '../../hooks/useAuth.jsx'
 
 /* ── Colores y labels por estado de apuesta ──────────────── */
@@ -18,11 +18,11 @@ const STATE_STYLES = {
     bg: 'rgba(66,91,139,.18)',
   },
   finalizada: {
-    border: 'rgba(235,195,43,.35)',
-    glow: '0 0 24px rgba(235,195,43,.08)',
+    border: 'rgba(125,211,252,.35)',
+    glow: '0 0 24px rgba(125,211,252,.08)',
     label: 'FINALIZADA',
-    color: '#c99f16',
-    bg: 'rgba(235,195,43,.1)',
+    color: '#0ea5e9',
+    bg: 'rgba(125,211,252,.1)',
   },
   cerrada: {
     border: 'rgba(30,59,110,.65)',
