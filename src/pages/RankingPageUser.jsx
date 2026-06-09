@@ -199,7 +199,10 @@ export default function RankingPageUser() {
                 {loading ? (
                   <SkeletonContent />
                 ) : tabla.length === 0 ? (
-                  <SinParticipantes />
+                  <>
+                    <SinParticipantes />
+                    <LeyendaPuntos apuesta={sel} total={0} />
+                  </>
                 ) : (
                   <>
                     <Podio
@@ -464,16 +467,22 @@ function MiPosicion({ pos }) {
 function LeyendaPuntos({ apuesta, total }) {
   const e = parseInt(apuesta?.puntos_exacto) || 5, d = parseInt(apuesta?.puntos_diferencia) || 3, r = parseInt(apuesta?.puntos_resultado) || 1
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, fontSize: 10, color: '#94a3b8', paddingTop: 12, borderTop: '1px solid #e8e3db', marginTop: 12 }}>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-        {[['#22c55e', `Exacto +${e}pts`], ['#ebc32b', `Diferencia +${d}pts`], ['#94a3b8', `Resultado +${r}pt${r === 1 ? '' : 's'}`], ['#f43f5e', 'Sin acierto 0pts']].map(([c, l]) => (
-          <span key={l} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: c, display: 'inline-block' }} />
-            {l}
-          </span>
-        ))}
+    <div style={{ paddingTop: 12, borderTop: '1px solid #e8e3db', marginTop: 12 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, fontSize: 10, color: '#94a3b8' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+          {[['#22c55e', `Exacto +${e}pts`], ['#ebc32b', `Diferencia +${d}pts`], ['#94a3b8', `Resultado +${r}pt${r === 1 ? '' : 's'}`], ['#f43f5e', 'Sin acierto 0pts']].map(([c, l]) => (
+            <span key={l} style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: c, display: 'inline-block' }} />
+              {l}
+            </span>
+          ))}
+        </div>
+        {total > 0 && <span>Mostrando top 3 de {total} participantes</span>}
       </div>
-      {total > 0 && <span>Mostrando top 3 de {total} participantes</span>}
+      <p style={{ fontSize: 10, color: '#94a3b8', margin: '8px 0 0', display: 'flex', alignItems: 'flex-start', gap: 5, lineHeight: 1.5 }}>
+        <span>⚖️</span>
+        <span><strong style={{ color: '#64748b' }}>Desempate:</strong> a igual puntaje, va primero quien tenga más aciertos <strong>exactos</strong>, luego más por <strong>diferencia</strong>, y por último quien <strong>predijo primero</strong>.</span>
+      </p>
     </div>
   )
 }
