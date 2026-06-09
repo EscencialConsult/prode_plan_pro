@@ -14,9 +14,9 @@ const C = {
   navySoft:  '#18243f',
   blueMed:   '#425b8b',
   blueSoft:  '#6e83ad',
-  gold:      '#ebc32b',
-  goldLt:    '#f5d75a',
-  goldDk:    '#c99f16',
+  gold:      '#E30613',
+  goldLt:    '#C7050F',
+  goldDk:    '#A8030C',
   cream:     '#faf7f0',
   cream2:    '#f0eadb',
   cream3:    '#e8e0c9',
@@ -110,7 +110,7 @@ function SectionHeader({ num, kicker, title, icon }) {
             <div style={{
               width:42, height:42, borderRadius:12, flexShrink:0,
               background:`linear-gradient(135deg,${C.navy},${C.navySoft})`,
-              border:`1px solid rgba(235,195,43,.35)`,
+              border:`1px solid rgba(227,6,19,.35)`,
               display:'flex', alignItems:'center', justifyContent:'center',
               boxShadow:'0 6px 18px rgba(12,24,43,.18)',
               marginTop:4,
@@ -125,7 +125,7 @@ function SectionHeader({ num, kicker, title, icon }) {
         </div>
         <div style={{
           height:2, marginTop:14, marginLeft:icon?56:0,
-          background:`linear-gradient(90deg,${C.gold} 0%,rgba(235,195,43,.4) 30%,rgba(235,195,43,0) 80%)`,
+          background:`linear-gradient(90deg,${C.gold} 0%,rgba(227,6,19,.4) 30%,rgba(227,6,19,0) 80%)`,
         }}/>
       </div>
     </div>
@@ -139,7 +139,7 @@ function SectionHeader({ num, kicker, title, icon }) {
 function Callout({ type='info', title, children }) {
   const variants = {
     tip:    { accent:C.green,   bg:'rgba(27,138,90,.06)',  ic:'✓', tone:'CONSEJO' },
-    warn:   { accent:C.goldDk,  bg:'rgba(235,195,43,.08)', ic:'!', tone:'IMPORTANTE' },
+    warn:   { accent:C.goldDk,  bg:'rgba(227,6,19,.08)', ic:'!', tone:'IMPORTANTE' },
     info:   { accent:C.blueMed, bg:'rgba(66,91,139,.06)',  ic:'i', tone:'NOTA' },
     danger: { accent:C.red,     bg:'rgba(184,69,46,.06)',  ic:'⚠', tone:'CUIDADO' },
   }
@@ -193,7 +193,7 @@ function Step({ num, title, children }) {
       borderRadius:12,
       transition:'all .18s ease',
     }}
-      onMouseEnter={e=>{ e.currentTarget.style.borderColor='rgba(235,195,43,.5)'; e.currentTarget.style.transform='translateX(3px)'; e.currentTarget.style.boxShadow='0 4px 14px rgba(12,24,43,.06)' }}
+      onMouseEnter={e=>{ e.currentTarget.style.borderColor='rgba(227,6,19,.5)'; e.currentTarget.style.transform='translateX(3px)'; e.currentTarget.style.boxShadow='0 4px 14px rgba(12,24,43,.06)' }}
       onMouseLeave={e=>{ e.currentTarget.style.borderColor=C.cream2; e.currentTarget.style.transform='none'; e.currentTarget.style.boxShadow='none' }}>
       <div style={{
         width:34, height:34, borderRadius:10, flexShrink:0,
@@ -468,11 +468,11 @@ function GoldButton({ onClick, children, variant='solid' }) {
         background:C.gold, color:C.navyDeep,
         fontFamily:"'DM Sans',sans-serif", fontWeight:700,
         fontSize:13, letterSpacing:'.02em',
-        boxShadow:'0 6px 18px rgba(235,195,43,.35)',
+        boxShadow:'0 6px 18px rgba(227,6,19,.35)',
         transition:'all .18s ease',
       }}
-        onMouseEnter={e=>{ e.currentTarget.style.background=C.goldLt; e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow='0 8px 22px rgba(235,195,43,.5)' }}
-        onMouseLeave={e=>{ e.currentTarget.style.background=C.gold; e.currentTarget.style.transform='none'; e.currentTarget.style.boxShadow='0 6px 18px rgba(235,195,43,.35)' }}>
+        onMouseEnter={e=>{ e.currentTarget.style.background=C.goldLt; e.currentTarget.style.transform='translateY(-1px)'; e.currentTarget.style.boxShadow='0 8px 22px rgba(227,6,19,.5)' }}
+        onMouseLeave={e=>{ e.currentTarget.style.background=C.gold; e.currentTarget.style.transform='none'; e.currentTarget.style.boxShadow='0 6px 18px rgba(227,6,19,.35)' }}>
         {children}
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <line x1="5" y1="12" x2="19" y2="12"/>
@@ -591,7 +591,7 @@ export default function Manual() {
       <div style={{
         position:'absolute', inset:0, pointerEvents:'none', overflow:'hidden',
         background:`
-          radial-gradient(ellipse 600px 400px at 90% 5%, rgba(235,195,43,.08), transparent 60%),
+          radial-gradient(ellipse 600px 400px at 90% 5%, rgba(227,6,19,.08), transparent 60%),
           radial-gradient(ellipse 500px 600px at 5% 60%, rgba(66,91,139,.05), transparent 60%)
         `,
       }}/>
@@ -632,8 +632,8 @@ export default function Manual() {
               fontSize:9, fontWeight:700,
               textTransform:'uppercase', letterSpacing:'.16em',
               color:C.goldDk,
-              background:'rgba(235,195,43,.12)',
-              border:`1px solid rgba(235,195,43,.35)`,
+              background:'rgba(227,6,19,.12)',
+              border:`1px solid rgba(227,6,19,.35)`,
               borderRadius:99, padding:'3px 10px',
             }}>
               <span style={{ width:5, height:5, borderRadius:'50%', background:C.gold }}/>
@@ -658,14 +658,14 @@ export default function Manual() {
                     <button key={s.id} onClick={()=>goTo(s.id)} style={{
                       display:'flex', alignItems:'center', gap:10,
                       width:'100%', padding:'7px 18px 7px 12px',
-                      background:active?'rgba(235,195,43,.1)':'transparent',
+                      background:active?'rgba(227,6,19,.1)':'transparent',
                       border:'none',
                       borderLeft:`2px solid ${active?C.gold:'transparent'}`,
                       cursor:'pointer', textAlign:'left',
                       transition:'all .15s ease',
                       fontFamily:"'DM Sans',sans-serif",
                     }}
-                      onMouseEnter={e=>{ if(!active){ e.currentTarget.style.background='rgba(235,195,43,.05)' }}}
+                      onMouseEnter={e=>{ if(!active){ e.currentTarget.style.background='rgba(227,6,19,.05)' }}}
                       onMouseLeave={e=>{ if(!active){ e.currentTarget.style.background='transparent' }}}>
                       <span style={{
                         fontFamily:"'Bebas Neue',sans-serif", fontSize:12,
@@ -717,7 +717,7 @@ export default function Manual() {
               GESTIONÁ EL<br/>
               <span style={{
                 color:C.goldDk,
-                textShadow:'0 0 32px rgba(235,195,43,.25)',
+                textShadow:'0 0 32px rgba(227,6,19,.25)',
               }}>TORNEO COMPLETO</span>
             </h1>
 
@@ -1037,7 +1037,7 @@ export default function Manual() {
               gap:12, margin:'18px 0',
             }}>
               {[
-                { emoji:'🥇', pos:'1° PUESTO', label:'Ganador principal de la apuesta', accent:C.gold,    bg:'rgba(235,195,43,.08)' },
+                { emoji:'🥇', pos:'1° PUESTO', label:'Ganador principal de la apuesta', accent:C.gold,    bg:'rgba(227,6,19,.08)' },
                 { emoji:'🥈', pos:'2° PUESTO', label:'Segundo lugar — premio a elección del admin', accent:C.ink300, bg:'rgba(168,178,196,.1)' },
                 { emoji:'🥉', pos:'3° PUESTO', label:'Tercer lugar — si el admin decide premiarlo', accent:'#b97a3a', bg:'rgba(185,122,58,.08)' },
                 { emoji:'🎖️', pos:'4° Y 5°', label:'El admin puede premiar más puestos si lo desea', accent:C.blueSoft, bg:'rgba(110,131,173,.08)' },
@@ -1184,14 +1184,14 @@ export default function Manual() {
               background:`linear-gradient(135deg,${C.navy} 0%,${C.navySoft} 100%)`,
               borderRadius:18, padding:'28px 28px 24px',
               margin:'32px 0',
-              border:`1px solid rgba(235,195,43,.3)`,
+              border:`1px solid rgba(227,6,19,.3)`,
               boxShadow:'0 18px 48px rgba(12,24,43,.25)',
             }}>
               {/* Glow decorativo */}
               <div style={{
                 position:'absolute', top:-60, right:-80,
                 width:280, height:280,
-                background:'radial-gradient(circle,rgba(235,195,43,.18),transparent 65%)',
+                background:'radial-gradient(circle,rgba(227,6,19,.18),transparent 65%)',
                 pointerEvents:'none',
               }}/>
               <div style={{ position:'relative' }}>
@@ -1227,8 +1227,8 @@ export default function Manual() {
                     <div key={i} style={{
                       display:'flex', alignItems:'center', gap:10,
                       padding:'8px 12px',
-                      background:'rgba(235,195,43,.06)',
-                      border:'1px solid rgba(235,195,43,.18)',
+                      background:'rgba(227,6,19,.06)',
+                      border:'1px solid rgba(227,6,19,.18)',
                       borderRadius:8,
                     }}>
                       <span style={{
@@ -1284,7 +1284,7 @@ export default function Manual() {
                       fontFamily:"'DM Sans',sans-serif", fontWeight:600, fontSize:12,
                       cursor:'pointer', transition:'all .15s ease',
                     }}
-                    onMouseEnter={e=>{ e.currentTarget.style.borderColor=C.gold; e.currentTarget.style.background='rgba(235,195,43,.08)'; e.currentTarget.style.color=C.goldDk }}
+                    onMouseEnter={e=>{ e.currentTarget.style.borderColor=C.gold; e.currentTarget.style.background='rgba(227,6,19,.08)'; e.currentTarget.style.color=C.goldDk }}
                     onMouseLeave={e=>{ e.currentTarget.style.borderColor=C.cream3; e.currentTarget.style.background=C.cream; e.currentTarget.style.color=C.navy }}>
                     {label}
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

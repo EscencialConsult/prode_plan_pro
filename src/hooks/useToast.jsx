@@ -80,7 +80,7 @@ function ToastItem({ toast, onClose }) {
     info: {
       bg: 'linear-gradient(135deg, #0c182b 0%, #0f2145 100%)',
       border: 'rgba(235, 195, 43, 0.4)',
-      color: '#ebc32b',
+      color: '#E30613',
       iconBg: 'rgba(235, 195, 43, 0.15)',
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -164,10 +164,10 @@ function ConfirmDialog({ opts, onResolve }) {
     },
     warning: {
       iconBg: 'rgba(235, 195, 43, 0.15)',
-      iconColor: '#ebc32b',
-      btnBg: 'linear-gradient(135deg, #ebc32b 0%, #c99f16 100%)',
+      iconColor: '#E30613',
+      btnBg: 'linear-gradient(135deg, #E30613 0%, #A8030C 100%)',
       btnColor: '#05090f',
-      btnShadow: '0 6px 24px rgba(235,195,43,.35)',
+      btnShadow: '0 6px 24px rgba(227,6,19,.35)',
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="12" cy="12" r="10" />

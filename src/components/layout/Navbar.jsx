@@ -1,5 +1,7 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useAuth } from '../../hooks/useAuth.jsx'
+import { BRAND } from '../../brand.js'
+import Logo from '../ui/Logo.jsx'
 
 const NAV_LINKS = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -28,31 +30,39 @@ export default function Navbar() {
     }`
 
   const linkStyle = isActive => isActive
-    ? { background: 'rgba(235,195,43,.15)', color: '#ebc32b', border: '1px solid rgba(235,195,43,.3)' }
-    : { color: 'rgba(255,255,255,.55)', border: '1px solid transparent' }
+    ? { background: BRAND.accentSoft, color: BRAND.accent, border: '1px solid rgba(227,6,19,.18)' }
+    : { color: BRAND.textMuted, border: '1px solid transparent' }
 
   return (
     <nav
       className="sticky top-0 z-50"
       style={{
-        background: 'rgba(5,9,15,.94)',
+        background: BRAND.primary,
         backdropFilter: 'blur(16px)',
-        borderBottom: '1px solid rgba(235,195,43,.12)',
-        boxShadow: '0 4px 24px rgba(0,0,0,.4)',
+        borderBottom: `1px solid ${BRAND.border}`,
+        boxShadow: '0 1px 10px rgba(0,0,0,.04)',
       }}
     >
       <div className="max-w-6xl mx-auto px-4 md:px-6 h-16 flex items-center gap-4">
 
         {/* ── Logo ── */}
         <Link to="/dashboard" className="flex items-center gap-3 flex-shrink-0 min-w-0">
-          {/* Slot logo empresa */}
-
-          <div className="w-px h-5 hidden sm:block" style={{ background: 'rgba(235,195,43,.25)' }} />
-          <img
-            src="./imgprode/one-prode-talento-new3.png"
-            alt="Prode Talento"
-            style={{ height: 32, width: 'auto', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))' }}
-          />
+          <div className="w-px h-5 hidden sm:block" style={{ background: BRAND.accentSoft }} />
+          {BRAND.logoPath ? (
+            <Logo size={42} alt={BRAND.logoAlt} />
+          ) : (
+            <span
+              style={{
+                fontFamily: "'Bebas Neue', sans-serif",
+                fontSize: '1.15rem',
+                color: BRAND.accent,
+                letterSpacing: '.05em',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {BRAND.name}
+            </span>
+          )}
         </Link>
 
         {/* ── Links ── */}
@@ -81,8 +91,8 @@ export default function Navbar() {
             <NavLink key={link.to} to={link.to}
               className={({ isActive }) => linkClass({ isActive })}
               style={({ isActive }) => isActive
-                ? { background: 'rgba(235,195,43,.2)', color: '#ebc32b', border: '1px solid rgba(235,195,43,.4)', fontWeight: 700 }
-                : { color: 'rgba(235,195,43,.6)', border: '1px solid transparent' }
+                ? { background: BRAND.accentSoft, color: BRAND.accent, border: '1px solid rgba(227,6,19,.18)', fontWeight: 700 }
+                : { color: BRAND.textMuted, border: '1px solid transparent' }
               }
             >
               {link.label}
@@ -96,10 +106,10 @@ export default function Navbar() {
             {/* Avatar + nombre */}
             <div className="hidden sm:flex items-center gap-2">
               <div className="w-7 h-7 rounded-full flex items-center justify-center font-display text-xs"
-                style={{ background: 'linear-gradient(135deg,#ebc32b,#c99f16)', color: '#05090f', boxShadow: '0 2px 8px rgba(235,195,43,.3)' }}>
+                style={{ background: BRAND.accent, color: '#fff', boxShadow: '0 2px 8px rgba(227,6,19,.22)' }}>
                 {(user.nombre || '?')[0].toUpperCase()}
               </div>
-              <span className="font-body text-sm" style={{ color: 'rgba(255,255,255,.55)' }}>
+              <span className="font-body text-sm" style={{ color: BRAND.textMuted }}>
                 {user.nombre}
               </span>
             </div>
@@ -107,9 +117,9 @@ export default function Navbar() {
             <button
               onClick={logout}
               className="px-3 py-1.5 rounded-lg text-sm font-body font-medium transition-all"
-              style={{ color: 'rgba(255,255,255,.45)', border: '1px solid rgba(255,255,255,.1)' }}
+              style={{ color: BRAND.textMuted, border: `1px solid ${BRAND.border}` }}
               onMouseEnter={e => { e.currentTarget.style.color = '#ff4d6d'; e.currentTarget.style.borderColor = 'rgba(255,77,109,.3)' }}
-              onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,.45)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,.1)' }}
+              onMouseLeave={e => { e.currentTarget.style.color = BRAND.textMuted; e.currentTarget.style.borderColor = BRAND.border }}
             >
               Salir
             </button>

@@ -24,7 +24,7 @@ const C = {
   mute:     '#a8b2c4',
   line:     '#e7dec6',
   gold:     '#d4a017',
-  goldHi:   '#ebc32b',
+  goldHi:   '#E30613',
   goldDeep: '#a87a0b',
   red:      '#e03252',
 }

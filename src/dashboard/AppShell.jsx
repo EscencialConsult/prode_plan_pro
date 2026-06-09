@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth.jsx'
+import { BRAND } from '../brand.js'
+import Logo from '../components/ui/Logo.jsx'
 
 const NAV_ITEMS = [
   { to: '/dashboard', label: 'Dashboard', icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg> },
@@ -50,26 +52,26 @@ function NavLink({ to, label, icon, location }) {
           fontSize: '.75rem',
           letterSpacing: '.05em',
           textTransform: 'uppercase',
-          color: a ? '#ebc32b' : 'rgba(255,255,255,.45)',
-          background: a ? 'rgba(235,195,43,.12)' : 'transparent',
-          border: a ? '1px solid rgba(235,195,43,.28)' : '1px solid transparent',
+          color: a ? BRAND.accent : BRAND.textMuted,
+          background: a ? BRAND.accentSoft : 'transparent',
+          border: a ? '1px solid rgba(227,6,19,.18)' : '1px solid transparent',
           transition: 'all .16s',
           cursor: 'pointer',
         }}
         onMouseEnter={e => {
           if (!a) {
-            e.currentTarget.style.color = 'rgba(255,255,255,.82)'
-            e.currentTarget.style.background = 'rgba(255,255,255,.05)'
+            e.currentTarget.style.color = BRAND.text
+            e.currentTarget.style.background = '#F2F2F2'
           }
         }}
         onMouseLeave={e => {
           if (!a) {
-            e.currentTarget.style.color = 'rgba(255,255,255,.45)'
+            e.currentTarget.style.color = BRAND.textMuted
             e.currentTarget.style.background = 'transparent'
           }
         }}
       >
-        <span style={{ color: a ? '#ebc32b' : 'inherit', display: 'flex', opacity: a ? 1 : .65 }}>
+        <span style={{ color: a ? BRAND.accent : 'inherit', display: 'flex', opacity: a ? 1 : .65 }}>
           {icon}
         </span>
         {label}
@@ -92,11 +94,11 @@ function NavLinkMob({ to, label, icon, location, onClick }) {
           borderRadius: 8,
           fontWeight: 600,
           fontSize: '.85rem',
-          color: a ? '#ebc32b' : 'rgba(255,255,255,.6)',
-          background: a ? 'rgba(235,195,43,.1)' : 'transparent',
+          color: a ? BRAND.accent : BRAND.textMuted,
+          background: a ? BRAND.accentSoft : 'transparent',
         }}
       >
-        <span style={{ color: a ? '#ebc32b' : 'inherit', display: 'flex' }}>{icon}</span>
+        <span style={{ color: a ? BRAND.accent : 'inherit', display: 'flex' }}>{icon}</span>
         {label}
       </span>
     </Link>
@@ -200,7 +202,7 @@ export default function AppShell({ children }) {
 
 <div
         style={{
-          background: '#faf7f0',
+          background: BRAND.secondary,
           display: 'flex',
           flexDirection: 'column',
           fontFamily: "'DM Sans',sans-serif",
@@ -210,10 +212,10 @@ export default function AppShell({ children }) {
       >
         <nav
           style={{
-            background: '#0c182b',
+            background: BRAND.primary,
             flexShrink: 0,
             zIndex: 50,
-            borderBottom: '1px solid rgba(235,195,43,.14)',
+            borderBottom: `1px solid ${BRAND.border}`,
           }}
         >
 <div
@@ -228,16 +230,21 @@ export default function AppShell({ children }) {
 
           >
             <Link to="/dashboard" style={{ textDecoration: 'none', flexShrink: 0, marginRight: '1.8rem' }}>
-              <img
-                src="/imgprode/one-prode-talento-new3.png"
-                alt="Prode Talento"
+            {BRAND.logoPath ? (
+              <Logo size={42} alt={BRAND.logoAlt} />
+            ) : (
+              <span
                 style={{
-                  height: 32,
-                  width: 'auto',
-                  filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))',
+                  fontFamily: "'Bebas Neue', sans-serif",
+                  fontSize: '1.15rem',
+                  color: BRAND.accent,
+                  letterSpacing: '.05em',
                 }}
-              />
-            </Link>
+              >
+                {BRAND.name}
+              </span>
+            )}
+          </Link>
 
 <div className="dnav" style={{ display: 'flex', alignItems: 'center', gap: '.15rem', flex: 1 }}>
   {filteredNavItems.map(({ to, label, icon }) => (
@@ -265,19 +272,19 @@ export default function AppShell({ children }) {
         fontSize: '.72rem',
         letterSpacing: '.06em',
         textTransform: 'uppercase',
-        color: location.pathname === '/manual-admin' ? '#0c182b' : '#ebc32b',
-        background: location.pathname === '/manual-admin' ? '#ebc32b' : 'transparent',
-        border: '1.5px solid #ebc32b',
+        color: location.pathname === '/manual-admin' ? '#fff' : BRAND.accent,
+        background: location.pathname === '/manual-admin' ? BRAND.accent : 'transparent',
+        border: `1.5px solid ${BRAND.accent}`,
         transition: 'all .16s',
         cursor: 'pointer',
         boxShadow: location.pathname === '/manual-admin'
-          ? '0 0 0 3px rgba(235,195,43,.18)'
+          ? '0 0 0 3px rgba(227,6,19,.18)'
           : 'none',
       }}
       onMouseEnter={e => {
         if (location.pathname !== '/manual-admin') {
-          e.currentTarget.style.background = 'rgba(235,195,43,.14)'
-          e.currentTarget.style.boxShadow = '0 0 0 3px rgba(235,195,43,.1)'
+          e.currentTarget.style.background = 'rgba(227,6,19,.14)'
+          e.currentTarget.style.boxShadow = '0 0 0 3px rgba(227,6,19,.1)'
         }
       }}
       onMouseLeave={e => {
@@ -333,16 +340,16 @@ export default function AppShell({ children }) {
                     padding: '.28rem .55rem .28rem .28rem',
                     borderRadius: 99,
                     background: (userMenu || location.pathname === '/cambiar-password')
-                      ? 'rgba(235,195,43,.14)' : 'rgba(255,255,255,.07)',
+                      ? BRAND.accentSoft : '#F7F7F7',
                     border: `1px solid ${(userMenu || location.pathname === '/cambiar-password')
-                      ? 'rgba(235,195,43,.4)' : 'rgba(255,255,255,.1)'}`,
+                      ? 'rgba(227,6,19,.3)' : BRAND.border}`,
                     cursor: 'pointer',
                     transition: 'all .16s',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(235,195,43,.4)' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(227,6,19,.4)' }}
                   onMouseLeave={e => {
                     if (!userMenu && location.pathname !== '/cambiar-password') {
-                      e.currentTarget.style.borderColor = 'rgba(255,255,255,.1)'
+                      e.currentTarget.style.borderColor = BRAND.border
                     }
                   }}
                 >
@@ -351,13 +358,13 @@ export default function AppShell({ children }) {
                       width: 27,
                       height: 27,
                       borderRadius: '50%',
-                      background: 'linear-gradient(135deg,#ebc32b,#c99f16)',
+                      background: BRAND.accent,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontFamily: "'Bebas Neue',sans-serif",
+                      fontFamily: "'Plus Jakarta Sans',sans-serif",
                       fontSize: '.88rem',
-                      color: '#05090f',
+                      color: '#fff',
                     }}
                   >
                     {initials(user?.nombre || user?.name || 'U')}
@@ -367,7 +374,7 @@ export default function AppShell({ children }) {
                     style={{
                       fontSize: '.78rem',
                       fontWeight: 600,
-                      color: 'rgba(255,255,255,.72)',
+                      color: BRAND.text,
                       maxWidth: 84,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
@@ -380,7 +387,7 @@ export default function AppShell({ children }) {
                   {/* Flechita indicadora de menú desplegable */}
                   <svg
                     width="11" height="11" viewBox="0 0 24 24" fill="none"
-                    stroke="rgba(255,255,255,.5)" strokeWidth="2.5"
+                    stroke="#777777" strokeWidth="2.5"
                     strokeLinecap="round" strokeLinejoin="round"
                     style={{
                       flexShrink: 0,
@@ -410,17 +417,17 @@ export default function AppShell({ children }) {
                         zIndex: 61,
                         minWidth: 200,
                         background: '#fff',
-                        borderRadius: 12,
-                        boxShadow: '0 12px 32px rgba(12,24,43,.22), 0 0 0 1px rgba(12,24,43,.06)',
+                        borderRadius: 8,
+                        boxShadow: '0 8px 32px rgba(0,0,0,.12)',
                         padding: '.35rem',
-                        border: '1px solid #f0eadb',
+                        border: `1px solid ${BRAND.border}`,
                       }}
                     >
                       <div
                         style={{
                           position: 'absolute', top: -6, right: 22, width: 12, height: 12,
                           background: '#fff', transform: 'rotate(45deg)',
-                          borderTop: '1px solid #f0eadb', borderLeft: '1px solid #f0eadb',
+                          borderTop: `1px solid ${BRAND.border}`, borderLeft: `1px solid ${BRAND.border}`,
                         }}
                       />
 
@@ -431,13 +438,13 @@ export default function AppShell({ children }) {
                         style={{
                           display: 'flex', alignItems: 'center', gap: '.55rem',
                           padding: '.6rem .7rem', borderRadius: 8,
-                          fontSize: '.82rem', fontWeight: 600, color: '#0c182b',
+                          fontSize: '.82rem', fontWeight: 600, color: BRAND.text,
                           textDecoration: 'none', transition: 'background .14s',
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.background = '#f6f1e3' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = '#F7F7F7' }}
                         onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
                       >
-                        <span style={{ color: '#c99f16', display: 'flex' }}>{KEY_ICON}</span>
+                        <span style={{ color: '#A8030C', display: 'flex' }}>{KEY_ICON}</span>
                         Cambiar contraseña
                       </Link>
                     </div>
@@ -451,12 +458,12 @@ export default function AppShell({ children }) {
                   disabled={logoutState === 'logging' || logoutState === 'redirect'}
                   style={{
                     background: logoutState === 'logging' ? 'rgba(255,77,109,.12)' : 'transparent',
-                    border: `1px solid ${logoutState === 'logging' ? 'rgba(255,77,109,.4)' : 'rgba(255,255,255,.1)'}`,
+                    border: `1px solid ${logoutState === 'logging' ? 'rgba(227,6,19,.35)' : BRAND.border}`,
                     borderRadius: 7,
                     padding: '.3rem .68rem',
                     fontSize: '.74rem',
                     fontWeight: 600,
-                    color: logoutState === 'logging' ? '#ff4d6d' : 'rgba(255,255,255,.35)',
+                    color: logoutState === 'logging' ? BRAND.accent : BRAND.textMuted,
                     cursor: logoutState === 'logging' || logoutState === 'redirect' ? 'wait' : 'pointer',
                     transition: 'all .16s',
                     display: 'inline-flex',
@@ -467,14 +474,14 @@ export default function AppShell({ children }) {
                   }}
                   onMouseEnter={e => {
                     if (logoutState === 'idle') {
-                      e.currentTarget.style.borderColor = 'rgba(255,77,109,.45)'
-                      e.currentTarget.style.color = '#ff4d6d'
+                      e.currentTarget.style.borderColor = 'rgba(227,6,19,.35)'
+                      e.currentTarget.style.color = BRAND.accent
                     }
                   }}
                   onMouseLeave={e => {
                     if (logoutState === 'idle') {
-                      e.currentTarget.style.borderColor = 'rgba(255,255,255,.1)'
-                      e.currentTarget.style.color = 'rgba(255,255,255,.35)'
+                      e.currentTarget.style.borderColor = BRAND.border
+                      e.currentTarget.style.color = BRAND.textMuted
                     }
                   }}
                 >
@@ -511,10 +518,10 @@ export default function AppShell({ children }) {
                         zIndex: 61,
                         minWidth: 240,
                         background: '#fff',
-                        borderRadius: 12,
-                        boxShadow: '0 12px 32px rgba(12,24,43,.22), 0 0 0 1px rgba(12,24,43,.06)',
+                        borderRadius: 8,
+                        boxShadow: '0 8px 32px rgba(0,0,0,.12)',
                         padding: '.85rem .95rem',
-                        border: '1px solid #f0eadb',
+                        border: `1px solid ${BRAND.border}`,
                       }}
                     >
                       <div
@@ -526,8 +533,8 @@ export default function AppShell({ children }) {
                           height: 12,
                           background: '#fff',
                           transform: 'rotate(45deg)',
-                          borderTop: '1px solid #f0eadb',
-                          borderLeft: '1px solid #f0eadb',
+                          borderTop: `1px solid ${BRAND.border}`,
+                          borderLeft: `1px solid ${BRAND.border}`,
                         }}
                       />
 
@@ -646,7 +653,7 @@ export default function AppShell({ children }) {
           {mob && (
             <div
               style={{
-                borderTop: '1px solid rgba(235,195,43,.1)',
+                borderTop: '1px solid rgba(227,6,19,.1)',
                 padding: '.55rem 1rem .75rem',
                 display: 'flex',
                 flexDirection: 'column',
@@ -682,8 +689,8 @@ export default function AppShell({ children }) {
 
         <footer
           style={{
-            background: '#080f1e',
-            borderTop: '2px solid #ebb32b',
+            background: BRAND.secondary,
+            borderTop: `2px solid ${BRAND.accent}`,
             padding: '.4rem 2rem',
             flexShrink: 0,
           }}
@@ -700,7 +707,16 @@ export default function AppShell({ children }) {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '.65rem' }}>
-              <img src="/img/one-logoletra.png" alt="ONE" style={{ height: 20, width: 'auto', display: 'block' }} />
+              <span
+                style={{
+                  fontFamily: "'Bebas Neue',sans-serif",
+                  fontSize: '.95rem',
+                  color: BRAND.accent,
+                  letterSpacing: '.08em',
+                }}
+              >
+                {BRAND.name}
+              </span>
               <span
                 style={{
                   fontFamily: "'DM Sans',sans-serif",
@@ -725,7 +741,7 @@ export default function AppShell({ children }) {
                 Desarrollado por
               </span>
 
-              <img src="/img/one-logocolor.png" alt="ONE" style={{ height: 25, width: 'auto', display: 'block' }} />
+              <Logo size={22} alt={BRAND.logoAlt} tone="white" style={{ opacity: .9 }} />
 
               <span
                 style={{
@@ -735,7 +751,7 @@ export default function AppShell({ children }) {
                   fontWeight: 400,
                 }}
               >
-                by
+                en alianza con
               </span>
 
               <img
@@ -774,15 +790,15 @@ export default function AppShell({ children }) {
                 width: 56,
                 height: 56,
                 borderRadius: '50%',
-                background: 'rgba(235,195,43,.15)',
-                border: '1px solid rgba(235,195,43,.4)',
+                background: 'rgba(227,6,19,.15)',
+                border: '1px solid rgba(227,6,19,.4)',
                 margin: '0 auto 1rem',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E30613" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>

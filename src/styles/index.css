@@ -3,54 +3,56 @@
    Plataforma white-label para prode empresarial.
    ============================================================ */
 
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 :root {
-  /* Backgrounds — navy profundo */
-  --color-bg:           #020F27;
-  --color-bg-2:         #071A3A;
-  --color-bg-3:         #0F2145;
-  --color-surface:      #0F2B4F;
-  --color-surface-2:    #17376A;
-  --color-border:       #1E3B6E;
-  --color-border-soft:  rgba(34, 217, 223, 0.12);
+  /* Backgrounds — Bercovich */
+  --color-bg:           #F7F7F7;
+  --color-bg-2:         #0A0A0A;
+  --color-bg-3:         #1A1A1A;
+  --color-surface:      #FFFFFF;
+  --color-surface-2:    #F2F2F2;
+  --color-border:       #E6E6E6;
+  --color-border-soft:  rgba(10, 10, 10, 0.10);
 
-  /* Acento único — cyan premium */
-  --color-accent:       #22D9DF;
-  --color-accent-bright:#28FFFF;
-  --color-accent-dim:   #148B91;
-  --color-accent-glow:  rgba(34, 217, 223, 0.18);
-  --color-accent-soft:  rgba(34, 217, 223, 0.08);
+  /* Acento — rojo Bercovich */
+  --color-accent:       #E30613;
+  --color-accent-bright:#E30613;
+  --color-accent-dim:   #A8030C;
+  --color-accent-glow:  rgba(227, 6, 19, 0.18);
+  --color-accent-soft:  rgba(227, 6, 19, 0.08);
+  --color-accent-shadow: rgba(227, 6, 19, 0.20);
 
   /* Semánticos */
-  --color-success:      #22D9DF;
-  --color-warn:         #F4B42A;
-  --color-warn-dim:     rgba(244, 180, 42, 0.15);
-  --color-danger:       #FF4D6D;
-  --color-danger-dim:   rgba(255, 77, 109, 0.15);
-  --color-live:         #FF3D71;
+  --color-success:      #16A34A;
+  --color-warn:         #F59E0B;
+  --color-warn-dim:     rgba(245, 158, 11, 0.14);
+  --color-danger:       #E30613;
+  --color-danger-dim:   rgba(227, 6, 19, 0.12);
+  --color-live:         #16A34A;
 
   /* Texto */
-  --color-text:         #F0F4FF;
-  --color-text-muted:   #8499C2;
-  --color-text-faint:   #4A5F8A;
+  --color-text:         #1A1A1A;
+  --color-text-muted:   #555555;
+  --color-text-faint:   #777777;
 
   /* Tipografía */
-  --font-display:       'Bebas Neue', sans-serif;
-  --font-body:          'DM Sans', sans-serif;
+  --font-display:       'Plus Jakarta Sans', 'DM Sans', sans-serif;
+  --font-body:          'Plus Jakarta Sans', 'DM Sans', sans-serif;
 
   /* Radios */
-  --radius-sm:          6px;
-  --radius-md:          10px;
-  --radius-lg:          16px;
-  --radius-xl:          24px;
+  --radius-sm:          4px;
+  --radius-md:          8px;
+  --radius-lg:          12px;
+  --radius-xl:          16px;
 
   /* Sombras */
-  --shadow-sm:          0 1px 3px rgba(0,0,0,0.5);
-  --shadow-md:          0 4px 20px rgba(0,0,0,0.6);
-  --shadow-lg:          0 12px 40px rgba(0,0,0,0.7);
+  --shadow-sm:          0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:          0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg:          0 8px 32px rgba(0,0,0,0.12);
   --shadow-glow:        0 0 32px var(--color-accent-glow);
-  --shadow-glow-strong: 0 0 48px rgba(34, 217, 223, 0.35);
+  --shadow-glow-strong: 0 4px 14px rgba(227, 6, 19, 0.30);
 
   /* Transiciones */
   --transition-fast:    150ms ease;
@@ -66,6 +68,9 @@
 body {
   margin: 0;
   padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
 }
 
 html {
@@ -89,6 +94,7 @@ body:has(.sh-in) {
 
 /* ── Scrollbar ─────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
+.gold-glow { text-shadow: 0 0 40px rgba(227,6,19,.45), 0 2px 0 rgba(0,0,0,.2); }
 ::-webkit-scrollbar-track { background: var(--color-bg-2); }
 ::-webkit-scrollbar-thumb {
   background: var(--color-border);
@@ -100,16 +106,15 @@ body:has(.sh-in) {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   line-height: 1.05;
-  letter-spacing: 0.02em;
-  color: var(--color-text);
+  letter-spacing: 0;
+  color: inherit;
 }
 
-/* Agregar DESPUÉS de la regla h1-h6 existente */
 body:has(.shell-in) h1,
 body:has(.shell-in) h2,
 body:has(.shell-in) h3,
 body:has(.shell-in) h4 {
-  color: #0c182b;
+  color: inherit;
 }
 
 a {
@@ -129,6 +134,11 @@ a:hover { color: var(--color-accent-bright); }
 .text-warn          { color: var(--color-warn); }
 .text-danger        { color: var(--color-danger); }
 
+/* Utility: cuando el contenido está sobre fondos oscuros */
+.on-dark { color: #ffffff; }
+.on-dark a { color: var(--color-accent); }
+.on-dark .text-muted { color: rgba(255,255,255,0.65); }
+
 .bg-surface     { background-color: var(--color-surface); }
 .bg-2           { background-color: var(--color-bg-2); }
 
@@ -143,12 +153,9 @@ a:hover { color: var(--color-accent-bright); }
 
 /* ── Glass effect ──────────────────────────────────────── */
 .glass {
-  background: linear-gradient(
-    135deg,
-    rgba(34, 217, 223, 0.05),
-    rgba(11, 74, 110, 0.15)
-  );
-  border: 1px solid var(--color-border-soft);
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
 }
 
 /* ── Animaciones ───────────────────────────────────────── */
@@ -192,11 +199,11 @@ a:hover { color: var(--color-accent-bright); }
 /* ── Botón primario con glow ───────────────────────────── */
 .btn-primary-glow {
   background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dim) 100%);
-  box-shadow: 0 4px 16px rgba(34, 217, 223, 0.3);
+  box-shadow: 0 4px 18px rgba(227, 6, 19, 0.32);
   transition: all var(--transition-base);
 }
 .btn-primary-glow:hover {
-  box-shadow: 0 6px 24px rgba(34, 217, 223, 0.5);
+  box-shadow: 0 8px 30px rgba(227, 6, 19, 0.45);
   transform: translateY(-1px);
 }
 
@@ -217,19 +224,19 @@ a:hover {
 
 /* Paleta landing */
 :root {
-  --lnd-navy-deep: #05090f;
-  --lnd-navy:      #0c182b;
-  --lnd-navy-soft: #18243f;
-  --lnd-blue-med:  #425b8b;
-  --lnd-blue-soft: #6e83ad;
-  --lnd-gold:      #ebc32b;
-  --lnd-gold-lt:   #f5d75a;
-  --lnd-gold-dk:   #c99f16;
-  --lnd-cream:     #faf7f0;
-  --lnd-cream-2:   #f0eadb;
-  --lnd-ink-700:   #2b3a5a;
-  --lnd-ink-500:   #5f6e8a;
-  --lnd-ink-300:   #a8b2c4;
+  --lnd-navy-deep: #0A0A0A;
+  --lnd-navy:      #1A1A1A;
+  --lnd-navy-soft: #333333;
+  --lnd-blue-med:  #555555;
+  --lnd-blue-soft: #777777;
+  --lnd-gold:      #E30613;
+  --lnd-gold-lt:   #E30613;
+  --lnd-gold-dk:   #A8030C;
+  --lnd-cream:     #F7F7F7;
+  --lnd-cream-2:   #E6E6E6;
+  --lnd-ink-700:   #333333;
+  --lnd-ink-500:   #555555;
+  --lnd-ink-300:   #BFBFBF;
   --lnd-red:       #b8452e;
 }
 
@@ -260,7 +267,7 @@ a:hover {
 .pulse-dot { animation: pulse-dot-anim 1.6s ease infinite; }
 
 /* Gold text glow */
-.gold-glow { text-shadow: 0 0 40px rgba(235,195,43,.45), 0 2px 0 rgba(0,0,0,.2); }
+.gold-glow { text-shadow: 0 0 40px rgba(227,6,19,.45), 0 2px 0 rgba(0,0,0,.2); }
 
 /* Nav link underline hover */
 .home-navlink { position: relative; font-size: .92rem; font-weight: 500; color: rgba(255,255,255,.75); transition: color .2s; text-decoration: none; }
@@ -347,7 +354,7 @@ body:has(.sh-in) {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 13px;
   letter-spacing: .14em;
-  color: #0c182b;
+  color: var(--color-text);
   margin: 0 0 8px;
 }
 .rk-left-scroll {
@@ -407,7 +414,7 @@ body:has(.sh-in) {
   top: 20%;
   bottom: 20%;
   width: 3px;
-  background: #ebc32b;
+  background: #E30613;
   border-radius: 0 3px 3px 0;
   opacity: 0;
   transition: opacity .14s;
@@ -475,7 +482,7 @@ body:has(.sh-in) {
   position: absolute;
   top: 0; right: 0;
   width: 220px; height: 100%;
-  background: radial-gradient(ellipse at 85% 50%, rgba(235,195,43,.2), transparent 65%);
+  background: radial-gradient(ellipse at 85% 50%, rgba(227,6,19,.2), transparent 65%);
   pointer-events: none;
 }
 .rk-banner-label {
@@ -497,7 +504,7 @@ body:has(.sh-in) {
 .rk-banner-stat-val {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 22px;
-  color: #ebc32b;
+  color: #E30613;
   margin: 0;
   line-height: 1;
 }
@@ -532,7 +539,7 @@ body:has(.sh-in) {
   top: -13px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(90deg, #c99f16, #ebc32b);
+  background: linear-gradient(90deg, #A8030C, #E30613);
   color: #fff;
   font-size: 8px;
   font-weight: 800;
@@ -555,7 +562,7 @@ body:has(.sh-in) {
 }
 .rk-podio-name {
   font-weight: 700;
-  color: #0c182b;
+  color: var(--color-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -575,7 +582,7 @@ body:has(.sh-in) {
 }
 .rk-podio-pts-val {
   font-family: 'Bebas Neue', sans-serif;
-  color: #0c182b;
+  color: var(--color-text);
   line-height: 1;
 }
 .rk-podio-pts-lbl {
@@ -622,7 +629,7 @@ body:has(.sh-in) {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .12em;
-  color: #ebc32b;
+  color: #E30613;
   margin: 0;
   display: flex;
   align-items: center;
@@ -683,7 +690,7 @@ body:has(.sh-in) {
 .rk-partido-team {
   font-size: 12px;
   font-weight: 600;
-  color: #0c182b;
+  color: var(--color-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -787,13 +794,13 @@ body:has(.sh-in) {
 .rk-tabla-name {
   font-size: 13px;
   font-weight: 600;
-  color: #0c182b;
+  color: var(--color-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   margin: 0 0 1px;
 }
-.rk-tabla-name.me { color: #c99f16; font-weight: 700; }
+.rk-tabla-name.me { color: #A8030C; font-weight: 700; }
 .rk-tabla-submeta {
   font-size: 10px;
   color: #5f6e8a;
@@ -860,7 +867,7 @@ body:has(.sh-in) {
 .rk-empty-title {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 20px;
-  color: #0c182b;
+  color: var(--color-text);
   margin: 0 0 4px;
   letter-spacing: .04em;
 }
@@ -919,7 +926,7 @@ body:has(.sh-in) {
 }
 .rk-mob-tab.active {
   background: #0c182b;
-  color: #ebc32b;
+  color: #E30613;
   border-color: transparent;
 }
 
@@ -955,7 +962,7 @@ body:has(.sh-in) {
   background: #faf7f0;
   font-family: 'DM Sans', sans-serif;
   font-size: 12px;
-  color: #0c182b;
+  color: var(--color-text);
   outline: none;
   box-sizing: border-box;
   transition: border-color .15s;

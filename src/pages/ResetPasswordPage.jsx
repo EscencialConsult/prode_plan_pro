@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
+import { BRAND } from '../brand.js'
+import Logo from '../components/ui/Logo.jsx'
 import sheetsApi from '../services/sheetsApi.js'
 
 export default function ResetPasswordPage() {
@@ -80,7 +82,7 @@ export default function ResetPasswordPage() {
       >
         {/* Glows */}
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{
-          background: 'radial-gradient(ellipse 55% 45% at 20% 25%, rgba(235,195,43,.16), transparent 55%)'
+          background: 'radial-gradient(ellipse 55% 45% at 20% 25%, rgba(227,6,19,.16), transparent 55%)'
         }} />
         <div className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{
           background: 'radial-gradient(ellipse 50% 45% at 80% 75%, rgba(66,91,139,.28), transparent 55%)'
@@ -88,11 +90,7 @@ export default function ResetPasswordPage() {
 
         {/* Logo */}
         <div className="relative z-10 flex flex-col items-center mb-6 lp-card">
-          <img
-            src="./imgprode/one-prode-talento-new3.png"
-            alt="Prode Talento"
-            style={{ height: 52, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,.6))' }}
-          />
+          <Logo size={56} alt={BRAND.logoAlt} tone="white" style={{ filter: 'drop-shadow(0 4px 16px rgba(0,0,0,.6))' }} />
         </div>
 
         {/* Card */}
@@ -101,15 +99,15 @@ export default function ResetPasswordPage() {
           style={{
             maxWidth: 420,
             background: 'linear-gradient(160deg, rgba(12,24,43,.92) 0%, rgba(5,9,15,.96) 100%)',
-            border: '1px solid rgba(235,195,43,.25)',
+            border: '1px solid rgba(227,6,19,.25)',
             borderRadius: 20,
-            boxShadow: '0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(235,195,43,.08), inset 0 1px 0 rgba(255,255,255,.05)',
+            boxShadow: '0 32px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(227,6,19,.08), inset 0 1px 0 rgba(255,255,255,.05)',
             backdropFilter: 'blur(24px)',
             animationDelay: '.1s',
           }}
         >
           <div className="rounded-t-[20px] h-0.5 w-full"
-            style={{ background: 'linear-gradient(90deg, transparent, #ebc32b 30%, #ebc32b 70%, transparent)' }} />
+            style={{ background: 'linear-gradient(90deg, transparent, #E30613 30%, #E30613 70%, transparent)' }} />
 
           <div className="px-8 py-8">
 
@@ -117,7 +115,7 @@ export default function ResetPasswordPage() {
             {validando && (
               <div className="text-center py-8">
                 <span className="inline-block w-10 h-10 border-4 border-t-transparent rounded-full lp-spin mb-4"
-                  style={{ borderColor: '#ebc32b', borderTopColor: 'transparent' }} />
+                  style={{ borderColor: '#E30613', borderTopColor: 'transparent' }} />
                 <p className="font-body text-sm" style={{ color: 'rgba(255,255,255,.55)' }}>
                   Validando link de recuperación...
                 </p>
@@ -151,9 +149,9 @@ export default function ResetPasswordPage() {
                 <Link
                   to="/forgot-password"
                   className="inline-block font-body font-bold text-sm px-6 py-3 rounded-full transition-all"
-                  style={{ background: '#ebc32b', color: '#05090f', boxShadow: '0 8px 28px rgba(235,195,43,.3)', textDecoration: 'none' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = '' }}
+                  style={{ background: '#E30613', color: '#fff', boxShadow: '0 8px 28px rgba(227,6,19,.3)', textDecoration: 'none' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#C7050F'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#E30613'; e.currentTarget.style.transform = '' }}
                 >
                   Pedir un link nuevo
                 </Link>
@@ -167,7 +165,7 @@ export default function ResetPasswordPage() {
                   <div className="flex items-center gap-2 mb-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-400 lp-pulse" />
                     <span className="font-body text-xs uppercase tracking-widest font-bold"
-                      style={{ color: 'rgba(235,195,43,.7)' }}>
+                      style={{ color: 'rgba(227,6,19,.7)' }}>
                       Nueva contraseña
                     </span>
                   </div>
@@ -177,14 +175,14 @@ export default function ResetPasswordPage() {
                   </h1>
                   {userInfo && (
                     <p className="font-body text-sm mt-2" style={{ color: 'rgba(255,255,255,.45)' }}>
-                      Hola <span style={{ color: '#ebc32b', fontWeight: 600 }}>{userInfo.nombre}</span>, elegí una contraseña nueva para tu cuenta.
+                      Hola <span style={{ color: '#E30613', fontWeight: 600 }}>{userInfo.nombre}</span>, elegí una contraseña nueva para tu cuenta.
                     </p>
                   )}
                 </div>
 
                 {/* Divider */}
                 <div className="h-px mb-6"
-                  style={{ background: 'linear-gradient(90deg, transparent, rgba(235,195,43,.2) 50%, transparent)' }} />
+                  style={{ background: 'linear-gradient(90deg, transparent, rgba(227,6,19,.2) 50%, transparent)' }} />
 
                 <form onSubmit={handleSubmit} className="space-y-4">
 
@@ -192,7 +190,7 @@ export default function ResetPasswordPage() {
                   <div>
                     <label htmlFor="password"
                       className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
-                      style={{ color: 'rgba(235,195,43,.8)' }}>
+                      style={{ color: 'rgba(227,6,19,.8)' }}>
                       Nueva contraseña
                     </label>
                     <input
@@ -210,12 +208,12 @@ export default function ResetPasswordPage() {
                         background: 'rgba(255,255,255,.06)',
                         border: '1px solid rgba(255,255,255,.1)',
                         color: '#fff',
-                        caretColor: '#ebc32b',
+                        caretColor: '#E30613',
                       }}
                       onFocus={e => {
-                        e.target.style.borderColor = 'rgba(235,195,43,.55)'
-                        e.target.style.background = 'rgba(235,195,43,.06)'
-                        e.target.style.boxShadow = '0 0 0 3px rgba(235,195,43,.1)'
+                        e.target.style.borderColor = 'rgba(227,6,19,.55)'
+                        e.target.style.background = 'rgba(227,6,19,.06)'
+                        e.target.style.boxShadow = '0 0 0 3px rgba(227,6,19,.1)'
                       }}
                       onBlur={e => {
                         e.target.style.borderColor = 'rgba(255,255,255,.1)'
@@ -232,7 +230,7 @@ export default function ResetPasswordPage() {
                   <div>
                     <label htmlFor="password2"
                       className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
-                      style={{ color: 'rgba(235,195,43,.8)' }}>
+                      style={{ color: 'rgba(227,6,19,.8)' }}>
                       Repetir contraseña
                     </label>
                     <input
@@ -249,12 +247,12 @@ export default function ResetPasswordPage() {
                         background: 'rgba(255,255,255,.06)',
                         border: '1px solid rgba(255,255,255,.1)',
                         color: '#fff',
-                        caretColor: '#ebc32b',
+                        caretColor: '#E30613',
                       }}
                       onFocus={e => {
-                        e.target.style.borderColor = 'rgba(235,195,43,.55)'
-                        e.target.style.background = 'rgba(235,195,43,.06)'
-                        e.target.style.boxShadow = '0 0 0 3px rgba(235,195,43,.1)'
+                        e.target.style.borderColor = 'rgba(227,6,19,.55)'
+                        e.target.style.background = 'rgba(227,6,19,.06)'
+                        e.target.style.boxShadow = '0 0 0 3px rgba(227,6,19,.1)'
                       }}
                       onBlur={e => {
                         e.target.style.borderColor = 'rgba(255,255,255,.1)'
@@ -280,9 +278,9 @@ export default function ResetPasswordPage() {
                     type="submit"
                     disabled={loading}
                     className="w-full font-body font-bold text-base py-4 rounded-full flex items-center justify-center gap-2 transition-all mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ background: '#ebc32b', color: '#05090f', boxShadow: '0 8px 28px rgba(235,195,43,.3)' }}
-                    onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(235,195,43,.45)' } }}
-                    onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(235,195,43,.3)' } }}
+                    style={{ background: '#E30613', color: '#fff', boxShadow: '0 8px 28px rgba(227,6,19,.3)' }}
+                    onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#C7050F'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 36px rgba(227,6,19,.45)' } }}
+                    onMouseLeave={e => { if (!loading) { e.currentTarget.style.background = '#E30613'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 8px 28px rgba(227,6,19,.3)' } }}
                   >
                     {loading ? (
                       <>
@@ -308,11 +306,11 @@ export default function ResetPasswordPage() {
                 <div
                   className="w-16 h-16 mx-auto mb-5 rounded-full flex items-center justify-center"
                   style={{
-                    background: 'rgba(235,195,43,.12)',
-                    border: '2px solid rgba(235,195,43,.45)',
+                    background: 'rgba(227,6,19,.12)',
+                    border: '2px solid rgba(227,6,19,.45)',
                   }}
                 >
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#E30613" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
@@ -327,9 +325,9 @@ export default function ResetPasswordPage() {
                 <Link
                   to="/login"
                   className="inline-block font-body font-bold text-sm px-6 py-3 rounded-full transition-all"
-                  style={{ background: '#ebc32b', color: '#05090f', boxShadow: '0 8px 28px rgba(235,195,43,.3)', textDecoration: 'none' }}
-                  onMouseEnter={e => { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-2px)' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = '' }}
+                  style={{ background: '#E30613', color: '#fff', boxShadow: '0 8px 28px rgba(227,6,19,.3)', textDecoration: 'none' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = '#C7050F'; e.currentTarget.style.transform = 'translateY(-2px)' }}
+                  onMouseLeave={e => { e.currentTarget.style.background = '#E30613'; e.currentTarget.style.transform = '' }}
                 >
                   Iniciar sesión
                 </Link>

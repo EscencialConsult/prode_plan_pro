@@ -19,7 +19,7 @@ npm install
 
 # 2. Configurar variables de entorno
 cp .env.example .env
-# Editar .env con tus API keys
+# Editar .env con tus API keys y completar VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
 
 # 3. Iniciar el servidor de desarrollo
 npm run dev

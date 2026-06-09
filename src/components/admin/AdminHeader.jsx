@@ -7,7 +7,7 @@ export default function AdminHeader({ bets = [], pendingUsers = [] }) {
   const stats = [
     { label:'Total Apuestas', value:totalBets,           color:'#0c182b', accent:'rgba(12,24,43,.06)',  border:'rgba(12,24,43,.1)',   icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg> },
     { label:'Activas',        value:activeBets,          color:'#1b8a5a', accent:'rgba(27,138,90,.07)', border:'rgba(27,138,90,.18)', icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49"/></svg> },
-    { label:'Finalizadas',    value:finishedBets,        color:'#c99f16', accent:'rgba(235,195,43,.07)',border:'rgba(235,195,43,.2)',  icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg> },
+    { label:'Finalizadas',    value:finishedBets,        color:'#A8030C', accent:'rgba(227,6,19,.07)',border:'rgba(227,6,19,.2)',  icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg> },
     { label:'Pendientes',     value:pendingUsers.length, color: pendingUsers.length > 0 ? '#e03252' : '#5f6e8a', accent: pendingUsers.length > 0 ? 'rgba(224,50,82,.07)' : 'rgba(95,110,138,.05)', border: pendingUsers.length > 0 ? 'rgba(224,50,82,.2)' : 'rgba(95,110,138,.12)', icon:<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
   ]
 
@@ -25,7 +25,7 @@ export default function AdminHeader({ bets = [], pendingUsers = [] }) {
   letterSpacing:'.02em',
   textAlign: 'left'   // ← AGREGAR ESTO
 }}>
-  PANEL DE <span style={{ color:'#ebc32b' }}>CONFIGURACIÓN</span>
+  PANEL DE <span style={{ color:'#E30613' }}>CONFIGURACIÓN</span>
 </h1>
       </div>
 

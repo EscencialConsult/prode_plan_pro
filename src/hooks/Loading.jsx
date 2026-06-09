@@ -131,7 +131,7 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
           <div className="absolute rounded-full border-2 opacity-85"
             style={{
               inset: '14px',
-              borderColor: '#ebc32b',
+              borderColor: '#E30613',
               boxShadow: '0 0 25px rgba(235, 195, 43, 0.3), inset 0 0 15px rgba(235, 195, 43, 0.05)',
               animation: 'spinReverse 2.2s linear infinite'
             }} 
@@ -186,7 +186,7 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
             <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
               <path d="M6 0L11.1962 3.5V10.5L6 14L0.803848 10.5V3.5L6 0Z" 
                 fill="rgba(235, 195, 43, 0.15)" 
-                stroke="#ebc32b" 
+                stroke="#E30613" 
                 strokeWidth="1"/>
             </svg>
           </div>
@@ -200,7 +200,7 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
             <svg width="10" height="12" viewBox="0 0 12 14" fill="none">
               <path d="M6 0L11.1962 3.5V10.5L6 14L0.803848 10.5V3.5L6 0Z" 
                 fill="rgba(235, 195, 43, 0.12)" 
-                stroke="#ebc32b" 
+                stroke="#E30613" 
                 strokeWidth="0.8"/>
             </svg>
           </div>
@@ -214,7 +214,7 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
             <svg width="8" height="10" viewBox="0 0 12 14" fill="none">
               <path d="M6 0L11.1962 3.5V10.5L6 14L0.803848 10.5V3.5L6 0Z" 
                 fill="rgba(235, 195, 43, 0.1)" 
-                stroke="#ebc32b" 
+                stroke="#E30613" 
                 strokeWidth="0.6"/>
             </svg>
           </div>
@@ -257,7 +257,7 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
         <div className="text-center relative">
           <p className="font-semibold text-sm tracking-wider uppercase" 
             style={{ 
-              color: '#ebc32b',
+              color: '#E30613',
               textShadow: '0 0 15px rgba(235, 195, 43, 0.4)',
               letterSpacing: '0.18em',
               fontWeight: 600
@@ -269,21 +269,21 @@ export default function Loading({ fullscreen = true, message = 'Cargando datos..
           <div className="flex gap-2 justify-center mt-3.5">
             <div className="w-1.5 h-1.5 rounded-full"
               style={{ 
-                background: 'linear-gradient(135deg, #ebc32b 0%, rgba(235, 195, 43, 0.7) 100%)',
+                background: 'linear-gradient(135deg, #E30613 0%, rgba(235, 195, 43, 0.7) 100%)',
                 boxShadow: '0 0 10px rgba(235, 195, 43, 0.5)',
                 animation: 'pulse 1.3s ease-in-out 0s infinite'
               }} 
             />
             <div className="w-1.5 h-1.5 rounded-full"
               style={{ 
-                background: 'linear-gradient(135deg, #ebc32b 0%, rgba(235, 195, 43, 0.7) 100%)',
+                background: 'linear-gradient(135deg, #E30613 0%, rgba(235, 195, 43, 0.7) 100%)',
                 boxShadow: '0 0 10px rgba(235, 195, 43, 0.5)',
                 animation: 'pulse 1.3s ease-in-out 0.22s infinite'
               }} 
             />
             <div className="w-1.5 h-1.5 rounded-full"
               style={{ 
-                background: 'linear-gradient(135deg, #ebc32b 0%, rgba(235, 195, 43, 0.7) 100%)',
+                background: 'linear-gradient(135deg, #E30613 0%, rgba(235, 195, 43, 0.7) 100%)',
                 boxShadow: '0 0 10px rgba(235, 195, 43, 0.5)',
                 animation: 'pulse 1.3s ease-in-out 0.44s infinite'
               }} 

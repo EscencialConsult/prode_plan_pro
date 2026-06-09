@@ -58,8 +58,8 @@ function CampoPassword({ id, label, value, onChange, autoComplete, autoFocus, vi
         disabled={disabled}
         style={INPUT_STYLE}
         onFocus={e => {
-          e.target.style.borderColor = '#ebc32b'
-          e.target.style.boxShadow = '0 0 0 3px rgba(235,195,43,.15)'
+          e.target.style.borderColor = '#E30613'
+          e.target.style.boxShadow = '0 0 0 3px rgba(227,6,19,.15)'
         }}
         onBlur={e => {
           e.target.style.borderColor = '#e3ddcf'
@@ -137,7 +137,7 @@ export default function CambiarPasswordPage() {
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '.4rem',
             fontSize: '.7rem', fontWeight: 700, textTransform: 'uppercase',
-            letterSpacing: '.08em', color: '#c99f16', marginBottom: '.35rem',
+            letterSpacing: '.08em', color: '#A8030C', marginBottom: '.35rem',
           }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
@@ -245,7 +245,7 @@ export default function CambiarPasswordPage() {
                     type="checkbox"
                     checked={verPass}
                     onChange={e => setVerPass(e.target.checked)}
-                    style={{ accentColor: '#ebc32b' }}
+                    style={{ accentColor: '#E30613' }}
                   />
                   Mostrar contraseñas
                 </label>
@@ -272,12 +272,12 @@ export default function CambiarPasswordPage() {
                 disabled={loading}
                 style={{
                   marginTop: '.2rem',
-                  background: loading ? '#d9c98f' : '#ebc32b',
-                  color: '#05090f', border: 'none', borderRadius: 999,
+                  background: loading ? '#d9c98f' : '#E30613',
+                  color: '#fff', border: 'none', borderRadius: 999,
                   padding: '.85rem', fontSize: '.9rem', fontWeight: 700,
                   cursor: loading ? 'wait' : 'pointer',
                   display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '.5rem',
-                  boxShadow: '0 8px 24px rgba(235,195,43,.28)',
+                  boxShadow: '0 8px 24px rgba(227,6,19,.28)',
                   transition: 'background .15s',
                 }}
               >

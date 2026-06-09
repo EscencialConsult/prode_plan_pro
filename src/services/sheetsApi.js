@@ -23,9 +23,9 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.error(
-    '⚠️ Faltan variables de entorno VITE_SUPABASE_URL o VITE_SUPABASE_ANON_KEY.\n' +
-    'Verificá que el archivo .env esté en la raíz del proyecto y reiniciá el servidor de Vite.'
+  throw new Error(
+    '⚠️ Faltan variables de entorno VITE_SUPABASE_URL o VITE_SUPABASE_ANON_KEY. ' +
+    'Copia .env.example a .env, completá esos valores con tu proyecto Supabase y reiniciá el servidor de Vite.'
   )
 }
 
@@ -98,11 +98,11 @@ function mostrarAvisoSesionExpirada() {
     <div style="text-align: center; color: #fff; max-width: 320px; padding: 1.5rem;">
       <div style="
         width: 56px; height: 56px; border-radius: 50%;
-        background: rgba(235,195,43,.15);
-        border: 1px solid rgba(235,195,43,.4);
+        background: rgba(227,6,19,.15);
+        border: 1px solid rgba(227,6,19,.4);
         margin: 0 auto 1rem;
         display: flex; align-items: center; justify-content: center;">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E30613" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/>
           <polyline points="12 6 12 12 16 14"/>
         </svg>
