@@ -158,7 +158,7 @@ export default function RegisterPage() {
                     CREAR CUENTA
                   </h1>
                   <p className="font-body text-sm mt-1.5" style={{ color: 'rgba(255,255,255,.45)' }}>
-                    Completá tus datos para unirte al torneo de tu empresa.
+                    Completa tus datos para unirte al torneo de tu empresa.
                   </p>
                 </div>
 
@@ -202,7 +202,7 @@ export default function RegisterPage() {
                       type="email"
                       value={form.email}
                       onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                      placeholder="tu@empresa.com"
+                      placeholder="tu correo personal"
                       required
                       autoComplete="email"
                       className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"

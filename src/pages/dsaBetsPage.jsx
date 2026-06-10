@@ -124,10 +124,10 @@ export default function BetsPage() {
               </p>
               <p className="font-body text-xs" style={{ color: '#a8b2c4' }}>
                 {filter === 'todas'
-                  ? 'Las próximas apuestas van a aparecer acá cuando se publiquen.'
+                  ? 'Las próximas apuestas van a aparecer aquí cuando se publiquen.'
                   : filter === 'activas'
-                    ? 'Probá cambiar el filtro o volvé a revisar más tarde.'
-                    : 'Una vez que cierren las apuestas actuales vas a poder verlas acá.'}
+                    ? 'Prueba cambiar el filtro o vuelve a revisar más tarde.'
+                    : 'Una vez que cierren las apuestas actuales podrás verlas aquí.'}
               </p>
             </div>
           )}

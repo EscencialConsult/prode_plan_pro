@@ -426,13 +426,13 @@ export default function MisPrediccionesPage() {
                     </svg>
                     <p className="text-[var(--color-text-muted)] font-body text-base mb-1">
                         {misBets.length === 0
-                            ? 'Todavía no cargaste predicciones'
+                            ? 'Todavía no ingresaste predicciones'
                             : 'No hay apuestas con estos filtros'}
                     </p>
                     <p className="text-[var(--color-text-faint)] font-body text-xs">
                         {misBets.length === 0
-                            ? 'Andá a "Apuestas" y cargá tus primeros prodes.'
-                            : 'Probá cambiando los filtros.'}
+                            ? 'Ve a "Apuestas" e ingresa tus primeros prodes.'
+                            : 'Prueba cambiando los filtros.'}
                     </p>
                 </div>
             ) : (

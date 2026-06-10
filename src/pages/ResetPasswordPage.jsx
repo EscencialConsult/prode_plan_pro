@@ -173,11 +173,11 @@ export default function ResetPasswordPage() {
                   </div>
                   <h1 className="font-display leading-none"
                     style={{ fontSize: '2.4rem', color: '#fff', letterSpacing: '.03em' }}>
-                    ELEGÍ UNA<br />NUEVA
+                    ELIGE UNA<br />NUEVA
                   </h1>
                   {userInfo && (
                     <p className="font-body text-sm mt-2" style={{ color: 'rgba(255,255,255,.45)' }}>
-                      Hola <span style={{ color: '#ebc32b', fontWeight: 600 }}>{userInfo.nombre}</span>, elegí una contraseña nueva para tu cuenta.
+                      Hola <span style={{ color: '#ebc32b', fontWeight: 600 }}>{userInfo.nombre}</span>, elige una contraseña nueva para tu cuenta.
                     </p>
                   )}
                 </div>
@@ -321,7 +321,7 @@ export default function ResetPasswordPage() {
                   ¡CONTRASEÑA ACTUALIZADA!
                 </h2>
                 <p className="font-body text-sm mb-6 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.55)', lineHeight: 1.5 }}>
-                  Tu contraseña se actualizó correctamente. Ya podés iniciar sesión con la nueva.
+                  Tu contraseña se actualizó correctamente. Ya puedes iniciar sesión con la nueva.
                 </p>
 
                 <Link

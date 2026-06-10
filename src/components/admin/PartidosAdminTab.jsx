@@ -45,7 +45,7 @@ function EditScoreModal({ match, onClose, onSave }) {
       const pl = penalesLocal !== '' ? parseInt(penalesLocal) : NaN
       const pv = penalesVisit !== '' ? parseInt(penalesVisit) : NaN
       if (isNaN(pl) || isNaN(pv)) {
-        setErrorPen('Es eliminatoria y terminó empatado: tenés que cargar los penales para definir el clasificado.')
+        setErrorPen('Es eliminatoria y terminó empatado: tienes que ingresar los penales para definir el clasificado.')
         return
       }
       if (pl === pv) {
@@ -177,7 +177,7 @@ function EditScoreModal({ match, onClose, onSave }) {
               </p>
             </div>
             <p className="font-body text-[11px] mb-3" style={{ color: '#5f6e8a' }}>
-              El partido terminó empatado en los 90'. Cargá los penales para que el sistema sepa quién clasifica.
+              El partido terminó empatado en los 90'. Ingresa los penales para que el sistema sepa quién clasifica.
             </p>
             <div className="flex items-center gap-3">
               <div className="flex-1">

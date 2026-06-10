@@ -38,7 +38,7 @@ export default function NotFoundPage() {
         </h1>
 
         <p className="text-[var(--color-text-muted)] font-body text-base mb-8 max-w-sm mx-auto">
-          La ruta que buscás no existe o fue movida. Volvé al inicio y seguimos desde ahí.
+          La ruta que buscas no existe o fue movida. Vuelve al inicio y seguimos desde ahí.
         </p>
 
         {/* Botones */}

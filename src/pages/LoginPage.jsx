@@ -90,7 +90,7 @@ export default function LoginPage() {
                 BIENVENIDO
               </h1>
               <p className="font-body text-sm mt-1.5" style={{ color: 'rgba(255,255,255,.45)' }}>
-                Ingresá para empezar a pronosticar con tu equipo.
+                Ingresa para empezar a pronosticar con tu equipo.
               </p>
             </div>
 
@@ -112,7 +112,7 @@ export default function LoginPage() {
                   type="email"
                   value={form.email}
                   onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                  placeholder="tu@empresa.com"
+                  placeholder="tu correo personal"
                   required
                   autoFocus
                   autoComplete="email"

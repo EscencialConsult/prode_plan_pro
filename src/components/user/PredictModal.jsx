@@ -41,8 +41,8 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
   let razonBloqueo = null
   if (estaBloqueado) {
     razonBloqueo = {
-      titulo: 'No tenés un área asignada',
-      detalle: 'Para participar en apuestas grupales necesitás tener un área asignada. Contactá al administrador para que te asigne una.',
+      titulo: 'No tienes un área asignada',
+      detalle: 'Para participar en apuestas grupales necesitas tener un área asignada. Contacta al administrador para que te asigne una.',
     }
   }
 
@@ -219,8 +219,8 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
     }
 
     if (matchPredictions.length === 0) {
-      toast.info('Ingresá al menos una predicción válida.')
-      return
+      toast.info('Ingresa al menos una predicción válida.')
+      return;
     }
 
     onSubmit(bet.id, matchPredictions)
@@ -323,8 +323,8 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
             <div className="mt-3 text-[13px] text-slate-300 leading-relaxed">
               {open
                 ? hadPredictions
-                  ? 'Revisá o modificá tus predicciones antes del cierre.'
-                  : 'Cargá tus predicciones para cada partido.'
+                  ? 'Revisa o modifica tus predicciones antes del cierre.'
+                  : 'Ingresa tus predicciones para cada partido.'
                 : 'La apuesta está cerrada. Modo solo lectura.'}
             </div>
           </div>
@@ -768,7 +768,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
 
               {open && !estaBloqueado && (
                 <div className="col-span-full text-[10px] text-slate-400 text-center tracking-wide">
-                  💡 Podés modificar mientras esté abierta
+                  💡 Puedes modificar mientras esté abierta
                 </div>
               )}
               {open && estaBloqueado && (

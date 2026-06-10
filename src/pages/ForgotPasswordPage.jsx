@@ -99,10 +99,10 @@ export default function ForgotPasswordPage() {
                 </div>
 
                 <h2 className="font-display mb-3" style={{ fontSize: '2rem', color: '#fff', letterSpacing: '.03em' }}>
-                  REVISÁ TU EMAIL
+                  REVISA TU EMAIL
                 </h2>
                 <p className="font-body text-sm mb-5 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.55)', lineHeight: 1.5 }}>
-                  Si el email está registrado, te enviamos un correo con instrucciones para restablecer tu contraseña. Revisá también la carpeta de spam.
+                  Si el email está registrado, te enviamos un correo con instrucciones para restablecer tu contraseña. Revisa también la carpeta de spam.
                 </p>
 
                 <p className="font-body text-xs mb-6" style={{ color: 'rgba(255,255,255,.3)' }}>
@@ -135,7 +135,7 @@ export default function ForgotPasswordPage() {
                     ¿OLVIDASTE<br />TU CONTRASEÑA?
                   </h1>
                   <p className="font-body text-sm mt-2" style={{ color: 'rgba(255,255,255,.45)' }}>
-                    Ingresá tu email y te enviamos un link para elegir una contraseña nueva.
+                    Ingresa tu email y te enviamos un link para elegir una contraseña nueva.
                   </p>
                 </div>
 
@@ -157,7 +157,7 @@ export default function ForgotPasswordPage() {
                       type="email"
                       value={email}
                       onChange={e => setEmail(e.target.value)}
-                      placeholder="tu@empresa.com"
+                      placeholder="tu correo personal"
                       required
                       autoFocus
                       autoComplete="email"

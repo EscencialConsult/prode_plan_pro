@@ -317,7 +317,7 @@ const filtered = bets.filter(b => {
               </p>
               <div className="rounded-xl p-4" style={{ background: 'rgba(244,180,42,.06)', border: '1px solid rgba(244,180,42,.25)' }}>
                 <p className="font-body text-xs mb-3" style={{ color: '#0c182b' }}>
-                  En 16avos, octavos, cuartos, semis, 3er puesto y final tenés que predecir <strong>el marcador (90')</strong> y <strong>quién clasifica</strong>.
+                  En 16avos, octavos, cuartos, semifinales, tercer puesto y final tienes que predecir <strong>el marcador (90')</strong> y <strong>quién clasifica</strong>.
                   Si terminan empatados, el clasificado se define por <strong>penales</strong>.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -357,7 +357,7 @@ const filtered = bets.filter(b => {
           <div style={{borderRadius:18,padding:'3.5rem 1.5rem',textAlign:'center',background:'#fff',border:'1.5px dashed #f0eadb'}}>
             <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#a8b2c4" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{margin:'0 auto 1rem'}}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
             <p style={{fontWeight:600,fontSize:'.92rem',color:'#5f6e8a',margin:0}}>{filter==='activas'?'No hay apuestas activas':filter==='cerradas'?'No hay apuestas cerradas':'No hay apuestas publicadas'}</p>
-            <p style={{fontSize:'.78rem',color:'#a8b2c4',margin:'.4rem 0 0'}}>Volvé a revisar más tarde</p>
+            <p style={{fontSize:'.78rem',color:'#a8b2c4',margin:'.4rem 0 0'}}>Vuelve a revisar más tarde</p>
           </div>
         ):(
           <div style={{display:'grid',gap:'1rem',animation:'din .38s ease both'}}>

@@ -294,7 +294,7 @@ function EditBetModal({ bet, matches, onClose, onSave, saving }) {
               <div className="rounded-xl p-3 mb-3"
                 style={{ background: 'rgba(224,50,82,.05)', border: '1px solid rgba(224,50,82,.2)' }}>
                 <p className="text-xs font-body" style={{ color: '#a8324c' }}>
-                  ⚠ No podés modificar los partidos porque ya hay <strong>{predicCount}</strong> {predicCount === 1 ? 'predicción cargada' : 'predicciones cargadas'} en esta apuesta.
+                  ⚠ No puedes modificar los partidos porque ya hay <strong>{predicCount}</strong> {predicCount === 1 ? 'predicción cargada' : 'predicciones cargadas'} en esta apuesta.
                 </p>
               </div>
             )}
@@ -448,7 +448,7 @@ export default function BetsListTab({ bets, matches, loading, editBet, deleteBet
             No hay apuestas creadas
           </h3>
           <p className="font-body text-sm" style={{ color: '#a8b2c4' }}>
-            Creá tu primera apuesta desde la pestaña "Nueva Apuesta"
+            Crea tu primera apuesta desde la pestaña "Nueva Apuesta"
           </p>
         </div>
       )}

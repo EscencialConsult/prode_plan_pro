@@ -233,7 +233,7 @@ export default function DashboardPage() {
       setIsSubmitting(false)
     } catch (error) {
       console.error('Error guardando predicciones:', error)
-      toast.error(error.message || 'Error al guardar predicciones. Por fvor intentá de nuevo.')
+      toast.error(error.message || 'Error al guardar predicciones. Por favor intenta de nuevo.')
       setIsSubmitting(false)
     }
   }
@@ -266,7 +266,7 @@ export default function DashboardPage() {
               </h1>
               <p className="font-body text-sm" style={{ color: 'rgba(255,255,255,.45)' }}>
                 {activeBets.length > 0
-                  ? `Tenés ${activeBets.length} apuesta${activeBets.length > 1 ? 's' : ''} activa${activeBets.length > 1 ? 's' : ''} disponible${activeBets.length > 1 ? 's' : ''}.`
+                  ? `Tienes ${activeBets.length} apuesta${activeBets.length > 1 ? 's' : ''} activa${activeBets.length > 1 ? 's' : ''} disponible${activeBets.length > 1 ? 's' : ''}.`
                   : 'Acá está el resumen de tu actividad en Prode Talento.'}
               </p>
             </div>
@@ -347,7 +347,7 @@ export default function DashboardPage() {
             <SectionHead title="ACCESOS RÁPIDOS" />
             <div className="flex flex-col gap-3">
               {[
-                { to: '/apuestas', label: 'Apuestas', sub: 'Cargá tus pronósticos', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></svg> },
+                { to: '/apuestas', label: 'Apuestas', sub: 'Ingresa tus pronósticos', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></svg> },
                 { to: '/partidos', label: 'Fixture', sub: 'Partidos del Mundial', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg> },
                 { to: '/mis-predicciones', label: 'Mis Predicciones', sub: 'Historial de pronósticos', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg> },
                 { to: '/ranking', label: 'Ranking', sub: 'Tabla de posiciones', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /></svg> },

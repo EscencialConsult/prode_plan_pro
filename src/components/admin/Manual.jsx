@@ -714,7 +714,7 @@ export default function Manual() {
               color:C.navy, letterSpacing:'.01em',
               lineHeight:.92, margin:'0 0 12px',
             }}>
-              GESTIONÁ EL<br/>
+              GESTIONA EL<br/>
               <span style={{
                 color:C.goldDk,
                 textShadow:'0 0 32px rgba(235,195,43,.25)',
@@ -781,7 +781,7 @@ export default function Manual() {
                 desc="Ver el ranking de cada apuesta y entregar los premios."/>
             </div>
             <Callout type="info" title="¿Quién puede ser admin?">
-              Solo los usuarios con rol <B>admin</B> pueden acceder al panel. Este rol se asigna directamente en la hoja de Google Sheets del sistema. Contactar al equipo técnico si necesitás agregar más administradores.
+              Solo los usuarios con rol <B>admin</B> pueden acceder al panel. Este rol se asigna directamente en la hoja de Google Sheets del sistema. Contactar al equipo técnico si necesitas agregar más administradores.
             </Callout>
           </section>
 
@@ -791,19 +791,19 @@ export default function Manual() {
           <section id="manual-acceso" style={{ marginBottom:48, scrollMarginTop:24 }}>
             <SectionHeader num="02" kicker="Introducción" title="ACCESO AL PANEL ADMIN" icon={ICONS.acceso}/>
             <Step num="1" title="Iniciar sesión normalmente">
-              Entrá con tu email y contraseña de administrador en la pantalla de login. Si tus credenciales tienen el rol <I>admin</I>, el sistema te reconocerá automáticamente.
+              Entra con tu email y contraseña de administrador en la pantalla de login. Si tus credenciales tienen el rol <I>admin</I>, el sistema te reconocerá automáticamente.
             </Step>
             <Step num="2" title="Ir a la ruta /admin">
-              Una vez dentro, navegá a <Code>/admin</Code> en la barra del navegador, o usá el botón de Admin en el menú superior si tenés acceso.
+              Una vez dentro, navega a <Code>/admin</Code> en la barra del navegador, o usa el botón de Admin en el menú superior si tienes acceso.
               <div style={{ marginTop:10 }}>
                 <GoldButton variant="outline" onClick={()=>navigate('/admin')}>Ir al Panel Admin</GoldButton>
               </div>
             </Step>
-            <Step num="3" title="Navegás por las pestañas del panel">
+            <Step num="3" title="Navegas por las pestañas del panel">
               El panel admin tiene 4 pestañas principales: <B>Apuestas</B>, <B>Partidos</B>, <B>Usuarios</B> y <B>Áreas</B>.
             </Step>
             <Callout type="danger" title="El panel admin es exclusivo">
-              Nunca compartás tu contraseña de admin. Los usuarios comunes no pueden ver ni acceder al panel. Si un usuario necesita acceso, solicitá al equipo técnico que le cambie el rol desde Google Sheets.
+              Nunca compartas tu contraseña de admin. Los usuarios comunes no pueden ver ni acceder al panel. Si un usuario necesita acceso, solicita al equipo técnico que le cambie el rol desde Google Sheets.
             </Callout>
           </section>
 
@@ -819,7 +819,7 @@ export default function Manual() {
               Una apuesta por fase del torneo genera hasta 6 ganadores distintos. Esto distribuye los premios en el tiempo y mantiene el interés de todos los participantes — incluso los que no van bien en el ranking general.
             </Callout>
             <P>
-              También podés hacer <B>apuestas por área</B> para generar competencia interna entre departamentos, o una <B>gran apuesta acumulada</B> con todos los partidos del torneo para el ganador general.
+              También puedes hacer <B>apuestas por área</B> para generar competencia interna entre departamentos, o una <B>gran apuesta acumulada</B> con todos los partidos del torneo para el ganador general.
             </P>
             <div style={{ marginTop:16 }}>
               <GoldButton onClick={()=>navigate('/admin')}>Crear una apuesta</GoldButton>
@@ -846,7 +846,7 @@ export default function Manual() {
               ].map((p,i)=><PhaseCard key={i} {...p}/>)}
             </div>
             <Callout type="warn" title="Las eliminatorias se van sabiendo de a poco">
-              En cada ronda eliminatoria, los partidos se confirman recién cuando terminan los partidos de la ronda anterior. Podés crear la apuesta anticipadamente y agregar los partidos a medida que se confirman.
+              En cada ronda eliminatoria, los partidos se confirman recién cuando terminan los partidos de la ronda anterior. Puedes crear la apuesta anticipadamente y agregar los partidos a medida que se confirman.
             </Callout>
           </section>
 
@@ -856,10 +856,10 @@ export default function Manual() {
           <section id="manual-crear-apuesta" style={{ marginBottom:48, scrollMarginTop:24 }}>
             <SectionHeader num="05" kicker="Gestión de Torneos" title="CREAR UNA APUESTA" icon={ICONS.crear}/>
             <P>
-              Desde la pestaña <B>Apuestas</B> del panel admin, hacé clic en <B>"Nueva Apuesta"</B>. Completá los siguientes campos:
+              Desde la pestaña <B>Apuestas</B> del panel admin, haz clic en <B>"Nueva Apuesta"</B>. Completa los siguientes campos:
             </P>
             <FieldItem name="Título" req="req">
-              Nombre descriptivo. Ej: <I>"Fase de Grupos — Mundial 2026"</I>. Este nombre ven todos los participantes.
+              Nombre descriptivo. Ej: <I>"Fase de Grupos — Mundial 2026"</I>. Este nombre lo ven todos los participantes.
             </FieldItem>
             <FieldItem name="Tipo" req="req">
               Categoría de la apuesta. Usualmente se usa el tipo <I>fase</I> para cada ronda del torneo.
@@ -871,7 +871,7 @@ export default function Manual() {
               Fecha y hora límite para cargar predicciones. Una vez pasada, la apuesta se cierra automáticamente. <B>Recomendación:</B> poner la fecha de inicio del primer partido de la fase.
             </FieldItem>
             <FieldItem name="Partidos" req="req">
-              Selección de los partidos que forman parte de esta apuesta. Podés seleccionar múltiples partidos.
+              Selección de los partidos que forman parte de esta apuesta. Puedes seleccionar múltiples partidos.
             </FieldItem>
             <FieldItem name="Pts. Exacto" req="opt">
               Puntos por acertar el marcador exacto. Por defecto: <B>5 puntos</B>.
@@ -883,7 +883,7 @@ export default function Manual() {
               Puntos por acertar quién gana o empata. Por defecto: <B>1 punto</B>.
             </FieldItem>
             <Callout type="tip" title="Consejo para los puntos">
-              Podés usar los valores por defecto (5/3/1) para todas las fases. Si querés hacer las fases finales más emocionantes, podés aumentar los puntos en octavos, cuartos y semis para que pesen más.
+              Puedes usar los valores por defecto (5/3/1) para todas las fases. Si quieres hacer las fases finales más emocionantes, puedes aumentar los puntos en octavos, cuartos y semis para que pesen más.
             </Callout>
             <div style={{ marginTop:16 }}>
               <GoldButton onClick={()=>navigate('/admin')}>Ir a Apuestas</GoldButton>
@@ -902,14 +902,14 @@ export default function Manual() {
               display:'grid', gridTemplateColumns:'1fr 1fr',
               gap:12, margin:'18px 0',
             }}>
-              <PhaseCard name="Para Grupos" desc="Seleccionás todos los partidos de la fase de grupos (o un bloque de ellos si querés dividirla)." accent={C.blueMed}/>
-              <PhaseCard name="Para Eliminatorias" desc="En cada ronda eliminatoria seleccionás solo los partidos de esa ronda. En 16avos son 32, en Octavos 16, en Cuartos 8." accent={C.gold}/>
+              <PhaseCard name="Para Grupos" desc="Seleccionas todos los partidos de la fase de grupos (o un bloque de ellos si quieres dividirla)." accent={C.blueMed}/>
+              <PhaseCard name="Para Eliminatorias" desc="En cada ronda eliminatoria seleccionas solo los partidos de esa ronda. En 16avos son 32, en Octavos 16, en Cuartos 8." accent={C.gold}/>
             </div>
             <Callout type="warn" title="En eliminatorias los partidos se conocen después">
-              Los equipos que juegan cada partido se saben recién cuando terminan los partidos anteriores. Podés crear la apuesta antes de que se definan todos los clasificados y agregar los partidos a medida que se confirman.
+              Los equipos que juegan cada partido se saben recién cuando terminan los partidos anteriores. Puedes crear la apuesta antes de que se definan todos los clasificados y agregar los partidos a medida que se confirman.
             </Callout>
             <P>
-              En la pestaña <B>Partidos</B> del panel admin podés ver el fixture completo, filtrar por estado (próximo, en vivo, finalizado) y ver qué partidos ya están asignados a qué apuesta.
+              En la pestaña <B>Partidos</B> del panel admin puedes ver el fixture completo, filtrar por estado (próximo, en vivo, finalizado) y ver qué partidos ya están asignados a qué apuesta.
             </P>
             <div style={{ marginTop:16 }}>
               <GoldButton onClick={()=>navigate('/partidos')}>Ver Fixture completo</GoldButton>
@@ -930,7 +930,7 @@ export default function Manual() {
               borderLeft:`2px dashed ${C.cream3}`,
             }}>
               {[
-                { dot:C.green, label:'ABIERTA', desc:'Apenas se crea la apuesta, queda en estado abierta. Los participantes pueden ver los partidos y cargar/modificar sus predicciones. Este estado dura hasta la fecha de cierre configurada, o hasta que el admin la cierre manualmente.' },
+                { dot:C.green, label:'ABIERTA', desc:'Apenas se crea la apuesta, queda en estado abierta. Los participantes pueden ver los partidos e ingresar/modificar sus predicciones. Este estado dura hasta la fecha de cierre configurada, o hasta que el admin la cierre manualmente.' },
                 { dot:C.red, label:'CERRADA', desc:'Cuando se alcanza la fecha límite (o el admin la cierra manualmente), la apuesta pasa a cerrada. Ya no se aceptan predicciones nuevas. Los partidos se juegan durante esta etapa y el sistema registra los resultados.' },
                 { dot:C.gold, label:'FINALIZADA', desc:'Una vez que todos los partidos tienen resultado, el admin puede finalizarla. El sistema calcula los puntos de cada participante y genera el ranking final. Este es el momento donde se decide quién ganó el premio.' },
               ].map((s,i)=>(
@@ -962,7 +962,7 @@ export default function Manual() {
               { accion:'Finalizar apuesta', desde:'Cerrada', resultado:'Calcula puntos → pasa a <strong style="color:#0c182b">Finalizada</strong>' },
             ]}/>
             <Callout type="info" title="Cierre automático vs. manual">
-              Si configurás una fecha de cierre, la apuesta se cierra sola al llegar esa fecha. También podés cerrarla manualmente antes desde el panel. Una vez cerrada, no se puede volver a abrir.
+              Si configuras una fecha de cierre, la apuesta se cierra sola al llegar esa fecha. También puedes cerrarla manualmente antes desde el panel. Una vez cerrada, no se puede volver a abrir.
             </Callout>
           </section>
 
@@ -975,13 +975,13 @@ export default function Manual() {
               Cuando un empleado se registra en la plataforma, su cuenta queda en estado <B>pendiente</B> hasta que el admin la apruebe. Desde la pestaña <B>Usuarios</B> del panel admin se ven todos los pendientes.
             </P>
             <Step num="1" title="Ver solicitudes pendientes">
-              Entrá al panel admin y hacé clic en la pestaña <B>Usuarios</B>. Vas a ver la lista de todos los registros pendientes con nombre, email y fecha de registro.
+              Entra al panel admin y haz clic en la pestaña <B>Usuarios</B>. Verás la lista de todos los registros pendientes con nombre, email y fecha de registro.
             </Step>
             <Step num="2" title="Asignar rol y área (solo Plan Pro)">
-              En el Plan Pro tenés que asignar un <B>rol</B> (Participante o Jefe de Área) y el <B>área</B> del usuario. En el Plan Básico, los usuarios se aprueban directamente como participantes generales.
+              En el Plan Pro tienes que asignar un <B>rol</B> (Participante o Jefe de Área) y el <B>área</B> del usuario. En el Plan Básico, los usuarios se aprueban directamente como participantes generales.
             </Step>
             <Step num="3" title="Confirmar o rechazar">
-              Hacé clic en <B>Aprobar</B> para activar la cuenta, o en <B>Rechazar</B> para eliminarla del sistema. Una vez aprobado, el usuario puede participar en todas las apuestas activas.
+              Haz clic en <B>Aprobar</B> para activar la cuenta, o en <B>Rechazar</B> para eliminarla del sistema. Una vez aprobado, el usuario puede participar en todas las apuestas activas.
             </Step>
             <Callout type="warn" title="Rechazar borra la cuenta">
               Al rechazar un usuario, su registro se elimina permanentemente del sistema. Si el usuario necesita intentarlo de nuevo, tendrá que registrarse otra vez.
@@ -999,7 +999,7 @@ export default function Manual() {
             <P>
               Las áreas son los departamentos o grupos de la empresa. Permiten organizar a los participantes por sector y generar rankings por área. Esta funcionalidad está disponible en el <B>Plan Pro</B>.
             </P>
-            <P>Desde la pestaña <B>Áreas</B> del panel admin podés:</P>
+            <P>Desde la pestaña <B>Áreas</B> del panel admin puedes:</P>
             <div style={{ display:'flex', flexDirection:'column', gap:8, margin:'14px 0' }}>
               {['Crear nuevas áreas con nombre y descripción','Editar el nombre o descripción de un área existente','Desactivar áreas que ya no se usan (sin borrar los usuarios asignados)','Ver cuántos usuarios tiene cada área'].map((item,i)=>(
                 <div key={i} style={{
@@ -1019,8 +1019,8 @@ export default function Manual() {
                 </div>
               ))}
             </div>
-            <Callout type="info" title="Creá las áreas antes de aprobar usuarios">
-              Si el plan es Pro, es importante que las áreas estén creadas antes de empezar a aprobar usuarios, porque al aprobar un usuario tenés que asignarle un área obligatoriamente.
+            <Callout type="info" title="Crea las áreas antes de aprobar usuarios">
+              Si el plan es Pro, es importante que las áreas estén creadas antes de empezar a aprobar usuarios, porque al aprobar un usuario tienes que asignarle un área obligatoriamente.
             </Callout>
           </section>
 
@@ -1030,7 +1030,7 @@ export default function Manual() {
           <section id="manual-premios" style={{ marginBottom:48, scrollMarginTop:24 }}>
             <SectionHeader num="10" kicker="Usuarios & Premios" title="DEFINIR PREMIOS" icon={ICONS.premios}/>
             <P>
-              Los premios se definen al crear cada apuesta en el campo <B>Premio</B>. El sistema no gestiona la entrega — eso queda a cargo del admin. El campo es texto libre: podés poner lo que quieras.
+              Los premios se definen al crear cada apuesta en el campo <B>Premio</B>. El sistema no gestiona la entrega — eso queda a cargo del admin. El campo es texto libre: puedes poner lo que quieras.
             </P>
             <div style={{
               display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',
@@ -1087,7 +1087,7 @@ export default function Manual() {
               Navegá a la sección Ranking y seleccioná la apuesta finalizada para ver la tabla de posiciones.
             </Step>
             <Step num="3" title="Ver el podio y la tabla">
-              El sistema muestra el <B>top 3 en podio</B> destacado, seguido por la tabla completa con todos los participantes. Podés ver el desglose partido por partido de cualquier jugador.
+              El sistema muestra el <B>top 3 en podio</B> destacado, seguido por la tabla completa con todos los participantes. Puedes ver el desglose partido por partido de cualquier jugador.
             </Step>
             <Step num="4" title="Identificar al ganador">
               El participante en el <B>1er puesto</B> es el ganador de esa apuesta.
@@ -1109,11 +1109,11 @@ export default function Manual() {
               Así se calculan los puntos de cada predicción. Los valores son los predeterminados (configurables por el admin al crear cada apuesta):
             </P>
             <ScoreTable rows={[
-              { tipo:'Exacto',          desc:'Acertás el marcador exacto (ej: predices 2-1 y sale 2-1)',                                        pts:'+5 pts', color:C.green },
-              { tipo:'Diferencia',      desc:'Acertás la diferencia de goles pero no el marcador exacto (ej: predices 2-1 y sale 3-2)',         pts:'+3 pts', color:C.goldDk },
-              { tipo:'Resultado',       desc:'Acertás quién gana o que empata, pero sin acertar diferencia ni marcador exacto',                 pts:'+1 pt',  color:C.blueMed },
+              { tipo:'Exacto',          desc:'Aciertas el marcador exacto (ej: predices 2-1 y sale 2-1)',                                        pts:'+5 pts', color:C.green },
+              { tipo:'Diferencia',      desc:'Aciertas la diferencia de goles pero no el marcador exacto (ej: predices 2-1 y sale 3-2)',         pts:'+3 pts', color:C.goldDk },
+              { tipo:'Resultado',       desc:'Aciertas quién gana o que empata, pero sin acertar diferencia ni marcador exacto',                 pts:'+1 pt',  color:C.blueMed },
               { tipo:'Error',           desc:'No se acierta el resultado (predices que gana local y gana visitante, o viceversa)',              pts:'0 pts',  color:C.red },
-              { tipo:'Sin predicción',  desc:'El participante no cargó ninguna predicción para ese partido',                                    pts:'0 pts',  color:C.ink300 },
+              { tipo:'Sin predicción',  desc:'El participante no ingresó ninguna predicción para ese partido',                                    pts:'0 pts',  color:C.ink300 },
             ]}/>
             <Callout type="info" title="Los puntos se calculan automáticamente">
               Una vez que el partido termina y el resultado está cargado en el sistema, los puntos se calculan solos. El admin solo necesita <B>finalizar la apuesta</B> cuando todos los partidos hayan terminado.
@@ -1125,7 +1125,7 @@ export default function Manual() {
           {/* ════════════ 13 CHECKLIST ════════════ */}
           <section id="manual-checklist" style={{ marginBottom:48, scrollMarginTop:24 }}>
             <SectionHeader num="13" kicker="Referencia" title="CHECKLIST RÁPIDO" icon={ICONS.check}/>
-            <P>Usá esta lista para no olvidar nada en cada etapa del torneo. <I>Tocá cada ítem para tildarlo.</I></P>
+            <P>Usa esta lista para no olvidar nada en cada etapa del torneo. <I>Toca cada ítem para marcarlo.</I></P>
 
             <h3 style={{
               fontFamily:"'Bebas Neue',sans-serif", fontSize:22,
@@ -1265,7 +1265,7 @@ export default function Manual() {
               }}>ACCESOS RÁPIDOS</p>
               <p style={{
                 fontSize:12, color:C.ink500, margin:'0 0 14px',
-              }}>Saltá directo a las secciones principales del sistema.</p>
+              }}>Salta directo a las secciones principales del sistema.</p>
               <div style={{ display:'flex', flexWrap:'wrap', gap:8 }}>
                 {[
                   { label:'Panel Admin', path:'/admin' },

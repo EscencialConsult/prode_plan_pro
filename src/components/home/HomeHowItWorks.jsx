@@ -2,17 +2,17 @@ import { Link } from 'react-router-dom'
 
 const STEPS = [
   {
-    n: '01', title: 'REGISTRATE',
-    desc: 'Ingresá con tu email de empresa. RRHH aprueba tu acceso en minutos y ya estás dentro.',
+    n: '01', title: 'REGÍSTRATE',
+    desc: 'Ingresa con tu email de empresa. RRHH aprueba tu acceso en minutos y ya estás dentro.',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
   },
   {
-    n: '02', title: 'PRONOSTICÁ',
-    desc: 'Antes de cada partido, cargá el resultado que creés que va a pasar. Se cierra cuando arranca.',
+    n: '02', title: 'PRONOSTICA',
+    desc: 'Antes de cada partido, ingresa el resultado que crees que va a ocurrir. Se cierra cuando empieza.',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
   },
   {
-    n: '03', title: 'GANÁ',
+    n: '03', title: 'GANA',
     desc: 'Cada acierto suma puntos. El ranking final define al ganador. El premio lo define tu empresa.',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>,
   },
@@ -30,7 +30,7 @@ export default function HomeHowItWorks() {
             Cómo funciona
           </span>
           <h2 className="font-display" style={{ fontSize: 'clamp(2.4rem,6vw,4rem)', color: '#0c182b', lineHeight: 1, letterSpacing: '.01em' }}>
-            3 PASOS Y ESTÁS JUGANDO
+            3 PASOS Y YA ESTÁS JUGANDO
           </h2>
         </div>
 

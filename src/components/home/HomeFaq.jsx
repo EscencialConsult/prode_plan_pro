@@ -2,12 +2,12 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const FAQS = [
-  { q: '¿Cómo me registro?', a: 'Hacé clic en "Crear mi cuenta", ingresá tu nombre y email de la empresa y elegí una contraseña. Un administrador aprueba tu acceso — generalmente en minutos.' },
-  { q: '¿Cómo cargo mis predicciones?', a: 'Una vez dentro, entrá a la sección "Apuestas", encontrá un partido abierto y cargá el resultado que creés que va a pasar. La apuesta cierra cuando arranca el partido.' },
+  { q: '¿Cómo me registro?', a: 'Haz clic en "Crear mi cuenta", ingresa tu nombre y email de la empresa y elige una contraseña. Un administrador aprueba tu acceso — generalmente en minutos.' },
+  { q: '¿Cómo cargo mis predicciones?', a: 'Una vez dentro, entra a la sección "Apuestas", encuentra un partido abierto e ingresa el resultado que crees que va a ocurrir. La apuesta cierra cuando empieza el partido.' },
   { q: '¿Cómo se calculan los puntos?', a: 'Acertar el resultado exacto suma más puntos que acertar solo quién gana. El sistema lo calcula automáticamente y actualiza el ranking después de cada partido.' },
   { q: '¿Qué es una apuesta grupal por área?', a: 'Es una dinámica donde tu puntaje individual también suma para tu sector. Toda el área compite como equipo contra las demás áreas de la empresa.' },
-  { q: '¿Puedo ver mis predicciones anteriores?', a: 'Sí. En "Mis Predicciones" encontrás el historial completo de tus pronósticos, cuántos acertaste y cómo evolucionó tu puntaje durante el torneo.' },
-  { q: '¿La plataforma funciona en el celular?', a: 'Sí, está optimizada para cualquier dispositivo. Solo necesitás el link y tu usuario — no hay nada que instalar.' },
+  { q: '¿Puedo ver mis predicciones anteriores?', a: 'Sí. En "Mis Predicciones" encuentras el historial completo de tus pronósticos, cuántos acertaste y cómo evolucionó tu puntaje durante el torneo.' },
+  { q: '¿La plataforma funciona en el teléfono?', a: 'Sí, está optimizada para cualquier dispositivo. Solo necesitas el enlace y tu usuario — no hay nada que instalar.' },
 ]
 
 export default function HomeFaq() {
@@ -29,7 +29,7 @@ export default function HomeFaq() {
               PREGUNTAS<br />FRECUENTES
             </h2>
             <p className="font-body text-base leading-relaxed mb-10" style={{ color: 'rgba(12,24,43,.78)', maxWidth: '28rem' }}>
-              Todo lo que necesitás saber para empezar a participar y sacarle el máximo a la plataforma.
+              Todo lo que necesitas saber para empezar a participar y aprovechar al máximo la plataforma.
             </p>
             <Link to="/login"
               className="inline-flex items-center gap-2 font-body font-bold text-sm px-7 py-4 rounded-full transition-all duration-300"

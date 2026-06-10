@@ -89,7 +89,7 @@ export default function CambiarPasswordPage() {
   // Validaciones de cliente (defensa rápida; el servicio revalida igual).
   function validar() {
     if (!form.actual || !form.nueva || !form.repetir) {
-      return 'Completá todos los campos.'
+      return 'Completa todos los campos.'
     }
     if (form.nueva.length < 6) {
       return 'La nueva contraseña debe tener al menos 6 caracteres.'
@@ -152,7 +152,7 @@ export default function CambiarPasswordPage() {
             Cambiar contraseña
           </h1>
           <p style={{ fontSize: '.85rem', color: '#5f6e8a', margin: '.3rem 0 0' }}>
-            Ingresá tu contraseña actual y elegí una nueva. No necesitás email.
+            Ingresa tu contraseña actual y elige una nueva. No necesitas email.
           </p>
         </div>
 
@@ -179,7 +179,7 @@ export default function CambiarPasswordPage() {
                 ¡Contraseña actualizada!
               </h2>
               <p style={{ fontSize: '.85rem', color: '#5f6e8a', margin: '0 0 1.3rem' }}>
-                Tu nueva contraseña ya está activa. Seguís con la sesión iniciada.
+                Tu nueva contraseña ya está activa. Sigues con la sesión iniciada.
               </p>
               <div style={{ display: 'flex', gap: '.6rem', justifyContent: 'center' }}>
                 <button

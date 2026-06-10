@@ -25,7 +25,7 @@ const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error(
     '⚠️ Faltan variables de entorno VITE_SUPABASE_URL o VITE_SUPABASE_ANON_KEY.\n' +
-    'Verificá que el archivo .env esté en la raíz del proyecto y reiniciá el servidor de Vite.'
+    'Verifica que el archivo .env esté en la raíz del proyecto y reinicia el servidor de Vite.'
   )
 }
 
@@ -376,7 +376,7 @@ const auth = {
     }
 
     if (error || !data.session) {
-      throw new Error('El link de recuperación no es válido o ya expiró. Pedí uno nuevo desde la pantalla de login.')
+      throw new Error('El link de recuperación no es válido o ya expiró. Pide uno nuevo desde la pantalla de login.')
     }
     return {
       ok: true,
@@ -393,7 +393,7 @@ const auth = {
     if (error) throw new Error(traducirErrorAuth(error))
     // Cerrar sesión: el usuario debe loguear con la nueva password
     await supabase.auth.signOut()
-    return { ok: true, message: 'Tu contraseña se actualizó correctamente. Ya podés iniciar sesión.' }
+    return { ok: true, message: 'Tu contraseña se actualizó correctamente. Ya puedes iniciar sesión.' }
   },
 
   /**
@@ -416,7 +416,7 @@ const auth = {
   cambiarPassword: async (currentPassword, newPassword) => {
     // ── 1. Validaciones de entrada (mínimas necesarias) ──
     if (!currentPassword || !newPassword) {
-      throw new Error('Completá la contraseña actual y la nueva.')
+      throw new Error('Completa la contraseña actual y la nueva.')
     }
     if (newPassword.length < 6) {
       throw new Error('La nueva contraseña debe tener al menos 6 caracteres.')
@@ -429,7 +429,7 @@ const auth = {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user?.email) {
       manejarSesionExpirada()
-      throw new Error('No hay una sesión activa. Volvé a iniciar sesión.')
+      throw new Error('No hay una sesión activa. Vuelve a iniciar sesión.')
     }
 
     // ── 3. Verificar la contraseña ACTUAL contra el hash almacenado ──
@@ -459,7 +459,7 @@ function traducirErrorAuth(error) {
   if (msg.includes('email not confirmed')) return 'Tu cuenta no fue confirmada todavía'
   if (msg.includes('user already registered')) return 'El email ya está registrado'
   if (msg.includes('password should be')) return 'La contraseña debe tener al menos 6 caracteres'
-  if (msg.includes('rate limit')) return 'Demasiados intentos. Probá nuevamente en unos minutos'
+  if (msg.includes('rate limit')) return 'Demasiados intentos. Intenta nuevamente en unos minutos'
   return error.message || 'Error de autenticación'
 }
 

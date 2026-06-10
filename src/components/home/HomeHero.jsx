@@ -81,13 +81,13 @@ export default function HomeHero() {
                   SE VIVE
                 </h1>
                 <h1 className="font-display leading-none block text-white" style={{ fontSize: 'clamp(1.8rem,8vw,5rem)', letterSpacing: '.01em' }}>
-                  ACÁ ADENTRO
+                  EN TU EMPRESA
                 </h1>
               </div>
 
               {/* Descripción */}
               <p className="font-body text-sm sm:text-base lg:text-lg leading-relaxed max-w-xl" style={{ color: 'rgba(255,255,255,.82)' }}>
-                Pronosticá los partidos, sumá puntos y competí con tu equipo.
+                Pronostica los partidos, suma puntos y compite con tu equipo.
                 El <strong className="font-bold text-white">prode interno</strong> de tu empresa ya está activo.
               </p>
 
@@ -130,7 +130,7 @@ export default function HomeHero() {
                 <svg viewBox="0 0 24 24" fill="#FF7D00" className="w-5 h-5 shrink-0 mt-0.5"><path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/></svg>
                 <p className="text-xs sm:text-sm font-body leading-relaxed" style={{ color: 'rgba(255,255,255,.88)' }}>
                   <strong className="text-white">El Mundial comienza el 11 de junio.</strong>{' '}
-                  Iniciá sesión para no perderte los primeros partidos.
+                  Inicia sesión para no perderte los primeros partidos.
                 </p>
               </div>
             </div>
@@ -203,7 +203,7 @@ export default function HomeHero() {
                   style={{ background: '#FF7D00', color: '#05090f', textDecoration: 'none' }}
                   onMouseEnter={e => { e.currentTarget.style.background = '#ff9a33' }}
                   onMouseLeave={e => { e.currentTarget.style.background = '#FF7D00' }}>
-                  Empezar a pronosticar
+                  Comenzar a pronosticar
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                 </Link>
               </div>
