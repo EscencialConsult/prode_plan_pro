@@ -495,7 +495,19 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
             {bet.partidos?.map((match, idx) => {
               const isLive = match.estado === 'en_vivo'
               const isFinished = match.estado === 'finalizado'
-              const isDisabled = !open || isLive || isFinished || estaBloqueado
+              // ── Bloqueo por horario de inicio del partido ──
+              // El partido se cierra automáticamente cuando llega su hora de
+              // arranque (fecha_partido), aunque el sync todavía no haya
+              // marcado el estado como 'en_vivo'. El estado queda como respaldo.
+              const kickoff = match.fecha_partido ? new Date(match.fecha_partido) : null
+              const matchStarted = kickoff && !isNaN(kickoff.getTime())
+                ? kickoff.getTime() <= Date.now()
+                : false
+              const fmtKick = kickoff && !isNaN(kickoff.getTime())
+                ? kickoff.toLocaleDateString('es-AR', { day: '2-digit', month: 'short' }).replace('.', '') +
+                  ' · ' + kickoff.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+                : null
+              const isDisabled = !open || isLive || isFinished || estaBloqueado || matchStarted
               const sc = scores[match.id] || { local: '', visitante: '' }
               const hasScore = sc.local !== '' && sc.visitante !== ''
               const elim = esEliminatoria(match.fase)
@@ -606,6 +618,23 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                       )}
                     </div>
                   </div>
+
+                  {/* Disponibilidad por partido (bloqueo automático al arrancar) */}
+                  {open && !estaBloqueado && (
+                    (matchStarted || isLive || isFinished) ? (
+                      <div className="px-3 py-2 bg-slate-100 border-t border-slate-200 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                          <circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" />
+                        </svg>
+                        Cerrado · el partido ya comenzó
+                      </div>
+                    ) : fmtKick ? (
+                      <div className="px-3 py-2 bg-green-50 border-t border-green-100 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-green-700">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
+                        Disponible hasta {fmtKick}
+                      </div>
+                    ) : null
+                  )}
 
                   {elim && empate && (
                     <div className="px-3 py-3 bg-amber-50 border-t border-dashed border-amber-200">
