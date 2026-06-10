@@ -275,13 +275,13 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
       >
         
         {/* SIDEBAR - SIN CAMBIOS */}
-        <aside className="hidden lg:flex flex-col bg-gradient-to-b from-zinc-900 via-zinc-800 to-zinc-900 text-red-50 border-r border-zinc-700/50 overflow-hidden">
+        <aside className="hidden lg:flex flex-col bg-gradient-to-b from-zinc-700 via-zinc-700 to-zinc-700 text-red-50 border-r border-zinc-700/50 overflow-hidden">
           <div className="p-6 border-b border-white/10 bg-gradient-to-r from-red-700/10 to-transparent flex-shrink-0">
             <div className="text-[10px] font-bold tracking-[0.2em] text-red-600 uppercase mb-2.5 flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
               Mundial 2026
             </div>
-            <h2 className="text-xl font-extrabold leading-tight text-white">{bet.titulo}</h2>
+            <h2 className="text-xl font-extrabold leading-tight" style={{ color: '#ffffff' }}>{bet.titulo}</h2>
           </div>
 
           <div className="grid grid-cols-2 gap-3 p-5 border-b border-white/10 flex-shrink-0">
@@ -445,7 +445,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                     type="button"
                     className={`w-9 h-9 inline-flex items-center justify-center rounded-lg text-xs font-bold flex-shrink-0 border-2 transition-all ${
                       isActive 
-                        ? 'bg-gradient-to-br from-zinc-900 to-zinc-800 border-red-600 text-red-600 shadow-lg shadow-red-700/30 scale-110' 
+                        ? 'bg-gradient-to-br from-zinc-700 to-zinc-800 border-red-600 text-red-600 shadow-lg shadow-red-700/30 scale-110' 
                         : done 
                           ? 'bg-gradient-to-br from-red-600 to-red-700 border-red-700 text-white'
                           : live 
@@ -530,7 +530,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                         : 'border-zinc-200'
                   }`}
                 >
-                  <div className="flex items-center justify-between px-3 py-2 bg-zinc-900 text-white">
+                  <div className="flex items-center justify-between px-3 py-2 bg-zinc-700 text-white">
                     <div className="flex items-center gap-2">
                       <span className="bg-zinc-800 text-red-600 text-[10px] font-black px-2 py-0.5 rounded min-w-[32px] text-center border border-red-600/30">
                         {String(idx + 1).padStart(2, '0')}
@@ -578,7 +578,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-center gap-2 px-4 py-3 bg-zinc-900">
+                    <div className="flex items-center justify-center gap-2 px-4 py-3 bg-zinc-700">
                       <input
                         type="text"
                         inputMode="numeric"
@@ -652,7 +652,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                           onClick={() => updateClasificado(match.id, match.codigo_local)}
                           className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide border-2 transition-all ${
                             clasifElegido === match.codigo_local
-                              ? 'bg-zinc-900 border-red-600 text-red-600 shadow-md'
+                              ? 'bg-zinc-700 border-red-600 text-red-600 shadow-md'
                               : 'bg-white border-zinc-200 text-zinc-700 hover:border-red-600 hover:bg-red-50'
                           } disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
@@ -667,7 +667,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                           onClick={() => updateClasificado(match.id, match.codigo_visitante)}
                           className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide border-2 transition-all ${
                             clasifElegido === match.codigo_visitante
-                              ? 'bg-zinc-900 border-red-600 text-red-600 shadow-md'
+                              ? 'bg-zinc-700 border-red-600 text-red-600 shadow-md'
                               : 'bg-white border-zinc-200 text-zinc-700 hover:border-red-600 hover:bg-red-50'
                           } disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
@@ -718,7 +718,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
 
                   {(isLive || isFinished) && (match.goles_local != null || match.goles_visitante != null) && (
                     <div className="px-3 py-2.5 bg-zinc-100 border-t border-zinc-200">
-                      <div className="flex items-center gap-3 px-3 py-2 bg-zinc-900 rounded-lg text-white">
+                      <div className="flex items-center gap-3 px-3 py-2 bg-zinc-700 rounded-lg text-white">
                         <span className="text-[9px] font-black tracking-widest uppercase text-red-600">
                           {isLive ? '⚡ VIVO' : '🏁 FINAL'}
                         </span>
@@ -741,7 +741,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
 
           {/* Footer */}
           <form onSubmit={handleSubmit} className="flex-shrink-0">
-            <footer className="px-4 sm:px-6 py-3 bg-zinc-900 text-white border-t-2 border-red-600 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 items-center">
+            <footer className="px-4 sm:px-6 py-3 bg-zinc-700 text-white border-t-2 border-red-600 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 items-center">
               <div className="min-w-0">
                 {open && (
                   <>
