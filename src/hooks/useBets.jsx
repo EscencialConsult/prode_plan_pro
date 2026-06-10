@@ -158,6 +158,36 @@ export function useBets({
     }
   }, [loadBets])
 
+  const editBet = useCallback(async (payload) => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      await sheetsApi.apuestas.editar(payload)
+      await loadBets()
+    } catch (err) {
+      setError(err.message || 'Error editando apuesta')
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }, [loadBets])
+
+  const deleteBet = useCallback(async (apuesta_id) => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      await sheetsApi.apuestas.eliminar(apuesta_id)
+      await loadBets()
+    } catch (err) {
+      setError(err.message || 'Error eliminando apuesta')
+      throw err
+    } finally {
+      setLoading(false)
+    }
+  }, [loadBets])
+
   return {
     bets,
     matches,
@@ -170,5 +200,7 @@ export function useBets({
     createBet,
     closeBet,
     finalizeBet,
+    editBet,
+    deleteBet,
   }
 }

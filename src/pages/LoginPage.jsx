@@ -218,23 +218,6 @@ export default function LoginPage() {
               </button>
             </form>
 
-            {/* Divider o */}
-            <div className="flex items-center gap-3 my-5">
-              <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,.08)' }} />
-              <span className="font-body text-xs" style={{ color: 'rgba(255,255,255,.25)' }}>o</span>
-              <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,.08)' }} />
-            </div>
-
-            {/* Registrarse */}
-            <Link
-              to="/register"
-              className="block w-full font-body font-semibold text-sm py-3.5 rounded-full text-center transition-all"
-              style={{ border: '1px solid rgba(255,255,255,.18)', color: 'rgba(255,255,255,.7)', textDecoration: 'none' }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,125,0,.5)'; e.currentTarget.style.color = '#FF7D00'; e.currentTarget.style.background = 'rgba(255,125,0,.06)' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.18)'; e.currentTarget.style.color = 'rgba(255,255,255,.7)'; e.currentTarget.style.background = 'transparent' }}
-            >
-              No tengo cuenta — Registrarme
-            </Link>
           </div>
         </div>
 

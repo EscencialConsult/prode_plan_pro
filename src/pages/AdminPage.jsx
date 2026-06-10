@@ -32,9 +32,9 @@ function getBetStatusColor(bet) {
 }
 
 export default function AdminPage() {
-  const { bets, loading: betsLoading, createBet, closeBet, finalizeBet, matches, loadBets } = useBets({ 
-    autoLoad: false, 
-    autoLoadPredictions: false 
+  const { bets, loading: betsLoading, createBet, editBet, deleteBet, matches, loadBets } = useBets({
+    autoLoad: false,
+    autoLoadPredictions: false
   })
   const { isPro } = useAuth()
   const { toast } = useToast()
@@ -317,9 +317,10 @@ if (initialLoading) {
         {tab === 'ApuestasCreadas' && (
 <BetsListTab
   bets={bets}
+  matches={matches}
   loading={betsLoading}
-  closeBet={closeBet}
-  finalizeBet={finalizeBet}
+  editBet={editBet}
+  deleteBet={deleteBet}
 />
         )}
 

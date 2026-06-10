@@ -2,10 +2,19 @@ import { useState, useMemo, useEffect } from 'react'
 import sheetsApi from '../../services/sheetsApi.js'
 import { useAuth } from '../../hooks/useAuth.jsx'
 import { useToast } from '../../hooks/useToast.jsx'
-import { fmtFecha, inputLocalAIsoUtc } from '../../utils/index.js'
+import { fmtFecha, inputLocalAIsoUtc, isoUtcAInputLocal } from '../../utils/index.js'
 
 /* ── Constantes ─────────────────────────────────────────── */
-const INITIAL = { titulo: '', type: 'libre', premio: '', fecha_cierre: '', partidos_ids: [] }
+const INITIAL = { titulo: '', type: 'grupos', premio: '', fecha_cierre: '', partidos_ids: [] }
+
+/** Devuelve la fecha de cierre sugerida = primer partido - 10 min,
+ *  en formato compatible con <input type="datetime-local"> (hora local). */
+function sugerirFechaCierre(primerPartido) {
+  if (!primerPartido?.fecha_partido) return ''
+  const fecha = new Date(primerPartido.fecha_partido)
+  fecha.setMinutes(fecha.getMinutes() - 10)
+  return isoUtcAInputLocal(fecha.toISOString())
+}
 
 const ORDEN_FASES = ['grupos', '16avos', 'octavos', 'cuartos', 'semis', '3er_puesto', 'final']
 const LABEL_FASE = {
@@ -222,6 +231,15 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
     }, partidosSeleccionados[0])
 
     setPrimerPartido(partidoMasTemprano)
+
+    // Autocálculo: fecha_cierre = primer partido - 10 min.
+    // Siempre que cambia el set de partidos, sobrescribimos la fecha.
+    const sugerida = sugerirFechaCierre(partidoMasTemprano)
+    if (sugerida && form.fecha_cierre !== sugerida) {
+      setForm(prev => ({ ...prev, fecha_cierre: sugerida }))
+      setErrorFecha('')
+      return
+    }
 
     if (!form.fecha_cierre) {
       setErrorFecha('')
@@ -631,7 +649,7 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
                     color: active ? C.gold : C.steel,
                   }}
                 >
-                  {t === 'grupos' ? 'Por Áreas' : 'Libre'}
+                  {t === 'grupos' ? 'Grupal' : 'Libre'}
                 </button>
               )
             })}

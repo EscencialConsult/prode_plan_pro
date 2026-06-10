@@ -115,18 +115,12 @@ export default function HomeHero() {
 
               {/* Botones */}
               <div className="flex flex-col sm:flex-row gap-3">
-                <Link to="/register" className="font-body font-bold text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full inline-flex items-center justify-center gap-2 transition-all w-full sm:w-auto"
+                <Link to="/login" className="font-body font-bold text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full inline-flex items-center justify-center gap-2 transition-all w-full sm:w-auto"
                   style={{ background: '#FF7D00', color: '#05090f', boxShadow: '0 8px 24px rgba(255,125,0,.28)', textDecoration: 'none' }}
                   onMouseEnter={e => { e.currentTarget.style.background = '#ff9a33'; e.currentTarget.style.transform = 'translateY(-2px)' }}
                   onMouseLeave={e => { e.currentTarget.style.background = '#FF7D00'; e.currentTarget.style.transform = '' }}>
-                  Crear mi cuenta
+                  Iniciar sesión
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                </Link>
-                <Link to="/login" className="font-body font-semibold text-sm sm:text-base px-6 sm:px-7 py-3.5 sm:py-4 rounded-full inline-flex items-center justify-center gap-2 transition-all w-full sm:w-auto"
-                  style={{ color: '#fff', border: '1.5px solid rgba(170,0,100,.6)', textDecoration: 'none' }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = '#FF7D00'; e.currentTarget.style.color = '#FF7D00' }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(170,0,100,.6)'; e.currentTarget.style.color = '#fff' }}>
-                  Ya tengo cuenta →
                 </Link>
               </div>
 
@@ -136,7 +130,7 @@ export default function HomeHero() {
                 <svg viewBox="0 0 24 24" fill="#FF7D00" className="w-5 h-5 shrink-0 mt-0.5"><path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/></svg>
                 <p className="text-xs sm:text-sm font-body leading-relaxed" style={{ color: 'rgba(255,255,255,.88)' }}>
                   <strong className="text-white">El Mundial comienza el 11 de junio.</strong>{' '}
-                  Registrate antes de que arranque para no perderte los primeros partidos.
+                  Iniciá sesión para no perderte los primeros partidos.
                 </p>
               </div>
             </div>
@@ -205,7 +199,7 @@ export default function HomeHero() {
                 </div>
 
                 {/* CTA final */}
-                <Link to="/register" className="flex items-center justify-center gap-2 w-full font-body font-bold text-sm py-3 sm:py-3.5 rounded-full transition-all"
+                <Link to="/login" className="flex items-center justify-center gap-2 w-full font-body font-bold text-sm py-3 sm:py-3.5 rounded-full transition-all"
                   style={{ background: '#FF7D00', color: '#05090f', textDecoration: 'none' }}
                   onMouseEnter={e => { e.currentTarget.style.background = '#ff9a33' }}
                   onMouseLeave={e => { e.currentTarget.style.background = '#FF7D00' }}>

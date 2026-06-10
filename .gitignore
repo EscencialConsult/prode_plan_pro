@@ -7,3 +7,7 @@ dist
 # Local Netlify folder
 .netlify
 *_files/
+
+# Scripts de importación
+scripts/.env
+scripts/import_errores.csv

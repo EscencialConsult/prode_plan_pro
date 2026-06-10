@@ -1,4 +1,6 @@
-import { isBetOpen, timeLeft } from '../../utils/index.js'
+import { useState, useEffect, useMemo } from 'react'
+import sheetsApi from '../../services/sheetsApi.js'
+import { isBetOpen, timeLeft, isoUtcAInputLocal, inputLocalAIsoUtc, fmtFecha } from '../../utils/index.js'
 import { useToast, useConfirm } from '../../hooks/useToast.jsx'
 
 function getBetStatus(bet) {
@@ -11,11 +13,12 @@ function getBetStatus(bet) {
   return { color: '#5f6e8a', bg: 'rgba(95,110,138,.06)', border: 'rgba(95,110,138,.12)', label: bet.estado || '—', dot: false }
 }
 
-function BetRow({ bet, onClose, onFinalize }) {
+function BetRow({ bet, onEdit, onDelete }) {
   const status = getBetStatus(bet)
   const matchCount = bet.partidos_ids ? bet.partidos_ids.split(',').filter(Boolean).length : (bet.partidos?.length || 0)
   const remaining = bet.fecha_cierre ? timeLeft(bet.fecha_cierre) : null
   const isOpen = isBetOpen(bet)
+  const puedeEliminar = bet.estado === 'abierta'
 
   return (
     <div
@@ -32,7 +35,6 @@ function BetRow({ bet, onClose, onFinalize }) {
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
-            {/* Status badge */}
             <span
               className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-body font-bold uppercase tracking-wider"
               style={{ background: status.bg, color: status.color, border: `1px solid ${status.border}` }}
@@ -40,7 +42,6 @@ function BetRow({ bet, onClose, onFinalize }) {
               {status.dot && <span className="w-1.5 h-1.5 rounded-full" style={{ background: status.color }} />}
               {status.label}
             </span>
-            {/* Type badge */}
             <span
               className="inline-flex px-2 py-0.5 rounded-full text-[10px] font-body font-semibold uppercase tracking-wider"
               style={{ background: 'rgba(12,24,43,.04)', color: '#a8b2c4', border: '1px solid #f0eadb' }}
@@ -80,28 +81,26 @@ function BetRow({ bet, onClose, onFinalize }) {
           </div>
         </div>
 
-        {/* Actions */}
+        {/* Acciones */}
         <div className="flex flex-col gap-1.5 flex-shrink-0">
-          {isOpen && onClose && (
+          <button
+            onClick={() => onEdit(bet)}
+            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full font-body font-semibold transition-all"
+            style={{ fontSize: 11, background: 'transparent', border: '1px solid rgba(12,24,43,.2)', color: '#5f6e8a' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(12,24,43,.04)'; e.currentTarget.style.borderColor = '#FF7D00'; e.currentTarget.style.color = '#FF7D00' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = 'rgba(12,24,43,.2)'; e.currentTarget.style.color = '#5f6e8a' }}
+          >
+            Editar
+          </button>
+          {puedeEliminar && (
             <button
-              onClick={() => onClose(bet.id)}
+              onClick={() => onDelete(bet.id)}
               className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full font-body font-semibold transition-all"
               style={{ fontSize: 11, background: 'transparent', border: '1px solid rgba(224,50,82,.3)', color: '#e03252' }}
               onMouseEnter={e => { e.currentTarget.style.background = 'rgba(224,50,82,.06)' }}
               onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
             >
-              Cerrar
-            </button>
-          )}
-          {bet.estado === 'cerrada' && onFinalize && (
-            <button
-              onClick={() => onFinalize(bet.id)}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full font-body font-bold transition-all"
-              style={{ fontSize: 11, background: 'rgba(235,195,43,.1)', border: '1px solid rgba(235,195,43,.35)', color: '#c99f16' }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.color = '#05090f' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(235,195,43,.1)'; e.currentTarget.style.color = '#c99f16' }}
-            >
-              Finalizar
+              Eliminar
             </button>
           )}
         </div>
@@ -110,36 +109,318 @@ function BetRow({ bet, onClose, onFinalize }) {
   )
 }
 
-export default function BetsListTab({ bets, loading, closeBet, finalizeBet }) {
+/* ── Modal de edición ────────────────────────────────────── */
+function EditBetModal({ bet, matches, onClose, onSave, saving }) {
+  const [form, setForm] = useState({
+    titulo: bet.titulo || '',
+    descripcion: bet.descripcion || '',
+    premio: bet.premio || '',
+    fecha_cierre: bet.fecha_cierre ? isoUtcAInputLocal(bet.fecha_cierre) : '',
+  })
+
+  const initialPartidos = useMemo(() => {
+    return (bet.partidos_ids || '').split(',').map(s => s.trim()).filter(Boolean)
+  }, [bet.partidos_ids])
+
+  const [partidosIds, setPartidosIds] = useState(initialPartidos)
+  const [predicCount, setPredicCount] = useState(null)
+  const [loadingCount, setLoadingCount] = useState(true)
+  const [busqueda, setBusqueda] = useState('')
+
+  useEffect(() => {
+    let cancelado = false
+    setLoadingCount(true)
+    sheetsApi.apuestas.contarPredicciones(bet.id)
+      .then(r => { if (!cancelado) setPredicCount(r.count) })
+      .catch(() => { if (!cancelado) setPredicCount(0) })
+      .finally(() => { if (!cancelado) setLoadingCount(false) })
+    return () => { cancelado = true }
+  }, [bet.id])
+
+  const partidosEditables = predicCount === 0
+
+  const partidosDisponibles = useMemo(() => {
+    return (matches || []).filter(m =>
+      m.equipo_local && m.equipo_visitante &&
+      m.codigo_local !== 'TBD' && m.codigo_visitante !== 'TBD'
+    )
+  }, [matches])
+
+  const partidosFiltrados = useMemo(() => {
+    const q = busqueda.trim().toLowerCase()
+    if (!q) return partidosDisponibles
+    return partidosDisponibles.filter(m =>
+      `${m.equipo_local} ${m.equipo_visitante}`.toLowerCase().includes(q)
+    )
+  }, [partidosDisponibles, busqueda])
+
+  // Recalcular fecha_cierre cuando cambia el set de partidos editables.
+  useEffect(() => {
+    if (!partidosEditables) return
+    if (partidosIds.length === 0) return
+    const seleccionados = partidosDisponibles.filter(m => partidosIds.includes(m.id))
+    if (seleccionados.length === 0) return
+    const primero = seleccionados.reduce((min, p) =>
+      new Date(p.fecha_partido) < new Date(min.fecha_partido) ? p : min, seleccionados[0])
+    const fecha = new Date(primero.fecha_partido)
+    fecha.setMinutes(fecha.getMinutes() - 10)
+    const sugerida = isoUtcAInputLocal(fecha.toISOString())
+    setForm(prev => prev.fecha_cierre === sugerida ? prev : { ...prev, fecha_cierre: sugerida })
+  }, [partidosIds, partidosDisponibles, partidosEditables])
+
+  function toggleMatch(id) {
+    setPartidosIds(prev =>
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    )
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault()
+
+    if (!form.titulo.trim()) return
+    if (!form.fecha_cierre) return
+    if (partidosEditables && partidosIds.length === 0) return
+
+    const payload = {
+      apuesta_id: bet.id,
+      titulo: form.titulo.trim(),
+      descripcion: form.descripcion.trim(),
+      premio: form.premio.trim(),
+      fecha_cierre: inputLocalAIsoUtc(form.fecha_cierre),
+    }
+    if (partidosEditables) {
+      payload.partidos_ids = partidosIds.join(',')
+    }
+    onSave(payload)
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: 'rgba(12,24,43,.65)', backdropFilter: 'blur(4px)' }}
+      onClick={onClose}
+    >
+      <form
+        onSubmit={handleSubmit}
+        onClick={e => e.stopPropagation()}
+        className="rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+        style={{ background: '#fff', boxShadow: '0 24px 60px rgba(0,0,0,.4)' }}
+      >
+        <div className="px-6 py-5 flex items-center justify-between"
+          style={{ borderBottom: '1px solid #f0eadb' }}>
+          <h2 className="font-display text-xl" style={{ color: '#0c182b', letterSpacing: '.02em' }}>
+            EDITAR APUESTA
+          </h2>
+          <button type="button" onClick={onClose}
+            className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+            style={{ color: '#5f6e8a' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(12,24,43,.06)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        <div className="px-6 py-5 space-y-4">
+
+          <div>
+            <label className="font-body font-bold text-xs uppercase tracking-widest block mb-1.5" style={{ color: '#5f6e8a' }}>
+              Título
+            </label>
+            <input
+              type="text"
+              value={form.titulo}
+              onChange={e => setForm(p => ({ ...p, titulo: e.target.value }))}
+              required
+              className="w-full px-4 py-3 rounded-xl font-body text-sm outline-none"
+              style={{ background: '#fff', border: '1.5px solid #f0eadb', color: '#0c182b' }}
+            />
+          </div>
+
+          <div>
+            <label className="font-body font-bold text-xs uppercase tracking-widest block mb-1.5" style={{ color: '#5f6e8a' }}>
+              Descripción
+            </label>
+            <textarea
+              value={form.descripcion}
+              onChange={e => setForm(p => ({ ...p, descripcion: e.target.value }))}
+              rows={2}
+              className="w-full px-4 py-3 rounded-xl font-body text-sm outline-none resize-none"
+              style={{ background: '#fff', border: '1.5px solid #f0eadb', color: '#0c182b' }}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="font-body font-bold text-xs uppercase tracking-widest block mb-1.5" style={{ color: '#5f6e8a' }}>
+                Premio / Incentivo
+              </label>
+              <input
+                type="text"
+                value={form.premio}
+                onChange={e => setForm(p => ({ ...p, premio: e.target.value }))}
+                className="w-full px-4 py-3 rounded-xl font-body text-sm outline-none"
+                style={{ background: '#fff', border: '1.5px solid #f0eadb', color: '#0c182b' }}
+              />
+            </div>
+            <div>
+              <label className="font-body font-bold text-xs uppercase tracking-widest block mb-1.5" style={{ color: '#5f6e8a' }}>
+                Fecha de cierre
+              </label>
+              <input
+                type="datetime-local"
+                value={form.fecha_cierre}
+                onChange={e => setForm(p => ({ ...p, fecha_cierre: e.target.value }))}
+                required
+                className="w-full px-4 py-3 rounded-xl font-body text-sm outline-none"
+                style={{ background: '#fff', border: '1.5px solid #f0eadb', color: '#0c182b' }}
+              />
+            </div>
+          </div>
+
+          {/* Partidos */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="font-body font-bold text-xs uppercase tracking-widest" style={{ color: '#5f6e8a' }}>
+                Partidos {partidosEditables && `(${partidosIds.length})`}
+              </label>
+              {loadingCount && (
+                <span className="text-xs font-body" style={{ color: '#a8b2c4' }}>Verificando predicciones...</span>
+              )}
+            </div>
+
+            {!loadingCount && !partidosEditables && (
+              <div className="rounded-xl p-3 mb-3"
+                style={{ background: 'rgba(224,50,82,.05)', border: '1px solid rgba(224,50,82,.2)' }}>
+                <p className="text-xs font-body" style={{ color: '#a8324c' }}>
+                  ⚠ No podés modificar los partidos porque ya hay <strong>{predicCount}</strong> {predicCount === 1 ? 'predicción cargada' : 'predicciones cargadas'} en esta apuesta.
+                </p>
+              </div>
+            )}
+
+            {!loadingCount && partidosEditables && (
+              <input
+                type="text"
+                value={busqueda}
+                onChange={e => setBusqueda(e.target.value)}
+                placeholder="Buscar equipo..."
+                className="w-full px-4 py-2.5 rounded-xl font-body text-sm outline-none mb-2"
+                style={{ background: '#fff', border: '1.5px solid #f0eadb', color: '#0c182b' }}
+              />
+            )}
+
+            <div className="rounded-xl overflow-hidden max-h-72 overflow-y-auto"
+              style={{ border: '1.5px solid #f0eadb', background: '#fafafa' }}>
+              {(partidosEditables ? partidosFiltrados : partidosDisponibles.filter(m => initialPartidos.includes(m.id))).map(m => {
+                const checked = partidosIds.includes(m.id)
+                return (
+                  <label key={m.id}
+                    className="flex items-center gap-3 px-3 py-2.5"
+                    style={{
+                      background: checked ? 'rgba(255,125,0,0.08)' : '#fff',
+                      borderBottom: '1px solid #f5f5f5',
+                      cursor: partidosEditables ? 'pointer' : 'default',
+                      opacity: partidosEditables ? 1 : 0.85,
+                    }}>
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      disabled={!partidosEditables}
+                      onChange={() => partidosEditables && toggleMatch(m.id)}
+                      className="hidden"
+                    />
+                    <span className="flex-shrink-0 w-5 h-5 rounded flex items-center justify-center transition-all"
+                      style={{
+                        border: `2px solid ${checked ? '#FF7D00' : '#e8dfd0'}`,
+                        background: checked ? '#FF7D00' : '#fff',
+                      }}>
+                      {checked && (
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#0c182b" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      )}
+                    </span>
+                    <span className="font-body text-sm flex-1 min-w-0 truncate" style={{ color: '#0c182b' }}>
+                      {m.equipo_local} vs {m.equipo_visitante}
+                    </span>
+                    <span className="text-[11px] font-body whitespace-nowrap" style={{ color: '#5f6e8a' }}>
+                      {fmtFecha(m.fecha_partido)}
+                    </span>
+                  </label>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+
+        <div className="px-6 py-4 flex justify-end gap-2"
+          style={{ borderTop: '1px solid #f0eadb', background: '#faf7f0' }}>
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={saving}
+            className="px-5 py-2.5 rounded-xl text-xs font-body font-semibold uppercase tracking-wider transition-all disabled:opacity-50"
+            style={{ background: '#fff', border: '1.5px solid #f0eadb', color: '#5f6e8a' }}
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            disabled={saving || loadingCount}
+            className="px-6 py-2.5 rounded-xl text-xs font-body font-bold uppercase tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{ background: 'linear-gradient(135deg, #FF7D00 0%, #a85f00 100%)', color: '#0c182b', boxShadow: '0 2px 8px rgba(255,125,0,.25)' }}
+          >
+            {saving ? 'Guardando...' : 'Guardar cambios'}
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}
+
+/* ── Componente principal ────────────────────────────────── */
+export default function BetsListTab({ bets, matches, loading, editBet, deleteBet }) {
   const { toast } = useToast()
-  const confirm   = useConfirm()
+  const confirm = useConfirm()
+  const [editingBet, setEditingBet] = useState(null)
+  const [saving, setSaving] = useState(false)
 
   const openBets = bets.filter(b => isBetOpen(b))
   const closedBets = bets.filter(b => (b.estado === 'cerrada' || b.estado === 'abierta') && !isBetOpen(b))
   const finishedBets = bets.filter(b => b.estado === 'finalizada')
 
-  async function handleClose(id) {
+  async function handleDelete(id) {
     const ok = await confirm({
-      titulo: '¿Cerrar apuesta?',
-      mensaje: 'Los usuarios ya no podrán cargar predicciones.',
-      confirmarTxt: 'Sí, cerrar',
-      tipo: 'warning',
-    })
-    if (!ok) return
-    try { await closeBet(id); toast.success('Apuesta cerrada correctamente') }
-    catch (e) { toast.error('Error al cerrar: ' + e.message) }
-  }
-
-  async function handleFinalize(id) {
-    const ok = await confirm({
-      titulo: '¿Finalizar apuesta?',
-      mensaje: 'Esto calculará los puntajes finales. No se puede deshacer.',
-      confirmarTxt: 'Sí, finalizar',
+      titulo: '¿Eliminar apuesta?',
+      mensaje: 'Se eliminará la apuesta y todas sus predicciones de forma permanente. Esta acción no se puede deshacer.',
+      confirmarTxt: 'Sí, eliminar',
       tipo: 'danger',
     })
     if (!ok) return
-    try { await finalizeBet(id); toast.success('Apuesta finalizada y puntajes calculados') }
-    catch (e) { toast.error('Error al finalizar: ' + e.message) }
+    try {
+      await deleteBet(id)
+      toast.success('Apuesta eliminada correctamente')
+    } catch (e) {
+      toast.error('Error al eliminar: ' + e.message)
+    }
+  }
+
+  function handleEdit(bet) {
+    setEditingBet(bet)
+  }
+
+  async function handleSaveEdit(payload) {
+    setSaving(true)
+    try {
+      await editBet(payload)
+      toast.success('Apuesta editada correctamente')
+      setEditingBet(null)
+    } catch (e) {
+      toast.error('Error al editar: ' + e.message)
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -179,7 +460,7 @@ export default function BetsListTab({ bets, loading, closeBet, finalizeBet }) {
             <span className="font-display text-lg" style={{ color: '#1b8a5a' }}>({openBets.length})</span>
           </div>
           <div className="flex flex-col gap-3">
-            {openBets.map(bet => (<BetRow key={bet.id} bet={bet} onClose={handleClose} />))}
+            {openBets.map(bet => (<BetRow key={bet.id} bet={bet} onEdit={handleEdit} onDelete={handleDelete} />))}
           </div>
         </div>
       )}
@@ -191,7 +472,7 @@ export default function BetsListTab({ bets, loading, closeBet, finalizeBet }) {
             <span className="font-display text-lg" style={{ color: '#5f6e8a' }}>({closedBets.length})</span>
           </div>
           <div className="flex flex-col gap-3">
-            {closedBets.map(bet => (<BetRow key={bet.id} bet={bet} onFinalize={handleFinalize} />))}
+            {closedBets.map(bet => (<BetRow key={bet.id} bet={bet} onEdit={handleEdit} onDelete={handleDelete} />))}
           </div>
         </div>
       )}
@@ -203,9 +484,19 @@ export default function BetsListTab({ bets, loading, closeBet, finalizeBet }) {
             <span className="font-display text-lg" style={{ color: '#c99f16' }}>({finishedBets.length})</span>
           </div>
           <div className="flex flex-col gap-3">
-            {finishedBets.map(bet => (<BetRow key={bet.id} bet={bet} />))}
+            {finishedBets.map(bet => (<BetRow key={bet.id} bet={bet} onEdit={handleEdit} onDelete={handleDelete} />))}
           </div>
         </div>
+      )}
+
+      {editingBet && (
+        <EditBetModal
+          bet={editingBet}
+          matches={matches || []}
+          saving={saving}
+          onClose={() => !saving && setEditingBet(null)}
+          onSave={handleSaveEdit}
+        />
       )}
     </div>
   )

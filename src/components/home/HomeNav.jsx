@@ -39,17 +39,11 @@ export default function HomeNav() {
         </div>
 
         <div className="hidden lg:flex items-center gap-3">
-          <Link to="/login" className="font-body font-semibold text-sm px-5 py-2.5 rounded-full transition-all"
-            style={{ color: 'rgba(255,255,255,.88)', border: '1.5px solid rgba(255,255,255,.28)', textDecoration: 'none' }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = '#FF7D00'; e.currentTarget.style.color = '#FF7D00' }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.28)'; e.currentTarget.style.color = 'rgba(255,255,255,.88)' }}>
-            Iniciar sesión
-          </Link>
-          <Link to="/register" className="font-body font-bold text-sm px-5 py-2.5 rounded-full transition-all"
+          <Link to="/login" className="font-body font-bold text-sm px-5 py-2.5 rounded-full transition-all"
             style={{ background: '#FF7D00', color: '#05090f', boxShadow: '0 6px 20px rgba(255,125,0,.25)', textDecoration: 'none' }}
             onMouseEnter={e => { e.currentTarget.style.background = '#ff9a33'; e.currentTarget.style.transform = 'translateY(-1px)' }}
             onMouseLeave={e => { e.currentTarget.style.background = '#FF7D00'; e.currentTarget.style.transform = '' }}>
-            Crear mi cuenta
+            Iniciar sesión
           </Link>
         </div>
 
@@ -74,18 +68,11 @@ export default function HomeNav() {
           ))}
           <div className="pt-2 space-y-2">
             <Link to="/login" onClick={() => setOpen(false)}
-              className="block text-center py-3 rounded-full text-sm font-body font-semibold text-white"
-              style={{ border: '1.5px solid rgba(255,255,255,.3)', textDecoration: 'none' }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = '#FF7D00'; e.currentTarget.style.color = '#FF7D00' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.3)'; e.currentTarget.style.color = '#ffffff' }}>
-              Iniciar sesión
-            </Link>
-            <Link to="/register" onClick={() => setOpen(false)}
               className="block text-center py-3 rounded-full text-sm font-body font-bold"
               style={{ background: '#FF7D00', color: '#05090f', textDecoration: 'none' }}
               onMouseEnter={e => { e.currentTarget.style.background = '#ff9a33' }}
               onMouseLeave={e => { e.currentTarget.style.background = '#FF7D00' }}>
-              Crear mi cuenta
+              Iniciar sesión
             </Link>
           </div>
         </div>

@@ -675,6 +675,42 @@ const apuestas = {
     invalidateClientCache()
     return data
   },
+
+  editar: async ({ apuesta_id, titulo, descripcion, premio, fecha_cierre, partidos_ids }) => {
+    let partidosArr = null
+    if (partidos_ids !== undefined && partidos_ids !== null) {
+      partidosArr = Array.isArray(partidos_ids)
+        ? partidos_ids.map(String).map(s => s.trim()).filter(Boolean)
+        : String(partidos_ids).split(',').map(s => s.trim()).filter(Boolean)
+    }
+    const { data, error } = await supabase.rpc('editar_apuesta', {
+      p_apuesta_id:   apuesta_id,
+      p_titulo:       titulo       ?? null,
+      p_descripcion:  descripcion  ?? null,
+      p_premio:       premio       ?? null,
+      p_fecha_cierre: fecha_cierre ?? null,
+      p_partidos_ids: partidosArr,
+    })
+    checkError(error, 'apuestas.editar')
+    invalidateClientCache()
+    return data
+  },
+
+  eliminar: async (apuesta_id) => {
+    const { data, error } = await supabase.rpc('eliminar_apuesta', { p_apuesta_id: apuesta_id })
+    checkError(error, 'apuestas.eliminar')
+    invalidateClientCache()
+    return data
+  },
+
+  contarPredicciones: async (apuesta_id) => {
+    const { count, error } = await supabase
+      .from('predicciones')
+      .select('id', { count: 'exact', head: true })
+      .eq('apuesta_id', apuesta_id)
+    checkError(error, 'apuestas.contarPredicciones')
+    return { ok: true, count: count || 0 }
+  },
 }
 
 // ── partidos ──────────────────────────────────────────────

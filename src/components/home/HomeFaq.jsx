@@ -31,7 +31,7 @@ export default function HomeFaq() {
             <p className="font-body text-base leading-relaxed mb-10" style={{ color: 'rgba(12,24,43,.78)', maxWidth: '28rem' }}>
               Todo lo que necesitás saber para empezar a participar y sacarle el máximo a la plataforma.
             </p>
-            <Link to="/register"
+            <Link to="/login"
               className="inline-flex items-center gap-2 font-body font-bold text-sm px-7 py-4 rounded-full transition-all duration-300"
               style={{ background: '#46009B', color: '#fff', textDecoration: 'none', boxShadow: '0 4px 14px rgba(70,0,155,.22)' }}
               onMouseEnter={e => { 
@@ -44,7 +44,7 @@ export default function HomeFaq() {
                 e.currentTarget.style.transform = 'translateY(0)'
                 e.currentTarget.style.boxShadow = '0 4px 14px rgba(70,0,155,.22)'
               }}>
-              Registrarme ahora
+              Iniciar sesión
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
                 <polyline points="9 18 15 12 9 6"/>
               </svg>
