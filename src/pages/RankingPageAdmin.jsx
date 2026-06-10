@@ -85,7 +85,7 @@ const CSS = `
 ══════════════════════════════════════════ */
 export default function RankingPageAdmin() {
   const { bets, loading: lb } = useBets()
-  const { user } = useAuth()
+  const { user, isPro } = useAuth()
   const { toast } = useToast()
 
   const [sel, setSel] = useState(null)
@@ -96,6 +96,45 @@ export default function RankingPageAdmin() {
   const [expandedUser, setExpandedUser] = useState(null)
   const [predicciones, setPredicciones] = useState({})
   const [loadingUser, setLoadingUser] = useState(null)
+
+  // ── Ranking global (se carga al montar) ──
+  const [globalTabla, setGlobalTabla] = useState([])
+  const [globalMeta, setGlobalMeta] = useState({})
+  const [globalLoading, setGlobalLoading] = useState(false)
+
+  // ── Ranking global por área (plan_pro solamente) ──
+  const [areasTabla, setAreasTabla] = useState([])
+  const [areasLoading, setAreasLoading] = useState(false)
+
+  useEffect(() => {
+    cargarRankingGlobal()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, user?.user_id])
+
+  useEffect(() => {
+    if (!isPro) return
+    cargarRankingAreas()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPro])
+
+  async function cargarRankingGlobal() {
+    setGlobalLoading(true)
+    try {
+      const r = await sheetsApi.predicciones.rankingGlobalTabla({ limit: 200 })
+      setGlobalTabla(r.tabla || [])
+      setGlobalMeta({ total: r.total, mi_posicion: r.mi_posicion, esta_en_top: r.esta_en_top })
+    } catch (e) { toast.error('Error cargando ranking global: ' + e.message) }
+    finally { setGlobalLoading(false) }
+  }
+
+  async function cargarRankingAreas() {
+    setAreasLoading(true)
+    try {
+      const r = await sheetsApi.predicciones.rankingGlobalAreas({ limit: 20 })
+      setAreasTabla(r.tabla || [])
+    } catch (e) { console.warn('Ranking por área no disponible:', e.message) }
+    finally { setAreasLoading(false) }
+  }
 
   const partidosMap = useMemo(() => {
     const map = new Map()
@@ -183,7 +222,7 @@ export default function RankingPageAdmin() {
             <span style={{ color: '#ebc32b' }}>ADMIN</span>
           </h1>
           <p style={{ fontSize: '.84rem', color: '#5f6e8a', margin: 0 }}>
-            {sel ? sel.titulo : 'Seleccioná una apuesta para ver el detalle'}
+            {sel ? sel.titulo : 'Ranking global acumulado · Seleccioná una apuesta para ver el detalle individual'}
           </p>
         </div>
 
@@ -196,6 +235,40 @@ export default function RankingPageAdmin() {
                 <Pill color="#22c55e" label={`${bets.filter(b => isOpen(b)).length} activas`} />
                 <Pill color="#64748b" label={`${bets.filter(b => !isOpen(b)).length} cerradas`} />
               </div>
+
+              {/* Botón persistente Ver Ranking Global */}
+              <button
+                onClick={() => setSel(null)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 7,
+                  width: '100%',
+                  marginTop: 12,
+                  padding: '8px 12px',
+                  borderRadius: 10,
+                  border: `1.5px solid ${!sel ? '#0c182b' : '#e8e3db'}`,
+                  background: !sel ? '#0c182b' : 'transparent',
+                  color: !sel ? '#ebc32b' : '#5f6e8a',
+                  fontWeight: 700,
+                  fontSize: 11,
+                  cursor: 'pointer',
+                  transition: 'all .18s',
+                  textAlign: 'left',
+                }}
+                onMouseEnter={e => { if (sel) { e.currentTarget.style.background = 'rgba(12,24,43,.06)'; e.currentTarget.style.borderColor = '#0c182b'; e.currentTarget.style.color = '#0c182b' } }}
+                onMouseLeave={e => { if (sel) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.borderColor = '#e8e3db'; e.currentTarget.style.color = '#5f6e8a' } }}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                </svg>
+                Ver Ranking Global
+                {!sel && (
+                  <span style={{ marginLeft: 'auto', fontSize: 8, background: 'rgba(235,195,43,.2)', color: '#ebc32b', padding: '2px 6px', borderRadius: 4, fontWeight: 800, letterSpacing: '.06em' }}>
+                    ACTIVO
+                  </span>
+                )}
+              </button>
             </div>
 
             <div className="rk-sidebar-scroll">
@@ -225,7 +298,15 @@ export default function RankingPageAdmin() {
           <div className="rk-content" style={{ padding: '24px 32px 32px' }}>
 
             {!sel ? (
-              <EmptySelect />
+              <RankingGlobalAdmin
+                tabla={globalTabla}
+                meta={globalMeta}
+                loading={globalLoading}
+                onRefresh={cargarRankingGlobal}
+                areasTabla={areasTabla}
+                areasLoading={areasLoading}
+                isPro={isPro}
+              />
             ) : (
               <div className="rk-in">
 
@@ -381,7 +462,7 @@ const PODIO_CFG = {
   2: { grad: 'linear-gradient(145deg,#fed7aa 0%,#c2720e 100%)', shadow: 'rgba(194,114,14,.4)', border: 'rgba(194,114,14,.5)', ring: 'rgba(194,114,14,.2)', emoji: '🥉', label: '3°' },
 }
 
-function Podio({ top, miId, apuesta, expandedUser, loadingUser, onToggle }) {
+function Podio({ top, miId, apuesta, expandedUser, loadingUser, onToggle, showDetail = true }) {
   if (!top.length) return null
 
   const orden = top.length === 1 ? [top[0]] : top.length === 2 ? [top[1], top[0]] : [top[1], top[0], top[2]]
@@ -454,7 +535,7 @@ function Podio({ top, miId, apuesta, expandedUser, loadingUser, onToggle }) {
                 background: isTop ? 'linear-gradient(135deg,rgba(235,195,43,.12),rgba(235,195,43,.06))' : 'rgba(12,24,43,.04)',
                 border: isTop ? '1px solid rgba(235,195,43,.25)' : '1px solid #f0eadb',
                 borderRadius: 10, padding: '8px 0',
-                marginBottom: 10,
+                marginBottom: (showDetail && apuesta?.tipo !== 'grupos') ? 10 : 0,
               }}>
                 <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: isTop ? 36 : 28, color: isTop ? '#c99f16' : '#0c182b', margin: 0, lineHeight: 1 }}>
                   {u.puntos_totales}
@@ -462,28 +543,31 @@ function Podio({ top, miId, apuesta, expandedUser, loadingUser, onToggle }) {
                 <p style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.14em', color: '#94a3b8', margin: '2px 0 0' }}>puntos</p>
               </div>
 
-              <button
-                onClick={() => onToggle(u.user_id)}
-                disabled={isLoading}
-                className={`rk-detail-btn rk-detail-btn-podio ${isExpanded ? 'active' : ''}`}
-                style={{ width: '100%' }}
-              >
-                {isLoading ? (
-                  <><span className="rk-spinner" /> Cargando…</>
-                ) : isExpanded ? (
-                  <>Ocultar detalle
-                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="18 15 12 9 6 15" />
-                    </svg>
-                  </>
-                ) : (
-                  <>Ver detalle
-                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="6 9 12 15 18 9" />
-                    </svg>
-                  </>
-                )}
-              </button>
+              {/* Detalle oculto para apuestas grupales por volumen — funcionalidad preservada */}
+              {showDetail && apuesta?.tipo !== 'grupos' && (
+                <button
+                  onClick={() => onToggle(u.user_id)}
+                  disabled={isLoading}
+                  className={`rk-detail-btn rk-detail-btn-podio ${isExpanded ? 'active' : ''}`}
+                  style={{ width: '100%' }}
+                >
+                  {isLoading ? (
+                    <><span className="rk-spinner" /> Cargando…</>
+                  ) : isExpanded ? (
+                    <>Ocultar detalle
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="18 15 12 9 6 15" />
+                      </svg>
+                    </>
+                  ) : (
+                    <>Ver detalle
+                      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </>
+                  )}
+                </button>
+              )}
             </div>
           )
         })}
@@ -716,18 +800,194 @@ function LeyendaPuntos({ apuesta, total }) {
   )
 }
 
-function EmptySelect() {
+/* ══════════════════════════════════════════
+   RANKING GLOBAL ADMIN (vista por defecto)
+══════════════════════════════════════════ */
+function RankingGlobalAdmin({ tabla, meta, loading, onRefresh, areasTabla = [], areasLoading = false, isPro = false }) {
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 40, textAlign: 'center', gap: 20 }}>
-      <div style={{ width: 80, height: 80, borderRadius: 24, background: 'linear-gradient(145deg,#0c182b,#1a3060)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 12px 40px rgba(12,24,43,.2)' }}>
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="rgba(235,195,43,.6)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+    <div className="rk-in">
+      {/* Header */}
+      <div style={{ borderRadius: 14, marginBottom: 24, background: 'linear-gradient(125deg,#0c182b 0%,#1a3060 100%)', padding: '18px 22px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: 'rgba(235,195,43,.08)', pointerEvents: 'none' }} />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, position: 'relative' }}>
+          <div>
+            <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: 'rgba(235,195,43,.55)', display: 'block', marginBottom: 4 }}>RANKING GLOBAL ACUMULADO</span>
+            <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(22px,3vw,32px)', color: '#fff', margin: '0 0 6px', letterSpacing: '.02em', lineHeight: 1 }}>Todas las apuestas</h2>
+            <p style={{ fontSize: 11, color: 'rgba(255,255,255,.4)', margin: 0 }}>Suma de puntos de apuestas cerradas y finalizadas · Vista de administrador</p>
+          </div>
+          {!loading && (
+            <div style={{ display: 'flex', gap: 20, flexShrink: 0, alignItems: 'flex-start' }}>
+              {meta.total > 0 && (
+                <div style={{ textAlign: 'center' }}>
+                  <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, color: 'rgba(255,255,255,.9)', margin: '0 0 1px', lineHeight: 1 }}>{meta.total}</p>
+                  <p style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '.14em', color: 'rgba(255,255,255,.35)', margin: 0 }}>Participantes</p>
+                </div>
+              )}
+              <button
+                onClick={onRefresh}
+                title="Actualizar ranking global"
+                style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.12)', borderRadius: 8, padding: '6px 10px', cursor: 'pointer', color: 'rgba(255,255,255,.5)', display: 'flex', alignItems: 'center' }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.12)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,.06)'}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" />
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                </svg>
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {loading ? (
+        <SkeletonContent />
+      ) : tabla.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '48px 24px', background: '#fff', borderRadius: 14, border: '1.5px solid #e8e3db' }}>
+          <p style={{ fontWeight: 700, color: '#64748b', margin: '0 0 6px', fontSize: 15 }}>Sin datos en el ranking global</p>
+          <p style={{ fontSize: 12, color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>El ranking global se calcula cuando hay apuestas cerradas o finalizadas con puntos calculados</p>
+        </div>
+      ) : (
+        <>
+          {/* Podio top 3 */}
+          <Podio
+            top={tabla.slice(0, 3)}
+            miId={null}
+            apuesta={null}
+            expandedUser={null}
+            loadingUser={null}
+            onToggle={() => {}}
+            showDetail={false}
+          />
+
+          {/* Tabla completa */}
+          {tabla.length > 3 && (
+            <GlobalFullTable tabla={tabla} />
+          )}
+
+      {/* Footer */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, fontSize: 10, color: '#94a3b8', paddingTop: 12, borderTop: '1px solid #e8e3db', marginTop: 12 }}>
+            <span>Seleccioná una apuesta del panel izquierdo para ver el ranking individual con predicciones detalladas</span>
+            {meta.total > 0 && <span>Mostrando {tabla.length} de {meta.total} participantes</span>}
+          </div>
+        </>
+      )}
+
+      {/* ── Ranking por área acumulado (plan_pro) ─────────── */}
+      {isPro && (
+        <div style={{ marginTop: 28 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+            <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: 'rgba(235,195,43,.7)' }}>
+              RANKING POR ÁREA — ACUMULADO
+            </span>
+            <span style={{ flex: 1, height: 1, background: 'rgba(235,195,43,.15)' }} />
+          </div>
+
+          {areasLoading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="rk-sk" style={{ height: 44, borderRadius: 10 }} />
+              ))}
+            </div>
+          ) : areasTabla.length === 0 ? (
+            <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center', padding: '16px 0' }}>
+              Sin datos por área todavía — aparecerá cuando haya apuestas finalizadas.
+            </p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {areasTabla.map((area, idx) => {
+                const medals = ['🥇', '🥈', '🥉']
+                const medal  = medals[idx] || null
+                return (
+                  <div
+                    key={area.area_id}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      padding: '10px 14px', borderRadius: 10,
+                      background: idx === 0 ? 'rgba(235,195,43,.07)' : '#fff',
+                      border: `1px solid ${idx === 0 ? 'rgba(235,195,43,.2)' : '#f0eadb'}`,
+                    }}
+                  >
+                    <span style={{ fontSize: 15, width: 22, textAlign: 'center', flexShrink: 0 }}>
+                      {medal || <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8' }}>#{area.posicion}</span>}
+                    </span>
+                    <span style={{ flex: 1, fontSize: 13, fontWeight: 700, color: '#0c182b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {area.nombre}
+                    </span>
+                    <span style={{ fontSize: 12, fontWeight: 800, color: idx === 0 ? '#c99f16' : '#475569', flexShrink: 0 }}>
+                      {area.puntos_totales} pts
+                    </span>
+                    <span style={{ fontSize: 10, color: '#94a3b8', flexShrink: 0 }}>
+                      {area.miembros_participantes} {area.miembros_participantes === 1 ? 'miembro' : 'miembros'}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function GlobalFullTable({ tabla }) {
+  const [exp, setExp] = useState(true)
+  const otros = tabla.slice(3)
+
+  return (
+    <div style={{ marginTop: 20 }}>
+      <button
+        onClick={() => setExp(!exp)}
+        style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', background: 'none', border: 'none', cursor: 'pointer', transition: 'opacity .15s' }}
+        onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
+        onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
+          <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.14em', color: '#94a3b8' }}>Ranking completo</span>
+          <span style={{ fontSize: 8, fontWeight: 700, background: 'rgba(12,24,43,.05)', color: '#c8d0dc', padding: '1px 6px', borderRadius: 4 }}>+{otros.length}</span>
+          <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg,#e8e3db,transparent)', marginLeft: 8 }} />
+        </div>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+          style={{ transition: 'transform .2s', transform: exp ? 'rotate(180deg)' : 'rotate(0deg)', flexShrink: 0, marginLeft: 8 }}>
+          <polyline points="6 9 12 15 18 9" />
         </svg>
-      </div>
-      <div>
-        <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, color: '#0c182b', margin: '0 0 6px', letterSpacing: '.04em' }}>SELECCIONÁ UNA APUESTA</p>
-        <p style={{ fontSize: 13, color: '#94a3b8', margin: 0, lineHeight: 1.7 }}>Elegí una apuesta del panel de la<br />izquierda para ver su ranking</p>
-      </div>
+      </button>
+
+      {exp && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingTop: 12 }}>
+          {otros.map((u, idx) => (
+            <div key={u.user_id} style={{
+              display: 'grid',
+              gridTemplateColumns: '32px 1fr 80px 70px 56px',
+              gap: 10,
+              padding: '9px 12px',
+              background: '#fff',
+              border: '1px solid #f5f3ee',
+              borderRadius: 10,
+              alignItems: 'center',
+            }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#fcfaf6'; e.currentTarget.style.borderColor = '#e8e3db' }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#f5f3ee' }}
+            >
+              <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, fontWeight: 700, color: '#94a3b8', textAlign: 'center' }}>#{idx + 4}</span>
+              <div style={{ minWidth: 0 }}>
+                <p style={{ fontWeight: 600, fontSize: 12, color: '#0c182b', margin: '0 0 1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.nombre}</p>
+                <p style={{ fontSize: 9, color: '#c8d0dc', margin: 0 }}>{u.predicciones} pred · {u.apuestas_participadas || '—'} apuestas</p>
+              </div>
+              <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-start' }}>
+                {[{ v: u.aciertos_exactos, c: '#22c55e' }, { v: u.aciertos_diferencia || 0, c: '#ebc32b' }].map((x, i) => (
+                  x.v > 0 && (
+                    <span key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: 5, background: `${x.c}12`, border: `1px solid ${x.c}25`, fontSize: 9, fontWeight: 600, color: x.c }}>{x.v}</span>
+                  )
+                ))}
+              </div>
+              <span style={{ fontSize: 9, color: '#94a3b8', textAlign: 'center' }}>{u.apuestas_participadas || 0} ap.</span>
+              <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 16, fontWeight: 700, color: '#0c182b', textAlign: 'right' }}>{u.puntos_totales}</div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -821,7 +1081,7 @@ function OtrosParticipantes({ tabla, user, apuesta, expandedUser, loadingUser, p
 
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: '32px 1fr 64px 56px auto',
+                  gridTemplateColumns: apuesta?.tipo === 'grupos' ? '32px 1fr 64px 56px' : '32px 1fr 64px 56px auto',
                   gap: 10,
                   padding: '9px 12px',
                   alignItems: 'center',
@@ -861,27 +1121,30 @@ function OtrosParticipantes({ tabla, user, apuesta, expandedUser, loadingUser, p
 
                   <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 15, fontWeight: 700, color: '#0c182b', textAlign: 'right' }}>{u.puntos_totales}</div>
 
-                  <button
-                    onClick={() => onToggle(u.user_id)}
-                    disabled={isLoading}
-                    className={`rk-detail-btn rk-detail-btn-mini ${isExpanded ? 'active' : ''}`}
-                  >
-                    {isLoading ? (
-                      <><span className="rk-spinner" /></>
-                    ) : isExpanded ? (
-                      <>Ocultar
-                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="18 15 12 9 6 15" />
-                        </svg>
-                      </>
-                    ) : (
-                      <>Ver
-                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="6 9 12 15 18 9" />
-                        </svg>
-                      </>
-                    )}
-                  </button>
+                  {/* Detalle oculto para apuestas grupales por volumen — funcionalidad preservada */}
+                  {apuesta?.tipo !== 'grupos' && (
+                    <button
+                      onClick={() => onToggle(u.user_id)}
+                      disabled={isLoading}
+                      className={`rk-detail-btn rk-detail-btn-mini ${isExpanded ? 'active' : ''}`}
+                    >
+                      {isLoading ? (
+                        <><span className="rk-spinner" /></>
+                      ) : isExpanded ? (
+                        <>Ocultar
+                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="18 15 12 9 6 15" />
+                          </svg>
+                        </>
+                      ) : (
+                        <>Ver
+                          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="6 9 12 15 18 9" />
+                          </svg>
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
 
                 {isExpanded && (

@@ -357,7 +357,24 @@ const auth = {
    * "tipo recovery" en este momento.
    */
   resetValidar: async (_token) => {
-    const { data, error } = await supabase.auth.getSession()
+    // Intentar obtener la sesión
+    let { data, error } = await supabase.auth.getSession()
+
+    // Si no hay sesión, pero la URL tiene "code" o "access_token",
+    // significa que Supabase está en proceso de intercambio de tokens.
+    // Damos un tiempo de espera de hasta 2.5 segundos (10 intentos de 250ms).
+    if (!data.session && (window.location.search.includes('code=') || window.location.hash.includes('access_token='))) {
+      for (let i = 0; i < 10; i++) {
+        await new Promise(resolve => setTimeout(resolve, 250))
+        const res = await supabase.auth.getSession()
+        if (res.data?.session) {
+          data = res.data
+          error = res.error
+          break
+        }
+      }
+    }
+
     if (error || !data.session) {
       throw new Error('El link de recuperación no es válido o ya expiró. Pedí uno nuevo desde la pantalla de login.')
     }
@@ -812,6 +829,18 @@ const predicciones = {
     return { ok: true, predicciones: data || [], mis: data || [] }
   },
 
+  deArea: async (apuesta_id, area_id) => {
+    let q = supabase
+      .from('predicciones')
+      .select('*, usuarios(nombre)')
+      .eq('area_id', area_id)
+    if (apuesta_id) q = q.eq('apuesta_id', apuesta_id)
+    const { data, error } = await q
+    checkError(error, 'predicciones.deArea')
+    return { ok: true, predicciones: data || [] }
+  },
+
+
   // Alias por compatibilidad (RankingPage.jsx usa este nombre)
   porUsuario: async function (apuesta_id, user_id) {
     return this.deUsuario(apuesta_id, user_id)
@@ -916,6 +945,137 @@ const predicciones = {
       tabla: top,
       mi_posicion: miPosicion,
       esta_en_top: estaEnTop,
+    }
+  },
+
+  /**
+   * Ranking global acumulado: suma de puntos de TODAS las apuestas
+   * cerradas/finalizadas para el usuario actual.
+   *
+   * Lee UNA sola fila de ranking_global_cache (O(log n) con índice único).
+   * El caché se actualiza automáticamente cada vez que el AppScript corre
+   * refrescar_rankings_por_partidos (cada 5 minutos).
+   *
+   * @param {{ user_id?: string }} opciones
+   */
+  rankingGlobal: async (opciones = {}) => {
+    const currentUserId = opciones.user_id || ''
+    if (!currentUserId) return { ok: true, total: 0, mi_posicion: null }
+
+    // Dos queries en paralelo: mi fila + total de participantes (head only)
+    const [miRowResult, totalResult] = await Promise.all([
+      supabase
+        .from('ranking_global_cache')
+        .select('*')
+        .eq('user_id', currentUserId)
+        .maybeSingle(),
+      supabase
+        .from('ranking_global_cache')
+        .select('*', { count: 'exact', head: true }),
+    ])
+
+    checkError(miRowResult.error, 'predicciones.rankingGlobal (mi_posicion)')
+    checkError(totalResult.error, 'predicciones.rankingGlobal (total)')
+
+    return {
+      ok: true,
+      total: totalResult.count || 0,
+      mi_posicion: miRowResult.data || null,
+    }
+  },
+
+  /**
+   * Tabla completa del ranking global acumulado.
+   * Lee el top N de ranking_global_cache ordenado por posición,
+   * más la fila del usuario actual (para mostrar su posición aunque no esté en el top).
+   *
+   * @param {{ user_id?: string, limit?: number }} opciones
+   */
+  rankingGlobalTabla: async (opciones = {}) => {
+    const currentUserId = opciones.user_id || ''
+    const limit = Math.min(parseInt(opciones.limit) || 50, 200)
+
+    const [tablaResult, totalResult, miRowResult] = await Promise.all([
+      supabase
+        .from('ranking_global_cache')
+        .select('*')
+        .order('posicion', { ascending: true })
+        .limit(limit),
+      supabase
+        .from('ranking_global_cache')
+        .select('*', { count: 'exact', head: true }),
+      currentUserId
+        ? supabase
+            .from('ranking_global_cache')
+            .select('*')
+            .eq('user_id', currentUserId)
+            .maybeSingle()
+        : Promise.resolve({ data: null, error: null }),
+    ])
+
+    checkError(tablaResult.error, 'predicciones.rankingGlobalTabla (tabla)')
+    checkError(totalResult.error, 'predicciones.rankingGlobalTabla (total)')
+    checkError(miRowResult.error, 'predicciones.rankingGlobalTabla (mi_posicion)')
+
+    const tabla = (tablaResult.data || []).map(r => ({
+      user_id: r.user_id,
+      nombre: r.nombre,
+      puntos_totales: r.puntos_totales,
+      posicion: r.posicion,
+      aciertos_exactos: r.aciertos_exactos,
+      aciertos_diferencia: r.aciertos_diferencia,
+      aciertos_resultado: r.aciertos_resultado,
+      predicciones: r.predicciones,
+      apuestas_participadas: r.apuestas_participadas,
+    }))
+
+    const miPosicion = miRowResult.data || null
+    const estaEnTop = miPosicion ? Number(miPosicion.posicion) <= limit : false
+
+    return {
+      ok: true,
+      total: totalResult.count || 0,
+      tabla,
+      mi_posicion: miPosicion,
+      esta_en_top: estaEnTop,
+    }
+  },
+
+  /**
+   * Ranking global acumulado por área.
+   * Suma de puntos de TODAS las apuestas cerradas/finalizadas,
+   * agrupados por área. Solo tiene datos en plan_pro.
+   *
+   * @param {{ limit?: number }} opciones
+   */
+  rankingGlobalAreas: async (opciones = {}) => {
+    const limit = Math.min(parseInt(opciones.limit) || 50, 200)
+
+    const [tablaResult, totalResult] = await Promise.all([
+      supabase
+        .from('ranking_global_areas_cache')
+        .select('*')
+        .order('posicion', { ascending: true })
+        .limit(limit),
+      supabase
+        .from('ranking_global_areas_cache')
+        .select('*', { count: 'exact', head: true }),
+    ])
+
+    checkError(tablaResult.error, 'predicciones.rankingGlobalAreas (tabla)')
+    checkError(totalResult.error, 'predicciones.rankingGlobalAreas (total)')
+
+    return {
+      ok: true,
+      total: totalResult.count || 0,
+      tabla: (tablaResult.data || []).map(r => ({
+        area_id:               r.area_id,
+        nombre:                r.area_nombre,
+        puntos_totales:        r.puntos_totales,
+        miembros_participantes: r.miembros_participantes,
+        predicciones:          r.predicciones,
+        posicion:              r.posicion,
+      })),
     }
   },
 }
@@ -1037,9 +1197,11 @@ const bootstrap = {
 
 // ── Listener para invalidar cache cuando cambia la sesión ───
 supabase.auth.onAuthStateChange((event, _session) => {
-  if (event === 'SIGNED_OUT') {
+  if (event === 'SIGNED_OUT' || event === 'SIGNED_IN' || event === 'USER_UPDATED') {
     invalidateClientCache()
-    try { sessionStorage.removeItem('prode_user') } catch (e) { }
+    if (event === 'SIGNED_OUT') {
+      try { sessionStorage.removeItem('prode_user') } catch (e) { }
+    }
   }
 })
 
