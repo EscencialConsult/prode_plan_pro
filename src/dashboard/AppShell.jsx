@@ -50,26 +50,26 @@ function NavLink({ to, label, icon, location }) {
           fontSize: '.75rem',
           letterSpacing: '.05em',
           textTransform: 'uppercase',
-          color: a ? '#c02727' : '#6e6f73',
-          background: a ? 'rgba(192,39,39,.12)' : 'transparent',
-          border: a ? '1px solid rgba(192,39,39,.28)' : '1px solid transparent',
+          color: a ? '#ffffff' : 'rgba(255,255,255,.55)',
+          background: a ? 'rgba(192,39,39,.45)' : 'transparent',
+          border: a ? '1px solid rgba(192,39,39,.6)' : '1px solid transparent',
           transition: 'all .16s',
           cursor: 'pointer',
         }}
         onMouseEnter={e => {
           if (!a) {
-            e.currentTarget.style.color = '#1f1f23'
-            e.currentTarget.style.background = 'rgba(31,31,35,.06)'
+            e.currentTarget.style.color = '#ffffff'
+            e.currentTarget.style.background = 'rgba(255,255,255,.08)'
           }
         }}
         onMouseLeave={e => {
           if (!a) {
-            e.currentTarget.style.color = '#6e6f73'
+            e.currentTarget.style.color = 'rgba(255,255,255,.55)'
             e.currentTarget.style.background = 'transparent'
           }
         }}
       >
-        <span style={{ color: a ? '#c02727' : 'inherit', display: 'flex', opacity: a ? 1 : .65 }}>
+        <span style={{ color: a ? '#ffffff' : 'inherit', display: 'flex', opacity: a ? 1 : .65 }}>
           {icon}
         </span>
         {label}
@@ -92,11 +92,11 @@ function NavLinkMob({ to, label, icon, location, onClick }) {
           borderRadius: 8,
           fontWeight: 600,
           fontSize: '.85rem',
-          color: a ? '#c02727' : '#6e6f73',
-          background: a ? 'rgba(192,39,39,.1)' : 'transparent',
+          color: a ? '#ffffff' : 'rgba(255,255,255,.6)',
+          background: a ? 'rgba(192,39,39,.45)' : 'transparent',
         }}
       >
-        <span style={{ color: a ? '#c02727' : 'inherit', display: 'flex' }}>{icon}</span>
+        <span style={{ color: a ? '#ffffff' : 'inherit', display: 'flex' }}>{icon}</span>
         {label}
       </span>
     </Link>
@@ -210,10 +210,10 @@ export default function AppShell({ children }) {
       >
         <nav
           style={{
-            background: '#e8e8ea',
+            background: '#3f3f46',
             flexShrink: 0,
             zIndex: 50,
-            borderBottom: '1px solid #d4d4d8',
+            borderBottom: '1px solid rgba(255,255,255,.1)',
           }}
         >
 <div
@@ -234,7 +234,7 @@ export default function AppShell({ children }) {
                 style={{
                   height: 50,
                   width: 'auto',
-                  filter: 'drop-shadow(0 1px 2px rgba(0,0,0,.12))',
+                  filter: 'drop-shadow(0 2px 6px rgba(0,0,0,.4))',
                 }}
               />
             </Link>
@@ -303,7 +303,7 @@ export default function AppShell({ children }) {
                   fontWeight: 700,
                   textTransform: 'uppercase',
                   letterSpacing: '.1em',
-                  color: '#16a34a',
+                  color: '#22c55e',
                 }}
               >
                 <span
@@ -333,16 +333,16 @@ export default function AppShell({ children }) {
                     padding: '.28rem .55rem .28rem .28rem',
                     borderRadius: 99,
                     background: (userMenu || location.pathname === '/cambiar-password')
-                      ? 'rgba(192,39,39,.14)' : 'rgba(31,31,35,.05)',
+                      ? 'rgba(192,39,39,.25)' : 'rgba(255,255,255,.08)',
                     border: `1px solid ${(userMenu || location.pathname === '/cambiar-password')
-                      ? 'rgba(192,39,39,.4)' : '#d4d4d8'}`,
+                      ? 'rgba(192,39,39,.5)' : 'rgba(255,255,255,.15)'}`,
                     cursor: 'pointer',
                     transition: 'all .16s',
                   }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(192,39,39,.4)' }}
                   onMouseLeave={e => {
                     if (!userMenu && location.pathname !== '/cambiar-password') {
-                      e.currentTarget.style.borderColor = '#d4d4d8'
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,.15)'
                     }
                   }}
                 >
@@ -367,7 +367,7 @@ export default function AppShell({ children }) {
                     style={{
                       fontSize: '.78rem',
                       fontWeight: 600,
-                      color: '#1f1f23',
+                      color: 'rgba(255,255,255,.85)',
                       maxWidth: 84,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
@@ -380,7 +380,7 @@ export default function AppShell({ children }) {
                   {/* Flechita indicadora de menú desplegable */}
                   <svg
                     width="11" height="11" viewBox="0 0 24 24" fill="none"
-                    stroke="#6e6f73" strokeWidth="2.5"
+                    stroke="rgba(255,255,255,.6)" strokeWidth="2.5"
                     strokeLinecap="round" strokeLinejoin="round"
                     style={{
                       flexShrink: 0,
@@ -451,12 +451,12 @@ export default function AppShell({ children }) {
                   disabled={logoutState === 'logging' || logoutState === 'redirect'}
                   style={{
                     background: logoutState === 'logging' ? 'rgba(255,77,109,.12)' : 'transparent',
-                    border: `1px solid ${logoutState === 'logging' ? 'rgba(255,77,109,.4)' : '#d4d4d8'}`,
+                    border: `1px solid ${logoutState === 'logging' ? 'rgba(255,77,109,.4)' : 'rgba(255,255,255,.15)'}`,
                     borderRadius: 7,
                     padding: '.3rem .68rem',
                     fontSize: '.74rem',
                     fontWeight: 600,
-                    color: logoutState === 'logging' ? '#ff4d6d' : '#6e6f73',
+                    color: logoutState === 'logging' ? '#ff4d6d' : 'rgba(255,255,255,.4)',
                     cursor: logoutState === 'logging' || logoutState === 'redirect' ? 'wait' : 'pointer',
                     transition: 'all .16s',
                     display: 'inline-flex',
@@ -473,8 +473,8 @@ export default function AppShell({ children }) {
                   }}
                   onMouseLeave={e => {
                     if (logoutState === 'idle') {
-                      e.currentTarget.style.borderColor = '#d4d4d8'
-                      e.currentTarget.style.color = '#6e6f73'
+                      e.currentTarget.style.borderColor = 'rgba(255,255,255,.15)'
+                      e.currentTarget.style.color = 'rgba(255,255,255,.4)'
                     }
                   }}
                 >
@@ -617,11 +617,11 @@ export default function AppShell({ children }) {
                 style={{
                   display: 'none',
                   background: 'transparent',
-                  border: '1px solid #d4d4d8',
+                  border: '1px solid rgba(255,255,255,.15)',
                   borderRadius: 7,
                   padding: '.36rem',
                   cursor: 'pointer',
-                  color: '#6e6f73',
+                  color: 'rgba(255,255,255,.6)',
                   alignItems: 'center',
                 }}
               >
@@ -646,7 +646,7 @@ export default function AppShell({ children }) {
           {mob && (
             <div
               style={{
-                borderTop: '1px solid #d4d4d8',
+                borderTop: '1px solid rgba(255,255,255,.1)',
                 padding: '.55rem 1rem .75rem',
                 display: 'flex',
                 flexDirection: 'column',

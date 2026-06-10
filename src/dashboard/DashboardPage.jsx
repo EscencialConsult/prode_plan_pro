@@ -249,7 +249,7 @@ export default function DashboardPage() {
       <div style={{ maxWidth: 1400, margin: '0 auto', padding: '2rem 1.5rem 3rem' }}>
 
         <div className="rounded-2xl p-6 md:p-8 mb-8 relative overflow-hidden animate-fade-in"
-          style={{ background: '#1f1f23', border: '1px solid rgba(192,39,39,.2)', boxShadow: '0 12px 40px rgba(31,31,35,.15)' }}>
+          style={{ background: '#3f3f46', border: '1px solid rgba(192,39,39,.2)', boxShadow: '0 12px 40px rgba(31,31,35,.15)' }}>
           <div className="absolute top-0 right-0 w-64 h-64 pointer-events-none"
             style={{ background: 'radial-gradient(circle at 80% 20%, rgba(192,39,39,.12), transparent 65%)' }} />
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-5">
