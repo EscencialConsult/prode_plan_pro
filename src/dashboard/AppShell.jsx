@@ -50,7 +50,7 @@ function NavLink({ to, label, icon, location }) {
           fontSize: '.75rem',
           letterSpacing: '.05em',
           textTransform: 'uppercase',
-          color: a ? '#c02727' : 'rgba(255,255,255,.45)',
+          color: a ? '#c02727' : '#6e6f73',
           background: a ? 'rgba(192,39,39,.12)' : 'transparent',
           border: a ? '1px solid rgba(192,39,39,.28)' : '1px solid transparent',
           transition: 'all .16s',
@@ -58,13 +58,13 @@ function NavLink({ to, label, icon, location }) {
         }}
         onMouseEnter={e => {
           if (!a) {
-            e.currentTarget.style.color = 'rgba(255,255,255,.82)'
-            e.currentTarget.style.background = 'rgba(255,255,255,.05)'
+            e.currentTarget.style.color = '#1f1f23'
+            e.currentTarget.style.background = 'rgba(31,31,35,.06)'
           }
         }}
         onMouseLeave={e => {
           if (!a) {
-            e.currentTarget.style.color = 'rgba(255,255,255,.45)'
+            e.currentTarget.style.color = '#6e6f73'
             e.currentTarget.style.background = 'transparent'
           }
         }}
@@ -92,7 +92,7 @@ function NavLinkMob({ to, label, icon, location, onClick }) {
           borderRadius: 8,
           fontWeight: 600,
           fontSize: '.85rem',
-          color: a ? '#c02727' : 'rgba(255,255,255,.6)',
+          color: a ? '#c02727' : '#6e6f73',
           background: a ? 'rgba(192,39,39,.1)' : 'transparent',
         }}
       >
@@ -210,10 +210,10 @@ export default function AppShell({ children }) {
       >
         <nav
           style={{
-            background: '#1f1f23',
+            background: '#e8e8ea',
             flexShrink: 0,
             zIndex: 50,
-            borderBottom: '1px solid rgba(192,39,39,.14)',
+            borderBottom: '1px solid #d4d4d8',
           }}
         >
 <div
@@ -234,7 +234,7 @@ export default function AppShell({ children }) {
                 style={{
                   height: 50,
                   width: 'auto',
-                  filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))',
+                  filter: 'drop-shadow(0 1px 2px rgba(0,0,0,.12))',
                 }}
               />
             </Link>
@@ -303,7 +303,7 @@ export default function AppShell({ children }) {
                   fontWeight: 700,
                   textTransform: 'uppercase',
                   letterSpacing: '.1em',
-                  color: '#22c55e',
+                  color: '#16a34a',
                 }}
               >
                 <span
@@ -333,16 +333,16 @@ export default function AppShell({ children }) {
                     padding: '.28rem .55rem .28rem .28rem',
                     borderRadius: 99,
                     background: (userMenu || location.pathname === '/cambiar-password')
-                      ? 'rgba(192,39,39,.14)' : 'rgba(255,255,255,.07)',
+                      ? 'rgba(192,39,39,.14)' : 'rgba(31,31,35,.05)',
                     border: `1px solid ${(userMenu || location.pathname === '/cambiar-password')
-                      ? 'rgba(192,39,39,.4)' : 'rgba(255,255,255,.1)'}`,
+                      ? 'rgba(192,39,39,.4)' : '#d4d4d8'}`,
                     cursor: 'pointer',
                     transition: 'all .16s',
                   }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(192,39,39,.4)' }}
                   onMouseLeave={e => {
                     if (!userMenu && location.pathname !== '/cambiar-password') {
-                      e.currentTarget.style.borderColor = 'rgba(255,255,255,.1)'
+                      e.currentTarget.style.borderColor = '#d4d4d8'
                     }
                   }}
                 >
@@ -367,7 +367,7 @@ export default function AppShell({ children }) {
                     style={{
                       fontSize: '.78rem',
                       fontWeight: 600,
-                      color: 'rgba(255,255,255,.72)',
+                      color: '#1f1f23',
                       maxWidth: 84,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
@@ -380,7 +380,7 @@ export default function AppShell({ children }) {
                   {/* Flechita indicadora de menú desplegable */}
                   <svg
                     width="11" height="11" viewBox="0 0 24 24" fill="none"
-                    stroke="rgba(255,255,255,.5)" strokeWidth="2.5"
+                    stroke="#6e6f73" strokeWidth="2.5"
                     strokeLinecap="round" strokeLinejoin="round"
                     style={{
                       flexShrink: 0,
@@ -451,12 +451,12 @@ export default function AppShell({ children }) {
                   disabled={logoutState === 'logging' || logoutState === 'redirect'}
                   style={{
                     background: logoutState === 'logging' ? 'rgba(255,77,109,.12)' : 'transparent',
-                    border: `1px solid ${logoutState === 'logging' ? 'rgba(255,77,109,.4)' : 'rgba(255,255,255,.1)'}`,
+                    border: `1px solid ${logoutState === 'logging' ? 'rgba(255,77,109,.4)' : '#d4d4d8'}`,
                     borderRadius: 7,
                     padding: '.3rem .68rem',
                     fontSize: '.74rem',
                     fontWeight: 600,
-                    color: logoutState === 'logging' ? '#ff4d6d' : 'rgba(255,255,255,.35)',
+                    color: logoutState === 'logging' ? '#ff4d6d' : '#6e6f73',
                     cursor: logoutState === 'logging' || logoutState === 'redirect' ? 'wait' : 'pointer',
                     transition: 'all .16s',
                     display: 'inline-flex',
@@ -473,8 +473,8 @@ export default function AppShell({ children }) {
                   }}
                   onMouseLeave={e => {
                     if (logoutState === 'idle') {
-                      e.currentTarget.style.borderColor = 'rgba(255,255,255,.1)'
-                      e.currentTarget.style.color = 'rgba(255,255,255,.35)'
+                      e.currentTarget.style.borderColor = '#d4d4d8'
+                      e.currentTarget.style.color = '#6e6f73'
                     }
                   }}
                 >
@@ -617,11 +617,11 @@ export default function AppShell({ children }) {
                 style={{
                   display: 'none',
                   background: 'transparent',
-                  border: '1px solid rgba(255,255,255,.14)',
+                  border: '1px solid #d4d4d8',
                   borderRadius: 7,
                   padding: '.36rem',
                   cursor: 'pointer',
-                  color: 'rgba(255,255,255,.6)',
+                  color: '#6e6f73',
                   alignItems: 'center',
                 }}
               >
@@ -646,7 +646,7 @@ export default function AppShell({ children }) {
           {mob && (
             <div
               style={{
-                borderTop: '1px solid rgba(192,39,39,.1)',
+                borderTop: '1px solid #d4d4d8',
                 padding: '.55rem 1rem .75rem',
                 display: 'flex',
                 flexDirection: 'column',
