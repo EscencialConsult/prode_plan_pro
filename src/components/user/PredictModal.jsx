@@ -270,15 +270,15 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
       onClick={cerrarModal}
     >
       <div 
-        className="relative w-full h-full sm:h-auto sm:max-w-7xl sm:max-h-[95vh] bg-gradient-to-br from-slate-50 to-amber-50/30 sm:rounded-2xl shadow-2xl grid grid-cols-1 lg:grid-cols-[320px_1fr] grid-rows-1 overflow-hidden"
+        className="relative w-full h-full sm:h-auto sm:max-w-7xl sm:max-h-[95vh] bg-gradient-to-br from-zinc-50 to-red-50/30 sm:rounded-2xl shadow-2xl grid grid-cols-1 lg:grid-cols-[320px_1fr] grid-rows-1 overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
         
         {/* SIDEBAR - SIN CAMBIOS */}
-        <aside className="hidden lg:flex flex-col bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-amber-50 border-r border-slate-700/50 overflow-hidden">
-          <div className="p-6 border-b border-white/10 bg-gradient-to-r from-yellow-500/10 to-transparent flex-shrink-0">
-            <div className="text-[10px] font-bold tracking-[0.2em] text-yellow-400 uppercase mb-2.5 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
+        <aside className="hidden lg:flex flex-col bg-gradient-to-b from-zinc-900 via-zinc-800 to-zinc-900 text-red-50 border-r border-zinc-700/50 overflow-hidden">
+          <div className="p-6 border-b border-white/10 bg-gradient-to-r from-red-700/10 to-transparent flex-shrink-0">
+            <div className="text-[10px] font-bold tracking-[0.2em] text-red-600 uppercase mb-2.5 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse" />
               Mundial 2026
             </div>
             <h2 className="text-xl font-extrabold leading-tight text-white">{bet.titulo}</h2>
@@ -286,14 +286,14 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
 
           <div className="grid grid-cols-2 gap-3 p-5 border-b border-white/10 flex-shrink-0">
             <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur border border-white/20 rounded-xl p-4 hover:scale-105 transition-transform">
-              <div className="text-4xl font-black leading-none text-yellow-400 mb-2">{filledCount}</div>
-              <div className="text-[10px] font-bold tracking-wider text-slate-300 uppercase">Completadas</div>
+              <div className="text-4xl font-black leading-none text-red-600 mb-2">{filledCount}</div>
+              <div className="text-[10px] font-bold tracking-wider text-zinc-300 uppercase">Completadas</div>
             </div>
             <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur border border-white/20 rounded-xl p-4 hover:scale-105 transition-transform">
-              <div className={`text-4xl font-black leading-none mb-2 ${pendingCount === 0 ? 'text-green-400' : 'text-slate-400'}`}>
+              <div className={`text-4xl font-black leading-none mb-2 ${pendingCount === 0 ? 'text-green-400' : 'text-zinc-400'}`}>
                 {pendingCount}
               </div>
-              <div className="text-[10px] font-bold tracking-wider text-slate-300 uppercase">Pendientes</div>
+              <div className="text-[10px] font-bold tracking-wider text-zinc-300 uppercase">Pendientes</div>
             </div>
           </div>
 
@@ -302,7 +302,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
               <div className={`inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full text-[10px] font-bold tracking-wider uppercase border-2 ${
                 isClosingSoon 
                   ? 'bg-red-500/20 text-red-300 border-red-500/50 animate-pulse shadow-lg shadow-red-500/20' 
-                  : 'bg-yellow-500/20 text-yellow-300 border-yellow-500/50 shadow-lg shadow-yellow-500/20'
+                  : 'bg-red-700/20 text-red-400 border-red-700/50 shadow-lg shadow-red-700/20'
               }`}>
                 <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                   <circle cx="12" cy="12" r="10" />
@@ -311,7 +311,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                 {remaining}
               </div>
             ) : (
-              <div className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-slate-700/50 text-slate-400 border-2 border-slate-600/50">
+              <div className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-zinc-700/50 text-zinc-400 border-2 border-zinc-600/50">
                 <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                   <circle cx="12" cy="12" r="10" />
                   <line x1="15" y1="9" x2="9" y2="15" />
@@ -320,7 +320,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                 Cerrada
               </div>
             )}
-            <div className="mt-3 text-[13px] text-slate-300 leading-relaxed">
+            <div className="mt-3 text-[13px] text-zinc-300 leading-relaxed">
               {open
                 ? hadPredictions
                   ? 'Revisá o modificá tus predicciones antes del cierre.'
@@ -330,7 +330,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
           </div>
 
           <nav className="flex-1 overflow-y-auto p-3 pb-4 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
-            <div className="px-3 py-3 text-[10px] font-bold tracking-[0.15em] text-slate-400 uppercase">
+            <div className="px-3 py-3 text-[10px] font-bold tracking-[0.15em] text-zinc-400 uppercase">
               {totalMatches} Partidos
             </div>
             {bet.partidos?.map((m, idx) => {
@@ -343,9 +343,9 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                   type="button"
                   className={`flex items-center gap-3 w-full px-3 py-2.5 text-left rounded-xl text-[13px] transition-all border-l-[3px] mb-2 ${
                     isActive 
-                      ? 'bg-yellow-500/20 border-l-yellow-400 shadow-lg shadow-yellow-500/20' 
+                      ? 'bg-red-700/20 border-l-red-600 shadow-lg shadow-red-700/20' 
                       : done 
-                        ? 'border-l-yellow-500 hover:bg-white/10 bg-white/5' 
+                        ? 'border-l-red-700 hover:bg-white/10 bg-white/5' 
                         : live 
                           ? 'border-l-red-500 hover:bg-white/10 bg-red-500/10 animate-pulse'
                           : 'border-l-transparent hover:bg-white/5'
@@ -354,23 +354,23 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                 >
                   <span className={`flex items-center justify-center w-7 h-7 rounded-lg text-xs font-bold flex-shrink-0 ${
                     done 
-                      ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-slate-900 shadow-md' 
+                      ? 'bg-gradient-to-br from-red-600 to-red-700 text-white shadow-md'
                       : live 
                         ? 'bg-gradient-to-br from-red-500 to-red-600 text-white shadow-md'
-                        : 'bg-white/10 text-slate-400 border border-white/20'
+                        : 'bg-white/10 text-zinc-400 border border-white/20'
                   }`}>
                     {idx + 1}
                   </span>
                   <span className="flex-1 min-w-0 text-white font-medium">
-                    <span className="block text-xs text-slate-400 mb-0.5 truncate">
+                    <span className="block text-xs text-zinc-400 mb-0.5 truncate">
                       {m.codigo_local || m.equipo_local}
                     </span>
-                    <span className="block text-xs text-slate-400 truncate">
+                    <span className="block text-xs text-zinc-400 truncate">
                       {m.codigo_visitante || m.equipo_visitante}
                     </span>
                   </span>
                   {done && (
-                    <svg className="w-4 h-4 text-yellow-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                    <svg className="w-4 h-4 text-red-600 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
                   )}
@@ -384,15 +384,15 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
         <div className="flex flex-col bg-white min-w-0 h-full overflow-hidden">
           
           {/* Header */}
-          <header className="px-4 sm:px-6 py-3 bg-gradient-to-r from-white to-amber-50/50 border-b border-slate-200 flex items-center justify-between gap-4 flex-shrink-0 shadow-sm">
+          <header className="px-4 sm:px-6 py-3 bg-gradient-to-r from-white to-red-50/50 border-b border-zinc-200 flex items-center justify-between gap-4 flex-shrink-0 shadow-sm">
             <div className="min-w-0 flex-1">
-              <div className="text-[10px] font-bold tracking-[0.2em] text-yellow-600 uppercase mb-1 flex items-center gap-2">
+              <div className="text-[10px] font-bold tracking-[0.2em] text-red-700 uppercase mb-1 flex items-center gap-2">
                 <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                 </svg>
                 Centro de Predicciones
               </div>
-              <h2 className="text-base sm:text-lg font-black text-slate-900 leading-tight">
+              <h2 className="text-base sm:text-lg font-black text-zinc-900 leading-tight">
                 {bet.titulo}
               </h2>
             </div>
@@ -401,7 +401,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                 <span className={`hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold tracking-wider uppercase border ${
                   isClosingSoon 
                     ? 'bg-red-50 text-red-600 border-red-300' 
-                    : 'bg-yellow-50 text-yellow-700 border-yellow-300'
+                    : 'bg-red-50 text-red-800 border-red-400'
                 }`}>
                   <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="currentColor">
                     <circle cx="12" cy="12" r="10" />
@@ -433,7 +433,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
           </header>
 
           {/* Mobile Nav Pills */}
-          <div className="lg:hidden px-4 py-2 bg-white border-b border-slate-200 overflow-x-auto scrollbar-none flex-shrink-0">
+          <div className="lg:hidden px-4 py-2 bg-white border-b border-zinc-200 overflow-x-auto scrollbar-none flex-shrink-0">
             <div className="inline-flex gap-2 min-w-min pb-1">
               {bet.partidos?.map((m, idx) => {
                 const done = predicionCompleta(m)
@@ -445,12 +445,12 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                     type="button"
                     className={`w-9 h-9 inline-flex items-center justify-center rounded-lg text-xs font-bold flex-shrink-0 border-2 transition-all ${
                       isActive 
-                        ? 'bg-gradient-to-br from-slate-900 to-slate-800 border-yellow-400 text-yellow-400 shadow-lg shadow-yellow-500/30 scale-110' 
+                        ? 'bg-gradient-to-br from-zinc-900 to-zinc-800 border-red-600 text-red-600 shadow-lg shadow-red-700/30 scale-110' 
                         : done 
-                          ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 border-yellow-500 text-slate-900'
+                          ? 'bg-gradient-to-br from-red-600 to-red-700 border-red-700 text-white'
                           : live 
                             ? 'bg-gradient-to-br from-red-500 to-red-600 border-red-500 text-white animate-pulse'
-                            : 'bg-slate-50 border-slate-200 text-slate-600'
+                            : 'bg-zinc-50 border-zinc-200 text-zinc-600'
                     }`}
                     onClick={() => scrollToMatch(m.id, idx)}
                   >
@@ -463,7 +463,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
 
           {/* Matches List - IGUAL QUE ANTES, SIN CAMBIOS */}
           <div 
-            className="flex-1 overflow-y-auto px-4 sm:px-6 py-3 scroll-smooth scrollbar-thin scrollbar-thumb-slate-300 hover:scrollbar-thumb-yellow-500 scrollbar-track-slate-100"
+            className="flex-1 overflow-y-auto px-4 sm:px-6 py-3 scroll-smooth scrollbar-thin scrollbar-thumb-zinc-300 hover:scrollbar-thumb-red-700 scrollbar-track-zinc-100"
             ref={listRef}
           >
             {/* ... TODO EL CONTENIDO DE LOS PARTIDOS IGUAL QUE ANTES ... */}
@@ -473,22 +473,22 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                   !
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-bold text-slate-900 mb-1 text-sm">{razonBloqueo.titulo}</div>
-                  <div className="text-xs text-slate-600 leading-relaxed">{razonBloqueo.detalle}</div>
+                  <div className="font-bold text-zinc-900 mb-1 text-sm">{razonBloqueo.titulo}</div>
+                  <div className="text-xs text-zinc-600 leading-relaxed">{razonBloqueo.detalle}</div>
                 </div>
               </div>
             )}
 
             {totalMatches === 0 && (
               <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
-                <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-3">
-                  <svg className="w-8 h-8 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <div className="w-16 h-16 rounded-full bg-zinc-100 flex items-center justify-center mb-3">
+                  <svg className="w-8 h-8 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <circle cx="12" cy="12" r="10" />
                     <path d="M12 6v6l4 2" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-bold text-slate-800 mb-1">No hay partidos disponibles</h3>
-                <p className="text-sm text-slate-500">Esta apuesta aún no tiene fixture cargado</p>
+                <h3 className="text-lg font-bold text-zinc-800 mb-1">No hay partidos disponibles</h3>
+                <p className="text-sm text-zinc-500">Esta apuesta aún no tiene fixture cargado</p>
               </div>
             )}
 
@@ -524,19 +524,19 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                   data-match-id={match.id}
                   className={`bg-white rounded-xl mb-2.5 overflow-hidden shadow-sm border transition-all duration-200 hover:shadow-md ${
                     completo && !isLive && !isFinished 
-                      ? 'border-yellow-400 shadow-yellow-500/10' 
+                      ? 'border-red-600 shadow-red-700/10' 
                       : isLive 
                         ? 'border-red-500 shadow-red-500/10'
-                        : 'border-slate-200'
+                        : 'border-zinc-200'
                   }`}
                 >
-                  <div className="flex items-center justify-between px-3 py-2 bg-slate-900 text-white">
+                  <div className="flex items-center justify-between px-3 py-2 bg-zinc-900 text-white">
                     <div className="flex items-center gap-2">
-                      <span className="bg-slate-800 text-yellow-400 text-[10px] font-black px-2 py-0.5 rounded min-w-[32px] text-center border border-yellow-400/30">
+                      <span className="bg-zinc-800 text-red-600 text-[10px] font-black px-2 py-0.5 rounded min-w-[32px] text-center border border-red-600/30">
                         {String(idx + 1).padStart(2, '0')}
                       </span>
                       <span className="text-[10px] font-bold tracking-wider uppercase">Partido</span>
-                      {elim && <span className="text-[9px] font-bold text-yellow-400 uppercase">· Elim</span>}
+                      {elim && <span className="text-[9px] font-bold text-red-600 uppercase">· Elim</span>}
                     </div>
                     <div className="flex items-center gap-1.5">
                       {isLive && (
@@ -546,12 +546,12 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                         </span>
                       )}
                       {isFinished && (
-                        <span className="inline-flex items-center bg-slate-600 text-white text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full">
+                        <span className="inline-flex items-center bg-zinc-600 text-white text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full">
                           FIN
                         </span>
                       )}
                       {!isLive && !isFinished && completo && (
-                        <span className="inline-flex items-center gap-1 bg-yellow-400 text-slate-900 text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full">
+                        <span className="inline-flex items-center gap-1 bg-red-600 text-white text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full">
                           <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4">
                             <polyline points="20 6 9 17 4 12" />
                           </svg>
@@ -562,23 +562,23 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                   </div>
 
                   <div className="grid grid-cols-[1fr_auto_1fr] items-center">
-                    <div className="flex items-center gap-2.5 p-3 bg-gradient-to-r from-slate-50 to-white border-r border-slate-200">
+                    <div className="flex items-center gap-2.5 p-3 bg-gradient-to-r from-zinc-50 to-white border-r border-zinc-200">
                       {match.bandera_local && (
                         <img src={match.bandera_local} alt="" className="w-10 h-7 object-cover rounded shadow-sm flex-shrink-0" />
                       )}
                       <div className="flex-1 min-w-0">
                         {match.codigo_local && (
-                          <div className="text-[9px] font-black tracking-wider text-yellow-600 uppercase mb-0.5">
+                          <div className="text-[9px] font-black tracking-wider text-red-700 uppercase mb-0.5">
                             {match.codigo_local}
                           </div>
                         )}
-                        <div className="text-sm font-black text-slate-900 leading-tight truncate">
+                        <div className="text-sm font-black text-zinc-900 leading-tight truncate">
                           {match.equipo_local}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-900">
+                    <div className="flex items-center justify-center gap-2 px-4 py-3 bg-zinc-900">
                       <input
                         type="text"
                         inputMode="numeric"
@@ -587,9 +587,9 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                         onChange={e => updateScore(match.id, 'local', e.target.value)}
                         placeholder="—"
                         disabled={isDisabled}
-                        className="w-11 h-11 text-2xl text-center font-black bg-white text-slate-900 border-2 border-yellow-400 rounded-lg outline-none transition-all focus:border-yellow-300 focus:shadow-lg focus:shadow-yellow-500/30 focus:scale-105 disabled:bg-slate-200 disabled:text-slate-400 disabled:border-slate-300 disabled:cursor-not-allowed tabular-nums"
+                        className="w-11 h-11 text-2xl text-center font-black bg-white text-zinc-900 border-2 border-red-600 rounded-lg outline-none transition-all focus:border-red-400 focus:shadow-lg focus:shadow-red-700/30 focus:scale-105 disabled:bg-zinc-200 disabled:text-zinc-400 disabled:border-zinc-300 disabled:cursor-not-allowed tabular-nums"
                       />
-                      <span className="text-2xl font-black text-yellow-400">:</span>
+                      <span className="text-2xl font-black text-red-600">:</span>
                       <input
                         type="text"
                         inputMode="numeric"
@@ -598,18 +598,18 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                         onChange={e => updateScore(match.id, 'visitante', e.target.value)}
                         placeholder="—"
                         disabled={isDisabled}
-                        className="w-11 h-11 text-2xl text-center font-black bg-white text-slate-900 border-2 border-yellow-400 rounded-lg outline-none transition-all focus:border-yellow-300 focus:shadow-lg focus:shadow-yellow-500/30 focus:scale-105 disabled:bg-slate-200 disabled:text-slate-400 disabled:border-slate-300 disabled:cursor-not-allowed tabular-nums"
+                        className="w-11 h-11 text-2xl text-center font-black bg-white text-zinc-900 border-2 border-red-600 rounded-lg outline-none transition-all focus:border-red-400 focus:shadow-lg focus:shadow-red-700/30 focus:scale-105 disabled:bg-zinc-200 disabled:text-zinc-400 disabled:border-zinc-300 disabled:cursor-not-allowed tabular-nums"
                       />
                     </div>
 
-                    <div className="flex items-center gap-2.5 p-3 text-right bg-gradient-to-l from-slate-50 to-white border-l border-slate-200">
+                    <div className="flex items-center gap-2.5 p-3 text-right bg-gradient-to-l from-zinc-50 to-white border-l border-zinc-200">
                       <div className="flex-1 min-w-0">
                         {match.codigo_visitante && (
-                          <div className="text-[9px] font-black tracking-wider text-yellow-600 uppercase mb-0.5">
+                          <div className="text-[9px] font-black tracking-wider text-red-700 uppercase mb-0.5">
                             {match.codigo_visitante}
                           </div>
                         )}
-                        <div className="text-sm font-black text-slate-900 leading-tight truncate">
+                        <div className="text-sm font-black text-zinc-900 leading-tight truncate">
                           {match.equipo_visitante}
                         </div>
                       </div>
@@ -622,7 +622,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                   {/* Disponibilidad por partido (bloqueo automático al arrancar) */}
                   {open && !estaBloqueado && (
                     (matchStarted || isLive || isFinished) ? (
-                      <div className="px-3 py-2 bg-slate-100 border-t border-slate-200 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                      <div className="px-3 py-2 bg-zinc-100 border-t border-zinc-200 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-zinc-500">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
                           <circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" />
                         </svg>
@@ -637,8 +637,8 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                   )}
 
                   {elim && empate && (
-                    <div className="px-3 py-3 bg-amber-50 border-t border-dashed border-amber-200">
-                      <div className="flex items-center gap-2 text-[10px] font-black tracking-widest uppercase text-amber-800 mb-2">
+                    <div className="px-3 py-3 bg-red-50 border-t border-dashed border-red-200">
+                      <div className="flex items-center gap-2 text-[10px] font-black tracking-widest uppercase text-red-800 mb-2">
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                           <circle cx="12" cy="12" r="10" />
                           <path d="M12 6v6l4 2" />
@@ -652,8 +652,8 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                           onClick={() => updateClasificado(match.id, match.codigo_local)}
                           className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide border-2 transition-all ${
                             clasifElegido === match.codigo_local
-                              ? 'bg-slate-900 border-yellow-400 text-yellow-400 shadow-md'
-                              : 'bg-white border-slate-200 text-slate-700 hover:border-yellow-400 hover:bg-amber-50'
+                              ? 'bg-zinc-900 border-red-600 text-red-600 shadow-md'
+                              : 'bg-white border-zinc-200 text-zinc-700 hover:border-red-600 hover:bg-red-50'
                           } disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
                           {match.bandera_local && (
@@ -667,8 +667,8 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                           onClick={() => updateClasificado(match.id, match.codigo_visitante)}
                           className={`flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide border-2 transition-all ${
                             clasifElegido === match.codigo_visitante
-                              ? 'bg-slate-900 border-yellow-400 text-yellow-400 shadow-md'
-                              : 'bg-white border-slate-200 text-slate-700 hover:border-yellow-400 hover:bg-amber-50'
+                              ? 'bg-zinc-900 border-red-600 text-red-600 shadow-md'
+                              : 'bg-white border-zinc-200 text-zinc-700 hover:border-red-600 hover:bg-red-50'
                           } disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
                           {match.bandera_visitante && (
@@ -694,10 +694,10 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                     <div className="px-3 py-2.5 bg-green-50 border-t border-dashed border-green-200">
                       <div className="flex items-center gap-2.5 px-3 py-2 bg-white rounded-lg border border-green-200">
                         <span className="text-green-600 text-sm">✓</span>
-                        <span className="text-[9px] uppercase tracking-wider font-bold text-slate-500">
+                        <span className="text-[9px] uppercase tracking-wider font-bold text-zinc-500">
                           Clasificado:
                         </span>
-                        <span className="text-xs font-black text-slate-900 uppercase inline-flex items-center gap-2">
+                        <span className="text-xs font-black text-zinc-900 uppercase inline-flex items-center gap-2">
                           {(() => {
                             const ganador = pl > pv
                               ? { nombre: match.equipo_local, bandera: match.bandera_local }
@@ -717,9 +717,9 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                   )}
 
                   {(isLive || isFinished) && (match.goles_local != null || match.goles_visitante != null) && (
-                    <div className="px-3 py-2.5 bg-slate-100 border-t border-slate-200">
-                      <div className="flex items-center gap-3 px-3 py-2 bg-slate-900 rounded-lg text-white">
-                        <span className="text-[9px] font-black tracking-widest uppercase text-yellow-400">
+                    <div className="px-3 py-2.5 bg-zinc-100 border-t border-zinc-200">
+                      <div className="flex items-center gap-3 px-3 py-2 bg-zinc-900 rounded-lg text-white">
+                        <span className="text-[9px] font-black tracking-widest uppercase text-red-600">
                           {isLive ? '⚡ VIVO' : '🏁 FINAL'}
                         </span>
                         <span className="text-lg font-black tabular-nums">
@@ -727,7 +727,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                         </span>
                         {match.penales_local != null && match.penales_local !== '' &&
                           match.penales_visit != null && match.penales_visit !== '' && (
-                            <span className="text-[10px] text-slate-400 ml-auto font-bold">
+                            <span className="text-[10px] text-zinc-400 ml-auto font-bold">
                               (pen {match.penales_local}-{match.penales_visit})
                             </span>
                           )}
@@ -741,20 +741,20 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
 
           {/* Footer */}
           <form onSubmit={handleSubmit} className="flex-shrink-0">
-            <footer className="px-4 sm:px-6 py-3 bg-slate-900 text-white border-t-2 border-yellow-400 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 items-center">
+            <footer className="px-4 sm:px-6 py-3 bg-zinc-900 text-white border-t-2 border-red-600 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 items-center">
               <div className="min-w-0">
                 {open && (
                   <>
                     <div className="flex items-baseline justify-between text-[9px] tracking-wider uppercase mb-2">
-                      <span className="text-slate-400 font-bold">Progreso</span>
+                      <span className="text-zinc-400 font-bold">Progreso</span>
                       <span className="text-white font-bold">
-                        <strong className="text-yellow-400 text-lg mr-1 font-black">{filledCount}</strong>
-                        <span className="text-slate-400">de</span> {totalMatches}
+                        <strong className="text-red-600 text-lg mr-1 font-black">{filledCount}</strong>
+                        <span className="text-zinc-400">de</span> {totalMatches}
                       </span>
                     </div>
                     <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 rounded-full transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-red-600 via-red-400 to-red-700 rounded-full transition-all duration-500"
                         style={{ width: `${progressPct}%` }}
                       />
                     </div>
@@ -765,7 +765,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
               <div className="flex gap-2 justify-stretch sm:justify-end">
                 <button 
                   type="button" 
-                  className="flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide bg-transparent border border-white/30 text-slate-300 hover:border-white hover:text-white hover:bg-white/10 transition-all active:scale-95 cursor-pointer"
+                  className="flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide bg-transparent border border-white/30 text-zinc-300 hover:border-white hover:text-white hover:bg-white/10 transition-all active:scale-95 cursor-pointer"
                   onClick={cerrarModal}
                 >
                   Cancelar
@@ -773,12 +773,12 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                 {open && !estaBloqueado && (
                   <button
                     type="submit"
-                    className="flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 text-slate-900 shadow-lg shadow-yellow-500/50 border border-yellow-400 hover:-translate-y-0.5 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none transition-all inline-flex items-center justify-center gap-2 active:scale-95"
+                    className="flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide bg-gradient-to-r from-red-600 via-red-500 to-red-700 text-white shadow-lg shadow-red-700/40 border border-red-600 hover:-translate-y-0.5 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none transition-all inline-flex items-center justify-center gap-2 active:scale-95"
                     disabled={loading || filledCount === 0}
                   >
                     {loading ? (
                       <>
-                        <span className="w-3 h-3 border-2 border-slate-900/30 border-t-slate-900 rounded-full animate-spin" />
+                        <span className="w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />
                         Guardando...
                       </>
                     ) : (
@@ -796,7 +796,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
               </div>
 
               {open && !estaBloqueado && (
-                <div className="col-span-full text-[10px] text-slate-400 text-center tracking-wide">
+                <div className="col-span-full text-[10px] text-zinc-400 text-center tracking-wide">
                   💡 Podés modificar mientras esté abierta
                 </div>
               )}
