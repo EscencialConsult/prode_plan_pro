@@ -429,31 +429,40 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
           </header>
 
           {/* Mobile Nav Pills */}
-          <div className="lg:hidden px-4 py-2 bg-white border-b border-slate-200 overflow-x-auto scrollbar-none flex-shrink-0">
-            <div className="inline-flex gap-2 min-w-min pb-1">
-              {bet.partidos?.map((m, idx) => {
-                const done = predicionCompleta(m)
-                const live = m.estado === 'en_vivo'
-                const isActive = idx === activeMatchIdx
-                return (
-                  <button
-                    key={m.id}
-                    type="button"
-                    className={`w-9 h-9 inline-flex items-center justify-center rounded-lg text-xs font-bold flex-shrink-0 border-2 transition-all ${
-                      isActive 
-                        ? 'bg-gradient-to-br from-slate-900 to-slate-800 border-yellow-400 text-yellow-400 shadow-lg shadow-yellow-500/30 scale-110' 
-                        : done 
-                          ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 border-yellow-500 text-slate-900'
-                          : live 
-                            ? 'bg-gradient-to-br from-red-500 to-red-600 border-red-500 text-white animate-pulse'
-                            : 'bg-slate-50 border-slate-200 text-slate-600'
-                    }`}
-                    onClick={() => scrollToMatch(m.id, idx)}
-                  >
-                    {idx + 1}
-                  </button>
-                )
-              })}
+          <div className="lg:hidden relative bg-white border-b border-slate-200 flex-shrink-0">
+            <div className="overflow-x-auto scrollbar-none px-4 py-2">
+              <div className="inline-flex gap-2 min-w-min pb-1">
+                {bet.partidos?.map((m, idx) => {
+                  const done = predicionCompleta(m)
+                  const live = m.estado === 'en_vivo'
+                  const isActive = idx === activeMatchIdx
+                  return (
+                    <button
+                      key={m.id}
+                      type="button"
+                      className={`w-9 h-9 inline-flex items-center justify-center rounded-lg text-xs font-bold flex-shrink-0 border-2 transition-all ${
+                        isActive
+                          ? 'bg-gradient-to-br from-slate-900 to-slate-800 border-yellow-400 text-yellow-400 shadow-lg shadow-yellow-500/30 scale-110'
+                          : done
+                            ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 border-yellow-500 text-slate-900'
+                            : live
+                              ? 'bg-gradient-to-br from-red-500 to-red-600 border-red-500 text-white animate-pulse'
+                              : 'bg-slate-50 border-slate-200 text-slate-600'
+                      }`}
+                      onClick={() => scrollToMatch(m.id, idx)}
+                    >
+                      {idx + 1}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+            {/* Fade derecha — indica que hay más para deslizar */}
+            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-white to-transparent" />
+            <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-slate-400">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
             </div>
           </div>
 
