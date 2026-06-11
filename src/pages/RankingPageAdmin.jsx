@@ -25,6 +25,7 @@ const CSS = `
 
 /* Panel izquierdo */
 .rk-sidebar { width:380px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;background:#fcfaf6;border-right:1px solid #f0eadb }
+.rk-sidebar-scroll { flex:1;min-height:0;overflow-y:auto }
 .rk-sidebar-scroll::-webkit-scrollbar { width:2px }
 .rk-sidebar-scroll::-webkit-scrollbar-thumb { background:#e2ddd6;border-radius:99px }
 
@@ -74,7 +75,7 @@ const CSS = `
 /* Mobile */
 @media(max-width:720px) {
   .rk-shell { flex-direction:column!important;height:auto!important }
-  .rk-sidebar { width:100%;max-height:220px;border-right:none!important;border-bottom:1px solid rgba(255,255,255,.08) }
+  .rk-sidebar { width:100%;max-height:60vh;border-right:none!important;border-bottom:1px solid rgba(255,255,255,.08) }
   .rk-content { padding:16px!important }
   .rk-podio-grid { grid-template-columns:1fr!important;max-width:220px!important }
 }
@@ -136,6 +137,19 @@ export default function RankingPageAdmin() {
     finally { setLoading(false) }
   }
 
+  async function cargarFaseGrupos() {
+    if (sel?.id === '__grupos__') return
+    const g = { id: '__grupos__', titulo: 'Ranking Fase de Grupos', __grupos: true }
+    setSel(g); setLoading(true); setTabla([]); setMeta({})
+    setExpandedUser(null); setPredicciones({}); setLoadingUser(null)
+    try {
+      const rG = await sheetsApi.predicciones.faseGrupos({ user_id: user?.id || user?.user_id })
+      setTabla(rG.tabla || [])
+      setMeta({ total: rG.total, mi_posicion: rG.mi_posicion, esta_en_top: rG.esta_en_top })
+    } catch (e) { toast.error('Error cargando ranking de fase de grupos: ' + e.message) }
+    finally { setLoading(false) }
+  }
+
   async function toggleUser(userId) {
     if (expandedUser === userId) {
       setExpandedUser(null)
@@ -147,7 +161,7 @@ export default function RankingPageAdmin() {
     }
     setLoadingUser(userId)
     try {
-      const r = await sheetsApi.predicciones.deUsuario(sel?.__general ? '' : sel.id, userId)
+      const r = await sheetsApi.predicciones.deUsuario((sel?.__general || sel?.__grupos) ? '' : sel.id, userId)
       const predsRaw = r.mis || r.predicciones || []
       const predsEnriquecidas = predsRaw.map(pred => {
         const partido = partidosMap.get(pred.partido_id) || {}
@@ -211,23 +225,23 @@ export default function RankingPageAdmin() {
               </div>
             </div>
 
-            {/* Botón Ranking General (acumulado) */}
+            {/* Botón Ranking Fase de Grupos (suma de las 3 fechas) */}
             <div style={{ padding: '12px 12px 0' }}>
               <div
-                onClick={cargarGeneral}
+                onClick={cargarFaseGrupos}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer',
                   padding: '11px 12px', borderRadius: 12,
                   background: 'linear-gradient(125deg,#0c182b,#1a3060)',
-                  border: sel?.id === '__general__' ? '1.5px solid #ebc32b' : '1px solid rgba(235,195,43,.25)',
-                  boxShadow: sel?.id === '__general__' ? '0 0 0 3px rgba(235,195,43,.15)' : 'none',
+                  border: sel?.id === '__grupos__' ? '1.5px solid #ebc32b' : '1px solid rgba(235,195,43,.25)',
+                  boxShadow: sel?.id === '__grupos__' ? '0 0 0 3px rgba(235,195,43,.15)' : 'none',
                   transition: 'all .15s',
                 }}
               >
-                <span style={{ fontSize: 18, lineHeight: 1 }}>🏆</span>
+                <span style={{ fontSize: 18, lineHeight: 1 }}>⚽</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 12.5, fontWeight: 700, color: '#fff', margin: '0 0 2px' }}>Ranking General</p>
-                  <p style={{ fontSize: 10, color: 'rgba(235,195,43,.75)', margin: 0 }}>Acumulado de todas las fases</p>
+                  <p style={{ fontSize: 12.5, fontWeight: 700, color: '#fff', margin: '0 0 2px' }}>Fase de Grupos</p>
+                  <p style={{ fontSize: 10, color: 'rgba(235,195,43,.75)', margin: 0 }}>Suma de las 3 fechas</p>
                 </div>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="9 18 15 12 9 6" />
@@ -378,11 +392,12 @@ function Banner({ apuesta, meta, loading }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, position: 'relative' }}>
         <div>
           <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: 'rgba(235,195,43,.55)', display: 'block', marginBottom: 4 }}>
-            {apuesta.__general ? 'RANKING GENERAL · ACUMULADO DE TODAS LAS FASES' : 'TABLA DE POSICIONES'}
+            {apuesta.__general ? 'RANKING GENERAL · ACUMULADO DE TODAS LAS FASES' : apuesta.__grupos ? 'RANKING FASE DE GRUPOS · SUMA DE LAS 3 FECHAS' : 'TABLA DE POSICIONES'}
           </span>
           <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(22px,3vw,32px)', color: '#fff', margin: '0 0 6px', letterSpacing: '.02em', lineHeight: 1 }}>
             {apuesta.titulo}
           </h2>
+          {apuesta.__grupos && <PremiosGrupos />}
           {apuesta.premio && (
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(235,195,43,.1)', border: '1px solid rgba(235,195,43,.2)', borderRadius: 99, padding: '3px 10px' }}>
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -398,6 +413,27 @@ function Banner({ apuesta, meta, loading }) {
             {meta.total > 0 && <BannerStat n={meta.total} label="Part." />}
           </div>
         )}
+      </div>
+    </div>
+  )
+}
+
+function PremiosGrupos() {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 18px', borderRadius: 14, background: 'linear-gradient(135deg,rgba(235,195,43,.22),rgba(235,195,43,.08))', border: '1.5px solid rgba(235,195,43,.45)', boxShadow: '0 0 0 3px rgba(235,195,43,.08)' }}>
+        <span style={{ fontSize: 30, lineHeight: 1 }}>💵</span>
+        <div>
+          <p style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.18em', color: 'rgba(235,195,43,.7)', margin: '0 0 2px' }}>Premio mayor</p>
+          <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(26px,5vw,38px)', color: '#ebc32b', margin: 0, lineHeight: 1, letterSpacing: '.01em' }}>$200.000</p>
+        </div>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 18px', borderRadius: 14, background: 'rgba(255,255,255,.06)', border: '1.5px solid rgba(255,255,255,.18)' }}>
+        <span style={{ fontSize: 30, lineHeight: 1 }}>👕</span>
+        <div>
+          <p style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.18em', color: 'rgba(255,255,255,.45)', margin: '0 0 2px' }}>Y además</p>
+          <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(22px,4vw,30px)', color: '#fff', margin: 0, lineHeight: 1, letterSpacing: '.02em' }}>Una Camiseta</p>
+        </div>
       </div>
     </div>
   )

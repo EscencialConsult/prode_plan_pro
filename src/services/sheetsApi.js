@@ -1057,6 +1057,38 @@ const predicciones = {
 
     return { ok: true, es_grupal: false, total: tabla.length, tabla, mi_posicion: miPosicion, esta_en_top: true }
   },
+
+  /**
+   * Ranking de la FASE DE GRUPOS: suma los puntos de cada persona en las
+   * apuestas puras de grupos (las 3 fechas). Con este ranking se definen
+   * los ganadores de la fase de grupos. (función ranking_fase_grupos en BD).
+   * Devuelve el mismo formato que `tabla`/`general` para reusar la UI.
+   */
+  faseGrupos: async (opciones = {}) => {
+    const currentUserId = opciones.user_id || ''
+    const { data, error } = await supabase.rpc('ranking_fase_grupos')
+    checkError(error, 'predicciones.faseGrupos')
+
+    const tabla = (data || []).map(r => ({
+      user_id: r.user_id,
+      nombre: r.nombre,
+      email: '',
+      puntos_totales: r.puntos_totales,
+      posicion: r.posicion,
+      aciertos_exactos: r.aciertos_exactos,
+      aciertos_diferencia: r.aciertos_diferencia,
+      aciertos_resultado: r.aciertos_resultado,
+      aciertos_clasificado: r.aciertos_clasificado,
+      predicciones: r.predicciones,
+      es_grupal: false,
+    }))
+
+    const miPosicion = currentUserId
+      ? tabla.find(r => r.user_id === currentUserId) || null
+      : null
+
+    return { ok: true, es_grupal: false, total: tabla.length, tabla, mi_posicion: miPosicion, esta_en_top: true }
+  },
 }
 
 // ── grupos (selecciones agrupadas por letra) ──────────────
