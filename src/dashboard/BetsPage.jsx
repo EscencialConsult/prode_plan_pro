@@ -9,7 +9,7 @@
  *    explicando la regla del +1 por acertar al clasificado.
  *  - ✅ ARREGLADO: onFinalize cambiado a onClose para que el botón X funcione
  */
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import AppShell from './AppShell.jsx'
 import { useBets } from '../hooks/useBets.jsx'
@@ -150,15 +150,31 @@ export default function BetsPage(){
 
   function showToast(msg,ok=true){setToast({msg,ok});setTimeout(()=>setToast(null),3200)}
 
-const filtered = bets.filter(b => {
-  // "Todas" muestra todas las apuestas (sin filtro)
-  if (filter === 'todas') return true
-  // "Activas" muestra las que siguen abiertas (estado abierta Y dentro de plazo)
-  if (filter === 'activas') return isOpen(b)
-  // "Cerradas" muestra las que ya no están abiertas para apostar
-  if (filter === 'cerradas') return !isOpen(b)
-  return true
-})
+  const filtered = useMemo(() => {
+    return bets
+      .filter(b => {
+        if (filter === 'todas') return true
+        if (filter === 'activas') return isOpen(b)
+        if (filter === 'cerradas') return !isOpen(b)
+        return true
+      })
+      .sort((a, b) => {
+        const aOpen = isOpen(a)
+        const bOpen = isOpen(b)
+
+        if (aOpen && !bOpen) return -1
+        if (!aOpen && bOpen) return 1
+
+        const da = a.fecha_cierre ? new Date(a.fecha_cierre).getTime() : Infinity
+        const db = b.fecha_cierre ? new Date(b.fecha_cierre).getTime() : Infinity
+
+        if (aOpen && bOpen) {
+          return da - db // closest to close first
+        } else {
+          return db - da // most recently closed first
+        }
+      })
+  }, [bets, filter])
 
   // Guardar predicciones en lote transaccional
   async function handlePredict(betId,preds){
