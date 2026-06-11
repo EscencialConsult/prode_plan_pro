@@ -37,7 +37,7 @@ export default function AdminTabs({
 
   return (
     <div
-      className="mb-6 flex items-center gap-2 rounded-xl p-1"
+      className="mb-6 flex flex-wrap items-center gap-2 rounded-xl p-1.5"
       style={{
         background: 'rgba(255,255,255,0.75)',
         border: '1px solid rgba(0,0,0,0.08)',
@@ -52,7 +52,7 @@ export default function AdminTabs({
             key={item.key}
             type="button"
             onClick={() => setTab(item.key)}
-            className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-xs font-body font-bold uppercase tracking-wider transition-all"
+            className="inline-flex flex-1 sm:flex-none items-center justify-center gap-2 whitespace-nowrap rounded-lg px-3 sm:px-4 py-2.5 sm:py-2 text-xs font-body font-bold uppercase tracking-wider transition-all"
             style={{
               background: active ? '#071A3A' : 'transparent',
               color: active ? '#EBC32B' : '#6B7280',

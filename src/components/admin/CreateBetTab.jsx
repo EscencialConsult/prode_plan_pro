@@ -19,7 +19,7 @@ export default function CreateBetTab({ createBet, loading, matches }) {
 
       {/* Form - SIN max-width */}
       <div
-        className="rounded-2xl p-6"
+        className="rounded-2xl p-4 sm:p-6"
         style={{
           background: '#fff',
           border: '1px solid #f0eadb',

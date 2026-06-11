@@ -262,7 +262,7 @@ if (initialLoading) {
         @keyframes shimmer{to{transform:translateX(200%)}}
       `}</style>
       
-      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '2rem 1.5rem 3rem' }}>
+      <div className="px-4 sm:px-6" style={{ maxWidth: 1400, margin: '0 auto', paddingTop: '2rem', paddingBottom: '3rem' }}>
 
         <AdminHeader bets={bets} pendingUsers={pendingUsers} />
 

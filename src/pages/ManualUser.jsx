@@ -427,7 +427,7 @@ export default function ManualUser() {
 
               <h1 style={{
                 fontFamily:"'Bebas Neue',sans-serif",
-                fontSize:'clamp(3.5rem, 7vw, 6rem)',
+                fontSize:'clamp(2.1rem, 7vw, 6rem)',
                 color:C.navy, letterSpacing:'.01em',
                 lineHeight:.92, margin:'0 0 12px',
               }}>
@@ -710,6 +710,11 @@ export default function ManualUser() {
           @media (max-width: 900px) {
             aside { display: none !important; }
             main { padding: 0 20px 60px !important; }
+          }
+          @media (max-width: 600px) {
+            main { padding: 0 14px 48px !important; }
+            main table { font-size: 12px !important; }
+            main table th, main table td { padding: 9px 10px !important; }
           }
         `}</style>
       </div>

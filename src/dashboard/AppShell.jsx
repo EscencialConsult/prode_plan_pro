@@ -195,6 +195,7 @@ export default function AppShell({ children }) {
         @media(max-width:860px) {
           .dnav { display: none !important; }
           .mhb { display: flex !important; }
+          .hide-mob { display: none !important; }
         }
       `}</style>
 
@@ -252,6 +253,7 @@ export default function AppShell({ children }) {
 {esAdmin && (
   <Link
     to="/manual-admin"
+    className="hide-mob"
     style={{ textDecoration: 'none', marginRight: '.75rem' }}
   >
     <span
@@ -295,6 +297,7 @@ export default function AppShell({ children }) {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginLeft: 'auto' }}>
               <span
+                className="hide-mob"
                 style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -364,6 +367,7 @@ export default function AppShell({ children }) {
                   </div>
 
                   <span
+                    className="hide-mob"
                     style={{
                       fontSize: '.78rem',
                       fontWeight: 600,
@@ -659,6 +663,10 @@ export default function AppShell({ children }) {
 
               {esAdmin && (
                 <NavLinkMob to="/admin" label="Configuración" icon={ADMIN_ICON} location={location} onClick={() => setMob(false)} />
+              )}
+
+              {esAdmin && (
+                <NavLinkMob to="/manual-admin" label="Manual" icon={MANUAL_ICON} location={location} onClick={() => setMob(false)} />
               )}
 
               <NavLinkMob to="/cambiar-password" label="Cambiar contraseña" icon={KEY_ICON} location={location} onClick={() => setMob(false)} />

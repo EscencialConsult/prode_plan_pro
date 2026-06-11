@@ -287,7 +287,7 @@ function FieldItem({ name, req, children }) {
               : req==='auto' ? { bg:'rgba(27,138,90,.1)',  color:C.green, label:'Auto'      }
               : null
   return (
-    <div style={{
+    <div className="manual-defrow" style={{
       display:'flex', gap:14, alignItems:'flex-start',
       padding:'12px 14px', borderRadius:10,
       background:C.white,
@@ -710,7 +710,7 @@ export default function Manual() {
 
             <h1 style={{
               fontFamily:"'Bebas Neue',sans-serif",
-              fontSize:'clamp(3.5rem, 7vw, 6rem)',
+              fontSize:'clamp(2.1rem, 7vw, 6rem)',
               color:C.navy, letterSpacing:'.01em',
               lineHeight:.92, margin:'0 0 12px',
             }}>
@@ -898,7 +898,7 @@ export default function Manual() {
             <P>
               Al crear o editar una apuesta, el admin selecciona qué partidos incluye esa apuesta. El sistema carga los partidos del fixture del Mundial automáticamente.
             </P>
-            <div style={{
+            <div className="manual-2col" style={{
               display:'grid', gridTemplateColumns:'1fr 1fr',
               gap:12, margin:'18px 0',
             }}>
@@ -1322,6 +1322,17 @@ export default function Manual() {
         @media (max-width: 900px) {
           aside { display: none !important; }
           main { padding: 0 20px 60px !important; }
+        }
+        @media (max-width: 600px) {
+          main { padding: 0 14px 48px !important; }
+          /* grids de 2 columnas pasan a 1 */
+          .manual-2col { grid-template-columns: 1fr !important; }
+          /* tablas: menos padding y fuente para que entren */
+          main table { font-size: 12px !important; }
+          main table th, main table td { padding: 9px 10px !important; }
+          /* filas de definición: término arriba, texto abajo */
+          .manual-defrow { flex-direction: column !important; gap: 4px !important; }
+          .manual-defrow > div:first-child { min-width: 0 !important; }
         }
       `}</style>
     </div>

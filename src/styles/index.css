@@ -96,6 +96,10 @@ body:has(.sh-in) {
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-accent-dim); }
 
+/* Oculta la scrollbar pero permite scroll (tabs deslizables en mobile) */
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
 /* ── Tipografía global ─────────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
@@ -1000,4 +1004,6 @@ body:has(.sh-in) {
   .rk-tabla-aciertos { display: none; }
   .rk-podio-grid { grid-template-columns: 1fr !important; }
   .rk-partido-row { grid-template-columns: 1fr 58px 58px 50px; }
+  /* Tabla de posiciones de grupos: ocultar columnas secundarias en celular */
+  .gcol-hide { display: none !important; }
 }

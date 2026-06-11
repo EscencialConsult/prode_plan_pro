@@ -540,11 +540,11 @@
           </div>
         </div>
 
-        <div className="px-6 py-6">
+        <div className="px-3 py-6 sm:px-6">
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 400px), 1fr))',
               gap: '1.25rem',
             }}
           >
@@ -680,8 +680,8 @@
               <tr style={{ background: C.creamHi }}>
                 <th
                   style={{
-                    width: '36px',
-                    padding: '8px 4px',
+                    width: '32px',
+                    padding: '8px 2px',
                     fontFamily: "'DM Sans',sans-serif",
                     fontSize: '0.6rem',
                     fontWeight: 700,
@@ -712,8 +712,9 @@
                 {['J', 'G', 'E', 'P', 'GF', 'GC', 'DIF', 'PTS'].map((h, i) => (
                   <th
                     key={h}
+                    className={['G', 'E', 'P'].includes(h) ? 'gcol-hide' : undefined}
                     style={{
-                      width: h === 'PTS' ? '46px' : h === 'DIF' ? '42px' : '32px',
+                      width: h === 'PTS' ? '38px' : h === 'DIF' ? '34px' : '28px',
                       padding: '8px 2px',
                       fontFamily: "'DM Sans',sans-serif",
                       fontSize: '0.6rem',
@@ -829,6 +830,7 @@
                     {[s.j, s.g, s.e, s.p, s.gf, s.gc].map((v, idx) => (
                       <td
                         key={idx}
+                        className={[1, 2, 3].includes(idx) ? 'gcol-hide' : undefined}
                         style={{
                           padding: '10px 2px',
                           textAlign: 'center',

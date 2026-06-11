@@ -156,7 +156,7 @@ export default function ActiveUsersTab({
             return (
               <div
                 key={u.id}
-                className="grid gap-3 px-5 py-4 items-center"
+                className="flex flex-col md:grid gap-2 md:gap-3 px-5 py-4 md:items-center"
                 style={{
                   gridTemplateColumns: '1.6fr 1.6fr 1fr 0.8fr 0.8fr 1fr',
                   borderBottom: idx === activeUsers.length - 1 ? 'none' : '1px solid #f5efe3',
