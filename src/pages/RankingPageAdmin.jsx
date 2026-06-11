@@ -85,7 +85,7 @@ const CSS = `
    COMPONENTE PRINCIPAL
 ══════════════════════════════════════════ */
 export default function RankingPageAdmin() {
-  const { bets, loading: lb } = useBets()
+  const { bets, matches, loading: lb } = useBets()
   const { user } = useAuth()
   const { toast } = useToast()
 
@@ -100,11 +100,12 @@ export default function RankingPageAdmin() {
 
   const partidosMap = useMemo(() => {
     const map = new Map()
-    if (sel?.partidos) {
-      sel.partidos.forEach(p => map.set(p.id, p))
-    }
+    // Todos los partidos del fixture (resuelve cualquier predicción, incluso en Fase de Grupos)
+    if (matches) matches.forEach(p => map.set(p.id, p))
+    // Los de la apuesta seleccionada (por si traen datos extra)
+    if (sel?.partidos) sel.partidos.forEach(p => map.set(p.id, p))
     return map
-  }, [sel])
+  }, [sel, matches])
 
   async function cargarRanking(bet) {
     if (sel?.id === bet.id) return
@@ -742,8 +743,16 @@ function PrediccionRow({ pred, apuesta }) {
       alignItems: 'center',
     }}>
       <div style={{ minWidth: 0 }}>
-        <p style={{ fontSize: '.78rem', fontWeight: 600, color: '#0c182b', margin: '0 0 .12rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {local} {visit && <><span style={{ color: '#94a3b8' }}>vs</span> {visit}</>}
+        <p style={{ fontSize: '.78rem', fontWeight: 600, color: '#0c182b', margin: '0 0 .12rem', display: 'flex', alignItems: 'center', gap: 5, minWidth: 0 }}>
+          {pred.bandera_local && <img src={pred.bandera_local} alt="" style={{ width: 18, height: 12, objectFit: 'cover', borderRadius: 2, flexShrink: 0, border: '1px solid #00000010' }} />}
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{local}</span>
+          {visit && (
+            <>
+              <span style={{ color: '#94a3b8', flexShrink: 0 }}>vs</span>
+              {pred.bandera_visitante && <img src={pred.bandera_visitante} alt="" style={{ width: 18, height: 12, objectFit: 'cover', borderRadius: 2, flexShrink: 0, border: '1px solid #00000010' }} />}
+              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{visit}</span>
+            </>
+          )}
         </p>
         <p style={{ fontSize: '.62rem', color: '#94a3b8', margin: 0 }}>
           {pred.jornada && `Jornada ${pred.jornada}`}
