@@ -238,10 +238,10 @@ export default function RankingPageAdmin() {
                   transition: 'all .15s',
                 }}
               >
-                <span style={{ fontSize: 18, lineHeight: 1 }}>⚽</span>
+                <span style={{ fontSize: 18, lineHeight: 1 }}>🏆</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ fontSize: 12.5, fontWeight: 700, color: '#fff', margin: '0 0 2px' }}>Fase de Grupos</p>
-                  <p style={{ fontSize: 10, color: 'rgba(235,195,43,.75)', margin: 0 }}>Suma de las 3 fechas</p>
+                  <p style={{ fontSize: 10, color: 'rgba(235,195,43,.75)', margin: 0 }}>Ganá $200.000 + una camiseta</p>
                 </div>
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#ebc32b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="9 18 15 12 9 6" />
@@ -422,18 +422,45 @@ function PremiosGrupos() {
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 14 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 18px', borderRadius: 14, background: 'linear-gradient(135deg,rgba(235,195,43,.22),rgba(235,195,43,.08))', border: '1.5px solid rgba(235,195,43,.45)', boxShadow: '0 0 0 3px rgba(235,195,43,.08)' }}>
-        <span style={{ fontSize: 30, lineHeight: 1 }}>💵</span>
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+          <rect x="2.5" y="6" width="19" height="12" rx="2.5" fill="#16a34a" stroke="#0c5a2e" strokeWidth="1" />
+          <rect x="4.5" y="8" width="15" height="8" rx="1.2" fill="none" stroke="rgba(255,255,255,.45)" strokeWidth="0.7" />
+          <circle cx="12" cy="12" r="2.7" fill="rgba(255,255,255,.15)" />
+          <path d="M12 9.6v4.8M13.3 10.4c-.3-.5-1-.7-1.6-.5-.6.2-.8.8-.4 1.2.3.4 1.3.4 1.7.8.4.4.1 1.1-.5 1.3-.6.2-1.3 0-1.6-.5" stroke="#fff" strokeWidth="0.8" strokeLinecap="round" fill="none" />
+        </svg>
         <div>
           <p style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.18em', color: 'rgba(235,195,43,.7)', margin: '0 0 2px' }}>Premio mayor</p>
           <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(26px,5vw,38px)', color: '#ebc32b', margin: 0, lineHeight: 1, letterSpacing: '.01em' }}>$200.000</p>
         </div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 18px', borderRadius: 14, background: 'rgba(255,255,255,.06)', border: '1.5px solid rgba(255,255,255,.18)' }}>
-        <span style={{ fontSize: 30, lineHeight: 1 }}>👕</span>
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+          <defs>
+            <clipPath id="argJerseyAdm">
+              <path d="M15.5 3 L21 7 L18.3 10.8 L16 9.2 V21 H8 V9.2 L5.7 10.8 L3 7 L8.5 3 C8.7 4.4 10.1 5.3 12 5.3 C13.9 5.3 15.3 4.4 15.5 3 Z" />
+            </clipPath>
+          </defs>
+          <g clipPath="url(#argJerseyAdm)">
+            <rect x="0" y="0" width="24" height="24" fill="#ffffff" />
+            <rect x="2"  y="0" width="2.3" height="24" fill="#75AADB" />
+            <rect x="7"  y="0" width="2.3" height="24" fill="#75AADB" />
+            <rect x="12" y="0" width="2.3" height="24" fill="#75AADB" />
+            <rect x="17" y="0" width="2.3" height="24" fill="#75AADB" />
+          </g>
+          <path d="M15.5 3 L21 7 L18.3 10.8 L16 9.2 V21 H8 V9.2 L5.7 10.8 L3 7 L8.5 3 C8.7 4.4 10.1 5.3 12 5.3 C13.9 5.3 15.3 4.4 15.5 3 Z" fill="none" stroke="#0c182b" strokeWidth="0.7" strokeLinejoin="round" />
+        </svg>
         <div>
           <p style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.18em', color: 'rgba(255,255,255,.45)', margin: '0 0 2px' }}>Y además</p>
           <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(22px,4vw,30px)', color: '#fff', margin: 0, lineHeight: 1, letterSpacing: '.02em' }}>Una Camiseta</p>
         </div>
+      </div>
+
+      {/* Cómo funciona (chiquito) */}
+      <div style={{ width: '100%', display: 'flex', alignItems: 'flex-start', gap: 7, marginTop: 4 }}>
+        <span style={{ fontSize: 12, lineHeight: 1.4 }}>ℹ️</span>
+        <p style={{ fontSize: 11, lineHeight: 1.5, color: 'rgba(255,255,255,.6)', margin: 0 }}>
+          <b style={{ color: 'rgba(235,195,43,.85)' }}>Cómo funciona:</b> se suman tus puntos de las 3 fechas de grupos. El que más puntos junta, gana los premios. <span style={{ color: 'rgba(255,255,255,.4)' }}>(Desempate: más aciertos exactos, luego por diferencia.)</span>
+        </p>
       </div>
     </div>
   )
