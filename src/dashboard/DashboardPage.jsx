@@ -4,7 +4,7 @@
  * ✅ INTEGRADO CON PredictModal
  * ✅ INTEGRADO CON Loading OVERLAY
  */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import AppShell from '../dashboard/AppShell.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { useBets } from '../hooks/useBets.jsx'
@@ -163,7 +163,15 @@ export default function DashboardPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [rankingData, setRankingData] = useState(null)
 
-  const activeBets = bets.filter(b => isBetOpen(b))
+  const activeBets = useMemo(() => {
+    return bets
+      .filter(b => isBetOpen(b))
+      .sort((a, b) => {
+        const da = a.fecha_cierre ? new Date(a.fecha_cierre).getTime() : Infinity
+        const db = b.fecha_cierre ? new Date(b.fecha_cierre).getTime() : Infinity
+        return da - db
+      })
+  }, [bets])
 
   useEffect(() => {
     if (!user) return
