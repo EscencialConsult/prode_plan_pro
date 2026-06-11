@@ -432,6 +432,26 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
             </div>
           </header>
 
+          {/* Cartel recordatorio (descripción de la apuesta) */}
+          {bet.descripcion && (
+            <div className="px-4 py-2.5 bg-yellow-50 border-b border-yellow-200 flex items-start gap-2.5 flex-shrink-0">
+              <svg className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="13" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <div className="min-w-0">
+                <p className="text-[12.5px] text-slate-700 leading-snug font-medium">{bet.descripcion}</p>
+                {open && (
+                  <p className="text-[12px] text-yellow-800 leading-snug font-bold mt-1.5 flex items-start gap-1.5">
+                    <span>⚠️</span>
+                    <span>Completá TODAS tus predicciones antes del cierre. Las que dejes sin cargar no suman puntos.</span>
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Mobile Nav Pills */}
           <div className="lg:hidden px-4 py-2 bg-white border-b border-slate-200 overflow-x-auto scrollbar-none flex-shrink-0">
             <div className="inline-flex gap-2 min-w-min pb-1">

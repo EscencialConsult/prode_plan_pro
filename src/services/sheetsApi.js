@@ -950,15 +950,28 @@ const predicciones = {
 
     const esGrupal = apuesta?.tipo === 'grupos'
 
-    // 2) Obtener ranking desde cache
-    const { data: ranking, error } = await supabase
-      .from('ranking_cache')
-      .select('*')
-      .eq('apuesta_id', apuesta_id)
-      .eq('es_grupal', esGrupal)
-      .order('posicion', { ascending: true })
+    // 2) Obtener ranking
+    //   - Grupal (áreas): desde ranking_cache (cuando hay resultados)
+    //   - Individual: vía ranking_apuesta(), que incluye a TODOS los que ya
+    //     cargaron predicciones (con 0 puntos hasta que finalicen partidos)
+    let ranking = null
+    let rankErr = null
+    if (esGrupal) {
+      const res = await supabase
+        .from('ranking_cache')
+        .select('*')
+        .eq('apuesta_id', apuesta_id)
+        .eq('es_grupal', true)
+        .order('posicion', { ascending: true })
+      ranking = res.data
+      rankErr = res.error
+    } else {
+      const res = await supabase.rpc('ranking_apuesta', { p_apuesta_id: apuesta_id })
+      ranking = res.data
+      rankErr = res.error
+    }
 
-    checkError(error, 'predicciones.tabla')
+    checkError(rankErr, 'predicciones.tabla')
 
     const rankingArr = (ranking || []).map(r => {
       if (esGrupal) {
@@ -990,7 +1003,7 @@ const predicciones = {
         aciertos_resultado: r.aciertos_resultado,
         aciertos_clasificado: r.aciertos_clasificado,
         predicciones: r.predicciones,
-        apuesta_id: r.apuesta_id,
+        apuesta_id: r.apuesta_id || apuesta_id,
         es_grupal: false,
       }
     })
