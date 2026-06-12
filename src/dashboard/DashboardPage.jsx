@@ -177,7 +177,15 @@ export default function DashboardPage() {
       limit: 200,
     })
       .then(res => {
-        setRankingData(res?.ok ? (res.mi_posicion || null) : null)
+        if (!res?.ok || !Array.isArray(res.tabla)) { setRankingData(null); return }
+        // La posición se calcula por ÍNDICE de fila (idx + 1), igual que la
+        // página de Ranking (top = slice(0,3), otros = slice(3) numerados con
+        // idx+4). NO se usa el campo `posicion` del caché porque es un RANK
+        // con empates y no coincide con la lista mostrada.
+        const uid = res.es_grupal ? (user?.area_id || '') : (user?.id || user?.user_id)
+        const idx = res.tabla.findIndex(r => r.user_id === uid)
+        if (idx < 0) { setRankingData(res.mi_posicion || null); return }
+        setRankingData({ ...res.tabla[idx], posicion: idx + 1 })
       })
       .catch(console.error)
   }, [user?.id, activeBetId])
