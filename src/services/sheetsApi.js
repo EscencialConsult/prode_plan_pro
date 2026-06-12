@@ -852,7 +852,10 @@ const predicciones = {
    * Devuelve formato compatible con el frontend actual.
    */
   tabla: async (apuesta_id, opciones = {}) => {
-    const limit = Math.min(parseInt(opciones.limit) || 50, 200)
+    // Cap alto: las pantallas piden 50/200 para mostrar, pero el ranking
+    // global/combinado pide todos los participantes (puede haber cientos)
+    // para no perder a nadie en la suma.
+    const limit = Math.min(parseInt(opciones.limit) || 50, 5000)
 
     // ✅ E-A4 FIX:
     // Recibimos usuario/área desde useAuth para evitar:
@@ -994,7 +997,9 @@ const predicciones = {
     })
 
     const resultados = await Promise.allSettled(
-      candidatas.map(a => predicciones.tabla(a.id, { limit: 200 }))
+      // limit alto: necesitamos TODOS los participantes de cada apuesta para
+      // sumar bien (no solo los primeros 200).
+      candidatas.map(a => predicciones.tabla(a.id, { limit: 5000 }))
     )
 
     const acumulado = new Map()

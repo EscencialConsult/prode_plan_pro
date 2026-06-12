@@ -188,7 +188,8 @@ export default function RankingPageAdmin() {
         [...selectedIds].map(id => sheetsApi.predicciones.refrescarRanking(id).catch(() => {}))
       )
       const resultados = await Promise.all(
-        [...selectedIds].map(id => sheetsApi.predicciones.tabla(id, { limit: 200 }))
+        // limit alto: sumar TODOS los participantes, no solo los primeros 200.
+        [...selectedIds].map(id => sheetsApi.predicciones.tabla(id, { limit: 5000 }))
       )
       const mapa = {}
       resultados.forEach(r => {
