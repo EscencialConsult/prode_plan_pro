@@ -164,19 +164,23 @@ export default function DashboardPage() {
   const [rankingData, setRankingData] = useState(null)
 
   const activeBets = bets.filter(b => isBetOpen(b))
+  const activeBetId = activeBets[0]?.id
 
   useEffect(() => {
-    if (!user) return
-    sheetsApi.predicciones.rankingGlobal({
+    if (!user || !activeBetId) { setRankingData(null); return }
+    // Puntos y posición del usuario en la apuesta activa.
+    // Usa la MISMA fuente que la página de Ranking (ranking_cache),
+    // así la posición del dashboard siempre coincide con el ranking.
+    sheetsApi.predicciones.tabla(activeBetId, {
       user_id: user?.id || user?.user_id,
+      area_id: user?.area_id || '',
+      limit: 200,
     })
       .then(res => {
-        if (res.ok && res.mi_posicion) {
-          setRankingData(res.mi_posicion)
-        }
+        setRankingData(res?.ok ? (res.mi_posicion || null) : null)
       })
       .catch(console.error)
-  }, [user?.id])
+  }, [user?.id, activeBetId])
   const liveBets = bets.filter(b => b.partidos?.some(p => p.estado === 'en_vivo'))
   const myPredCount = Object.keys(predictions).length
   const nombre = (user?.nombre || '').split(' ')[0].toUpperCase()
@@ -293,10 +297,10 @@ export default function DashboardPage() {
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 animate-fade-in delay-1">
-          <StatCard label="Puntos totales" value={rankingData ? rankingData.puntos_totales : "—"} sub={rankingData ? "Suma de todas las apuestas" : "Sin apuestas finalizadas"} gold
+          <StatCard label="Puntos totales" value={rankingData ? rankingData.puntos_totales : "—"} sub={rankingData ? "En la apuesta en curso" : "Sin predicciones puntuadas"} gold
             icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>}
           />
-          <StatCard label="Posición" value={rankingData ? `#${rankingData.posicion}` : "—"} sub="Ranking global acumulado" gold
+          <StatCard label="Posición" value={rankingData ? `#${rankingData.posicion}` : "—"} sub="Posición en el ranking" gold
             icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>}
           />
           <StatCard label="Predicciones" value={myPredCount || '—'} sub="Cargadas hasta ahora"
