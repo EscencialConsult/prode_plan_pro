@@ -230,7 +230,7 @@ export default function AppShell({ children }) {
           >
             <Link to="/dashboard" style={{ textDecoration: 'none', flexShrink: 0, marginRight: '1.8rem' }}>
               <img
-                src="/imgprode/one-prode-talento-new3.png"
+                src="/imgprode/one-prode-talento-new31.png"
                 alt="Prode Talento"
                 style={{
                   height: 32,

@@ -49,7 +49,7 @@ export default function Navbar() {
 
           <div className="w-px h-5 hidden sm:block" style={{ background: 'rgba(235,195,43,.25)' }} />
           <img
-            src="./imgprode/one-prode-talento-new3.png"
+            src="./imgprode/one-prode-talento-new31.png"
             alt="Prode Talento"
             style={{ height: 32, width: 'auto', filter: 'drop-shadow(0 2px 8px rgba(0,0,0,.5))' }}
           />

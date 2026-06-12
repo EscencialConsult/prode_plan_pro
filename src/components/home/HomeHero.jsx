@@ -145,7 +145,7 @@ export default function HomeHero() {
               {/* Medalla flotante */}
               <div className="relative mb-5 sm:mb-6 flex justify-center">
                 <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(235,195,43,.28), transparent 60%)', filter: 'blur(28px)' }} />
-                <img src="./imgprode/one-prode-dorado.png" alt="Prode Talento" className="relative float-medal-el"
+                <img src="./imgprode/one-prode-dorado2.png" alt="Prode Talento" className="relative float-medal-el"
                   style={{ width: 'clamp(140px, 30vw, 180px)', filter: 'drop-shadow(0 16px 32px rgba(0,0,0,.6))' }} />
               </div>
 

@@ -78,7 +78,7 @@ export default function RegisterPage() {
         <div className="relative z-10 flex flex-col items-center mb-6 rp-card">
 
           <img
-            src="./imgprode/one-prode-talento-new3.png"
+            src="./imgprode/one-prode-talento-new31.png"
             alt="Prode Talento"
             style={{ height: 52, width: 'auto', filter: 'drop-shadow(0 4px 16px rgba(0,0,0,.6))' }}
           />
