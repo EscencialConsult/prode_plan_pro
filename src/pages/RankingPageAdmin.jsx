@@ -116,7 +116,7 @@ export default function RankingPageAdmin() {
   async function cargarRankingGlobal() {
     setGlobalLoading(true)
     try {
-      const r = await sheetsApi.predicciones.rankingGlobalTabla({ limit: 200 })
+      const r = await sheetsApi.predicciones.tablaGlobal({ limit: 200 })
       setGlobalTabla(r.tabla || [])
       setGlobalMeta({ total: r.total, mi_posicion: r.mi_posicion, esta_en_top: r.esta_en_top })
     } catch (e) { toast.error('Error cargando ranking global: ' + e.message) }

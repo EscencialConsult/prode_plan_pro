@@ -872,21 +872,42 @@ const predicciones = {
 
     const esGrupal = apuesta?.tipo === 'grupos'
 
-    // 2) Obtener ranking desde cache
-    const { data: ranking, error } = await supabase
-      .from('ranking_cache')
-      .select('*')
-      .eq('apuesta_id', apuesta_id)
-      .eq('es_grupal', esGrupal)
-      .order('posicion', { ascending: true })
-
-    checkError(error, 'predicciones.tabla')
+    // 2) Obtener ranking. Preferimos la VISTA en vivo (siempre fresca y, en
+    //    individuales, con fecha_apuesta para el desempate "apostó primero").
+    //    Si la vista no fuera accesible por permisos, caemos al cache
+    //    (comportamiento anterior) para que nunca se rompa.
+    let ranking = null
+    let usandoVista = true
+    {
+      const vista = esGrupal ? 'ranking_apuestas_grupales' : 'ranking_apuestas'
+      const res = await supabase
+        .from(vista)
+        .select('*')
+        .eq('apuesta_id', apuesta_id)
+        .order('posicion', { ascending: true })
+      if (res.error) {
+        usandoVista = false
+      } else {
+        ranking = res.data
+      }
+    }
+    if (!usandoVista) {
+      const res = await supabase
+        .from('ranking_cache')
+        .select('*')
+        .eq('apuesta_id', apuesta_id)
+        .eq('es_grupal', esGrupal)
+        .order('posicion', { ascending: true })
+      checkError(res.error, 'predicciones.tabla')
+      ranking = res.data
+    }
 
     const rankingArr = (ranking || []).map(r => {
       if (esGrupal) {
         return {
           user_id: r.area_id,
-          nombre: r.nombre,
+          // La vista usa area_nombre; el cache usa nombre.
+          nombre: r.area_nombre || r.nombre,
           email: '',
           puntos_totales: r.puntos_totales,
           posicion: r.posicion,
@@ -912,6 +933,8 @@ const predicciones = {
         aciertos_resultado: r.aciertos_resultado,
         aciertos_clasificado: r.aciertos_clasificado,
         predicciones: r.predicciones,
+        // Solo viene de la vista; se usa para el desempate en el ranking global.
+        fecha_apuesta: r.fecha_apuesta,
         apuesta_id: r.apuesta_id,
         es_grupal: false,
       }
@@ -946,6 +969,133 @@ const predicciones = {
       tabla: top,
       mi_posicion: miPosicion,
       esta_en_top: estaEnTop,
+    }
+  },
+
+  /**
+   * Ranking global acumulado calculado EN EL FRONTEND.
+   * En vez de leer la tabla ranking_global_cache (que depende de un cron
+   * externo y puede quedar vacía), suma los puntos de cada apuesta a partir
+   * del ranking por apuesta (ranking_cache, que sí está al día).
+   * Devuelve la misma forma que rankingGlobal: { ok, tabla, mi_posicion, ... }
+   */
+  tablaGlobal: async (opciones = {}) => {
+    const limit = Math.min(parseInt(opciones.limit) || 200, 200)
+    const apuestasResp = await apuestas.listar()
+    const todas = apuestasResp.apuestas || []
+    const estados = opciones.estados || null
+    const apuestaIds = Array.isArray(opciones.apuestaIds) && opciones.apuestaIds.length
+      ? new Set(opciones.apuestaIds.map(String))
+      : null
+    const candidatas = todas.filter(a => {
+      if (apuestaIds && !apuestaIds.has(String(a.id))) return false
+      if (estados && estados.length && !estados.includes(a.estado)) return false
+      return true
+    })
+
+    const resultados = await Promise.allSettled(
+      candidatas.map(a => predicciones.tabla(a.id, { limit: 200 }))
+    )
+
+    const acumulado = new Map()
+    let apuestasIncluidas = 0
+    let apuestasOmitidas = 0
+
+    resultados.forEach((res, idx) => {
+      if (res.status !== 'fulfilled') {
+        apuestasOmitidas += 1
+        return
+      }
+
+      const ranking = res.value
+      if (ranking.es_grupal) {
+        apuestasOmitidas += 1
+        return
+      }
+
+      const filas = ranking.tabla || []
+      if (!filas.length) return
+      apuestasIncluidas += 1
+
+      filas.forEach(u => {
+        const id = u.user_id
+        if (!id) return
+
+        const actual = acumulado.get(id) || {
+          user_id: id,
+          nombre: u.nombre || 'Sin nombre',
+          email: u.email || '',
+          puntos_totales: 0,
+          predicciones: 0,
+          aciertos_exactos: 0,
+          aciertos_diferencia: 0,
+          aciertos_resultado: 0,
+          aciertos_clasificado: 0,
+          apuestas_participadas: 0,
+          apuestas_ids: new Set(),
+          primera_apuesta: null,
+        }
+
+        actual.puntos_totales += Number(u.puntos_totales || 0)
+        actual.predicciones += Number(u.predicciones || 0)
+        actual.aciertos_exactos += Number(u.aciertos_exactos || 0)
+        actual.aciertos_diferencia += Number(u.aciertos_diferencia || 0)
+        actual.aciertos_resultado += Number(u.aciertos_resultado || 0)
+        actual.aciertos_clasificado += Number(u.aciertos_clasificado || 0)
+        actual.apuestas_ids.add(candidatas[idx].id)
+        actual.apuestas_participadas = actual.apuestas_ids.size
+        if (u.fecha_apuesta) {
+          if (!actual.primera_apuesta || u.fecha_apuesta < actual.primera_apuesta) {
+            actual.primera_apuesta = u.fecha_apuesta
+          }
+        }
+        acumulado.set(id, actual)
+      })
+    })
+
+    // Desempate: ante igualdad de puntos, gana quien apostó PRIMERO.
+    const tiempoPrimeraApuesta = (u) =>
+      u.primera_apuesta ? new Date(u.primera_apuesta).getTime() : Infinity
+
+    const rankingArr = Array.from(acumulado.values())
+      .map(u => ({ ...u, apuestas_ids: Array.from(u.apuestas_ids) }))
+      .sort((a, b) =>
+        b.puntos_totales - a.puntos_totales ||
+        tiempoPrimeraApuesta(a) - tiempoPrimeraApuesta(b) ||
+        b.apuestas_participadas - a.apuestas_participadas ||
+        String(a.nombre || '').localeCompare(String(b.nombre || ''), 'es')
+      )
+
+    let posicionAnterior = 0
+    let puntosAnterior = null
+    let tiempoAnterior = null
+    rankingArr.forEach((u, idx) => {
+      const tiempo = tiempoPrimeraApuesta(u)
+      if (puntosAnterior === u.puntos_totales && tiempoAnterior === tiempo) {
+        u.posicion = posicionAnterior
+      } else {
+        u.posicion = idx + 1
+        posicionAnterior = u.posicion
+        puntosAnterior = u.puntos_totales
+        tiempoAnterior = tiempo
+      }
+    })
+
+    const { data: { user } } = await supabase.auth.getUser()
+    const miPosicion = user ? rankingArr.find(r => r.user_id === user.id) || null : null
+    const estaEnTop = miPosicion ? Number(miPosicion.posicion) <= limit : false
+
+    return {
+      ok: true,
+      es_global: true,
+      total: rankingArr.length,
+      limit,
+      tabla: rankingArr.slice(0, limit),
+      mi_posicion: miPosicion,
+      esta_en_top: estaEnTop,
+      apuestas_incluidas: apuestasIncluidas,
+      apuestas_omitidas: apuestasOmitidas,
+      apuestas_total: candidatas.length,
     }
   },
 

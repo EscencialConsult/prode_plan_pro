@@ -167,9 +167,10 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!user) return
-    sheetsApi.predicciones.rankingGlobal({
-      user_id: user?.id || user?.user_id,
-    })
+    // Calcula el ranking global en el frontend (suma de los rankings por
+    // apuesta), igual que en PRODE_sogefigroup. No depende de la tabla
+    // ranking_global_cache, que queda vacía sin el cron externo.
+    sheetsApi.predicciones.tablaGlobal()
       .then(res => {
         if (res.ok && res.mi_posicion) {
           setRankingData(res.mi_posicion)
