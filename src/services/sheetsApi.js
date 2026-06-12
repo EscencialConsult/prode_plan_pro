@@ -1085,6 +1085,21 @@ const predicciones = {
     const miPosicion = user ? rankingArr.find(r => r.user_id === user.id) || null : null
     const estaEnTop = miPosicion ? Number(miPosicion.posicion) <= limit : false
 
+    // Mejor posición individual: el mejor (menor) puesto que el usuario
+    // obtuvo en CUALQUIERA de sus apuestas (para la tarjeta del dashboard).
+    let miMejorPosicion = null
+    if (user) {
+      resultados.forEach(res => {
+        if (res.status !== 'fulfilled' || res.value.es_grupal) return
+        ;(res.value.tabla || []).forEach(u => {
+          if (u.user_id === user.id && u.posicion != null) {
+            const p = Number(u.posicion)
+            miMejorPosicion = miMejorPosicion === null ? p : Math.min(miMejorPosicion, p)
+          }
+        })
+      })
+    }
+
     return {
       ok: true,
       es_global: true,
@@ -1092,6 +1107,7 @@ const predicciones = {
       limit,
       tabla: rankingArr.slice(0, limit),
       mi_posicion: miPosicion,
+      mi_mejor_posicion: miMejorPosicion,
       esta_en_top: estaEnTop,
       apuestas_incluidas: apuestasIncluidas,
       apuestas_omitidas: apuestasOmitidas,

@@ -162,18 +162,20 @@ export default function DashboardPage() {
   const [selectedBet, setSelectedBet] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [rankingData, setRankingData] = useState(null)
+  const [mejorPosicion, setMejorPosicion] = useState(null)
 
   const activeBets = bets.filter(b => isBetOpen(b))
 
   useEffect(() => {
     if (!user) return
-    // Calcula el ranking global en el frontend (suma de los rankings por
-    // apuesta), igual que en PRODE_sogefigroup. No depende de la tabla
-    // ranking_global_cache, que queda vacía sin el cron externo.
+    // Calcula el resumen del usuario en el frontend, desde los rankings de
+    // cada apuesta (mismas vistas que la pantalla de Ranking → datos
+    // consistentes). No depende del cache global.
     sheetsApi.predicciones.tablaGlobal()
       .then(res => {
-        if (res.ok && res.mi_posicion) {
-          setRankingData(res.mi_posicion)
+        if (res.ok) {
+          if (res.mi_posicion) setRankingData(res.mi_posicion)
+          setMejorPosicion(res.mi_mejor_posicion ?? null)
         }
       })
       .catch(console.error)
@@ -252,54 +254,59 @@ export default function DashboardPage() {
           style={{ background: '#0c182b', border: '1px solid rgba(235,195,43,.2)', boxShadow: '0 12px 40px rgba(12,24,43,.15)' }}>
           <div className="absolute top-0 right-0 w-64 h-64 pointer-events-none"
             style={{ background: 'radial-gradient(circle at 80% 20%, rgba(235,195,43,.12), transparent 65%)' }} />
-          <div className="relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-5">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse-live" />
-                <span className="font-body font-bold text-xs uppercase tracking-widest" style={{ color: 'rgba(235,195,43,.7)' }}>
-                  Mundial 2026
-                </span>
-              </div>
-              <h1 className="font-display leading-none mb-1" style={{ fontSize: 'clamp(2.2rem,6vw,3.5rem)', letterSpacing: '.02em' }}>
-                <span className="text-white">HOLA, </span>
-                <span style={{ color: '#ebc32b' }}>{nombre}</span>
-              </h1>
-              <p className="font-body text-sm" style={{ color: 'rgba(255,255,255,.45)' }}>
-                {activeBets.length > 0
-                  ? `Tenés ${activeBets.length} apuesta${activeBets.length > 1 ? 's' : ''} activa${activeBets.length > 1 ? 's' : ''} disponible${activeBets.length > 1 ? 's' : ''}.`
-                  : 'Acá está el resumen de tu actividad en Prode Talento.'}
-              </p>
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse-live" />
+              <span className="font-body font-bold text-xs uppercase tracking-widest" style={{ color: 'rgba(235,195,43,.7)' }}>
+                Mundial 2026
+              </span>
             </div>
-            <div className="flex gap-2 flex-shrink-0">
-              <Link to="/partidos"
+            <h1 className="font-display leading-none mb-1" style={{ fontSize: 'clamp(2.2rem,6vw,3.5rem)', letterSpacing: '.02em' }}>
+              <span className="text-white">HOLA, </span>
+              <span style={{ color: '#ebc32b' }}>{nombre}</span>
+            </h1>
+            <p className="font-body text-sm" style={{ color: 'rgba(255,255,255,.45)' }}>
+              {activeBets.length > 0
+                ? `Tenés ${activeBets.length} apuesta${activeBets.length > 1 ? 's' : ''} activa${activeBets.length > 1 ? 's' : ''} disponible${activeBets.length > 1 ? 's' : ''}.`
+                : 'Acá está el resumen de tu actividad en Prode Talento.'}
+            </p>
+
+            <p className="font-body font-bold text-xs uppercase tracking-widest mt-5 mb-2.5" style={{ color: 'rgba(235,195,43,.55)' }}>
+              Accesos rápidos
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Link to="/apuestas"
                 className="inline-flex items-center gap-2 font-body font-bold text-sm px-5 py-3 rounded-full transition-all"
                 style={{ background: '#ebc32b', color: '#05090f', boxShadow: '0 6px 20px rgba(235,195,43,.3)', textDecoration: 'none' }}
                 onMouseEnter={e => { e.currentTarget.style.background = '#f5d75a'; e.currentTarget.style.transform = 'translateY(-1px)' }}
                 onMouseLeave={e => { e.currentTarget.style.background = '#ebc32b'; e.currentTarget.style.transform = '' }}>
-                Fixture
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
                 </svg>
+                Ir a Apuestas
               </Link>
               <Link to="/ranking"
                 className="inline-flex items-center gap-2 font-body font-semibold text-sm px-5 py-3 rounded-full transition-all"
                 style={{ border: '1px solid rgba(255,255,255,.2)', color: 'rgba(255,255,255,.7)', textDecoration: 'none' }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(235,195,43,.4)'; e.currentTarget.style.color = '#ebc32b' }}
                 onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.2)'; e.currentTarget.style.color = 'rgba(255,255,255,.7)' }}>
-                Ranking
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                </svg>
+                Ir a Ranking
               </Link>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8 animate-fade-in delay-1">
-          <StatCard label="Puntos totales" value={rankingData ? rankingData.puntos_totales : "—"} sub={rankingData ? "Suma de todas las apuestas" : "Sin apuestas finalizadas"} gold
+          <StatCard label="Puntos totales" value={rankingData ? rankingData.puntos_totales : "—"} sub="Acumulado en tus apuestas" gold
             icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>}
           />
-          <StatCard label="Posición" value={rankingData ? `#${rankingData.posicion}` : "—"} sub="Ranking global acumulado" gold
+          <StatCard label="Mejor posición" value={mejorPosicion != null ? `#${mejorPosicion}` : "—"} sub="Tu mejor puesto obtenido" gold
             icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>}
           />
-          <StatCard label="Predicciones" value={myPredCount || '—'} sub="Cargadas hasta ahora"
+          <StatCard label="Predicciones" value={rankingData?.predicciones ?? (myPredCount || '—')} sub="Cargadas hasta ahora"
             icon={<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /></svg>}
           />
           <StatCard label="En vivo" value={liveBets.length} sub="Partidos ahora mismo" live={liveBets.length > 0}
