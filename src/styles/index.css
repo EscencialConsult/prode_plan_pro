@@ -350,13 +350,13 @@ body:has(.sh-in) {
   color: #0c182b;
   margin: 0 0 8px;
 }
-.rk-left-scroll {
+.rk-sidebar-scroll {
   overflow-y: auto;
   flex: 1;
 }
-.rk-left-scroll::-webkit-scrollbar { width: 3px; }
-.rk-left-scroll::-webkit-scrollbar-track { background: transparent; }
-.rk-left-scroll::-webkit-scrollbar-thumb { background: #e8e2d8; border-radius: 99px; }
+.rk-sidebar-scroll::-webkit-scrollbar { width: 3px; }
+.rk-sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+.rk-sidebar-scroll::-webkit-scrollbar-thumb { background: #e8e2d8; border-radius: 99px; }
 
 /* ── Sección label (Activas / Historial) ── */
 .rk-section-label {

@@ -37,6 +37,15 @@ const CSS = `
 @keyframes rk-shimmer { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
 .rk-in { animation: rk-in .28s ease both }
 
+/* Tabs por área */
+.rk-tab { padding:7px 18px;border:none;background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:#94a3b8;border-bottom:2.5px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap }
+.rk-tab.active { color:#0c182b;border-bottom-color:#FF7D00 }
+.rk-tab:hover:not(.active) { color:#0c182b }
+.rk-area-header { display:flex;align-items:center;gap:8px;padding:10px 0 6px;margin-top:4px }
+.rk-area-row { display:grid;grid-template-columns:40px 1fr 80px;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid #f5f3ee;transition:background .12s }
+.rk-area-row:hover { background:rgba(12,24,43,.025) }
+.rk-area-row.me { background:rgba(255,125,0,.04) }
+
 /* Panel izquierdo */
 .rk-sidebar { width:380px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;background:#fcfaf6;border-right:1px solid #f0eadb }
 .rk-sidebar-scroll { overflow-y:auto;flex:1 }
@@ -94,9 +103,15 @@ export default function RankingPage() {
   const [detalles, setDetalles] = useState({})
   const [q, setQ] = useState('')
 
+  // ── Tab por área (solo apuestas libre) ──
+  const [tabActivo, setTabActivo] = useState('individual') // 'individual' | 'por_area'
+  const [tablaArea, setTablaArea] = useState([])
+  const [loadingArea, setLoadingArea] = useState(false)
+
   async function cargarRanking(bet) {
     if (sel?.id === bet.id) return
     setSel(bet); setLoading(true); setTabla([]); setMeta({}); setExpandido(null); setDetalles({}); setQ('')
+    setTabActivo('individual'); setTablaArea([])
     try {
       const [rT, rA] = await Promise.all([sheetsApi.predicciones.tabla(bet.id, {
         user_id: user?.id || user?.user_id,
@@ -104,9 +119,36 @@ export default function RankingPage() {
       }), sheetsApi.apuestas.obtener(bet.id)])
       setTabla(rT.tabla || [])
       setMeta({ total: rT.total, mi_posicion: rT.mi_posicion, esta_en_top: rT.esta_en_top })
-      setSel(prev => ({ ...(prev || bet), ...rA.apuesta }))
+      const apuestaFull = { ...(bet || {}), ...rA.apuesta }
+      setSel(apuestaFull)
+      // Pre-cargar datos de área si es apuesta libre
+      if (apuestaFull.tipo === 'libre') {
+        cargarTablaArea(bet.id)
+      }
     } catch (e) { toast.error('Error cargando ranking: ' + e.message) }
     finally { setLoading(false) }
+  }
+
+  async function cargarTablaArea(apuestaId) {
+    setLoadingArea(true)
+    try {
+      // Leer ranking_cache: filas individuales con posicion_en_area no nula
+      const { data, error } = await sheetsApi._supabase
+        .from('ranking_cache')
+        .select('user_id, nombre, area_id, area_nombre_cache, puntos_totales, posicion, posicion_en_area, aciertos_exactos, aciertos_diferencia, aciertos_resultado, predicciones')
+        .eq('apuesta_id', apuestaId)
+        .eq('es_grupal', false)
+        .not('posicion_en_area', 'is', null)
+        .order('area_id', { ascending: true })
+        .order('posicion_en_area', { ascending: true })
+      if (error) throw error
+      setTablaArea(data || [])
+    } catch (e) {
+      console.warn('Error cargando ranking por área:', e.message)
+      setTablaArea([])
+    } finally {
+      setLoadingArea(false)
+    }
   }
 
   async function toggleExpandir(uid) {
@@ -194,49 +236,79 @@ export default function RankingPage() {
                 {/* Banner */}
                 <Banner apuesta={sel} meta={meta} loading={loading} />
 
-                {loading ? (
-                  <SkeletonContent />
-                ) : tabla.length === 0 ? (
-                  <SinParticipantes />
+                {/* ── Tab switcher (solo apuestas libre) ── */}
+                {sel.tipo === 'libre' && !loading && tabla.length > 0 && (
+                  <div style={{ display: 'flex', borderBottom: '1.5px solid #e8e3db', marginBottom: 20, gap: 0 }}>
+                    <button
+                      id="tab-individual"
+                      className={`rk-tab${tabActivo === 'individual' ? ' active' : ''}`}
+                      onClick={() => setTabActivo('individual')}
+                    >
+                      🏆 Individual
+                    </button>
+                    <button
+                      id="tab-por-area"
+                      className={`rk-tab${tabActivo === 'por_area' ? ' active' : ''}`}
+                      onClick={() => { setTabActivo('por_area'); if (tablaArea.length === 0 && !loadingArea) cargarTablaArea(sel.id) }}
+                    >
+                      🏢 Por Área
+                    </button>
+                  </div>
+                )}
+
+                {/* ── Contenido según tab activo ── */}
+                {tabActivo === 'por_area' && sel.tipo === 'libre' ? (
+                  <RankingPorArea
+                    tablaArea={tablaArea}
+                    loading={loadingArea}
+                    miId={user?.id}
+                    miAreaId={user?.area_id}
+                  />
                 ) : (
-                  <>
-                    {tabla.length > 5 && <Buscador q={q} setQ={setQ} />}
+                  loading ? (
+                    <SkeletonContent />
+                  ) : tabla.length === 0 ? (
+                    <SinParticipantes />
+                  ) : (
+                    <>
+                      {tabla.length > 5 && <Buscador q={q} setQ={setQ} />}
 
-                    {!q && (
-                      <Podio
-                        top={tabla.slice(0, 3)}
-                        miId={user?.id} esAdmin={esAdmin}
-                        expandido={expandido} detalles={detalles}
-                        apuesta={sel} onToggle={toggleExpandir}
-                      />
-                    )}
+                      {!q && (
+                        <Podio
+                          top={tabla.slice(0, 3)}
+                          miId={user?.id} esAdmin={esAdmin}
+                          expandido={expandido} detalles={detalles}
+                          apuesta={sel} onToggle={toggleExpandir}
+                        />
+                      )}
 
-                    {(q ? filasFiltradas : tabla.slice(3)).length > 0 && (
-                      <TablaResto
-                        filas={q ? filasFiltradas : tabla.slice(3)}
-                        offset={q ? 0 : 3} tabla={tabla} hayQ={!!q}
-                        miId={user?.id} esAdmin={esAdmin}
-                        expandido={expandido} detalles={detalles}
-                        apuesta={sel} onToggle={toggleExpandir}
-                      />
-                    )}
+                      {(q ? filasFiltradas : tabla.slice(3)).length > 0 && (
+                        <TablaResto
+                          filas={q ? filasFiltradas : tabla.slice(3)}
+                          offset={q ? 0 : 3} tabla={tabla} hayQ={!!q}
+                          miId={user?.id} esAdmin={esAdmin}
+                          expandido={expandido} detalles={detalles}
+                          apuesta={sel} onToggle={toggleExpandir}
+                        />
+                      )}
 
-                    {q && filasFiltradas.length === 0 && <SinResultados q={q} clear={() => setQ('')} />}
-                    {!q && tabla.length <= 3 && tabla.length > 0 && (
-                      <p style={{ textAlign: 'center', fontSize: 12, color: '#94a3b8', marginTop: 8 }}>
-                        {tabla.length === 1 ? 'Único participante de la apuesta' : `Los ${tabla.length} participantes de la apuesta`}
-                      </p>
-                    )}
-                    {!q && meta.mi_posicion && !meta.esta_en_top && (
-                      <MiPosicion
-                        pos={meta.mi_posicion} apuesta={sel}
-                        expandida={expandido === user?.id}
-                        detalle={detalles[user?.id]}
-                        onToggle={() => toggleExpandir(user?.id)}
-                      />
-                    )}
-                    <LeyendaPuntos apuesta={sel} total={meta.total} mostrando={q ? filasFiltradas.length : tabla.length} />
-                  </>
+                      {q && filasFiltradas.length === 0 && <SinResultados q={q} clear={() => setQ('')} />}
+                      {!q && tabla.length <= 3 && tabla.length > 0 && (
+                        <p style={{ textAlign: 'center', fontSize: 12, color: '#94a3b8', marginTop: 8 }}>
+                          {tabla.length === 1 ? 'Único participante de la apuesta' : `Los ${tabla.length} participantes de la apuesta`}
+                        </p>
+                      )}
+                      {!q && meta.mi_posicion && !meta.esta_en_top && (
+                        <MiPosicion
+                          pos={meta.mi_posicion} apuesta={sel}
+                          expandida={expandido === user?.id}
+                          detalle={detalles[user?.id]}
+                          onToggle={() => toggleExpandir(user?.id)}
+                        />
+                      )}
+                      <LeyendaPuntos apuesta={sel} total={meta.total} mostrando={q ? filasFiltradas.length : tabla.length} />
+                    </>
+                  )
                 )}
               </div>
             )}
@@ -876,6 +948,183 @@ function SinResultados({ q, clear }) {
         onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2ddd6'; e.currentTarget.style.color = '#64748b' }}>
         Limpiar búsqueda
       </button>
+    </div>
+  )
+}
+
+/* ══════════════════════════════════════════
+   RANKING POR ÁREA (apuestas tipo libre)
+══════════════════════════════════════════ */
+function RankingPorArea({ tablaArea, loading, miId, miAreaId }) {
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {[1, 2, 3].map(i => (
+          <div key={i}>
+            <div className="rk-sk" style={{ height: 32, borderRadius: 8, marginBottom: 6 }} />
+            {[1, 2].map(j => <div key={j} className="rk-sk" style={{ height: 44, borderRadius: 0, marginTop: 1 }} />)}
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  if (!tablaArea || tablaArea.length === 0) {
+    return (
+      <div style={{ textAlign: 'center', padding: '48px 24px', background: '#fff', borderRadius: 14, border: '1.5px solid #e8e3db' }}>
+        <p style={{ fontSize: 28, margin: '0 0 8px' }}>🏢</p>
+        <p style={{ fontWeight: 700, color: '#64748b', margin: '0 0 6px', fontSize: 15 }}>Sin datos por área todavía</p>
+        <p style={{ fontSize: 12, color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>
+          Los rankings por área se calculan en el próximo ciclo del sistema.<br />
+          Asegúrate de que los participantes tengan un área asignada.
+        </p>
+      </div>
+    )
+  }
+
+  // Agrupar filas por área
+  const grupos = tablaArea.reduce((acc, row) => {
+    const key = row.area_id || '_sin_area'
+    const nombre = row.area_nombre_cache || 'Sin área'
+    if (!acc[key]) acc[key] = { area_id: key, area_nombre: nombre, filas: [] }
+    acc[key].filas.push(row)
+    return acc
+  }, {})
+
+  const gruposList = Object.values(grupos).sort((a, b) => a.area_nombre.localeCompare(b.area_nombre))
+
+  // Colores para las áreas (rotación)
+  const AREA_COLORS = ['#6366f1','#0ea5e9','#10b981','#f59e0b','#ec4899','#8b5cf6','#14b8a6']
+  const colorForArea = (idx) => AREA_COLORS[idx % AREA_COLORS.length]
+
+  return (
+    <div className="rk-in" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Info header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+        <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 11, letterSpacing: '.18em', color: '#94a3b8' }}>
+          RANKING POR ÁREA — {tablaArea.length} participantes · {gruposList.length} áreas
+        </span>
+        <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg,#e2ddd6,transparent)' }} />
+      </div>
+
+      {gruposList.map((grupo, gIdx) => {
+        const esMiArea = grupo.area_id === miAreaId
+        const color = colorForArea(gIdx)
+
+        return (
+          <div key={grupo.area_id} style={{
+            borderRadius: 14,
+            overflow: 'hidden',
+            border: `1.5px solid ${esMiArea ? 'rgba(255,125,0,.4)' : '#e8e3db'}`,
+            boxShadow: esMiArea ? '0 0 0 3px rgba(255,125,0,.08)' : '0 2px 8px rgba(12,24,43,.04)',
+          }}>
+            {/* Header del área */}
+            <div style={{
+              background: esMiArea
+                ? 'linear-gradient(90deg,#0c182b,#17376a)'
+                : `linear-gradient(90deg,${color}18,${color}08)`,
+              padding: '10px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              borderBottom: `1px solid ${esMiArea ? 'rgba(255,255,255,.08)' : `${color}20`}`,
+            }}>
+              <div style={{
+                width: 8, height: 8, borderRadius: '50%',
+                background: esMiArea ? '#FF7D00' : color,
+                boxShadow: esMiArea ? '0 0 8px rgba(255,125,0,.6)' : `0 0 6px ${color}80`,
+                flexShrink: 0,
+              }} />
+              <span style={{
+                fontFamily: "'Bebas Neue',sans-serif",
+                fontSize: 13,
+                letterSpacing: '.06em',
+                color: esMiArea ? '#fff' : '#0c182b',
+                flex: 1,
+              }}>
+                {grupo.area_nombre}
+              </span>
+              {esMiArea && (
+                <span style={{
+                  fontSize: 9, fontWeight: 800, textTransform: 'uppercase',
+                  letterSpacing: '.16em', color: '#FF7D00',
+                  background: 'rgba(255,125,0,.12)', border: '1px solid rgba(255,125,0,.25)',
+                  borderRadius: 99, padding: '2px 10px',
+                }}>
+                  Tu área
+                </span>
+              )}
+              <span style={{
+                fontSize: 10, fontWeight: 600,
+                color: esMiArea ? 'rgba(255,255,255,.5)' : '#94a3b8',
+              }}>
+                {grupo.filas.length} participante{grupo.filas.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+
+            {/* Tabla de participantes del área */}
+            <div style={{ background: '#fff' }}>
+              {/* Col header */}
+              <div style={{
+                display: 'grid', gridTemplateColumns: '40px 1fr 80px',
+                padding: '6px 16px', background: 'rgba(12,24,43,.02)',
+                borderBottom: '1px solid #f0eadb', gap: 8,
+              }}>
+                {['#', 'Participante', 'Pts'].map((h, i) => (
+                  <span key={i} style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.12em', color: '#b8c0cc', textAlign: i === 2 ? 'center' : 'left' }}>{h}</span>
+                ))}
+              </div>
+
+              {grupo.filas.map((row, rIdx) => {
+                const esYo = row.user_id === miId
+                const pos = row.posicion_en_area
+                const posColor = pos === 1 ? '#FF7D00' : pos === 2 ? '#94a3b8' : pos === 3 ? '#c2720e' : '#c8d0dc'
+
+                return (
+                  <div key={row.user_id} className={`rk-area-row${esYo ? ' me' : ''}`}
+                    style={{ borderBottom: rIdx < grupo.filas.length - 1 ? '1px solid #f5f3ee' : 'none' }}>
+                    {/* Posición */}
+                    <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 17, color: posColor, lineHeight: 1 }}>
+                      {pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : pos}
+                    </span>
+                    {/* Nombre */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                      <div style={{
+                        width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
+                        background: esYo ? 'linear-gradient(135deg,#FF7D00,#ffb766)' : `linear-gradient(135deg,${color}40,${color}20)`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontFamily: "'Bebas Neue',sans-serif", fontSize: 11,
+                        color: esYo ? '#0c182b' : color,
+                        boxShadow: esYo ? '0 0 0 2px rgba(255,125,0,.3)' : 'none',
+                      }}>
+                        {initials(row.nombre)}
+                      </div>
+                      <div style={{ minWidth: 0 }}>
+                        <p style={{ fontWeight: esYo ? 700 : 600, fontSize: 12, color: esYo ? '#FF7D00' : '#0c182b', margin: '0 0 1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {row.nombre}
+                          {esYo && <span style={{ fontSize: 9, color: '#94a3b8', fontWeight: 400, marginLeft: 4 }}>(tú)</span>}
+                        </p>
+                        <p style={{ fontSize: 9, color: '#94a3b8', margin: 0 }}>
+                          #{row.posicion} global · {row.predicciones} pred
+                        </p>
+                      </div>
+                    </div>
+                    {/* Puntos */}
+                    <div style={{ textAlign: 'center' }}>
+                      <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, color: '#0c182b', lineHeight: 1 }}>{row.puntos_totales}</span>
+                      <span style={{ fontSize: 7, color: '#94a3b8', marginLeft: 2, fontWeight: 700, display: 'block', letterSpacing: '.1em' }}>PTS</span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })}
+
+      <p style={{ textAlign: 'center', fontSize: 11, color: '#94a3b8', margin: '4px 0 0' }}>
+        Solo participantes con área asignada aparecen en este ranking
+      </p>
     </div>
   )
 }

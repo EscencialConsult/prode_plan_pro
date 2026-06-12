@@ -1087,19 +1087,27 @@ const predicciones = {
   rankingGlobalAreas: async (opciones = {}) => {
     const limit = Math.min(parseInt(opciones.limit) || 50, 200)
 
+    const checkLibre = await supabase
+      .from('ranking_global_libre_areas_cache')
+      .select('id')
+      .limit(1)
+
+    const useLibre = checkLibre.data && checkLibre.data.length > 0
+    const targetTable = useLibre ? 'ranking_global_libre_areas_cache' : 'ranking_global_areas_cache'
+
     const [tablaResult, totalResult] = await Promise.all([
       supabase
-        .from('ranking_global_areas_cache')
+        .from(targetTable)
         .select('*')
         .order('posicion', { ascending: true })
         .limit(limit),
       supabase
-        .from('ranking_global_areas_cache')
+        .from(targetTable)
         .select('*', { count: 'exact', head: true }),
     ])
 
-    checkError(tablaResult.error, 'predicciones.rankingGlobalAreas (tabla)')
-    checkError(totalResult.error, 'predicciones.rankingGlobalAreas (total)')
+    checkError(tablaResult.error, `predicciones.rankingGlobalAreas (${targetTable} - tabla)`)
+    checkError(totalResult.error, `predicciones.rankingGlobalAreas (${targetTable} - total)`)
 
     return {
       ok: true,
@@ -1113,6 +1121,66 @@ const predicciones = {
         posicion:              r.posicion,
       })),
     }
+  },
+
+  /**
+   * Ranking individual top-5 agrupado por área.
+   * Lee ranking_global_cache (que tiene area_id por usuario)
+   * y devuelve, para cada área, los primeros N usuarios ordenados por puntos.
+   *
+   * @param {{ topN?: number }} opciones
+   */
+  rankingGlobalPorArea: async (opciones = {}) => {
+    const topN = parseInt(opciones.topN) || 5
+
+    // Traer todos los usuarios del ranking con su area_id y área join
+    const { data, error } = await supabase
+      .from('ranking_global_cache')
+      .select('user_id, nombre, area_id, puntos_totales, posicion, aciertos_exactos, aciertos_diferencia, aciertos_resultado, predicciones, apuestas_participadas')
+      .order('puntos_totales', { ascending: false })
+
+    checkError(error, 'predicciones.rankingGlobalPorArea')
+
+    // Agrupar en JS por area_id, tomando top N por área
+    const porArea = {}
+    for (const row of (data || [])) {
+      if (!row.area_id) continue
+      if (!porArea[row.area_id]) {
+        porArea[row.area_id] = { area_id: row.area_id, area_nombre: null, usuarios: [] }
+      }
+      if (porArea[row.area_id].usuarios.length < topN) {
+        porArea[row.area_id].usuarios.push({
+          user_id:             row.user_id,
+          nombre:              row.nombre,
+          puntos_totales:      row.puntos_totales,
+          posicion_global:     row.posicion,
+          aciertos_exactos:    row.aciertos_exactos || 0,
+          aciertos_diferencia: row.aciertos_diferencia || 0,
+          aciertos_resultado:  row.aciertos_resultado || 0,
+          predicciones:        row.predicciones || 0,
+          apuestas_participadas: row.apuestas_participadas || 0,
+        })
+      }
+    }
+
+    // Obtener nombres de áreas
+    const areaIds = Object.keys(porArea)
+    if (areaIds.length > 0) {
+      const { data: areasData } = await supabase
+        .from('areas')
+        .select('id, nombre')
+        .in('id', areaIds)
+      for (const a of (areasData || [])) {
+        if (porArea[a.id]) porArea[a.id].area_nombre = a.nombre
+      }
+    }
+
+    // Ordenar áreas por puntos totales del primero de cada área
+    const areas = Object.values(porArea)
+      .filter(a => a.usuarios.length > 0)
+      .sort((a, b) => (b.usuarios[0]?.puntos_totales || 0) - (a.usuarios[0]?.puntos_totales || 0))
+
+    return { ok: true, areas }
   },
 }
 

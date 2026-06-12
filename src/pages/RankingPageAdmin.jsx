@@ -25,6 +25,7 @@ const CSS = `
 
 /* Panel izquierdo */
 .rk-sidebar { width:380px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;background:#fcfaf6;border-right:1px solid #f0eadb }
+.rk-sidebar-scroll { overflow-y:auto;flex:1 }
 .rk-sidebar-scroll::-webkit-scrollbar { width:2px }
 .rk-sidebar-scroll::-webkit-scrollbar-thumb { background:#e2ddd6;border-radius:99px }
 
@@ -71,6 +72,15 @@ const CSS = `
 .rk-detail-btn-mini:hover:not(:disabled) { background:rgba(12,24,43,.1);color:#0c182b }
 .rk-detail-btn-mini.active { background:#0c182b;color:#ebc32b }
 
+/* Tabs Por región */
+.rk-tab { padding:7px 18px;border:none;background:transparent;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:#94a3b8;border-bottom:2.5px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap }
+.rk-tab.active { color:#0c182b;border-bottom-color:#ebc32b }
+.rk-tab:hover:not(.active) { color:#0c182b }
+.rk-area-header { display:flex;align-items:center;gap:8px;padding:10px 0 6px;margin-top:4px }
+.rk-area-row { display:grid;grid-template-columns:40px 1fr 80px;align-items:center;gap:8px;padding:9px 14px;border-bottom:1px solid #f5f3ee;transition:background .12s }
+.rk-area-row:hover { background:rgba(12,24,43,.025) }
+.rk-area-row.me { background:rgba(255,125,0,.04) }
+
 /* Mobile */
 @media(max-width:720px) {
   .rk-shell { flex-direction:column!important;height:auto!important }
@@ -97,14 +107,23 @@ export default function RankingPageAdmin() {
   const [predicciones, setPredicciones] = useState({})
   const [loadingUser, setLoadingUser] = useState(null)
 
+  // ── Tab Por región (solo apuestas libre) ──
+  const [tabActivo, setTabActivo] = useState('individual') // 'individual' | 'por_area'
+  const [tablaArea, setTablaArea] = useState([])
+  const [loadingArea, setLoadingArea] = useState(false)
+
   // ── Ranking global (se carga al montar) ──
   const [globalTabla, setGlobalTabla] = useState([])
   const [globalMeta, setGlobalMeta] = useState({})
   const [globalLoading, setGlobalLoading] = useState(false)
 
-  // ── Ranking global por área (plan_pro solamente) ──
+  // ── Ranking global Por región (plan_pro solamente) ──
   const [areasTabla, setAreasTabla] = useState([])
   const [areasLoading, setAreasLoading] = useState(false)
+
+  // ── Ranking individual agrupado Por región (top 5 Por región) ──
+  const [areasIndividual, setAreasIndividual] = useState([])
+  const [areasIndividualLoading, setAreasIndividualLoading] = useState(false)
 
   useEffect(() => {
     cargarRankingGlobal()
@@ -114,6 +133,7 @@ export default function RankingPageAdmin() {
   useEffect(() => {
     if (!isPro) return
     cargarRankingAreas()
+    cargarAreasIndividual()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPro])
 
@@ -132,8 +152,17 @@ export default function RankingPageAdmin() {
     try {
       const r = await sheetsApi.predicciones.rankingGlobalAreas({ limit: 20 })
       setAreasTabla(r.tabla || [])
-    } catch (e) { console.warn('Ranking por área no disponible:', e.message) }
+    } catch (e) { console.warn('Ranking Por región no disponible:', e.message) }
     finally { setAreasLoading(false) }
+  }
+
+  async function cargarAreasIndividual() {
+    setAreasIndividualLoading(true)
+    try {
+      const r = await sheetsApi.predicciones.rankingGlobalPorArea({ topN: 5 })
+      setAreasIndividual(r.areas || [])
+    } catch (e) { console.warn('Ranking Por región individual no disponible:', e.message) }
+    finally { setAreasIndividualLoading(false) }
   }
 
   const partidosMap = useMemo(() => {
@@ -144,10 +173,30 @@ export default function RankingPageAdmin() {
     return map
   }, [sel])
 
+  const sortedBets = useMemo(() => {
+    return [...bets].sort((a, b) => {
+      const aOpen = isOpen(a)
+      const bOpen = isOpen(b)
+
+      if (aOpen && !bOpen) return -1
+      if (!aOpen && bOpen) return 1
+
+      const da = a.fecha_cierre ? new Date(a.fecha_cierre).getTime() : Infinity
+      const db = b.fecha_cierre ? new Date(b.fecha_cierre).getTime() : Infinity
+
+      if (aOpen && bOpen) {
+        return da - db // closest to close first
+      } else {
+        return db - da // most recently closed first
+      }
+    })
+  }, [bets])
+
   async function cargarRanking(bet) {
     if (sel?.id === bet.id) return
     setSel(bet); setLoading(true); setTabla([]); setMeta({})
     setExpandedUser(null); setPredicciones({}); setLoadingUser(null)
+    setTabActivo('individual'); setTablaArea([])
 
     try {
       const [rT, rA] = await Promise.all([sheetsApi.predicciones.tabla(bet.id, {
@@ -157,9 +206,34 @@ export default function RankingPageAdmin() {
       }), sheetsApi.apuestas.obtener(bet.id)])
       setTabla(rT.tabla || [])
       setMeta({ total: rT.total, mi_posicion: rT.mi_posicion, esta_en_top: rT.esta_en_top })
-      setSel(prev => ({ ...(prev || bet), ...rA.apuesta }))
+      const apuestaFull = { ...(bet || {}), ...rA.apuesta }
+      setSel(apuestaFull)
+      if (apuestaFull.tipo === 'libre') {
+        cargarTablaArea(bet.id)
+      }
     } catch (e) { toast.error('Error cargando ranking: ' + e.message) }
     finally { setLoading(false) }
+  }
+
+  async function cargarTablaArea(apuestaId) {
+    setLoadingArea(true)
+    try {
+      const { data, error } = await sheetsApi._supabase
+        .from('ranking_cache')
+        .select('user_id, nombre, area_id, area_nombre_cache, puntos_totales, posicion, posicion_en_area, aciertos_exactos, aciertos_diferencia, aciertos_resultado, predicciones')
+        .eq('apuesta_id', apuestaId)
+        .eq('es_grupal', false)
+        .not('posicion_en_area', 'is', null)
+        .order('area_id', { ascending: true })
+        .order('posicion_en_area', { ascending: true })
+      if (error) throw error
+      setTablaArea(data || [])
+    } catch (e) {
+      console.warn('Error cargando ranking Por región:', e.message)
+      setTablaArea([])
+    } finally {
+      setLoadingArea(false)
+    }
   }
 
   async function toggleUser(userId) {
@@ -232,8 +306,8 @@ export default function RankingPageAdmin() {
             <div style={{ padding: '20px 16px 14px', borderBottom: '1px solid #f0eadb' }}>
               <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 11, letterSpacing: '.2em', color: '#94a3b8', margin: '0 0 10px' }}>APUESTAS</p>
               <div style={{ display: 'flex', gap: 6 }}>
-                <Pill color="#22c55e" label={`${bets.filter(b => isOpen(b)).length} activas`} />
-                <Pill color="#64748b" label={`${bets.filter(b => !isOpen(b)).length} cerradas`} />
+                <Pill color="#22c55e" label={`${sortedBets.filter(b => isOpen(b)).length} activas`} />
+                <Pill color="#64748b" label={`${sortedBets.filter(b => !isOpen(b)).length} cerradas`} />
               </div>
 
               {/* Botón persistente Ver Ranking Global */}
@@ -278,15 +352,15 @@ export default function RankingPageAdmin() {
                 </div>
               ) : (
                 <>
-                  {bets.filter(b => isOpen(b)).length > 0 && (
+                  {sortedBets.filter(b => isOpen(b)).length > 0 && (
                     <SideSection label="Activas" dot="#22c55e">
-                      {bets.filter(b => isOpen(b)).map(b => (
+                      {sortedBets.filter(b => isOpen(b)).map(b => (
                         <BetRow key={b.id} bet={b} sel={sel?.id === b.id} onPick={cargarRanking} />
                       ))}
                     </SideSection>
                   )}
                   <SideSection label="Historial">
-                    {bets.filter(b => !isOpen(b)).map(b => (
+                    {sortedBets.filter(b => !isOpen(b)).map(b => (
                       <BetRow key={b.id} bet={b} sel={sel?.id === b.id} onPick={cargarRanking} />
                     ))}
                   </SideSection>
@@ -305,54 +379,80 @@ export default function RankingPageAdmin() {
                 onRefresh={cargarRankingGlobal}
                 areasTabla={areasTabla}
                 areasLoading={areasLoading}
+                areasIndividual={areasIndividual}
+                areasIndividualLoading={areasIndividualLoading}
                 isPro={isPro}
               />
             ) : (
               <div className="rk-in">
+ 
+                 <Banner apuesta={sel} meta={meta} loading={loading} />
+ 
+                 {/* Tabs de tipo de ranking (Solo para apuestas libres) */}
+                 {sel.tipo === 'libre' && (
+                   <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid #f0eadb', marginBottom: 20 }}>
+                     <button
+                       className={`rk-tab ${tabActivo === 'individual' ? 'active' : ''}`}
+                       onClick={() => setTabActivo('individual')}
+                     >
+                       Individual
+                     </button>
+                     <button
+                       className={`rk-tab ${tabActivo === 'por_area' ? 'active' : ''}`}
+                       onClick={() => setTabActivo('por_area')}
+                     >
+                       Por región
+                     </button>
+                   </div>
+                 )}
 
-                <Banner apuesta={sel} meta={meta} loading={loading} />
-
-                {loading ? (
-                  <SkeletonContent />
-                ) : tabla.length === 0 ? (
-                  <SinParticipantes />
-                ) : (
-                  <>
-                    <Podio
-                      top={tabla.slice(0, 3)}
-                      miId={user?.id}
-                      apuesta={sel}
-                      expandedUser={expandedUser}
-                      loadingUser={loadingUser}
-                      onToggle={toggleUser}
-                    />
-
-                    {expandedUser && tabla.slice(0, 3).some(u => u.user_id === expandedUser) && (
-                      <PrediccionesPanel
-                        user={tabla.find(u => u.user_id === expandedUser)}
-                        predicciones={predicciones[expandedUser] || []}
-                        apuesta={sel}
-                        onClose={() => setExpandedUser(null)}
-                      />
-                    )}
-
-                    {tabla.length > 3 && (
-                      <OtrosParticipantes
-                        tabla={tabla}
-                        user={user}
-                        apuesta={sel}
-                        expandedUser={expandedUser}
-                        loadingUser={loadingUser}
-                        predicciones={predicciones}
-                        onToggle={toggleUser}
-                      />
-                    )}
-
-                    <LeyendaPuntos apuesta={sel} total={meta.total} />
-
-                  </>
-                )}
-              </div>
+                 {loading ? (
+                   <SkeletonContent />
+                 ) : tabActivo === 'por_area' ? (
+                   <RankingPorArea
+                     tabla={tablaArea}
+                     loading={loadingArea}
+                     miAreaId={user?.area_id}
+                   />
+                 ) : tabla.length === 0 ? (
+                   <SinParticipantes />
+                 ) : (
+                   <>
+                     <Podio
+                       top={tabla.slice(0, 3)}
+                       miId={user?.id}
+                       apuesta={sel}
+                       expandedUser={expandedUser}
+                       loadingUser={loadingUser}
+                       onToggle={toggleUser}
+                     />
+ 
+                     {expandedUser && tabla.slice(0, 3).some(u => u.user_id === expandedUser) && (
+                       <PrediccionesPanel
+                         user={tabla.find(u => u.user_id === expandedUser)}
+                         predicciones={predicciones[expandedUser] || []}
+                         apuesta={sel}
+                         onClose={() => setExpandedUser(null)}
+                       />
+                     )}
+ 
+                     {tabla.length > 3 && (
+                       <OtrosParticipantes
+                         tabla={tabla}
+                         user={user}
+                         apuesta={sel}
+                         expandedUser={expandedUser}
+                         loadingUser={loadingUser}
+                         predicciones={predicciones}
+                         onToggle={toggleUser}
+                       />
+                     )}
+ 
+                     <LeyendaPuntos apuesta={sel} total={meta.total} />
+ 
+                   </>
+                 )}
+               </div>
             )}
           </div>
         </div>
@@ -803,7 +903,7 @@ function LeyendaPuntos({ apuesta, total }) {
 /* ══════════════════════════════════════════
    RANKING GLOBAL ADMIN (vista por defecto)
 ══════════════════════════════════════════ */
-function RankingGlobalAdmin({ tabla, meta, loading, onRefresh, areasTabla = [], areasLoading = false, isPro = false }) {
+function RankingGlobalAdmin({ tabla, meta, loading, onRefresh, areasTabla = [], areasLoading = false, areasIndividual = [], areasIndividualLoading = false, isPro = false }) {
   return (
     <div className="rk-in">
       {/* Header */}
@@ -873,60 +973,98 @@ function RankingGlobalAdmin({ tabla, meta, loading, onRefresh, areasTabla = [], 
         </>
       )}
 
-      {/* ── Ranking por área acumulado (plan_pro) ─────────── */}
+      {/* ── Ranking Top 5 Por región (plan_pro) ─────────── */}
       {isPro && (
         <div style={{ marginTop: 28 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
             <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: 'rgba(235,195,43,.7)' }}>
-              RANKING POR ÁREA — ACUMULADO
+              RANKING Por región — TOP 5
             </span>
             <span style={{ flex: 1, height: 1, background: 'rgba(235,195,43,.15)' }} />
           </div>
 
-          {areasLoading ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="rk-sk" style={{ height: 44, borderRadius: 10 }} />
+          {areasIndividualLoading ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {[...Array(2)].map((_, i) => (
+                <div key={i} className="rk-sk" style={{ height: 120, borderRadius: 12 }} />
               ))}
             </div>
-          ) : areasTabla.length === 0 ? (
+          ) : areasIndividual.length === 0 ? (
             <p style={{ fontSize: 12, color: '#94a3b8', textAlign: 'center', padding: '16px 0' }}>
-              Sin datos por área todavía — aparecerá cuando haya apuestas finalizadas.
+              Sin datos Por región todavía — aparecerá cuando haya apuestas cerradas o finalizadas con puntos calculados.
             </p>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {areasTabla.map((area, idx) => {
-                const medals = ['🥇', '🥈', '🥉']
-                const medal  = medals[idx] || null
-                return (
-                  <div
-                    key={area.area_id}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 12,
-                      padding: '10px 14px', borderRadius: 10,
-                      background: idx === 0 ? 'rgba(235,195,43,.07)' : '#fff',
-                      border: `1px solid ${idx === 0 ? 'rgba(235,195,43,.2)' : '#f0eadb'}`,
-                    }}
-                  >
-                    <span style={{ fontSize: 15, width: 22, textAlign: 'center', flexShrink: 0 }}>
-                      {medal || <span style={{ fontSize: 11, fontWeight: 700, color: '#94a3b8' }}>#{area.posicion}</span>}
-                    </span>
-                    <span style={{ flex: 1, fontSize: 13, fontWeight: 700, color: '#0c182b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {area.nombre}
-                    </span>
-                    <span style={{ fontSize: 12, fontWeight: 800, color: idx === 0 ? '#c99f16' : '#475569', flexShrink: 0 }}>
-                      {area.puntos_totales} pts
-                    </span>
-                    <span style={{ fontSize: 10, color: '#94a3b8', flexShrink: 0 }}>
-                      {area.miembros_participantes} {area.miembros_participantes === 1 ? 'miembro' : 'miembros'}
-                    </span>
-                  </div>
-                )
-              })}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 14 }}>
+              {areasIndividual.map((area) => (
+                <AreaRankingCard key={area.area_id} area={area} />
+              ))}
             </div>
           )}
         </div>
       )}
+    </div>
+  )
+}
+
+/* ── Tarjeta de ranking de área con top-5 ── */
+function AreaRankingCard({ area }) {
+  const MEDALS = ['🥇', '🥈', '🥉']
+  return (
+    <div style={{
+      background: '#fff',
+      border: '1px solid #f0eadb',
+      borderRadius: 14,
+      overflow: 'hidden',
+      boxShadow: '0 2px 12px rgba(12,24,43,.06)',
+    }}>
+      {/* Header del área */}
+      <div style={{
+        background: 'linear-gradient(135deg,#0c182b 0%,#1a2540 100%)',
+        padding: '10px 14px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+      }}>
+        <span style={{ fontSize: 13 }}>🏢</span>
+        <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 14, letterSpacing: '.06em', color: '#ebc32b', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {area.area_nombre || 'Sin nombre'}
+        </span>
+        <span style={{ fontSize: 9, color: 'rgba(255,255,255,.35)', fontWeight: 600 }}>
+          TOP {area.usuarios.length}
+        </span>
+      </div>
+      {/* Lista de usuarios */}
+      <div>
+        {area.usuarios.map((u, idx) => (
+          <div key={u.user_id} style={{
+            display: 'grid',
+            gridTemplateColumns: '28px 1fr 52px',
+            alignItems: 'center',
+            gap: 8,
+            padding: '8px 12px',
+            borderBottom: idx < area.usuarios.length - 1 ? '1px solid #f5f3ee' : 'none',
+            background: idx === 0 ? 'rgba(235,195,43,.04)' : 'transparent',
+          }}>
+            <span style={{ fontSize: idx < 3 ? 14 : 11, textAlign: 'center' }}>
+              {MEDALS[idx] || <span style={{ fontWeight: 700, color: '#94a3b8' }}>#{idx + 1}</span>}
+            </span>
+            <div style={{ minWidth: 0 }}>
+              <p style={{ fontSize: 12, fontWeight: idx === 0 ? 700 : 500, color: '#0c182b', margin: '0 0 1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {u.nombre}
+              </p>
+              <p style={{ fontSize: 9, color: '#94a3b8', margin: 0 }}>
+                #{u.posicion_global} global · {u.predicciones} pred
+              </p>
+            </div>
+            <div style={{ textAlign: 'right', flexShrink: 0 }}>
+              <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, color: idx === 0 ? '#c99f16' : '#0c182b' }}>
+                {u.puntos_totales}
+              </span>
+              <span style={{ fontSize: 8, color: '#94a3b8', display: 'block', lineHeight: 1 }}>pts</span>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
@@ -1161,6 +1299,179 @@ function OtrosParticipantes({ tabla, user, apuesta, expandedUser, loadingUser, p
           })}
         </div>
       )}
+    </div>
+  )
+}
+
+/* ══════════════════════════════════════════
+   RANKING Por región (apuestas tipo libre)
+══════════════════════════════════════════ */
+function RankingPorArea({ tabla, loading, miId, miAreaId }) {
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {[1, 2, 3].map(i => (
+          <div key={i}>
+            <div className="rk-sk" style={{ height: 32, borderRadius: 8, marginBottom: 6 }} />
+            {[1, 2].map(j => <div key={j} className="rk-sk" style={{ height: 44, borderRadius: 0, marginTop: 1 }} />)}
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  if (!tabla || tabla.length === 0) {
+    return (
+      <div style={{ textAlign: 'center', padding: '48px 24px', background: '#fff', borderRadius: 14, border: '1.5px solid #e8e3db' }}>
+        <p style={{ fontSize: 28, margin: '0 0 8px' }}>🏢</p>
+        <p style={{ fontWeight: 700, color: '#64748b', margin: '0 0 6px', fontSize: 15 }}>Sin datos Por región todavía</p>
+        <p style={{ fontSize: 12, color: '#94a3b8', margin: 0, lineHeight: 1.6 }}>
+          Los rankings Por región se calculan en el próximo ciclo del sistema.<br />
+          Asegúrate de que los participantes tengan un área asignada.
+        </p>
+      </div>
+    )
+  }
+
+  // Agrupar filas Por región
+  const grupos = tabla.reduce((acc, row) => {
+    const key = row.area_id || '_sin_area'
+    const nombre = row.area_nombre_cache || 'Sin área'
+    if (!acc[key]) acc[key] = { area_id: key, area_nombre: nombre, filas: [] }
+    acc[key].filas.push(row)
+    return acc
+  }, {})
+
+  const gruposList = Object.values(grupos).sort((a, b) => a.area_nombre.localeCompare(b.area_nombre))
+
+  // Colores para las áreas (rotación)
+  const AREA_COLORS = ['#6366f1','#0ea5e9','#10b981','#f59e0b','#ec4899','#8b5cf6','#14b8a6']
+  const colorForArea = (idx) => AREA_COLORS[idx % AREA_COLORS.length]
+
+  return (
+    <div className="rk-in" style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Info header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+        <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 11, letterSpacing: '.18em', color: '#94a3b8' }}>
+          RANKING Por región — {tabla.length} participantes · {gruposList.length} áreas
+        </span>
+        <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg,#e2ddd6,transparent)' }} />
+      </div>
+
+      {gruposList.map((grupo, gIdx) => {
+        const esMiArea = grupo.area_id === miAreaId
+        const color = colorForArea(gIdx)
+
+        return (
+          <div key={grupo.area_id} style={{
+            borderRadius: 14,
+            overflow: 'hidden',
+            border: `1.5px solid ${esMiArea ? 'rgba(235,195,43,.4)' : '#e8e3db'}`,
+            boxShadow: esMiArea ? '0 0 0 3px rgba(235,195,43,.08)' : '0 2px 8px rgba(12,24,43,.04)',
+          }}>
+            {/* Header del área */}
+            <div style={{
+              background: esMiArea
+                ? 'linear-gradient(90deg,#0c182b,#17376a)'
+                : `linear-gradient(90deg,${color}18,${color}08)`,
+              padding: '10px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              borderBottom: `1px solid ${esMiArea ? 'rgba(255,255,255,.08)' : `${color}20`}`,
+            }}>
+              <div style={{
+                width: 8, height: 8, borderRadius: '50%',
+                background: esMiArea ? '#ebc32b' : color,
+                boxShadow: esMiArea ? '0 0 8px rgba(235,195,43,.6)' : `0 0 6px ${color}80`,
+                flexShrink: 0,
+              }} />
+              <span style={{
+                fontFamily: "'Bebas Neue',sans-serif",
+                fontSize: 13,
+                letterSpacing: '.06em',
+                color: esMiArea ? '#fff' : '#0c182b',
+                flex: 1,
+              }}>
+                {grupo.area_nombre}
+              </span>
+              {esMiArea && (
+                <span style={{
+                  fontSize: 9, fontWeight: 800, textTransform: 'uppercase',
+                  letterSpacing: '.16em', color: '#ebc32b',
+                  background: 'rgba(235,195,43,.12)', border: '1px solid rgba(235,195,43,.25)',
+                  borderRadius: 99, padding: '2px 10px',
+                }}>
+                  Tu área
+                </span>
+              )}
+              <span style={{
+                fontSize: 10, fontWeight: 600,
+                color: esMiArea ? 'rgba(255,255,255,.5)' : '#94a3b8',
+              }}>
+                {grupo.filas.length} participante{grupo.filas.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+
+            {/* Tabla de participantes del área */}
+            <div style={{ background: '#fff' }}>
+              {/* Col header */}
+              <div style={{
+                display: 'grid', gridTemplateColumns: '40px 1fr 80px',
+                padding: '6px 16px', background: 'rgba(12,24,43,.02)',
+                borderBottom: '1px solid #f0eadb', gap: 8,
+              }}>
+                {['#', 'Participante', 'Pts'].map((h, i) => (
+                  <span key={i} style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.12em', color: '#b8c0cc', textAlign: i === 2 ? 'center' : 'left' }}>{h}</span>
+                ))}
+              </div>
+
+              {grupo.filas.map((row, rIdx) => {
+                const esYo = row.user_id === miId
+                const pos = row.posicion_en_area
+                const posColor = pos === 1 ? '#ebc32b' : pos === 2 ? '#94a3b8' : pos === 3 ? '#c2720e' : '#c8d0dc'
+
+                return (
+                  <div key={row.user_id} className={`rk-area-row${esYo ? ' me' : ''}`}
+                    style={{ borderBottom: rIdx < grupo.filas.length - 1 ? '1px solid #f5f3ee' : 'none' }}>
+                    {/* Posición */}
+                    <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 17, color: posColor, lineHeight: 1 }}>
+                      {pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : pos}
+                    </span>
+                    {/* Nombre */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                      <div style={{
+                        width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
+                        background: esYo ? 'linear-gradient(135deg,#ebc32b,#ffe169)' : `linear-gradient(135deg,${color}40,${color}20)`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontFamily: "'Bebas Neue',sans-serif", fontSize: 11,
+                        color: esYo ? '#0c182b' : color,
+                        boxShadow: esYo ? '0 0 0 2px rgba(235,195,43,.3)' : 'none',
+                      }}>
+                        {initials(row.nombre)}
+                      </div>
+                      <div style={{ minWidth: 0 }}>
+                        <p style={{ fontWeight: esYo ? 700 : 600, fontSize: 12, color: esYo ? '#ebc32b' : '#0c182b', margin: '0 0 1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {row.nombre}
+                          {esYo && <span style={{ fontSize: 9, color: '#94a3b8', fontWeight: 400, marginLeft: 4 }}>(tú)</span>}
+                        </p>
+                        <p style={{ fontSize: 9, color: '#94a3b8', margin: 0 }}>
+                          #{row.posicion} global · {row.predicciones} pred
+                        </p>
+                      </div>
+                    </div>
+                    {/* Puntos */}
+                    <div style={{ textAlign: 'center' }}>
+                      <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, color: '#0c182b', lineHeight: 1 }}>{row.puntos_totales}</span>
+                      <span style={{ fontSize: 7, color: '#94a3b8', marginLeft: 2, fontWeight: 700, display: 'block', letterSpacing: '.1em' }}>PTS</span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
