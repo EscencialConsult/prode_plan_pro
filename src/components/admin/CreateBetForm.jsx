@@ -3,6 +3,7 @@ import sheetsApi from '../../services/sheetsApi.js'
 import { useAuth } from '../../hooks/useAuth.jsx'
 import { useToast } from '../../hooks/useToast.jsx'
 import { fmtFecha, inputLocalAIsoUtc } from '../../utils/index.js'
+import { logger } from '../../utils/logger.js'
 
 /* ── Constantes ─────────────────────────────────────────── */
 const INITIAL = { titulo: '', type: 'libre', premio: '', fecha_cierre: '', partidos_ids: [] }
@@ -121,14 +122,14 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
   const [partidosBloqueados, setPartidosBloqueados] = useState([])
 
   useEffect(() => {
-    sheetsApi.areas.listar(true).then(res => setAreas(res.areas || [])).catch(console.error)
+    sheetsApi.areas.listar(true).then(res => setAreas(res.areas || [])).catch(logger.error)
   }, [])
 
   useEffect(() => {
     sheetsApi.partidos.bloqueados()
       .then(res => setPartidosBloqueados(res.partidos || []))
       .catch(err => {
-        console.warn('No se pudieron cargar partidos bloqueados:', err)
+        logger.warn('No se pudieron cargar partidos bloqueados:', err)
         setPartidosBloqueados([])
       })
   }, [])

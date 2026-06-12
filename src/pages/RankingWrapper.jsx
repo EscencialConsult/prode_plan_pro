@@ -9,12 +9,7 @@ import RankingPageUser from './RankingPageUser.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 
 export default function RankingWrapper() {
-  const { user, loading, isAdmin } = useAuth()
-
-  // ✅ DEBUG: Descomenta para ver qué está pasando
-  console.log('RankingWrapper - User:', user)
-  console.log('RankingWrapper - isAdmin:', isAdmin)
-  console.log('RankingWrapper - Will render:', isAdmin ? 'RankingPageAdmin' : 'RankingPageUser')
+  const { loading, isAdmin } = useAuth()
 
   if (loading) {
     return <div>Cargando...</div>

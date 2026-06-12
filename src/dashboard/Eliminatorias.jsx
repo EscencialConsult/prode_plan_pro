@@ -11,6 +11,7 @@
  * 🎨 Paleta centralizada en THEME (editá una vez, cambia todo).
  */
 import { useMemo, useState } from 'react'
+import { logger } from '../utils/logger.js'
 
 // ──────────────────────────────────────────────────────────────────
 // 🎨 PALETA — crema · azul medianoche · dorado · negro
@@ -647,7 +648,7 @@ export default function Eliminatorias({ matches }) {
       try {
         sessionStorage.setItem('eliminatorias_collapsed', JSON.stringify(newState))
       } catch (e) {
-        console.error('Error saving to sessionStorage:', e)
+        logger.error('Error saving to sessionStorage:', e)
       }
       return newState
     })

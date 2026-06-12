@@ -16,6 +16,7 @@ import { useBets } from '../hooks/useBets.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import PredictModal from '../components/user/PredictModal.jsx'
 import sheetsApi from '../services/sheetsApi.js'
+import { logger } from '../utils/logger.js'
 
 /* ── helpers ── */
 function timeLeft(d){const diff=new Date(d)-Date.now();if(diff<=0)return'Cerrada';const h=Math.floor(diff/3600000);const m=Math.floor((diff%3600000)/60000);if(h>=24)return`${Math.floor(h/24)}d ${h%24}h`;if(h>0)return`${h}h ${m}m`;return`${m}m`}
@@ -158,6 +159,24 @@ const filtered = bets.filter(b => {
   // "Cerradas" muestra las que ya no están abiertas para apostar
   if (filter === 'cerradas') return !isOpen(b)
   return true
+}).sort((a, b) => {
+  const aOpen = isOpen(a)
+  const bOpen = isOpen(b)
+
+  if (aOpen && !bOpen) return -1
+  if (!aOpen && bOpen) return 1
+
+  // If both are open, sort by fecha_cierre ascending (closest to closing first)
+  if (aOpen && bOpen) {
+    if (!a.fecha_cierre) return 1
+    if (!b.fecha_cierre) return -1
+    return new Date(a.fecha_cierre) - new Date(b.fecha_cierre)
+  }
+
+  // If both are closed, sort by fecha_cierre descending (most recently closed first)
+  if (!a.fecha_cierre) return 1
+  if (!b.fecha_cierre) return -1
+  return new Date(b.fecha_cierre) - new Date(a.fecha_cierre)
 })
 
   // Guardar predicciones en lote transaccional
@@ -198,7 +217,7 @@ const filtered = bets.filter(b => {
       setActiveBet(null)
       showToast('Predicciones guardadas exitosamente',true)
     }catch(err){
-      console.error('Error guardando:', err)
+      logger.error('Error guardando:', err)
       showToast(err.message||'Error al guardar',false)
     }finally{
       setSaving(false)

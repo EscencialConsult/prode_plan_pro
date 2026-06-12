@@ -3,6 +3,7 @@ import AppShell from '../dashboard/AppShell.jsx'
 import { useBets } from '../hooks/useBets.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { formatDate, isBetOpen } from '../utils/index.js'
+import { logger } from '../utils/logger.js'
 import sheetsApi from '../services/sheetsApi.js'
 import { useToast, useConfirm } from '../hooks/useToast.jsx'
 
@@ -84,7 +85,7 @@ useEffect(() => {
     try {
       await loadBets()
     } catch (error) {
-      console.error('Error cargando datos iniciales:', error)
+      logger.error('Error cargando datos iniciales:', error)
     } finally {
       setInitialLoading(false)
     }
@@ -113,7 +114,7 @@ useEffect(() => {
   /* ── Funciones: Áreas ─────────────────────────────────── */
   async function loadAreas() {
     try { const r = await sheetsApi.areas.listar(true); setAreas(r.areas || []) }
-    catch (e) { console.error('Error cargando áreas:', e) }
+    catch (e) { logger.error('Error cargando áreas:', e) }
   }
 
   async function loadAreasAll() {

@@ -7,6 +7,7 @@ import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useAuth } from '../../hooks/useAuth.jsx'
 import { timeLeft, isBetOpen } from '../../utils/index.js'
+import { logger } from '../../utils/logger.js'
 import { useToast } from '../../hooks/useToast.jsx'
 
 function esEliminatoria(fase) {
@@ -93,7 +94,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
         }
       }
     } catch (e) {
-      console.warn('Error loading draft:', e)
+      logger.warn('Error loading draft:', e)
     }
 
     setScores(initialScores)
@@ -108,7 +109,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
     try {
       localStorage.setItem(draftKey, JSON.stringify({ scores, clasificados }))
     } catch (e) {
-      console.warn('Error saving draft:', e)
+      logger.warn('Error saving draft:', e)
     }
   }, 2000, [scores, clasificados])
 
@@ -258,9 +259,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
     }
   }
 
-  // ✅ FUNCIÓN SIMPLIFICADA QUE SÍ FUNCIONA
   const cerrarModal = () => {
-    console.log('🔴 CERRANDO MODAL') // Para debug
     onClose()
   }
 

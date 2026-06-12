@@ -25,6 +25,7 @@ const CSS = `
 
 /* Panel izquierdo */
 .rk-sidebar { width:380px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;background:#fcfaf6;border-right:1px solid #f0eadb }
+.rk-sidebar-scroll { flex:1;overflow-y:auto }
 .rk-sidebar-scroll::-webkit-scrollbar { width:2px }
 .rk-sidebar-scroll::-webkit-scrollbar-thumb { background:#e2ddd6;border-radius:99px }
 
@@ -210,11 +211,41 @@ export default function RankingPageAdmin() {
         <div className="rk-shell" style={{ display: 'flex', height: 'calc(100vh - 200px)', minHeight: 520, borderRadius: 20, overflow: 'hidden', boxShadow: '0 8px 48px rgba(12,24,43,.14)' }}>
 
           <div className="rk-sidebar">
-            <div style={{ padding: '20px 16px 14px', borderBottom: '1px solid #f0eadb' }}>
-              <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 11, letterSpacing: '.2em', color: '#94a3b8', margin: '0 0 10px' }}>APUESTAS</p>
-              <div style={{ display: 'flex', gap: 6 }}>
-                <Pill color="#22c55e" label={`${bets.filter(b => isOpen(b)).length} activas`} />
-                <Pill color="#64748b" label={`${bets.filter(b => !isOpen(b)).length} cerradas`} />
+            <div style={{ padding: '20px 16px 14px', borderBottom: '1px solid #f0eadb', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 11, letterSpacing: '.2em', color: '#94a3b8', margin: 0 }}>APUESTAS</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <Pill color="#22c55e" label={`${bets.filter(b => isOpen(b)).length} activas`} />
+                  <Pill color="#64748b" label={`${bets.filter(b => !isOpen(b)).length} cerradas`} />
+                </div>
+                <button
+                  onClick={() => setSel(null)}
+                  style={{
+                    background: !sel ? '#0c182b' : 'transparent',
+                    border: '1px solid #0c182b',
+                    color: !sel ? '#ebc32b' : '#0c182b',
+                    borderRadius: 6,
+                    padding: '3px 8px',
+                    fontSize: '9px',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '.05em',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                  }}
+                  onMouseEnter={e => {
+                    if (sel) {
+                      e.currentTarget.style.background = 'rgba(12,24,43,0.06)'
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (sel) {
+                      e.currentTarget.style.background = 'transparent'
+                    }
+                  }}
+                >
+                  Ver Ranking Global
+                </button>
               </div>
             </div>
 

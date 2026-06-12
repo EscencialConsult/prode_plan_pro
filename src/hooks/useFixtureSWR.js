@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import sheetsApi from '../services/sheetsApi'
+import { logger } from '../utils/logger.js'
 
 /**
  * Hook SWR personalizado para fixture (y otros endpoints reutilizables)
@@ -32,7 +33,7 @@ export function useFixtureSWR(filters = {}) {
         }
       }
     } catch (e) {
-      console.warn('⚠️ Error leyendo fixture del localStorage:', e)
+      logger.warn('Error leyendo fixture del localStorage:', e)
     }
     return null
   })
@@ -57,7 +58,7 @@ export function useFixtureSWR(filters = {}) {
       }
       localStorage.setItem(FIXTURE_CACHE_KEY, JSON.stringify(payload))
     } catch (e) {
-      console.warn('⚠️ Error guardando fixture a localStorage:', e)
+      logger.warn('Error guardando fixture a localStorage:', e)
       // Si localStorage se llena, intentar limpiar cache viejo
       if (e.name === 'QuotaExceededError') {
         handleStorageQuotaFull()
@@ -94,14 +95,10 @@ export function useFixtureSWR(filters = {}) {
         // 🔄 Hubo cambios → actualizar localStorage + state
         saveToCache(freshData)
         setFixture(freshData)
-        console.log('✅ Fixture actualizado desde backend', freshData.length, 'partidos')
-      } else {
-        // ✅ Sin cambios → no re-renderizar
-        console.log('✅ Fixture ya estaba al día, sin cambios')
       }
     } catch (err) {
       if (err.name !== 'AbortError') {
-        console.error('❌ Error revalidando fixture:', err)
+        logger.error('Error revalidando fixture:', err)
         setError(err.message)
       }
     } finally {
@@ -125,7 +122,6 @@ export function useFixtureSWR(filters = {}) {
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden) {
-        console.log('📲 Pestaña visible, revalidando fixture...')
         revalidate()
       }
     }
@@ -193,7 +189,7 @@ export function useSWR(key, fetcher, options = {}) {
           timestamp: Date.now(),
         }))
       } catch (e) {
-        console.warn('⚠️ Error guardando a cache:', e)
+        logger.warn('Error guardando a cache:', e)
       }
     }
   }, [cacheKey])
@@ -284,7 +280,7 @@ export function handleStorageQuotaFull() {
       navigator.storage.estimate().then(estimate => {
         const percentUsed = (estimate.usage / estimate.quota) * 100
         if (percentUsed > 80) {
-          console.warn(`⚠️ Storage al ${percentUsed.toFixed(1)}%, limpiando caches...`)
+          logger.warn(`Storage al ${percentUsed.toFixed(1)}%, limpiando caches...`)
           // Borrar los caches menos críticos
           localStorage.removeItem(FIXTURE_CACHE_KEY)
           localStorage.removeItem('apuestas_cache')
@@ -293,6 +289,6 @@ export function handleStorageQuotaFull() {
       })
     }
   } catch (e) {
-    console.warn('Error chequeando storage:', e)
+    logger.warn('Error chequeando storage:', e)
   }
 }

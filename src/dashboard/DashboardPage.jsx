@@ -9,6 +9,7 @@ import AppShell from '../dashboard/AppShell.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { useBets } from '../hooks/useBets.jsx'
 import { isBetOpen, timeLeft } from '../utils/index.js'
+import { logger } from '../utils/logger.js'
 import { Link } from 'react-router-dom'
 import PredictModal from '../components/user/PredictModal.jsx'
 import Loading from '../hooks/Loading.jsx'
@@ -163,7 +164,13 @@ export default function DashboardPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [rankingData, setRankingData] = useState(null)
 
-  const activeBets = bets.filter(b => isBetOpen(b))
+  const activeBets = [...bets]
+    .filter(b => isBetOpen(b))
+    .sort((a, b) => {
+      if (!a.fecha_cierre) return 1
+      if (!b.fecha_cierre) return -1
+      return new Date(a.fecha_cierre) - new Date(b.fecha_cierre)
+    })
 
   useEffect(() => {
     if (!user) return
@@ -175,7 +182,7 @@ export default function DashboardPage() {
           setRankingData(res.mi_posicion)
         }
       })
-      .catch(console.error)
+      .catch(logger.error)
   }, [user?.id])
   const liveBets = bets.filter(b => b.partidos?.some(p => p.estado === 'en_vivo'))
   const myPredCount = Object.keys(predictions).length
@@ -232,7 +239,7 @@ export default function DashboardPage() {
       setSelectedBet(null)
       setIsSubmitting(false)
     } catch (error) {
-      console.error('Error guardando predicciones:', error)
+      logger.error('Error guardando predicciones:', error)
       toast.error(error.message || 'Error al guardar predicciones. Por fvor intentá de nuevo.')
       setIsSubmitting(false)
     }

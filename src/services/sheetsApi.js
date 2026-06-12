@@ -17,14 +17,15 @@
    ============================================================ */
 
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '../utils/logger.js'
 
 // ── Configuración ─────────────────────────────────────────
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.error(
-    '⚠️ Faltan variables de entorno VITE_SUPABASE_URL o VITE_SUPABASE_ANON_KEY.\n' +
+  logger.error(
+    'Faltan variables de entorno VITE_SUPABASE_URL o VITE_SUPABASE_ANON_KEY.\n' +
     'Verificá que el archivo .env esté en la raíz del proyecto y reiniciá el servidor de Vite.'
   )
 }
