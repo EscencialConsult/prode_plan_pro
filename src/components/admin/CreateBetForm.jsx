@@ -7,15 +7,6 @@ import { fmtFecha, inputLocalAIsoUtc, isoUtcAInputLocal } from '../../utils/inde
 /* ── Constantes ─────────────────────────────────────────── */
 const INITIAL = { titulo: '', type: 'grupos', premio: '', fecha_cierre: '', partidos_ids: [] }
 
-/** Devuelve la fecha de cierre sugerida = primer partido - 10 min,
- *  en formato compatible con <input type="datetime-local"> (hora local). */
-function sugerirFechaCierre(primerPartido) {
-  if (!primerPartido?.fecha_partido) return ''
-  const fecha = new Date(primerPartido.fecha_partido)
-  fecha.setMinutes(fecha.getMinutes() - 10)
-  return isoUtcAInputLocal(fecha.toISOString())
-}
-
 const ORDEN_FASES = ['grupos', '16avos', 'octavos', 'cuartos', 'semis', '3er_puesto', 'final']
 const LABEL_FASE = {
   grupos: 'Fase de Grupos',
@@ -142,6 +133,7 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
   const [busqueda, setBusqueda] = useState('')
   const [errorFecha, setErrorFecha] = useState('')
   const [primerPartido, setPrimerPartido] = useState(null)
+  const [ultimoPartido, setUltimoPartido] = useState(null)
   const [partidosBloqueados, setPartidosBloqueados] = useState([])
 
   useEffect(() => {
@@ -210,53 +202,34 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
 
   const seleccionados = form.partidos_ids.length
 
+  // La apuesta ya no usa una fecha de cierre manual: cada partido se cierra
+  // solo cuando arranca. La fecha de cierre global se autocompleta con la
+  // fecha del ÚLTIMO partido seleccionado (cuando se cierra el último).
   useEffect(() => {
-    if (form.partidos_ids.length === 0) {
-      setErrorFecha('')
-      setPrimerPartido(null)
-      return
-    }
+    setErrorFecha('')
 
     const partidosSeleccionados = partidosDisponibles.filter(m => form.partidos_ids.includes(m.id))
     if (partidosSeleccionados.length === 0) {
-      setErrorFecha('')
       setPrimerPartido(null)
+      setUltimoPartido(null)
+      setForm(prev => (prev.fecha_cierre ? { ...prev, fecha_cierre: '' } : prev))
       return
     }
 
-    const partidoMasTemprano = partidosSeleccionados.reduce((earliest, current) => {
-      const currentDate = new Date(current.fecha_partido)
-      const earliestDate = new Date(earliest.fecha_partido)
-      return currentDate < earliestDate ? current : earliest
-    }, partidosSeleccionados[0])
+    const partidoMasTemprano = partidosSeleccionados.reduce((earliest, current) =>
+      new Date(current.fecha_partido) < new Date(earliest.fecha_partido) ? current : earliest
+    , partidosSeleccionados[0])
+
+    const partidoMasTardio = partidosSeleccionados.reduce((latest, current) =>
+      new Date(current.fecha_partido) > new Date(latest.fecha_partido) ? current : latest
+    , partidosSeleccionados[0])
 
     setPrimerPartido(partidoMasTemprano)
+    setUltimoPartido(partidoMasTardio)
 
-    // Autocálculo: fecha_cierre = primer partido - 10 min.
-    // Siempre que cambia el set de partidos, sobrescribimos la fecha.
-    const sugerida = sugerirFechaCierre(partidoMasTemprano)
-    if (sugerida && form.fecha_cierre !== sugerida) {
-      setForm(prev => ({ ...prev, fecha_cierre: sugerida }))
-      setErrorFecha('')
-      return
-    }
-
-    if (!form.fecha_cierre) {
-      setErrorFecha('')
-      return
-    }
-
-    const fechaLimite = new Date(form.fecha_cierre)
-    const fechaPrimerPartido = new Date(partidoMasTemprano.fecha_partido)
-
-    if (fechaLimite >= fechaPrimerPartido) {
-      setErrorFecha(`La fecha límite debe ser ANTES del ${fmtFecha(partidoMasTemprano.fecha_partido)} (${partidoMasTemprano.equipo_local} vs ${partidoMasTemprano.equipo_visitante})`)
-    } else if (fechaLimite.getTime() <= Date.now()) {
-      setErrorFecha('La fecha límite debe ser futura.')
-    } else {
-      setErrorFecha('')
-    }
-  }, [form.fecha_cierre, form.partidos_ids, partidosDisponibles])
+    const cierre = isoUtcAInputLocal(partidoMasTardio.fecha_partido)
+    setForm(prev => (prev.fecha_cierre === cierre ? prev : { ...prev, fecha_cierre: cierre }))
+  }, [form.partidos_ids, partidosDisponibles])
 
   function toggleMatch(id) {
     setForm(prev => ({
@@ -279,9 +252,10 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
   }
 
   function limpiarSeleccion() {
-    setForm(prev => ({ ...prev, partidos_ids: [] }))
+    setForm(prev => ({ ...prev, partidos_ids: [], fecha_cierre: '' }))
     setErrorFecha('')
     setPrimerPartido(null)
+    setUltimoPartido(null)
   }
 
   function handleChangeFase(f) {
@@ -321,35 +295,13 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
       setBusqueda('')
       setErrorFecha('')
       setPrimerPartido(null)
+      setUltimoPartido(null)
     } catch (err) {
       toast.error('Error al crear apuesta: ' + err.message)
     }
   }
 
-  const canSubmit = !loading && seleccionados > 0 && !errorFecha && form.fecha_cierre
-
-  const maxFechaCierre = useMemo(() => {
-    if (!primerPartido) return ''
-    const fecha = new Date(primerPartido.fecha_partido)
-    fecha.setMinutes(fecha.getMinutes() - 2)
-    const yyyy = fecha.getFullYear()
-    const mm = String(fecha.getMonth() + 1).padStart(2, '0')
-    const dd = String(fecha.getDate()).padStart(2, '0')
-    const hh = String(fecha.getHours()).padStart(2, '0')
-    const mi = String(fecha.getMinutes()).padStart(2, '0')
-    return `${yyyy}-${mm}-${dd}T${hh}:${mi}`
-  }, [primerPartido])
-
-  const minFechaCierre = useMemo(() => {
-    const ahora = new Date()
-    ahora.setMinutes(ahora.getMinutes() + 1)
-    const yyyy = ahora.getFullYear()
-    const mm = String(ahora.getMonth() + 1).padStart(2, '0')
-    const dd = String(ahora.getDate()).padStart(2, '0')
-    const hh = String(ahora.getHours()).padStart(2, '0')
-    const mi = String(ahora.getMinutes()).padStart(2, '0')
-    return `${yyyy}-${mm}-${dd}T${hh}:${mi}`
-  }, [primerPartido])
+  const canSubmit = !loading && seleccionados > 0 && form.fecha_cierre
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
@@ -691,20 +643,15 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
 
         <div className="flex flex-col gap-1.5">
           <Field
-            label={primerPartido
-              ? `Fecha límite (antes del ${fmtFecha(primerPartido.fecha_partido)})`
-              : 'Fecha límite (seleccioná partidos primero)'}
+            label="Cierre de la apuesta (automático)"
             type="datetime-local"
             value={form.fecha_cierre}
-            min={minFechaCierre}
-            max={maxFechaCierre || undefined}
-            onChange={e => setForm(p => ({ ...p, fecha_cierre: e.target.value }))}
-            error={errorFecha}
-            disabled={!primerPartido}
-            required
+            readOnly
+            disabled={!ultimoPartido}
+            title="Se calcula solo: la apuesta queda abierta hasta que empieza el último partido. Cada partido se cierra al arrancar."
           />
 
-          {primerPartido && !errorFecha && (
+          {ultimoPartido && (
             <div
               className="flex items-start gap-2 px-3 py-2 rounded-lg"
               style={{ background: 'rgba(255,125,0,0.06)', border: '1px solid rgba(255,125,0,0.15)' }}
@@ -715,7 +662,10 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
                 <line x1="12" y1="8" x2="12.01" y2="8" />
               </svg>
               <span className="font-body text-[11px]" style={{ color: C.steel }}>
-                El primer partido es <strong style={{ color: C.ink }}>{primerPartido.equipo_local} vs {primerPartido.equipo_visitante}</strong> el {fmtFecha(primerPartido.fecha_partido)}.
+                Cada partido se cierra solo al arrancar. Los usuarios pueden pronosticar
+                cada partido hasta su hora de inicio. {primerPartido && (
+                  <>El primero es <strong style={{ color: C.ink }}>{primerPartido.equipo_local} vs {primerPartido.equipo_visitante}</strong> el {fmtFecha(primerPartido.fecha_partido)}</>
+                )} y el último el <strong style={{ color: C.ink }}>{fmtFecha(ultimoPartido.fecha_partido)}</strong> (cierre general).
               </span>
             </div>
           )}

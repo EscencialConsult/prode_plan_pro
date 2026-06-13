@@ -6,7 +6,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useAuth } from '../../hooks/useAuth.jsx'
-import { timeLeft, isBetOpen } from '../../utils/index.js'
+import { timeLeft, isBetOpen, isMatchOpen, fmtFecha } from '../../utils/index.js'
 import { useToast } from '../../hooks/useToast.jsx'
 
 function esEliminatoria(fase) {
@@ -187,6 +187,8 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
     const empatesSinClasificado = []
 
     for (const match of (bet.partidos || [])) {
+      // Cada partido se cierra al arrancar: no enviamos los que ya empezaron.
+      if (!isMatchOpen(match)) continue
       const vals = scores[match.id]
       if (!vals) continue
       const pl = parseInt(vals.local, 10)
@@ -495,7 +497,12 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
             {bet.partidos?.map((match, idx) => {
               const isLive = match.estado === 'en_vivo'
               const isFinished = match.estado === 'finalizado'
-              const isDisabled = !open || isLive || isFinished || estaBloqueado
+              // Cada partido se cierra solo cuando arranca (su propia fecha_partido).
+              const matchOpen = isMatchOpen(match)
+              // Bloqueado por: área faltante, apuesta cerrada (estado), o este partido ya empezó.
+              const isDisabled = estaBloqueado || bet.estado !== 'abierta' || !matchOpen
+              // "Cerrado por hora": el partido ya empezó pero el estado todavía no se sincronizó.
+              const matchCerrado = !matchOpen && !isLive && !isFinished
               const sc = scores[match.id] || { local: '', visitante: '' }
               const hasScore = sc.local !== '' && sc.visitante !== ''
               const elim = esEliminatoria(match.fase)
@@ -536,6 +543,17 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                       {isFinished && (
                         <span className="inline-flex items-center bg-slate-600 text-white text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full">
                           FIN
+                        </span>
+                      )}
+                      {matchCerrado && (
+                        <span className="inline-flex items-center bg-slate-600 text-white text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full">
+                          CERRADO
+                        </span>
+                      )}
+                      {matchOpen && match.fecha_partido && (
+                        <span className="inline-flex items-center gap-1 bg-emerald-500/90 text-white text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full">
+                          <span className="w-1 h-1 rounded-full bg-white" />
+                          DISPONIBLE
                         </span>
                       )}
                       {!isLive && !isFinished && completo && (
@@ -606,6 +624,23 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                       )}
                     </div>
                   </div>
+
+                  {match.fecha_partido && (
+                    matchOpen ? (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 border-t border-emerald-100 text-[10px] font-bold text-emerald-700">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        Disponible hasta {fmtFecha(match.fecha_partido)}
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 border-t border-slate-200 text-[10px] font-bold text-slate-500">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                          <rect x="3" y="11" width="18" height="11" rx="2" />
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                        Cerrado · el partido ya comenzó
+                      </div>
+                    )
+                  )}
 
                   {elim && empate && (
                     <div className="px-3 py-3 bg-amber-50 border-t border-dashed border-amber-200">

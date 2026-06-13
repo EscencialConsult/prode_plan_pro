@@ -164,6 +164,17 @@ export function isBetOpen(bet) {
   return new Date(bet.fecha_cierre) > new Date()
 }
 
+/** Devuelve true si un partido individual sigue abierto para pronosticar.
+ *  Cada partido se cierra solo cuando arranca (su fecha_partido) o cuando
+ *  ya está en vivo / finalizado. Si no tiene fecha cargada, no se bloquea. */
+export function isMatchOpen(match) {
+  if (!match) return false
+  if (match.estado === 'en_vivo' || match.estado === 'finalizado') return false
+  const inicio = match.fecha_partido ? new Date(match.fecha_partido) : null
+  if (!inicio || isNaN(inicio.getTime())) return true
+  return inicio > new Date()
+}
+
 /** Clases CSS para el estado de una apuesta */
 export function betStatusClass(estado) {
   return {
