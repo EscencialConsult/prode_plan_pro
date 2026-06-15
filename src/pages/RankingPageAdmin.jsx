@@ -128,8 +128,11 @@ export default function RankingPageAdmin() {
   }
 
   async function cargarRankingGlobal(apuestaIds = []) {
-    const titulo = apuestaIds.length > 0
-      ? `Ranking seleccionado · ${apuestaIds.length} apuesta${apuestaIds.length > 1 ? 's' : ''}`
+    // Si están TODAS las apuestas visibles seleccionadas → usar el VIEW global (más completo y correcto)
+    const esSubconjunto = apuestaIds.length > 0 && apuestaIds.length < bets.length
+    const idsEfectivos = esSubconjunto ? apuestaIds : []
+    const titulo = idsEfectivos.length > 0
+      ? `Ranking seleccionado · ${idsEfectivos.length} apuesta${idsEfectivos.length > 1 ? 's' : ''}`
       : 'Ranking Global'
     setSel({ id: 'global', titulo, tipo: 'global' })
     setLoading(true); setTabla([]); setMeta({})
@@ -137,10 +140,10 @@ export default function RankingPageAdmin() {
     try {
       const rT = await sheetsApi.predicciones.tablaGlobal({
         user_id: user?.id || user?.user_id,
-        apuesta_ids: apuestaIds.length > 0 ? apuestaIds : undefined,
+        apuesta_ids: idsEfectivos.length > 0 ? idsEfectivos : undefined,
       })
       setTabla(rT.tabla || [])
-      setMeta({ total: rT.total, mi_posicion: rT.mi_posicion, esta_en_top: rT.esta_en_top, apuestas_n: apuestaIds.length || 0 })
+      setMeta({ total: rT.total, mi_posicion: rT.mi_posicion, esta_en_top: rT.esta_en_top, apuestas_n: idsEfectivos.length || 0 })
     } catch (e) { toast.error('Error cargando ranking global: ' + e.message) }
     finally { setLoading(false) }
   }
