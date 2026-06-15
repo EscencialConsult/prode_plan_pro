@@ -21,21 +21,17 @@ export default function ProtectedRoute({ requireAdmin = false }) {
   if (requireAdmin && !isAdmin) return <Navigate to="/" replace />
 
   const isPlaceholderEmail = user.email ? user.email.toLowerCase().includes('@prodetalento.com') : false
-  const needsUpdate = !isAdmin && (!user.celular || user.celular.trim() === '' || isPlaceholderEmail)
+  const needsUpdate = !isAdmin && (!user.celular || user.celular.trim() === '')
 
   async function handleSubmit(e) {
     e.preventDefault()
     setSaving(true)
     setError(null)
     try {
-      if (isPlaceholderEmail && (!form.email || !form.email.includes('@'))) {
-        throw new Error('Por favor, ingresá un correo electrónico válido.')
-      }
       if (!form.celular || form.celular.trim() === '') {
         throw new Error('Por favor, ingresá tu número de teléfono / WhatsApp.')
       }
-      const emailToSave = isPlaceholderEmail ? form.email.trim() : user.email
-      await sheetsApi.usuarios.actualizarMisDatos(form.celular.trim(), emailToSave)
+      await sheetsApi.usuarios.actualizarMisDatos(form.celular.trim())
       await refreshUser()
       toast.success('¡Datos actualizados correctamente!')
     } catch (err) {
@@ -129,31 +125,6 @@ export default function ProtectedRoute({ requireAdmin = false }) {
                   style={{ background: 'linear-gradient(90deg, transparent, rgba(134,200,115,.2) 50%, transparent)' }} />
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  {isPlaceholderEmail && (
-                    <div>
-                      <label htmlFor="block-email"
-                        className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
-                        style={{ color: 'rgba(255,255,255,.7)' }}>
-                        Correo Electrónico
-                      </label>
-                      <input
-                        id="block-email"
-                        type="email"
-                        value={form.email}
-                        onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                        placeholder="ejemplo@correo.com"
-                        required
-                        className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
-                        style={inputStyle}
-                        onFocus={onFocus}
-                        onBlur={onBlur}
-                      />
-                      <p className="font-body text-xs mt-1.5 text-yellow-400/90 leading-normal">
-                        ⚠️ Tenés asignado un correo temporal. Por favor, ingresá tu correo real para poder iniciar sesión en el futuro.
-                      </p>
-                    </div>
-                  )}
-
                   <div>
                     <label htmlFor="block-celular"
                       className="block font-body font-bold text-xs uppercase tracking-widest mb-2"

@@ -601,11 +601,13 @@ const usuarios = {
     throw new Error('Función "crear usuario manual" todavía no implementada en la versión Supabase. Pedí al usuario que se registre normalmente y aprobalo.')
   },
 
-  actualizarMisDatos: async (celular, email) => {
-    const { data, error } = await supabase.rpc('actualizar_mis_datos', {
-      p_celular: celular,
-      p_email: email,
-    })
+  actualizarMisDatos: async (celular) => {
+    const { data: { user: authUser } } = await supabase.auth.getUser()
+    if (!authUser) throw new Error('No hay sesión activa')
+    const { data, error } = await supabase
+      .from('usuarios')
+      .update({ celular })
+      .eq('id', authUser.id)
     checkError(error, 'usuarios.actualizarMisDatos')
     invalidateClientCache()
     return data
