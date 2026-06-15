@@ -1055,33 +1055,31 @@ const predicciones = {
       }
       rankingArr = ranking || []
     } else {
-      // Con filtro: agregar desde predicciones filtradas por apuesta_ids
-      const { data: preds, error: predErr } = await supabase
-        .from('predicciones')
-        .select('user_id, puntos, fecha_registro')
-        .in('apuesta_id', apuestaIds)
+      // Con filtro: predicciones de esas apuestas + nombres del view (bypasea RLS de usuarios)
+      const [predsResult, namesResult] = await Promise.all([
+        supabase
+          .from('predicciones')
+          .select('user_id, puntos, fecha_registro')
+          .in('apuesta_id', apuestaIds),
+        supabase
+          .from('ranking_global')
+          .select('user_id, nombre'),
+      ])
 
-      if (predErr) {
-        console.error('Error fetching predicciones filtradas:', predErr)
-        return { ok: false, error: predErr.message, tabla: [] }
+      if (predsResult.error) {
+        console.error('Error fetching predicciones filtradas:', predsResult.error)
+        return { ok: false, error: predsResult.error.message, tabla: [] }
       }
 
-      const userIds = [...new Set((preds || []).map(p => p.user_id))]
-      let userNames = {}
-      if (userIds.length > 0) {
-        const { data: users } = await supabase
-          .from('usuarios')
-          .select('id, nombre')
-          .in('id', userIds)
-        ;(users || []).forEach(u => { userNames[u.id] = u.nombre })
-      }
+      const nameMap = {}
+      ;(namesResult.data || []).forEach(r => { nameMap[r.user_id] = r.nombre })
 
       const userMap = {}
-      ;(preds || []).forEach(p => {
+      ;(predsResult.data || []).forEach(p => {
         if (!userMap[p.user_id]) {
           userMap[p.user_id] = {
             user_id: p.user_id,
-            nombre: userNames[p.user_id] || 'Usuario',
+            nombre: nameMap[p.user_id] || 'Participante',
             puntos_totales: 0,
             predicciones: 0,
             aciertos_exactos: 0,
