@@ -10,7 +10,6 @@ export default function ProtectedRoute({ requireAdmin = false }) {
   const { toast } = useToast()
 
   const [form, setForm] = useState(() => ({
-    email: user ? (user.email.toLowerCase().includes('@prodetalento.com') ? '' : user.email) : '',
     celular: user ? (user.celular || '') : '',
   }))
   const [saving, setSaving] = useState(false)
@@ -20,7 +19,6 @@ export default function ProtectedRoute({ requireAdmin = false }) {
   if (!user) return <Navigate to="/login" replace />
   if (requireAdmin && !isAdmin) return <Navigate to="/" replace />
 
-  const isPlaceholderEmail = user.email ? user.email.toLowerCase().includes('@prodetalento.com') : false
   const needsUpdate = !isAdmin && (!user.celular || user.celular.trim() === '')
 
   async function handleSubmit(e) {

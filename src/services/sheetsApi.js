@@ -334,17 +334,16 @@ const auth = {
     return { ok: true }
   },
 
-  registro: async (nombre, email, dni, password) => {
+  registro: async (nombre, dni, password) => {
     const authEmail = `${dni.trim()}@prodetalento.com`
     const { data, error } = await supabase.auth.signUp({
       email: authEmail,
       password,
-      options: { 
-        data: { 
+      options: {
+        data: {
           nombre: nombre.trim(),
           dni: dni.trim(),
-          email_contacto: email.trim().toLowerCase()
-        } 
+        }
       },
     })
     if (error) throw new Error(traducirErrorAuth(error))

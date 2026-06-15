@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import sheetsApi from '../services/sheetsApi.js'
 
 export default function RegisterPage() {
-  const [form, setForm]       = useState({ nombre: '', email: '', dni: '', password: '' })
+  const [form, setForm]       = useState({ nombre: '', dni: '', password: '' })
   const [done, setDone]       = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState(null)
@@ -13,7 +13,7 @@ export default function RegisterPage() {
     setLoading(true)
     setError(null)
     try {
-      await sheetsApi.auth.registro(form.nombre, form.email, form.dni, form.password)
+      await sheetsApi.auth.registro(form.nombre, form.dni, form.password)
       setDone(true)
     } catch (err) {
       setError(err.message || 'No se pudo completar el registro')
@@ -125,11 +125,8 @@ export default function RegisterPage() {
                 <p className="font-body text-sm leading-relaxed mb-2 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.55)' }}>
                   Tu cuenta está <strong style={{ color: '#86C873' }}>pendiente de aprobación</strong> por el administrador.
                 </p>
-                <p className="font-body text-sm leading-relaxed mb-2 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.55)' }}>
-                  Revisá tu <strong style={{ color: '#86C873' }}>correo electrónico</strong> y hacé clic en el enlace para confirmar tu registro.
-                </p>
                 <p className="font-body text-sm leading-relaxed mb-8 max-w-xs mx-auto" style={{ color: 'rgba(255,255,255,.4)' }}>
-                  Si no lo encontrás, revisá la carpeta de spam o correo no deseado. Te avisaremos cuando tu cuenta esté activa.
+                  Te avisaremos cuando tu cuenta esté activa y puedas ingresar con tu DNI.
                 </p>
 
                 {/* Divider */}
@@ -211,28 +208,6 @@ export default function RegisterPage() {
                       onChange={e => setForm(p => ({ ...p, dni: e.target.value }))}
                       placeholder="DNI"
                       required
-                      className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
-                      style={inputStyle}
-                      onFocus={onFocus}
-                      onBlur={onBlur}
-                    />
-                  </div>
-
-                  {/* Email */}
-                  <div>
-                    <label htmlFor="email"
-                      className="block font-body font-bold text-xs uppercase tracking-widest mb-2"
-                      style={{ color: 'rgba(255,255,255,.7)' }}>
-                      Email
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      value={form.email}
-                      onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                      placeholder="tu@empresa.com"
-                      required
-                      autoComplete="email"
                       className="w-full px-4 py-3.5 rounded-xl font-body text-sm outline-none transition-all"
                       style={inputStyle}
                       onFocus={onFocus}

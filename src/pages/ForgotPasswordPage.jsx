@@ -9,8 +9,7 @@ export default function ForgotPasswordPage() {
   const [registeredEmail, setRegisteredEmail] = useState('')
   
   // Form fields for Step 2
-  const [nombreCompleto, setNombreCompleto] = useState('')
-  const [nuevoEmail, setNuevoEmail] = useState('')
+  const [celularVerif, setCelularVerif] = useState('')
   const [emailRegistrado, setEmailRegistrado] = useState('')
   const [nuevaPassword, setNuevaPassword] = useState('')
   const [confirmarPassword, setConfirmarPassword] = useState('')
@@ -49,11 +48,11 @@ export default function ForgotPasswordPage() {
     setLoading(true)
     setError(null)
     try {
-      const verificacion = esFalso ? nombreCompleto : emailRegistrado
+      const verificacion = esFalso ? celularVerif : emailRegistrado
       await sheetsApi.auth.recuperarAccesoPublico(
         dni,
         verificacion,
-        esFalso ? nuevoEmail : null,
+        null,
         nuevaPassword
       )
       setStep('success')
@@ -284,8 +283,8 @@ export default function ForgotPasswordPage() {
                   
                   {esFalso ? (
                     <div className="mt-3 p-3.5 rounded-xl font-body text-xs leading-relaxed"
-                      style={{ background: 'rgba(244,180,42,0.08)', border: '1px solid rgba(244,180,42,0.25)', color: '#ffd166' }}>
-                      <strong>⚠️ No tenés un email real actualizado.</strong> Antes de restablecer tu contraseña, ingresá un correo real y validá tu Nombre completo tal cual te registraste.
+                      style={{ background: 'rgba(134,200,115,0.08)', border: '1px solid rgba(134,200,115,0.25)', color: '#a8e096' }}>
+                      <strong>📱 Verificación por celular.</strong> Ingresá el número de celular que tenés registrado en tu perfil para confirmar tu identidad y cambiar la contraseña.
                     </div>
                   ) : (
                     <div className="mt-3 p-3.5 rounded-xl font-body text-xs leading-relaxed"
@@ -297,39 +296,24 @@ export default function ForgotPasswordPage() {
 
                 <form onSubmit={handleReset} className="space-y-4">
                   {esFalso ? (
-                    <>
-                      {/* Caso Fake Email: Pide Nombre Completo + Nuevo Email */}
-                      <div>
-                        <label className="block font-body font-bold text-xs uppercase tracking-widest mb-1.5"
-                          style={{ color: 'rgba(255,255,255,.7)' }}>
-                          Nombre Completo
-                        </label>
-                        <input
-                          type="text"
-                          value={nombreCompleto}
-                          onChange={e => setNombreCompleto(e.target.value)}
-                          placeholder="Tu nombre y apellido registrado"
-                          required
-                          className="w-full px-4 py-3 rounded-xl font-body text-sm outline-none transition-all"
-                          style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', color: '#fff' }}
-                        />
-                      </div>
-                      <div>
-                        <label className="block font-body font-bold text-xs uppercase tracking-widest mb-1.5"
-                          style={{ color: 'rgba(255,255,255,.7)' }}>
-                          Tu nuevo Email real
-                        </label>
-                        <input
-                          type="email"
-                          value={nuevoEmail}
-                          onChange={e => setNuevoEmail(e.target.value)}
-                          placeholder="ejemplo@correo.com"
-                          required
-                          className="w-full px-4 py-3 rounded-xl font-body text-sm outline-none transition-all"
-                          style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', color: '#fff' }}
-                        />
-                      </div>
-                    </>
+                    <div>
+                      {/* Caso sin email real: verificar por celular */}
+                      <label className="block font-body font-bold text-xs uppercase tracking-widest mb-1.5"
+                        style={{ color: 'rgba(255,255,255,.7)' }}>
+                        Celular / WhatsApp registrado
+                      </label>
+                      <input
+                        type="tel"
+                        value={celularVerif}
+                        onChange={e => setCelularVerif(e.target.value)}
+                        placeholder="Ej: +5491122334455"
+                        required
+                        className="w-full px-4 py-3 rounded-xl font-body text-sm outline-none transition-all"
+                        style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', color: '#fff', caretColor: '#86C873' }}
+                        onFocus={e => { e.target.style.borderColor = 'rgba(134,200,115,.55)'; e.target.style.background = 'rgba(134,200,115,.06)'; e.target.style.boxShadow = '0 0 0 3px rgba(134,200,115,.1)' }}
+                        onBlur={e => { e.target.style.borderColor = 'rgba(255,255,255,.1)'; e.target.style.background = 'rgba(255,255,255,.06)'; e.target.style.boxShadow = 'none' }}
+                      />
+                    </div>
                   ) : (
                     /* Caso Real Email: Pide confirmar el Email Registrado */
                     <div>
