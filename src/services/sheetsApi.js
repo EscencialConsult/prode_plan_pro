@@ -1055,48 +1055,26 @@ const predicciones = {
       }
       rankingArr = ranking || []
     } else {
-      // Con filtro: predicciones de esas apuestas + nombres del view (bypasea RLS de usuarios)
-      const [predsResult, namesResult] = await Promise.all([
-        supabase
-          .from('predicciones')
-          .select('user_id, puntos, fecha_registro')
-          .in('apuesta_id', apuestaIds),
-        supabase
-          .from('ranking_global')
-          .select('user_id, nombre'),
-      ])
-
-      if (predsResult.error) {
-        console.error('Error fetching predicciones filtradas:', predsResult.error)
-        return { ok: false, error: predsResult.error.message, tabla: [] }
-      }
-
-      const nameMap = {}
-      ;(namesResult.data || []).forEach(r => { nameMap[r.user_id] = r.nombre })
-
-      const userMap = {}
-      ;(predsResult.data || []).forEach(p => {
-        if (!userMap[p.user_id]) {
-          userMap[p.user_id] = {
-            user_id: p.user_id,
-            nombre: nameMap[p.user_id] || 'Participante',
-            puntos_totales: 0,
-            predicciones: 0,
-            aciertos_exactos: 0,
-            aciertos_diferencia: 0,
-            aciertos_resultado: 0,
-            _primera: p.fecha_registro,
-          }
-        }
-        const u = userMap[p.user_id]
-        u.puntos_totales += (p.puntos || 0)
-        u.predicciones++
-        if (p.fecha_registro < u._primera) u._primera = p.fecha_registro
+      // Con filtro: RPC server-side para evitar el límite de 1000 rows de Supabase
+      const { data: rpcData, error: rpcError } = await supabase.rpc('ranking_filtrado', {
+        apuesta_ids: apuestaIds,
       })
 
-      rankingArr = Object.values(userMap)
-        .sort((a, b) => b.puntos_totales - a.puntos_totales || (a._primera || '').localeCompare(b._primera || ''))
-        .map((u, i) => ({ ...u, posicion: i + 1 }))
+      if (rpcError) {
+        console.error('Error fetching ranking filtrado:', rpcError)
+        return { ok: false, error: rpcError.message, tabla: [] }
+      }
+
+      rankingArr = (rpcData || []).map((r, i) => ({
+        posicion: Number(r.posicion) || i + 1,
+        user_id: r.user_id,
+        nombre: r.nombre || 'Participante',
+        puntos_totales: Number(r.puntos_totales) || 0,
+        predicciones: Number(r.predicciones) || 0,
+        aciertos_exactos: 0,
+        aciertos_diferencia: 0,
+        aciertos_resultado: 0,
+      }))
     }
 
     let miPosicion = null
