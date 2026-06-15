@@ -73,6 +73,7 @@ export default function RankingPageUser() {
   const [tabla, setTabla] = useState([])
   const [meta, setMeta] = useState({})
   const [loading, setLoading] = useState(false)
+  const [apuestasSeleccionadas, setApuestasSeleccionadas] = useState([]) // [] = todas
 
   async function cargarRanking(bet) {
     if (sel?.id === bet.id) return
@@ -89,17 +90,29 @@ export default function RankingPageUser() {
     finally { setLoading(false) }
   }
 
-  async function cargarRankingGlobal() {
-    setSel({ id: 'global', titulo: 'Ranking Global', tipo: 'global' })
+  async function cargarRankingGlobal(apuestaIds = []) {
+    const titulo = apuestaIds.length > 0
+      ? `Global · ${apuestaIds.length} apuesta${apuestaIds.length > 1 ? 's' : ''}`
+      : 'Ranking Global'
+    setSel({ id: 'global', titulo, tipo: 'global' })
     setLoading(true); setTabla([]); setMeta({})
     try {
       const rT = await sheetsApi.predicciones.tablaGlobal({
         user_id: user?.id || user?.user_id,
+        apuesta_ids: apuestaIds.length > 0 ? apuestaIds : undefined,
       })
       setTabla(rT.tabla || [])
-      setMeta({ total: rT.total, mi_posicion: rT.mi_posicion, esta_en_top: rT.esta_en_top })
+      setMeta({ total: rT.total, mi_posicion: rT.mi_posicion, esta_en_top: rT.esta_en_top, apuestas_n: apuestaIds.length || 0 })
     } catch (e) { toast.error('Error cargando ranking global: ' + e.message) }
     finally { setLoading(false) }
+  }
+
+  function toggleApuesta(id) {
+    const next = apuestasSeleccionadas.includes(id)
+      ? apuestasSeleccionadas.filter(x => x !== id)
+      : [...apuestasSeleccionadas, id]
+    setApuestasSeleccionadas(next)
+    cargarRankingGlobal(next)
   }
 
   return (
@@ -146,7 +159,11 @@ export default function RankingPageUser() {
                   🏆 Por Apuesta
                 </button>
                 <button
-                  onClick={() => { setTipoRanking('global'); cargarRankingGlobal() }}
+                  onClick={() => {
+                    setTipoRanking('global')
+                    setApuestasSeleccionadas([])
+                    cargarRankingGlobal([])
+                  }}
                   style={{
                     flex: 1, padding: '7px 10px', borderRadius: 8, fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em',
                     border: 'none', cursor: 'pointer', transition: 'all .15s',
@@ -161,16 +178,68 @@ export default function RankingPageUser() {
 
             <div className="rk-sidebar-scroll" style={{ flex: 1, overflowY: 'auto' }}>
               {tipoRanking === 'global' ? (
-                <div style={{ padding: 20, textAlign: 'center' }} className="rk-in">
-                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 44, height: 44, borderRadius: '50%', background: 'rgba(134,200,115,.12)', color: '#86C873', marginBottom: 12 }}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-                  </div>
-                  <h4 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 15, color: '#111811', margin: '0 0 6px', letterSpacing: '.04em' }}>
-                    ACUMULADO GENERAL
-                  </h4>
-                  <p style={{ fontSize: 11, color: '#4a6b50', lineHeight: 1.4, margin: 0 }}>
-                    Este ranking suma automáticamente todos los puntajes obtenidos por cada participante en todas las apuestas en las que haya jugado.
-                  </p>
+                <div className="rk-in">
+
+                  {/* ── GENERAL ── */}
+                  <SideSection label="General">
+                    {/* Fila: Todas las apuestas */}
+                    <div
+                      className={`rk-row${apuestasSeleccionadas.length === 0 ? ' sel' : ''}`}
+                      onClick={() => { setApuestasSeleccionadas([]); cargarRankingGlobal([]) }}
+                    >
+                      <div style={{ width: 28, height: 28, borderRadius: 7, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: apuestasSeleccionadas.length === 0 ? 'rgba(134,200,115,.2)' : 'rgba(17,24,17,.06)', color: apuestasSeleccionadas.length === 0 ? '#86C873' : '#64748b' }}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M8 12h8M8 8h8M8 16h5"/></svg>
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontSize: 12, fontWeight: 600, color: apuestasSeleccionadas.length === 0 ? '#fff' : '#111811', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Todas las apuestas</p>
+                        <p style={{ fontSize: 10, color: '#94a3b8', margin: 0 }}>Ranking acumulado · {bets.length} creadas</p>
+                      </div>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={apuestasSeleccionadas.length === 0 ? '#86C873' : '#c8d0dc'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+                    </div>
+
+                    {/* Fila: Ranking seleccionado — solo cuando hay filtro activo */}
+                    {apuestasSeleccionadas.length > 0 && (
+                      <div className="rk-row sel">
+                        <div style={{ width: 28, height: 28, borderRadius: 7, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(134,200,115,.2)', color: '#86C873' }}>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontSize: 12, fontWeight: 600, color: '#fff', margin: '0 0 2px' }}>Ranking seleccionado</p>
+                          <p style={{ fontSize: 10, color: '#94a3b8', margin: 0 }}>{apuestasSeleccionadas.length} apuesta{apuestasSeleccionadas.length > 1 ? 's' : ''} marcada{apuestasSeleccionadas.length > 1 ? 's' : ''}</p>
+                        </div>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setApuestasSeleccionadas([]); cargarRankingGlobal([]) }}
+                          style={{ fontSize: 8, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', padding: '3px 8px', borderRadius: 5, border: '1px solid rgba(134,200,115,.4)', background: 'rgba(134,200,115,.12)', color: '#86C873', cursor: 'pointer', flexShrink: 0 }}
+                        >
+                          LIMPIAR
+                        </button>
+                      </div>
+                    )}
+                  </SideSection>
+
+                  {/* ── APUESTAS con checkboxes ── */}
+                  {lb ? (
+                    <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      {[...Array(3)].map((_, i) => <div key={i} className="rk-sk" style={{ height: 52 }} />)}
+                    </div>
+                  ) : (
+                    <>
+                      {bets.filter(b => isOpen(b)).length > 0 && (
+                        <SideSection label="Activas" dot="#22c55e">
+                          {bets.filter(b => isOpen(b)).map(b => (
+                            <GlobalBetRow key={b.id} bet={b} checked={apuestasSeleccionadas.includes(b.id)} onToggle={toggleApuesta} />
+                          ))}
+                        </SideSection>
+                      )}
+                      {bets.filter(b => !isOpen(b)).length > 0 && (
+                        <SideSection label="Historial">
+                          {bets.filter(b => !isOpen(b)).map(b => (
+                            <GlobalBetRow key={b.id} bet={b} checked={apuestasSeleccionadas.includes(b.id)} onToggle={toggleApuesta} />
+                          ))}
+                        </SideSection>
+                      )}
+                    </>
+                  )}
                 </div>
               ) : (
                 <>
@@ -275,6 +344,23 @@ function SideSection({ label, dot, children }) {
   )
 }
 
+function GlobalBetRow({ bet, checked, onToggle }) {
+  const open = isOpen(bet)
+  const parts = bet.partidos_ids ? bet.partidos_ids.split(',').filter(Boolean).length : 0
+  return (
+    <div className={`rk-row${checked ? ' sel' : ''}`} onClick={() => onToggle(bet.id)}>
+      <div style={{ width: 16, height: 16, borderRadius: 4, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 800, background: checked ? '#86C873' : 'transparent', border: checked ? 'none' : '1.5px solid #c8d0dc', color: '#111811' }}>
+        {checked && '✓'}
+      </div>
+      <div style={{ width: 6, height: 6, borderRadius: '50%', flexShrink: 0, background: open ? '#22c55e' : '#475569', boxShadow: open ? '0 0 5px #22c55e' : 'none' }} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ fontSize: 12, fontWeight: 600, color: checked ? '#fff' : '#111811', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{bet.titulo}</p>
+        <p style={{ fontSize: 10, color: '#94a3b8', margin: 0 }}>{bet.participantes || 0} part · {parts} partidos</p>
+      </div>
+    </div>
+  )
+}
+
 function BetRow({ bet, sel, onPick }) {
   const open = isOpen(bet)
   const fin = bet.estado === 'finalizada'
@@ -350,6 +436,7 @@ function Banner({ apuesta, meta, loading }) {
         {!loading && (
           <div style={{ display: 'flex', gap: 20, flexShrink: 0 }}>
             {meta.total > 0 && <BannerStat n={meta.total} label="Part." gold={isGlobal} />}
+            {isGlobal && meta.apuestas_n > 0 && <BannerStat n={meta.apuestas_n} label="Apuestas" gold />}
             {meta.mi_posicion && <BannerStat n={`#${meta.mi_posicion.posicion}`} label="Tu pos." gold />}
           </div>
         )}

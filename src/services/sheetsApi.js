@@ -1038,20 +1038,69 @@ const predicciones = {
 
   tablaGlobal: async function (opciones = {}) {
     const currentUserId = opciones.user_id || ''
+    const apuestaIds = opciones.apuesta_ids // undefined o array de UUIDs
 
-    // 1) Consultar la vista pre-agregada en la base de datos
-    const { data: ranking, error } = await supabase
-      .from('ranking_global')
-      .select('*')
-      .order('posicion', { ascending: true })
+    let rankingArr = []
 
-    if (error) {
-      console.error('Error fetching global ranking:', error)
-      return { ok: false, error: error.message, tabla: [] }
+    if (!apuestaIds || apuestaIds.length === 0) {
+      // Sin filtro: usar la vista pre-agregada (todas las apuestas)
+      const { data: ranking, error } = await supabase
+        .from('ranking_global')
+        .select('*')
+        .order('posicion', { ascending: true })
+
+      if (error) {
+        console.error('Error fetching global ranking:', error)
+        return { ok: false, error: error.message, tabla: [] }
+      }
+      rankingArr = ranking || []
+    } else {
+      // Con filtro: agregar desde predicciones filtradas por apuesta_ids
+      const { data: preds, error: predErr } = await supabase
+        .from('predicciones')
+        .select('user_id, puntos, fecha_registro')
+        .in('apuesta_id', apuestaIds)
+
+      if (predErr) {
+        console.error('Error fetching predicciones filtradas:', predErr)
+        return { ok: false, error: predErr.message, tabla: [] }
+      }
+
+      const userIds = [...new Set((preds || []).map(p => p.user_id))]
+      let userNames = {}
+      if (userIds.length > 0) {
+        const { data: users } = await supabase
+          .from('usuarios')
+          .select('id, nombre')
+          .in('id', userIds)
+        ;(users || []).forEach(u => { userNames[u.id] = u.nombre })
+      }
+
+      const userMap = {}
+      ;(preds || []).forEach(p => {
+        if (!userMap[p.user_id]) {
+          userMap[p.user_id] = {
+            user_id: p.user_id,
+            nombre: userNames[p.user_id] || 'Usuario',
+            puntos_totales: 0,
+            predicciones: 0,
+            aciertos_exactos: 0,
+            aciertos_diferencia: 0,
+            aciertos_resultado: 0,
+            _primera: p.fecha_registro,
+          }
+        }
+        const u = userMap[p.user_id]
+        u.puntos_totales += (p.puntos || 0)
+        u.predicciones++
+        if (p.fecha_registro < u._primera) u._primera = p.fecha_registro
+      })
+
+      rankingArr = Object.values(userMap)
+        .sort((a, b) => b.puntos_totales - a.puntos_totales || (a._primera || '').localeCompare(b._primera || ''))
+        .map((u, i) => ({ ...u, posicion: i + 1 }))
     }
 
-    const rankingArr = ranking || []
-    
     let miPosicion = null
     if (currentUserId) {
       miPosicion = rankingArr.find(r => r.user_id === currentUserId) || null
