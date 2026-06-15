@@ -14,12 +14,13 @@ export default function ProtectedRoute({ requireAdmin = false }) {
   }))
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
+  const [completado, setCompletado] = useState(false)
 
   if (loading) return <Loading />
   if (!user) return <Navigate to="/login" replace />
   if (requireAdmin && !isAdmin) return <Navigate to="/" replace />
 
-  const needsUpdate = !isAdmin && (!user.celular || user.celular.trim() === '')
+  const needsUpdate = !completado && !isAdmin && (!user.celular || user.celular.trim() === '')
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -30,8 +31,9 @@ export default function ProtectedRoute({ requireAdmin = false }) {
         throw new Error('Por favor, ingresá tu número de teléfono / WhatsApp.')
       }
       await sheetsApi.usuarios.actualizarMisDatos(form.celular.trim())
-      await refreshUser()
+      setCompletado(true)
       toast.success('¡Datos actualizados correctamente!')
+      refreshUser()
     } catch (err) {
       setError(err.message || 'No se pudieron actualizar los datos. Intentá nuevamente.')
     } finally {
