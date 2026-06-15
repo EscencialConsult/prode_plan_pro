@@ -6,11 +6,11 @@
 -- Una apuesta cuenta como "fase de grupos" si:
 --   - tiene al menos un partido con fase = 'grupos', y
 --   - NO tiene ningún partido de otra fase (eliminatorias).
--- Así se identifican solas las 3 apuestas de grupos, sin configurar nada.
 --
--- IMPORTANTE: muestra a TODOS los que ya cargaron predicciones en grupos,
--- aunque tengan 0 puntos (antes de que se jueguen los partidos). Los puntos
--- se suman desde ranking_cache a medida que finalizan los partidos.
+-- Suma los puntos DIRECTO desde predicciones.puntos (que el trigger calcula
+-- al cargar resultados). NO depende de ranking_cache, así que queda siempre
+-- correcto aunque el cache esté vacío. Incluye a todos los que cargaron
+-- predicciones (0 puntos hasta que finalicen partidos).
 --
 -- Ejecutar en: Supabase → SQL Editor → Run
 -- ════════════════════════════════════════════════════════════════
@@ -41,57 +41,44 @@ AS $$
             WHERE ap.apuesta_id = a.id AND lower(trim(coalesce(p.fase, ''))) <> 'grupos'
           )
   ),
-  -- Todos los que cargaron al menos una predicción en grupos (aparecen aunque tengan 0 puntos)
-  preds AS (
-    SELECT pr.user_id, count(*)::bigint AS n_preds
+  base AS (
+    SELECT
+      pr.user_id,
+      pr.puntos,
+      pr.pred_local, pr.pred_visitante,
+      p.goles_local, p.goles_visitante,
+      (p.goles_local IS NOT NULL AND p.goles_visitante IS NOT NULL) AS fin
     FROM predicciones pr
     JOIN apuestas_grupos g ON g.id = pr.apuesta_id
+    JOIN partidos p ON p.id = pr.partido_id
     WHERE pr.user_id IS NOT NULL
-    GROUP BY pr.user_id
-  ),
-  -- Puntos acumulados (solo existen una vez que finalizan partidos)
-  cache_agg AS (
-    SELECT
-      rc.user_id,
-      max(rc.nombre)                       AS nombre,
-      sum(rc.puntos_totales)::bigint       AS puntos_totales,
-      sum(rc.aciertos_exactos)::bigint     AS aciertos_exactos,
-      sum(rc.aciertos_diferencia)::bigint  AS aciertos_diferencia,
-      sum(rc.aciertos_resultado)::bigint   AS aciertos_resultado,
-      sum(rc.aciertos_clasificado)::bigint AS aciertos_clasificado
-    FROM ranking_cache rc
-    JOIN apuestas_grupos g ON g.id = rc.apuesta_id
-    WHERE rc.es_grupal = false AND rc.user_id IS NOT NULL
-    GROUP BY rc.user_id
   ),
   agg AS (
     SELECT
-      p.user_id,
-      coalesce(c.nombre, u.nombre, 'Participante') AS nombre,
-      coalesce(c.puntos_totales, 0)       AS puntos_totales,
-      coalesce(c.aciertos_exactos, 0)     AS aciertos_exactos,
-      coalesce(c.aciertos_diferencia, 0)  AS aciertos_diferencia,
-      coalesce(c.aciertos_resultado, 0)   AS aciertos_resultado,
-      coalesce(c.aciertos_clasificado, 0) AS aciertos_clasificado,
-      p.n_preds                           AS predicciones
-    FROM preds p
-    LEFT JOIN cache_agg c ON c.user_id = p.user_id
-    LEFT JOIN usuarios  u ON u.id = p.user_id
+      b.user_id,
+      coalesce(sum(b.puntos), 0)::bigint AS puntos_totales,
+      count(*) FILTER (WHERE b.fin AND b.pred_local = b.goles_local AND b.pred_visitante = b.goles_visitante)::bigint AS aciertos_exactos,
+      count(*) FILTER (WHERE b.fin AND NOT (b.pred_local = b.goles_local AND b.pred_visitante = b.goles_visitante)
+                              AND (b.pred_local - b.pred_visitante) = (b.goles_local - b.goles_visitante))::bigint AS aciertos_diferencia,
+      count(*) FILTER (WHERE b.fin AND sign(b.pred_local - b.pred_visitante) = sign(b.goles_local - b.goles_visitante)
+                              AND (b.pred_local - b.pred_visitante) <> (b.goles_local - b.goles_visitante))::bigint AS aciertos_resultado,
+      0::bigint AS aciertos_clasificado,
+      count(*)::bigint AS predicciones
+    FROM base b
+    GROUP BY b.user_id
   )
   SELECT
-    user_id, nombre, puntos_totales, aciertos_exactos, aciertos_diferencia,
-    aciertos_resultado, aciertos_clasificado, predicciones,
+    a.user_id,
+    coalesce(u.nombre, 'Participante') AS nombre,
+    a.puntos_totales, a.aciertos_exactos, a.aciertos_diferencia,
+    a.aciertos_resultado, a.aciertos_clasificado, a.predicciones,
     row_number() OVER (
-      -- Desempate: + puntos, luego + exactos, luego + diferencia, y por estabilidad nombre
-      ORDER BY puntos_totales DESC, aciertos_exactos DESC, aciertos_diferencia DESC, nombre ASC
+      ORDER BY a.puntos_totales DESC, a.aciertos_exactos DESC, a.aciertos_diferencia DESC, coalesce(u.nombre,'') ASC
     ) AS posicion
-  FROM agg
+  FROM agg a
+  LEFT JOIN usuarios u ON u.id = a.user_id
   ORDER BY posicion;
 $$;
 
--- Lo ven usuarios logueados (y el admin). Service_role por si se llama desde backend.
 GRANT EXECUTE ON FUNCTION public.ranking_fase_grupos() TO authenticated;
 GRANT EXECUTE ON FUNCTION public.ranking_fase_grupos() TO service_role;
-
--- Prueba rápida
-SELECT * FROM public.ranking_fase_grupos();
