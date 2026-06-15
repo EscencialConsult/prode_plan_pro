@@ -601,15 +601,9 @@ const usuarios = {
   },
 
   actualizarMisDatos: async (celular) => {
-    const { data: { user: authUser } } = await supabase.auth.getUser()
-    if (!authUser) throw new Error('No hay sesión activa')
-    const { data, error } = await supabase
-      .from('usuarios')
-      .update({ celular })
-      .eq('id', authUser.id)
-    checkError(error, 'usuarios.actualizarMisDatos')
+    const { error } = await supabase.rpc('actualizar_celular_propio', { p_celular: celular })
+    if (error) throw new Error(error.message)
     invalidateClientCache()
-    return data
   },
 }
 
