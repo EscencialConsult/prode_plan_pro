@@ -98,6 +98,17 @@ body {
   padding: 0;
 }
 
+/* ── Red de seguridad responsive ───────────────────────────
+   Evita el scroll/recorte horizontal en cualquier pantalla y
+   hace que las imágenes nunca empujen el ancho del layout.    */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+img, svg, video, canvas {
+  max-width: 100%;
+}
+
 html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;

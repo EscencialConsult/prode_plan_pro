@@ -16,17 +16,15 @@ import { useBets } from '../hooks/useBets.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import PredictModal from '../components/user/PredictModal.jsx'
 import sheetsApi from '../services/sheetsApi.js'
+import { isBetEditable, lastMatchKickoff, timeLeft } from '../utils/index.js'
 
 /* ── helpers ── */
-function timeLeft(d){const diff=new Date(d)-Date.now();if(diff<=0)return'Cerrada';const h=Math.floor(diff/3600000);const m=Math.floor((diff%3600000)/60000);if(h>=24)return`${Math.floor(h/24)}d ${h%24}h`;if(h>0)return`${h}h ${m}m`;return`${m}m`}
 const CARD_BASE={background:'#fff',border:'1px solid #c8dbcc',borderRadius:16,boxShadow:'0 1px 0 rgba(17,24,17,.04)'}
 const MUTED={fontSize:'.78rem',color:'#4a6b50'}
 
-function isOpen(b){
-  if (b.estado !== 'abierta') return false
-  if (!b.fecha_cierre) return true
-  return new Date(b.fecha_cierre) > new Date()
-}
+// El cierre es por partido: una apuesta sigue "abierta" mientras tenga al
+// menos un partido que todavía no empezó.
+function isOpen(b){ return isBetEditable(b) }
 const FILTERS=[
   {key:'todas', label:'Todas'},
   {key:'activas', label:'Activas'},
@@ -61,7 +59,8 @@ function BetCard({bet,predsMap,onPredict}){
   const allDone=bet.partidos?.length>0&&bet.partidos.every(p=>p.estado==='finalizado')
   const stateKey=live?'en_vivo':allDone?'finalizada':open?'abierta':'cerrada'
   const s=STATE[stateKey]
-  const rem=timeLeft(bet.fecha_cierre)
+  const ultimoKickoff=lastMatchKickoff(bet)
+  const rem=ultimoKickoff?timeLeft(ultimoKickoff):'Cerrada'
   const mc=bet.partidos?.length||0
   const anyPred=bet.partidos?.some(p=>predsMap?.[p.id])
   const {user}=useAuth()
@@ -95,7 +94,7 @@ function BetCard({bet,predsMap,onPredict}){
             const pred=predsMap?.[m.id]
             const fin=m.estado==='finalizado'||m.estado==='en_vivo'
             return(
-              <div key={m.id} style={{display:'grid',gridTemplateColumns:'1fr auto 1fr',alignItems:'center',gap:'.6rem',padding:'.55rem .75rem',borderRadius:9,background:pred?'rgba(134,200,115,.05)':'rgba(17,24,17,.02)',border:pred?'1px solid rgba(134,200,115,.2)':'1px solid #c8dbcc'}}>
+              <div key={m.id} style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) auto minmax(0,1fr)',alignItems:'center',gap:'.6rem',padding:'.55rem .75rem',borderRadius:9,background:pred?'rgba(134,200,115,.05)':'rgba(17,24,17,.02)',border:pred?'1px solid rgba(134,200,115,.2)':'1px solid #c8dbcc'}}>
                 <span style={{fontWeight:500,fontSize:'.8rem',color:'#111811',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{m.equipo_local}</span>
                 <div style={{textAlign:'center',minWidth:60}}>
                   {pred?(
@@ -116,8 +115,8 @@ function BetCard({bet,predsMap,onPredict}){
       )}
 
       {/* Footer */}
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'1rem',paddingTop:'.85rem',borderTop:'1px solid #c8dbcc'}}>
-        <div style={{display:'flex',alignItems:'center',gap:'.5rem'}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'.75rem',flexWrap:'wrap',paddingTop:'.85rem',borderTop:'1px solid #c8dbcc'}}>
+        <div style={{display:'flex',alignItems:'center',gap:'.5rem',flexWrap:'wrap',minWidth:0}}>
           {anyPred&&(
             <span style={{display:'inline-flex',alignItems:'center',gap:'.3rem',fontSize:'.72rem',fontWeight:600,color:'#1b8a5a'}}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
@@ -365,7 +364,7 @@ const filtered = bets.filter(b => {
             <p style={{fontSize:'.78rem',color:'#8aaa8e',margin:'.4rem 0 0'}}>Volvé a revisar más tarde</p>
           </div>
         ):(
-          <div style={{display:'grid',gap:'1rem',animation:'din .38s ease both'}}>
+          <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr)',gap:'1rem',animation:'din .38s ease both'}}>
             {filtered.map(bet=>(
               <BetCard key={bet.id} bet={bet} predsMap={predictions} onPredict={setActiveBet}/>
             ))}

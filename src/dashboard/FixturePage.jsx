@@ -189,7 +189,7 @@
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: '1fr auto 1fr',
+              gridTemplateColumns: 'minmax(0,1fr) auto minmax(0,1fr)',
               alignItems: 'center',
               gap: 12,
             }}

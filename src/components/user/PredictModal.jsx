@@ -6,7 +6,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useAuth } from '../../hooks/useAuth.jsx'
-import { timeLeft, isBetOpen } from '../../utils/index.js'
+import { timeLeft, isMatchOpen, isBetEditable, lastMatchKickoff, fmtFecha } from '../../utils/index.js'
 import { useToast } from '../../hooks/useToast.jsx'
 
 function esEliminatoria(fase) {
@@ -152,8 +152,12 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
 
   if (!bet) return null
 
-  const open = isBetOpen(bet)
-  const remaining = timeLeft(bet.fecha_cierre)
+  // El cierre es por partido: la apuesta sigue editable mientras al menos un
+  // partido no haya empezado. El contador del encabezado cuenta hasta el ÚLTIMO
+  // partido (cuando la apuesta termina de cerrarse del todo).
+  const open = isBetEditable(bet)
+  const cierreFinal = lastMatchKickoff(bet)
+  const remaining = cierreFinal ? timeLeft(cierreFinal) : 'Cerrada'
   const isClosingSoon = open && remaining !== 'Cerrada' && !remaining.includes('d')
   const totalMatches = bet.partidos?.length || 0
 
@@ -183,6 +187,9 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
     const empatesSinClasificado = []
 
     for (const match of (bet.partidos || [])) {
+      // Solo se envían partidos todavía abiertos: los que ya iniciaron están
+      // bloqueados y el servidor también los rechaza.
+      if (!isMatchOpen(match)) continue
       const vals = scores[match.id]
       if (!vals) continue
       const pl = parseInt(vals.local, 10)
@@ -500,7 +507,11 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
             {bet.partidos?.map((match, idx) => {
               const isLive = match.estado === 'en_vivo'
               const isFinished = match.estado === 'finalizado'
-              const isDisabled = !open || isLive || isFinished || estaBloqueado
+              const matchOpen = isMatchOpen(match)
+              // Bloqueado por tiempo: ya pasó su hora de inicio pero la sync
+              // todavía no lo marcó en vivo/finalizado.
+              const isLockedByTime = !matchOpen && !isLive && !isFinished
+              const isDisabled = !matchOpen || estaBloqueado
               const sc = scores[match.id] || { local: '', visitante: '' }
               const hasScore = sc.local !== '' && sc.visitante !== ''
               const elim = esEliminatoria(match.fase)
@@ -543,7 +554,16 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                           FIN
                         </span>
                       )}
-                      {!isLive && !isFinished && completo && (
+                      {isLockedByTime && (
+                        <span className="inline-flex items-center gap-1 bg-slate-700 text-slate-200 text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full">
+                          <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                          </svg>
+                          CERRADO
+                        </span>
+                      )}
+                      {!isLive && !isFinished && !isLockedByTime && completo && (
                         <span className="inline-flex items-center gap-1 bg-yellow-400 text-slate-900 text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full">
                           <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4">
                             <polyline points="20 6 9 17 4 12" />
@@ -554,7 +574,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-[1fr_auto_1fr] items-stretch">
+                  <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-stretch">
                     {/* LOCAL */}
                     <div className="flex flex-col items-center justify-center gap-1 px-2 py-3 sm:flex-row sm:items-center sm:justify-start sm:gap-2.5 sm:px-3 bg-gradient-to-r from-slate-50 to-white border-r border-slate-200">
                       {match.bandera_local && (
@@ -626,6 +646,24 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                       )}
                     </div>
                   </div>
+
+                  {/* Disponibilidad del partido — cierre automático al iniciar */}
+                  {!isLive && !isFinished && (
+                    matchOpen ? (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 border-t border-green-100 text-[10px] font-bold text-green-700">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                        Disponible hasta el inicio · {fmtFecha(match.fecha_partido)}
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 border-t border-slate-200 text-[10px] font-bold text-slate-500">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                        </svg>
+                        Cerrado — el partido ya comenzó
+                      </div>
+                    )
+                  )}
 
                   {elim && empate && (
                     <div className="px-3 py-3 bg-amber-50 border-t border-dashed border-amber-200">

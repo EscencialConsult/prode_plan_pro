@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react'
 import AppShell from '../dashboard/AppShell.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import { useBets } from '../hooks/useBets.jsx'
-import { isBetOpen, timeLeft } from '../utils/index.js'
+import { isBetEditable, lastMatchKickoff, timeLeft } from '../utils/index.js'
 import { Link } from 'react-router-dom'
 import PredictModal from '../components/user/PredictModal.jsx'
 import Loading from '../hooks/Loading.jsx'
@@ -40,7 +40,10 @@ function StatCard({ label, value, sub, icon, gold = false, live = false }) {
 
 function BetRow({ bet, onPredict }) {
   const matchCount = bet.partidos?.length || 0
-  const remaining = isBetOpen(bet) ? timeLeft(bet.fecha_cierre) : 'Cerrada'
+  // La apuesta cierra del todo al iniciar su último partido: contamos hasta ahí.
+  const ultimoKickoff = lastMatchKickoff(bet)
+  const editable = isBetEditable(bet)
+  const remaining = editable && ultimoKickoff ? timeLeft(ultimoKickoff) : 'Cerrada'
   const closingSoon = remaining !== 'Cerrada' && !remaining.includes('d')
   const hasLive = bet.partidos?.some(p => p.estado === 'en_vivo')
   return (
@@ -165,7 +168,7 @@ export default function DashboardPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [rankingData, setRankingData] = useState(null)
 
-  const activeBets = bets.filter(b => isBetOpen(b))
+  const activeBets = bets.filter(b => isBetEditable(b))
 
   useEffect(() => {
     if (user) {
@@ -385,14 +388,14 @@ export default function DashboardPage() {
         {liveBets.length > 0 && (
           <div className="mb-8 animate-fade-in delay-2">
             <SectionHead title="EN VIVO AHORA" />
-            <div className="grid gap-3">
+            <div className="grid grid-cols-1 gap-3">
               {liveBets.map(bet => <LiveCard key={bet.id} bet={bet} predictions={predictions} onPredict={handlePredict} />)}
             </div>
           </div>
         )}
 
         {esAdmin ? (
-          <div className="grid lg:grid-cols-3 gap-6 animate-fade-in delay-2">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in delay-2">
             <div className="lg:col-span-2">
               <SectionHead title="PANEL DE ADMINISTRACIÓN" />
               <div
@@ -466,7 +469,7 @@ export default function DashboardPage() {
             </div>
           </div>
         ) : (
-          <div className="grid lg:grid-cols-3 gap-6 animate-fade-in delay-2">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in delay-2">
 
             <div className="lg:col-span-2">
               <SectionHead title="APUESTAS ACTIVAS" to="/apuestas" cta="Ver todas" />

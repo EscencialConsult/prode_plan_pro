@@ -164,6 +164,66 @@ export function isBetOpen(bet) {
   return new Date(bet.fecha_cierre) > new Date()
 }
 
+/**
+ * Devuelve true si un PARTIDO individual sigue abierto para pronosticar.
+ *
+ * El cierre es automático por partido: cada usuario puede cargar/editar su
+ * pronóstico hasta el momento en que ESE partido inicia. Una vez que arranca
+ * (hora de inicio alcanzada) o que la sincronización lo marca en vivo /
+ * finalizado / cancelado, el partido queda bloqueado.
+ *
+ * La hora de inicio (`fecha_partido` / `fecha_hora`) viaja en ISO con offset
+ * UTC real, por lo que `new Date(...)` da el instante correcto sin ambigüedad
+ * de zona horaria.
+ */
+export function isMatchOpen(match) {
+  if (!match) return false
+  const estado = match.estado
+  if (estado === 'en_vivo' || estado === 'finalizado' || estado === 'cancelado') return false
+  const kickoff = match.fecha_partido || match.fecha_hora
+  if (!kickoff) return true // sin fecha de inicio: solo se bloquea por estado
+  const t = new Date(kickoff).getTime()
+  if (isNaN(t)) return true
+  return t > Date.now()
+}
+
+/**
+ * Devuelve true si una apuesta admite edición: no fue finalizada/cerrada por
+ * el administrador y conserva al menos un partido todavía abierto.
+ *
+ * Reemplaza al cierre único por `fecha_cierre`: ahora una apuesta sigue
+ * "abierta" mientras tenga partidos que aún no empezaron, aunque otros del
+ * mismo grupo ya estén bloqueados.
+ */
+export function isBetEditable(bet) {
+  if (!bet) return false
+  if (bet.estado === 'finalizada' || bet.estado === 'cerrada') return false
+  return (bet.partidos || []).some(isMatchOpen)
+}
+
+/** Hora de inicio (ISO) del próximo partido aún abierto de una apuesta, o null. */
+export function nextMatchKickoff(bet) {
+  const abiertos = (bet?.partidos || [])
+    .filter(isMatchOpen)
+    .map(m => m.fecha_partido || m.fecha_hora)
+    .filter(Boolean)
+    .sort((a, b) => new Date(a) - new Date(b))
+  return abiertos[0] || null
+}
+
+/**
+ * Hora de inicio (ISO) del ÚLTIMO partido de una apuesta (el de kickoff más
+ * tardío, esté abierto o no). Es el momento en que la apuesta termina de
+ * cerrarse del todo: hasta ahí queda al menos un partido por jugar.
+ */
+export function lastMatchKickoff(bet) {
+  const fechas = (bet?.partidos || [])
+    .map(m => m.fecha_partido || m.fecha_hora)
+    .filter(Boolean)
+    .sort((a, b) => new Date(a) - new Date(b))
+  return fechas[fechas.length - 1] || null
+}
+
 /** Clases CSS para el estado de una apuesta */
 export function betStatusClass(estado) {
   return {

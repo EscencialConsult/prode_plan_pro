@@ -469,7 +469,7 @@ function MiPosicion({ pos }) {
     <div style={{ position: 'sticky', bottom: 12, marginTop: 12, zIndex: 10 }}>
       <div style={{ borderRadius: 13, overflow: 'hidden', boxShadow: '0 8px 32px rgba(17,24,17,.28)', border: '2px solid rgba(134,200,115,.45)' }}>
         <div style={{
-          display: 'grid', gridTemplateColumns: '44px 1fr 100px 68px',
+          display: 'grid', gridTemplateColumns: '44px minmax(0,1fr) 100px 68px',
           padding: '10px 16px', gap: 8, alignItems: 'center',
           background: 'linear-gradient(90deg,#111811,#263328)',
         }}>
@@ -619,7 +619,7 @@ function OtrosParticipantes({ tabla, user }) {
           {otros.map((u, idx) => (
             <div key={u.user_id} style={{
               display: 'grid',
-              gridTemplateColumns: '32px 1fr 64px 56px',
+              gridTemplateColumns: '32px minmax(0,1fr) 64px 56px',
               gap: 10,
               padding: '9px 12px',
               background: u.user_id === user?.id ? 'rgba(134,200,115,.1)' : '#fff',

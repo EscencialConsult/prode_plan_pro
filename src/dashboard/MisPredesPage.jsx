@@ -67,7 +67,7 @@ function PartidoRow({match,pred}){
   return(
     <div style={{padding:'.7rem .85rem',borderRadius:10,background:pts>0?'rgba(27,138,90,.04)':'rgba(17,24,17,.02)',border:`1px solid ${pts>0?'rgba(27,138,90,.2)':'#c8dbcc'}`}}>
       {/* Equipos */}
-      <div style={{display:'grid',gridTemplateColumns:'1fr auto 1fr',alignItems:'center',gap:'.5rem',marginBottom:'.45rem'}}>
+      <div style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) auto minmax(0,1fr)',alignItems:'center',gap:'.5rem',marginBottom:'.45rem'}}>
         <div style={{display:'flex',alignItems:'center',gap:'.4rem',minWidth:0}}>
           {match.bandera_local&&<img src={match.bandera_local} alt="" style={{width:22,height:16,objectFit:'cover',borderRadius:2,border:'1px solid #c8dbcc',flexShrink:0}}/>}
           <span style={{fontWeight:600,fontSize:'.82rem',color:'#111811',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{match.equipo_local}</span>
