@@ -5,6 +5,11 @@ import { useAuth } from '../hooks/useAuth.jsx'
 import { isBetOpen, timeLeft } from '../utils/index.js'
 import { useToast } from '../hooks/useToast.jsx'
 
+function lastMatchKickoff(bet) {
+    const fechas = (bet.partidos || []).map(p => p.fecha_hora).filter(Boolean)
+    return fechas.length ? fechas.sort().at(-1) : null
+}
+
 /* ── Chip de filtro reutilizable ───────────────────────── */
 function Chip({ active, onClick, children }) {
     return (
@@ -340,7 +345,17 @@ export default function MisPrediccionesPage() {
             if (filtroEstado === 'finalizadas' && activa) return false
 
             return true
-        }).sort((a, b) => new Date(b.fecha_creacion || 0) - new Date(a.fecha_creacion || 0))
+        }).sort((a, b) => {
+            const aOpen = isBetOpen(a)
+            const bOpen = isBetOpen(b)
+            if (aOpen !== bOpen) return aOpen ? -1 : 1
+            const aTime = lastMatchKickoff(a)
+            const bTime = lastMatchKickoff(b)
+            if (!aTime && !bTime) return 0
+            if (!aTime) return 1
+            if (!bTime) return -1
+            return new Date(aTime) - new Date(bTime)
+        })
     }, [misBets, filtroEstado, filtroTipo])
 
     // Auto-expandir la primera (más reciente)
