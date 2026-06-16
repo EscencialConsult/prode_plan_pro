@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import sheetsApi from '../../services/sheetsApi.js'
 import { useAuth } from '../../hooks/useAuth.jsx'
 import { useToast } from '../../hooks/useToast.jsx'
-import { fmtFecha, inputLocalAIsoUtc } from '../../utils/index.js'
+import { fmtFecha, inputLocalAIsoUtc, isoUtcAInputLocal } from '../../utils/index.js'
 
 /* ── Constantes ─────────────────────────────────────────── */
 const INITIAL = { titulo: '', type: 'libre', premio: '', fecha_cierre: '', partidos_ids: [], areas_ids: [] }
@@ -167,24 +167,35 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
   const seleccionados = form.partidos_ids.length
 
   useEffect(() => {
-    if (!form.fecha_cierre || form.partidos_ids.length === 0) {
+    if (form.partidos_ids.length === 0) {
+      setErrorFecha('')
+      return
+    }
+
+    const partidosSeleccionados = partidosDisponibles.filter(m => form.partidos_ids.includes(m.id))
+    if (partidosSeleccionados.length === 0) {
+      setErrorFecha('')
+      return
+    }
+
+    const partidoMasTardio = partidosSeleccionados.reduce((latest, current) =>
+      new Date(current.fecha_partido) > new Date(latest.fecha_partido) ? current : latest
+    , partidosSeleccionados[0])
+
+    // Autocompletado: cierre global = inicio del último partido (cubre toda la fase)
+    if (!form.fecha_cierre) {
+      setForm(p => ({ ...p, fecha_cierre: isoUtcAInputLocal(partidoMasTardio.fecha_partido) }))
       setErrorFecha('')
       return
     }
 
     const fechaLimite = new Date(form.fecha_cierre)
-    const partidosSeleccionados = partidosDisponibles.filter(m => form.partidos_ids.includes(m.id))
-    
-    const partidoMasTemprano = partidosSeleccionados.reduce((earliest, current) => {
-      const currentDate = new Date(current.fecha_partido)
-      const earliestDate = new Date(earliest.fecha_partido)
-      return currentDate < earliestDate ? current : earliest
-    }, partidosSeleccionados[0])
+    const fechaUltimoPartido = new Date(partidoMasTardio.fecha_partido)
 
-    const fechaPrimerPartido = new Date(partidoMasTemprano.fecha_partido)
-
-    if (fechaLimite >= fechaPrimerPartido) {
-      setErrorFecha(`La fecha límite debe ser ANTES del ${fmtFecha(partidoMasTemprano.fecha_partido)} (${partidoMasTemprano.equipo_local} vs ${partidoMasTemprano.equipo_visitante})`)
+    if (fechaLimite.getTime() <= Date.now()) {
+      setErrorFecha('El cierre global debe ser una fecha futura.')
+    } else if (fechaLimite < fechaUltimoPartido) {
+      setErrorFecha(`El cierre global debe ser POSTERIOR al último partido (${fmtFecha(partidoMasTardio.fecha_partido)} · ${partidoMasTardio.equipo_local} vs ${partidoMasTardio.equipo_visitante}), para que cada partido quede disponible hasta su propio inicio.`)
     } else {
       setErrorFecha('')
     }
@@ -531,7 +542,7 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
           placeholder="Ej: Gift card $50"
         />
         <Field
-          label="Fecha límite (debe ser ANTES del primer partido)"
+          label="Cierre global (después del último partido · cada partido se bloquea al comenzar)"
           type="datetime-local"
           value={form.fecha_cierre}
           onChange={e => setForm(p => ({ ...p, fecha_cierre: e.target.value }))}

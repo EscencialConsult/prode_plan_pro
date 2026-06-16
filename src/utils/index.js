@@ -164,6 +164,39 @@ export function isBetOpen(bet) {
   return new Date(bet.fecha_cierre) > new Date()
 }
 
+/* ══════════════════════════════════════════════════════════
+   PARTIDOS — Bloqueo individual por hora de inicio
+   ══════════════════════════════════════════════════════════ */
+
+/**
+ * Devuelve true si un partido YA comenzó y por lo tanto ya no admite
+ * predicciones. El bloqueo es por partido individual: cada partido se
+ * cierra a su propia hora de inicio (fecha_hora / fecha_partido), aunque
+ * la apuesta global siga abierta.
+ *
+ * Señales de bloqueo (cualquiera basta):
+ *   1. estado en_vivo / finalizado / cancelado (lo marcó la sincronización)
+ *   2. la hora de inicio ya pasó (now >= fecha de inicio)
+ *
+ * La (2) bloquea exactamente al arranque aunque la sincronización (cada
+ * 5 min) todavía no haya marcado el partido como en_vivo.
+ */
+export function hasMatchStarted(match) {
+  if (!match) return false
+  const estado = match.estado
+  if (estado === 'en_vivo' || estado === 'finalizado' || estado === 'cancelado') return true
+  const iso = match.fecha_partido || match.fecha_hora
+  if (!iso) return false
+  const t = new Date(iso).getTime()
+  if (isNaN(t)) return false
+  return t <= Date.now()
+}
+
+/** Inverso de hasMatchStarted: el partido sigue disponible para predecir. */
+export function isMatchOpen(match) {
+  return !hasMatchStarted(match)
+}
+
 /** Clases CSS para el estado de una apuesta */
 export function betStatusClass(estado) {
   return {
