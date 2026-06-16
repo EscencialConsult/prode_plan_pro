@@ -71,6 +71,14 @@ const CSS = `
 .rk-detail-btn-mini:hover:not(:disabled) { background:rgba(17,24,17,.1);color:#111811 }
 .rk-detail-btn-mini.active { background:#111811;color:#86C873 }
 
+/* Exclusive apuesta (⭐) */
+.rk-row-excl { background:linear-gradient(90deg,rgba(235,195,43,.08) 0%,rgba(235,195,43,.02) 100%);border-bottom:1px solid rgba(235,195,43,.2)!important }
+.rk-row-excl:hover { background:linear-gradient(90deg,rgba(235,195,43,.14) 0%,rgba(235,195,43,.05) 100%)!important }
+.rk-row-excl::before { background:#ebc32b!important }
+.rk-row-excl.sel { background:linear-gradient(90deg,#1d1600 0%,#2a2000 100%)!important }
+@keyframes rk-star-glow { 0%,100%{filter:drop-shadow(0 0 3px rgba(235,195,43,.5))} 50%{filter:drop-shadow(0 0 9px rgba(235,195,43,.95))} }
+.rk-excl-star { display:inline-block;animation:rk-star-glow 2s ease infinite;font-size:14px;line-height:1;flex-shrink:0 }
+
 /* Mobile */
 @media(max-width:720px) {
   .rk-shell { flex-direction:column!important;height:auto!important }
@@ -440,15 +448,22 @@ function SideSection({ label, dot, children }) {
 function GlobalBetRow({ bet, checked, onToggle }) {
   const open = isOpen(bet)
   const parts = bet.partidos_ids ? bet.partidos_ids.split(',').filter(Boolean).length : 0
+  const isExcl = bet.titulo.includes('⭐')
   return (
-    <div className={`rk-row${checked ? ' sel' : ''}`} onClick={() => onToggle(bet.id)}>
-      <div style={{ width: 16, height: 16, borderRadius: 4, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 800, background: checked ? '#86C873' : 'transparent', border: checked ? 'none' : '1.5px solid #c8d0dc', color: '#111811' }}>
+    <div className={`rk-row${checked ? ' sel' : ''}${isExcl ? ' rk-row-excl' : ''}`} onClick={() => onToggle(bet.id)}>
+      <div style={{ width: 16, height: 16, borderRadius: 4, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 800, background: checked ? (isExcl ? '#ebc32b' : '#86C873') : 'transparent', border: checked ? 'none' : `1.5px solid ${isExcl ? 'rgba(235,195,43,.4)' : '#c8d0dc'}`, color: '#111811' }}>
         {checked && '✓'}
       </div>
-      <div style={{ width: 6, height: 6, borderRadius: '50%', flexShrink: 0, background: open ? '#22c55e' : '#475569', boxShadow: open ? '0 0 5px #22c55e' : 'none' }} />
+      {isExcl
+        ? <span className="rk-excl-star">⭐</span>
+        : <div style={{ width: 6, height: 6, borderRadius: '50%', flexShrink: 0, background: open ? '#22c55e' : '#475569', boxShadow: open ? '0 0 5px #22c55e' : 'none' }} />
+      }
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: 12, fontWeight: 600, color: checked ? '#fff' : '#111811', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{bet.titulo}</p>
-        <p style={{ fontSize: 10, color: '#94a3b8', margin: 0 }}>{bet.participantes || 0} part · {parts} partidos</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 2 }}>
+          <p style={{ fontSize: 12, fontWeight: isExcl ? 700 : 600, color: checked ? (isExcl ? '#ebc32b' : '#fff') : (isExcl ? '#7a5800' : '#111811'), margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, minWidth: 0 }}>{bet.titulo}</p>
+          {isExcl && <span style={{ fontSize: 7, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase', background: checked ? 'rgba(235,195,43,.25)' : 'rgba(235,195,43,.15)', border: `1px solid ${checked ? 'rgba(235,195,43,.6)' : 'rgba(235,195,43,.4)'}`, color: checked ? '#ebc32b' : '#9a6f00', borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>ESPECIAL</span>}
+        </div>
+        <p style={{ fontSize: 10, color: isExcl ? (checked ? 'rgba(235,195,43,.5)' : 'rgba(154,111,0,.65)') : '#94a3b8', margin: 0 }}>{bet.participantes || 0} part · {parts} partidos</p>
       </div>
     </div>
   )
@@ -459,18 +474,25 @@ function BetRow({ bet, sel, onPick }) {
   const fin = bet.estado === 'finalizada'
   const col = fin ? '#86C873' : open ? '#22c55e' : '#475569'
   const parts = bet.partidos_ids ? bet.partidos_ids.split(',').filter(Boolean).length : 0
+  const isExcl = bet.titulo.includes('⭐')
   return (
-    <div className={`rk-row${sel ? ' sel' : ''}`} onClick={() => onPick(bet)}>
-      <div style={{ width: 7, height: 7, borderRadius: '50%', background: col, flexShrink: 0, boxShadow: open ? `0 0 6px ${col}` : sel ? `0 0 4px ${col}` : 'none' }} />
+    <div className={`rk-row${sel ? ' sel' : ''}${isExcl ? ' rk-row-excl' : ''}`} onClick={() => onPick(bet)}>
+      {isExcl
+        ? <span className="rk-excl-star">⭐</span>
+        : <div style={{ width: 7, height: 7, borderRadius: '50%', background: col, flexShrink: 0, boxShadow: open ? `0 0 6px ${col}` : sel ? `0 0 4px ${col}` : 'none' }} />
+      }
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: 12, fontWeight: 600, color: sel ? '#fff' : '#111811', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {bet.titulo}
-        </p>
-        <p style={{ fontSize: 10, color: '#94a3b8', margin: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 2 }}>
+          <p style={{ fontSize: 12, fontWeight: isExcl ? 700 : 600, color: sel ? (isExcl ? '#ebc32b' : '#fff') : (isExcl ? '#7a5800' : '#111811'), margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1, minWidth: 0 }}>
+            {bet.titulo}
+          </p>
+          {isExcl && <span style={{ fontSize: 7, fontWeight: 800, letterSpacing: '.08em', textTransform: 'uppercase', background: sel ? 'rgba(235,195,43,.25)' : 'rgba(235,195,43,.15)', border: `1px solid ${sel ? 'rgba(235,195,43,.6)' : 'rgba(235,195,43,.4)'}`, color: sel ? '#ebc32b' : '#9a6f00', borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>ESPECIAL</span>}
+        </div>
+        <p style={{ fontSize: 10, color: isExcl ? (sel ? 'rgba(235,195,43,.5)' : 'rgba(154,111,0,.65)') : '#94a3b8', margin: 0 }}>
           {bet.participantes || 0} part · {parts} partidos
         </p>
       </div>
-      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={sel ? '#86C873' : '#c8d0dc'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={sel ? (isExcl ? '#ebc32b' : '#86C873') : (isExcl ? 'rgba(235,195,43,.45)' : '#c8d0dc')} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <polyline points="9 18 15 12 9 6" />
       </svg>
     </div>
@@ -482,22 +504,39 @@ function BetRow({ bet, sel, onPick }) {
 ══════════════════════════════════════════ */
 function Banner({ apuesta, meta, loading }) {
   const isGlobal = apuesta.tipo === 'global'
+  const isExcl = apuesta.titulo?.includes('⭐')
+  const bg = isGlobal
+    ? 'linear-gradient(125deg,#1b170c 0%,#352c11 100%)'
+    : isExcl
+      ? 'linear-gradient(125deg,#1a1100 0%,#2e1e00 50%,#1d1500 100%)'
+      : 'linear-gradient(125deg,#111811 0%,#1e3020 100%)'
+  const borderStyle = isGlobal
+    ? '1.5px solid #ebc32b'
+    : isExcl
+      ? '1.5px solid rgba(235,195,43,.5)'
+      : '1px solid rgba(134,200,115,.2)'
+  const accentColor = (isGlobal || isExcl) ? '#ebc32b' : '#86C873'
+  const accentAlpha = (isGlobal || isExcl) ? 'rgba(235,195,43,.08)' : 'rgba(134,200,115,.08)'
+  const titleColor = (isGlobal || isExcl) ? '#ebc32b' : '#fff'
+  const dividerColor = (isGlobal || isExcl) ? 'rgba(235,195,43,.15)' : 'rgba(134,200,115,.12)'
   return (
     <div style={{
       borderRadius: 14,
       marginBottom: 24,
-      background: isGlobal ? 'linear-gradient(125deg,#1b170c 0%,#352c11 100%)' : 'linear-gradient(125deg,#111811 0%,#1e3020 100%)',
-      border: isGlobal ? '1.5px solid #ebc32b' : '1px solid rgba(134,200,115,.2)',
+      background: bg,
+      border: borderStyle,
       padding: '24px 22px 18px',
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      boxShadow: isExcl ? '0 0 40px rgba(235,195,43,.1), 0 8px 32px rgba(0,0,0,.35)' : 'none'
     }}>
-      <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: isGlobal ? 'rgba(235,195,43,.06)' : 'rgba(134,200,115,.08)', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', bottom: -40, right: 80, width: 120, height: 120, borderRadius: '50%', background: isGlobal ? 'rgba(235,195,43,.04)' : 'rgba(134,200,115,.05)', pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: accentAlpha, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: -40, right: 80, width: 120, height: 120, borderRadius: '50%', background: isExcl ? 'rgba(235,195,43,.04)' : (isGlobal ? 'rgba(235,195,43,.04)' : 'rgba(134,200,115,.05)'), pointerEvents: 'none' }} />
+      {isExcl && <div style={{ position: 'absolute', top: -20, left: -20, width: 100, height: 100, borderRadius: '50%', background: 'rgba(235,195,43,.05)', pointerEvents: 'none' }} />}
 
-      {/* Styled MOYANO CONDUCCIÓN Logo top-right */}
+      {/* Logo */}
       <div style={{ position: 'absolute', top: 12, right: 18, pointerEvents: 'none', display: 'flex', alignItems: 'center', gap: 8, transformOrigin: 'top right' }}>
-        <img src="/imgprode/one-prode-blanco.png" alt="Logo" style={{ height: 32, width: 'auto', opacity: 0.95, filter: 'drop-shadow(0 2px 8px rgba(134,200,115,0.4))' }} />
+        <img src="/imgprode/one-prode-blanco.png" alt="Logo" style={{ height: 32, width: 'auto', opacity: 0.95, filter: `drop-shadow(0 2px 8px ${isExcl ? 'rgba(235,195,43,0.5)' : 'rgba(134,200,115,0.4)'})` }} />
         <div style={{ width: 1, height: 18, background: 'rgba(255,255,255,.25)', flexShrink: 0 }} />
         <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.25rem', letterSpacing: '.06em', fontWeight: 600 }}>
           <span style={{ color: '#7BA3C0' }}>MOYANO </span>
@@ -510,28 +549,43 @@ function Banner({ apuesta, meta, loading }) {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 16, position: 'relative', marginTop: 6 }}>
         <div>
-          <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: isGlobal ? '#ebc32b' : 'rgba(134,200,115,.55)', display: 'block', marginBottom: 4 }}>
+          {isExcl && (
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'rgba(235,195,43,.15)', border: '1px solid rgba(235,195,43,.45)', borderRadius: 99, padding: '3px 11px', marginBottom: 8 }}>
+              <span style={{ fontSize: 11 }}>⭐</span>
+              <span style={{ fontSize: 8, fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: '#ebc32b' }}>REGALO EXCLUSIVO</span>
+            </div>
+          )}
+          <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: isGlobal ? '#ebc32b' : isExcl ? 'rgba(235,195,43,.55)' : 'rgba(134,200,115,.55)', display: 'block', marginBottom: 4 }}>
             {isGlobal ? '🏆 ACUMULADO GENERAL' : 'TABLA DE POSICIONES'}
           </span>
-          <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(22px,3vw,32px)', color: isGlobal ? '#ebc32b' : '#fff', margin: '0 0 6px', letterSpacing: '.02em', lineHeight: 1 }}>
+          <h2 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(22px,3vw,32px)', color: titleColor, margin: '0 0 6px', letterSpacing: '.02em', lineHeight: 1 }}>
             {apuesta.titulo}
           </h2>
           {apuesta.premio && (
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(134,200,115,.1)', border: '1px solid rgba(134,200,115,.2)', borderRadius: 99, padding: '3px 10px' }}>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#86C873" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: isExcl ? 'rgba(235,195,43,.1)' : 'rgba(134,200,115,.1)', border: `1px solid ${isExcl ? 'rgba(235,195,43,.2)' : 'rgba(134,200,115,.2)'}`, borderRadius: 99, padding: '3px 10px' }}>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" /><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" /><path d="M4 22h16" /><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
               </svg>
-              <span style={{ fontSize: 10, color: 'rgba(134,200,115,.8)', fontWeight: 600 }}>{apuesta.premio}</span>
+              <span style={{ fontSize: 10, color: isExcl ? 'rgba(235,195,43,.8)' : 'rgba(134,200,115,.8)', fontWeight: 600 }}>{apuesta.premio}</span>
             </div>
           )}
         </div>
 
         {!loading && (
           <div style={{ display: 'flex', gap: 20, flexShrink: 0 }}>
-            {meta.total > 0 && <BannerStat n={meta.total} label="Part." gold={isGlobal} />}
+            {meta.total > 0 && <BannerStat n={meta.total} label="Part." gold={isGlobal || isExcl} />}
             {isGlobal && meta.apuestas_n > 0 && <BannerStat n={meta.apuestas_n} label="Apuestas" gold />}
           </div>
         )}
+      </div>
+
+      <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${dividerColor}`, display: 'flex', alignItems: 'center', gap: 7 }}>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke={accentColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: .7 }}>
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <span style={{ fontSize: 10, color: (isGlobal || isExcl) ? 'rgba(235,195,43,.6)' : 'rgba(134,200,115,.55)', fontWeight: 600, letterSpacing: '.04em' }}>
+          En caso de empate en puntos, tiene prioridad quien realizó su apuesta primero.
+        </span>
       </div>
     </div>
   )

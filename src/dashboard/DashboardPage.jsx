@@ -40,31 +40,49 @@ function StatCard({ label, value, sub, icon, gold = false, live = false }) {
 
 function BetRow({ bet, onPredict }) {
   const matchCount = bet.partidos?.length || 0
-  // La apuesta cierra del todo al iniciar su último partido: contamos hasta ahí.
   const ultimoKickoff = lastMatchKickoff(bet)
   const editable = isBetEditable(bet)
   const remaining = editable && ultimoKickoff ? timeLeft(ultimoKickoff) : 'Cerrada'
   const closingSoon = remaining !== 'Cerrada' && !remaining.includes('d')
   const hasLive = bet.partidos?.some(p => p.estado === 'en_vivo')
+  const isExcl = bet.titulo?.includes('⭐')
   return (
     <div
       onClick={() => onPredict(bet)}
       className="flex items-center gap-3 p-3.5 rounded-xl transition-all group cursor-pointer"
-      style={{ background: '#fff', border: '1px solid #c8dbcc', boxShadow: '0 1px 0 rgba(17,24,17,.04)' }}
-      onMouseEnter={e => { e.currentTarget.style.background = '#f6f9f6'; e.currentTarget.style.borderColor = '#86C873'; e.currentTarget.style.transform = 'translateX(3px)' }}
-      onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#c8dbcc'; e.currentTarget.style.transform = '' }}
+      style={{
+        background: isExcl ? 'linear-gradient(90deg,rgba(235,195,43,.07) 0%,rgba(235,195,43,.02) 100%)' : '#fff',
+        border: isExcl ? '1.5px solid rgba(235,195,43,.4)' : '1px solid #c8dbcc',
+        boxShadow: isExcl ? '0 2px 12px rgba(235,195,43,.08)' : '0 1px 0 rgba(17,24,17,.04)',
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.background = isExcl ? 'rgba(235,195,43,.1)' : '#f6f9f6'
+        e.currentTarget.style.borderColor = isExcl ? 'rgba(235,195,43,.65)' : '#86C873'
+        e.currentTarget.style.transform = 'translateX(3px)'
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.background = isExcl ? 'linear-gradient(90deg,rgba(235,195,43,.07) 0%,rgba(235,195,43,.02) 100%)' : '#fff'
+        e.currentTarget.style.borderColor = isExcl ? 'rgba(235,195,43,.4)' : '#c8dbcc'
+        e.currentTarget.style.transform = ''
+      }}
     >
-      <span className="w-2 h-2 rounded-full flex-shrink-0"
-        style={{ background: hasLive ? '#e03252' : '#86C873', boxShadow: hasLive ? '0 0 8px rgba(224,50,82,.5)' : '0 0 6px rgba(134,200,115,.5)' }} />
+      {isExcl
+        ? <span style={{ fontSize: 16, lineHeight: 1, flexShrink: 0, filter: 'drop-shadow(0 0 4px rgba(235,195,43,.7))' }}>⭐</span>
+        : <span className="w-2 h-2 rounded-full shrink-0"
+            style={{ background: hasLive ? '#e03252' : '#86C873', boxShadow: hasLive ? '0 0 8px rgba(224,50,82,.5)' : '0 0 6px rgba(134,200,115,.5)' }} />
+      }
       <div className="flex-1 min-w-0">
-        <p className="font-body font-semibold text-sm truncate" style={{ color: '#111811' }}>{bet.titulo}</p>
-        <p className="font-body text-xs mt-0.5" style={{ color: '#4a6b50' }}>
+        <div className="flex items-center gap-2">
+          <p className="font-body font-semibold text-sm truncate" style={{ color: isExcl ? '#7a5800' : '#111811' }}>{bet.titulo}</p>
+          {isExcl && <span style={{ fontSize: 7, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', background: 'rgba(235,195,43,.15)', border: '1px solid rgba(235,195,43,.4)', color: '#9a6f00', borderRadius: 4, padding: '1px 5px', flexShrink: 0, whiteSpace: 'nowrap' }}>ESPECIAL</span>}
+        </div>
+        <p className="font-body text-xs mt-0.5" style={{ color: isExcl ? 'rgba(154,111,0,.7)' : '#4a6b50' }}>
           {matchCount} {matchCount === 1 ? 'partido' : 'partidos'}
           {bet.premio && <span> · 🏆 {bet.premio}</span>}
         </p>
       </div>
-      <span className="font-body text-xs font-semibold flex-shrink-0" style={{ color: closingSoon ? '#5A9E4A' : '#111811' }}>{remaining}</span>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8aaa8e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 transition-transform group-hover:translate-x-1">
+      <span className="font-body text-xs font-semibold flex-shrink-0" style={{ color: isExcl ? '#9a6f00' : (closingSoon ? '#5A9E4A' : '#111811') }}>{remaining}</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={isExcl ? 'rgba(235,195,43,.5)' : '#8aaa8e'} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 transition-transform group-hover:translate-x-1">
         <polyline points="9 18 15 12 9 6" />
       </svg>
     </div>

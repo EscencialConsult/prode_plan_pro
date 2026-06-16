@@ -65,27 +65,44 @@ function BetCard({bet,predsMap,onPredict}){
   const anyPred=bet.partidos?.some(p=>predsMap?.[p.id])
   const {user}=useAuth()
   const canPredict=(open&&(bet.tipo!=='grupos'||!!user?.area_id))
+  const isExcl=bet.titulo?.includes('⭐')
 
   return(
-    <div style={{...CARD_BASE,borderRadius:18,padding:'1.4rem 1.5rem',border:`1px solid ${live?'rgba(224,50,82,.25)':open?'rgba(27,138,90,.18)':'#c8dbcc'}`,transition:'transform .2s,box-shadow .2s'}}
-      onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-2px)';e.currentTarget.style.boxShadow='0 10px 28px rgba(17,24,17,.1)'}}
-      onMouseLeave={e=>{e.currentTarget.style.transform='';e.currentTarget.style.boxShadow='0 1px 0 rgba(17,24,17,.04)'}}>
+    <div style={{
+      borderRadius:18,
+      padding:0,
+      border: isExcl ? '1.5px solid rgba(235,195,43,.45)' : `1px solid ${live?'rgba(224,50,82,.25)':open?'rgba(27,138,90,.18)':'#c8dbcc'}`,
+      background: isExcl ? 'linear-gradient(135deg,rgba(235,195,43,.06) 0%,#fff 40%)' : '#fff',
+      boxShadow: isExcl ? '0 4px 24px rgba(235,195,43,.1), 0 1px 0 rgba(17,24,17,.04)' : '0 1px 0 rgba(17,24,17,.04)',
+      transition:'transform .2s,box-shadow .2s',overflow:'hidden'}}
+      onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-2px)';e.currentTarget.style.boxShadow=isExcl?'0 12px 32px rgba(235,195,43,.15)':'0 10px 28px rgba(17,24,17,.1)'}}
+      onMouseLeave={e=>{e.currentTarget.style.transform='';e.currentTarget.style.boxShadow=isExcl?'0 4px 24px rgba(235,195,43,.1), 0 1px 0 rgba(17,24,17,.04)':'0 1px 0 rgba(17,24,17,.04)'}}>
 
-      {/* Header */}
-      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:'1rem',marginBottom:'1rem'}}>
-        <div style={{flex:1,minWidth:0}}>
-          <h3 style={{fontWeight:700,fontSize:'1rem',color:'#111811',margin:'0 0 .3rem',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{bet.titulo}</h3>
-          <p style={{...MUTED,fontSize:'.75rem',margin:0}}>
-            {mc} {mc===1?'partido':'partidos'}
-            {bet.premio?` · 🏆 ${bet.premio}`:''}
-            {open&&rem!=='Cerrada'?` · ⏱ ${rem}`:''}
-          </p>
+      {isExcl&&<div style={{height:3,background:'linear-gradient(90deg,transparent,#ebc32b 30%,#ebc32b 70%,transparent)'}}/>}
+
+      <div style={{padding:'1.4rem 1.5rem'}}>
+        {isExcl&&(
+          <div style={{display:'inline-flex',alignItems:'center',gap:6,background:'rgba(235,195,43,.12)',border:'1px solid rgba(235,195,43,.4)',borderRadius:99,padding:'3px 11px',marginBottom:10}}>
+            <span style={{fontSize:12}}>⭐</span>
+            <span style={{fontSize:9,fontWeight:800,letterSpacing:'.18em',textTransform:'uppercase',color:'#9a6f00'}}>REGALO EXCLUSIVO</span>
+          </div>
+        )}
+
+        {/* Header */}
+        <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:'1rem',marginBottom:'1rem'}}>
+          <div style={{flex:1,minWidth:0}}>
+            <h3 style={{fontWeight:700,fontSize:'1rem',color:isExcl?'#7a5800':'#111811',margin:'0 0 .3rem',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{bet.titulo}</h3>
+            <p style={{...MUTED,fontSize:'.75rem',margin:0,color:isExcl?'rgba(154,111,0,.7)':'#4a6b50'}}>
+              {mc} {mc===1?'partido':'partidos'}
+              {bet.premio?` · 🏆 ${bet.premio}`:''}
+              {open&&rem!=='Cerrada'?` · ⏱ ${rem}`:''}
+            </p>
+          </div>
+          <span style={{display:'inline-flex',alignItems:'center',gap:'.35rem',padding:'.28rem .7rem',borderRadius:99,fontSize:'.65rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em',background:s.bg,color:s.color,border:`1px solid ${s.border}`,flexShrink:0,whiteSpace:'nowrap'}}>
+            {live&&<span style={{width:6,height:6,borderRadius:'50%',background:s.color,animation:'ldot 1.4s ease infinite',display:'inline-block'}}/>}
+            {s.label}
+          </span>
         </div>
-        <span style={{display:'inline-flex',alignItems:'center',gap:'.35rem',padding:'.28rem .7rem',borderRadius:99,fontSize:'.65rem',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em',background:s.bg,color:s.color,border:`1px solid ${s.border}`,flexShrink:0,whiteSpace:'nowrap'}}>
-          {live&&<span style={{width:6,height:6,borderRadius:'50%',background:s.color,animation:'ldot 1.4s ease infinite',display:'inline-block'}}/>}
-          {s.label}
-        </span>
-      </div>
 
       {/* Partidos preview */}
       {bet.partidos?.length>0&&(
@@ -115,23 +132,24 @@ function BetCard({bet,predsMap,onPredict}){
       )}
 
       {/* Footer */}
-      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'.75rem',flexWrap:'wrap',paddingTop:'.85rem',borderTop:'1px solid #c8dbcc'}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'.75rem',flexWrap:'wrap',paddingTop:'.85rem',borderTop:`1px solid ${isExcl?'rgba(235,195,43,.2)':'#c8dbcc'}`}}>
         <div style={{display:'flex',alignItems:'center',gap:'.5rem',flexWrap:'wrap',minWidth:0}}>
           {anyPred&&(
-            <span style={{display:'inline-flex',alignItems:'center',gap:'.3rem',fontSize:'.72rem',fontWeight:600,color:'#1b8a5a'}}>
+            <span style={{display:'inline-flex',alignItems:'center',gap:'.3rem',fontSize:'.72rem',fontWeight:600,color:isExcl?'#9a6f00':'#1b8a5a'}}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
               Predicción guardada
             </span>
           )}
-          {bet.participantes>0&&<span style={{...MUTED,fontSize:'.72rem'}}>{bet.participantes} participantes</span>}
+          {bet.participantes>0&&<span style={{...MUTED,fontSize:'.72rem',color:isExcl?'rgba(154,111,0,.7)':'#4a6b50'}}>{bet.participantes} participantes</span>}
         </div>
         {canPredict&&(
-          <button onClick={()=>onPredict(bet)} style={{fontWeight:700,fontSize:'.8rem',padding:'.55rem 1.1rem',borderRadius:99,border:'none',background:'#86C873',color:'#0a0f0a',cursor:'pointer',transition:'all .17s',boxShadow:'0 4px 14px rgba(134,200,115,.25)',whiteSpace:'nowrap'}}
-            onMouseEnter={e=>{e.currentTarget.style.background='#A8E096';e.currentTarget.style.transform='translateY(-1px)'}}
-            onMouseLeave={e=>{e.currentTarget.style.background='#86C873';e.currentTarget.style.transform=''}}>
-            {anyPred?'Editar prode':'Cargar prode'}
+          <button onClick={()=>onPredict(bet)} style={{fontWeight:700,fontSize:'.8rem',padding:'.55rem 1.1rem',borderRadius:99,border:'none',background:isExcl?'#ebc32b':'#86C873',color:'#0a0f0a',cursor:'pointer',transition:'all .17s',boxShadow:isExcl?'0 4px 14px rgba(235,195,43,.3)':'0 4px 14px rgba(134,200,115,.25)',whiteSpace:'nowrap'}}
+            onMouseEnter={e=>{e.currentTarget.style.background=isExcl?'#f0cf5a':'#A8E096';e.currentTarget.style.transform='translateY(-1px)'}}
+            onMouseLeave={e=>{e.currentTarget.style.background=isExcl?'#ebc32b':'#86C873';e.currentTarget.style.transform=''}}>
+            {isExcl&&open?'⭐ ':''}{anyPred?'Editar prode':'Cargar prode'}
           </button>
         )}
+      </div>
       </div>
     </div>
   )

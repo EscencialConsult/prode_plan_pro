@@ -88,6 +88,7 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
   const open = isBetOpen(bet)
   const isLive = bet.partidos?.some(p => p.estado === 'en_vivo')
   const allFinished = bet.partidos?.length > 0 && bet.partidos.every(p => p.estado === 'finalizado')
+  const isExcl = bet.titulo?.includes('⭐')
 
   // Estado visual de la apuesta
   const state = isLive
@@ -122,17 +123,32 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
     <div
       className="rounded-2xl overflow-hidden transition-all"
       style={{
-        background: 'linear-gradient(145deg, #1C261D 0%, #0a150a 100%)',
-        border: `1px solid ${style.border}`,
-        boxShadow: `0 10px 30px rgba(0,0,0,0.35), ${style.glow}`,
+        background: isExcl
+          ? 'linear-gradient(145deg, #221500 0%, #140c00 100%)'
+          : 'linear-gradient(145deg, #1C261D 0%, #0a150a 100%)',
+        border: isExcl ? '1.5px solid rgba(235,195,43,.5)' : `1px solid ${style.border}`,
+        boxShadow: isExcl
+          ? '0 10px 40px rgba(0,0,0,.45), 0 0 40px rgba(235,195,43,.1)'
+          : `0 10px 30px rgba(0,0,0,0.35), ${style.glow}`,
       }}
     >
+      {isExcl && (
+        <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #ebc32b 30%, #ebc32b 70%, transparent)' }} />
+      )}
       <div className="p-5 md:p-6">
+
+        {/* Badge REGALO EXCLUSIVO */}
+        {isExcl && (
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(235,195,43,.12)', border: '1px solid rgba(235,195,43,.4)', borderRadius: 99, padding: '4px 12px', marginBottom: 12 }}>
+            <span style={{ fontSize: 13 }}>⭐</span>
+            <span style={{ fontSize: 9, fontWeight: 800, letterSpacing: '.2em', textTransform: 'uppercase', color: '#ebc32b' }}>REGALO EXCLUSIVO</span>
+          </div>
+        )}
 
         {/* Header: título + badges de estado/tipo */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="min-w-0 flex-1">
-            <h3 className="font-display text-2xl md:text-3xl tracking-wide leading-tight truncate" style={{ color: '#d0daf0' }}>
+            <h3 className="font-display text-2xl md:text-3xl tracking-wide leading-tight truncate" style={{ color: isExcl ? '#ebc32b' : '#d0daf0' }}>
               {bet.titulo}
             </h3>
             <p className="text-xs text-[var(--color-text-muted)] font-body mt-1">
@@ -323,30 +339,32 @@ export default function BetCard({ bet, predictionsMap, onPredict }) {
             className="w-full font-body font-bold text-sm py-3 rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               background: open && puedeApostarGrupal
-                ? 'linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-bright) 100%)'
+                ? isExcl
+                  ? 'linear-gradient(135deg, #ebc32b 0%, #c49a1a 100%)'
+                  : 'linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-bright) 100%)'
                 : 'transparent',
-              color: open && puedeApostarGrupal ? '#0F1410' : 'var(--color-accent)',
-              border: open && puedeApostarGrupal ? 'none' : '1px solid rgba(134,200,115,0.4)',
-              boxShadow: open && puedeApostarGrupal ? '0 6px 20px rgba(134,200,115,0.3)' : 'none',
+              color: open && puedeApostarGrupal ? '#0F1410' : (isExcl ? '#ebc32b' : 'var(--color-accent)'),
+              border: open && puedeApostarGrupal ? 'none' : `1px solid ${isExcl ? 'rgba(235,195,43,0.4)' : 'rgba(134,200,115,0.4)'}`,
+              boxShadow: open && puedeApostarGrupal ? (isExcl ? '0 6px 20px rgba(235,195,43,0.35)' : '0 6px 20px rgba(134,200,115,0.3)') : 'none',
             }}
             onMouseEnter={e => {
               if (open && puedeApostarGrupal) {
-                e.currentTarget.style.boxShadow = '0 8px 28px rgba(134,200,115,0.5)'
+                e.currentTarget.style.boxShadow = isExcl ? '0 8px 28px rgba(235,195,43,0.5)' : '0 8px 28px rgba(134,200,115,0.5)'
                 e.currentTarget.style.transform = 'translateY(-1px)'
               } else {
-                e.currentTarget.style.background = 'rgba(134,200,115,0.08)'
+                e.currentTarget.style.background = isExcl ? 'rgba(235,195,43,0.08)' : 'rgba(134,200,115,0.08)'
               }
             }}
             onMouseLeave={e => {
               if (open && puedeApostarGrupal) {
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(134,200,115,0.3)'
+                e.currentTarget.style.boxShadow = isExcl ? '0 6px 20px rgba(235,195,43,0.35)' : '0 6px 20px rgba(134,200,115,0.3)'
                 e.currentTarget.style.transform = 'translateY(0)'
               } else {
                 e.currentTarget.style.background = 'transparent'
               }
             }}
           >
-            {actionLabel}
+            {isExcl && open ? '⭐ ' : ''}{actionLabel}
           </button>
         )}
 
