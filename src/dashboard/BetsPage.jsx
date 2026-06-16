@@ -172,15 +172,24 @@ export default function BetsPage(){
 
   function showToast(msg,ok=true){setToast({msg,ok});setTimeout(()=>setToast(null),3200)}
 
-const filtered = bets.filter(b => {
-  // "Todas" muestra todas las apuestas (sin filtro)
-  if (filter === 'todas') return true
-  // "Activas" muestra las que siguen abiertas (estado abierta Y dentro de plazo)
-  if (filter === 'activas') return isOpen(b)
-  // "Cerradas" muestra las que ya no están abiertas para apostar
-  if (filter === 'cerradas') return !isOpen(b)
-  return true
-})
+const filtered = bets
+  .filter(b => {
+    if (filter === 'todas') return true
+    if (filter === 'activas') return isOpen(b)
+    if (filter === 'cerradas') return !isOpen(b)
+    return true
+  })
+  .sort((a, b) => {
+    const aOpen = isOpen(a)
+    const bOpen = isOpen(b)
+    if (aOpen !== bOpen) return aOpen ? -1 : 1
+    const aTime = lastMatchKickoff(a)
+    const bTime = lastMatchKickoff(b)
+    if (!aTime && !bTime) return 0
+    if (!aTime) return 1
+    if (!bTime) return -1
+    return new Date(aTime) - new Date(bTime)
+  })
 
   // Guardar predicciones en lote transaccional
   async function handlePredict(betId,preds){
