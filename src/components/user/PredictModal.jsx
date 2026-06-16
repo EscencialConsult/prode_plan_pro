@@ -55,6 +55,9 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
   const [activeMatchIdx, setActiveMatchIdx] = useState(0)
   const matchRefs = useRef({})
   const listRef = useRef(null)
+  // true sólo cuando el usuario edita un marcador (no al hidratar desde la DB).
+  // Evita crear borradores "fantasma" con solo abrir la apuesta.
+  const userEditedRef = useRef(false)
 
   const esApuestaGrupos = bet?.tipo === 'grupos' || bet?.type === 'grupos'
   const areaUsuario = user?.area_id
@@ -134,9 +137,18 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
     })
   }, [bet?.id, user?.id, user?.user_id, predictions]) // ← re-init al cambiar usuario o al llegar predicciones
 
-  // Guarda el borrador 2s después del último cambio (recovery anti-cierre accidental)
+  // Al cambiar de apuesta, arrancamos sin marca de edición (la hidratación
+  // desde la DB no cuenta como edición del usuario).
+  useEffect(() => {
+    userEditedRef.current = false
+  }, [bet?.id])
+
+  // Guarda el borrador 2s después del último cambio, PERO sólo si el usuario
+  // editó realmente un marcador (recovery anti-cierre accidental). Así, abrir
+  // una apuesta no genera borradores que "resuciten" predicciones borradas.
   useDebounce(() => {
     if (!bet?.id) return
+    if (!userEditedRef.current) return
     const userId = user?.id || user?.user_id || 'anon'
     const draftKey = `bet-${bet.id}-${userId}-draft`
     try {
@@ -262,6 +274,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
 
   function updateScore(partidoId, side, value) {
     if (value !== '' && !/^\d{0,2}$/.test(value)) return
+    userEditedRef.current = true
     setScores(prev => ({ ...prev, [partidoId]: { ...prev[partidoId], [side]: value } }))
     
     setClasificados(prev => {
@@ -281,6 +294,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
   }
 
   function updateClasificado(partidoId, codigo) {
+    userEditedRef.current = true
     setClasificados(prev => ({ ...prev, [partidoId]: codigo }))
   }
 
