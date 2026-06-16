@@ -14,6 +14,30 @@ function esEliminatoria(fase) {
   return String(fase).trim().toLowerCase() !== 'grupos'
 }
 
+/**
+ * Un partido queda cerrado para predicciones si ya inició (fecha_hora <= ahora)
+ * o si su estado es en_vivo / finalizado / cancelado.
+ * Comparación por instante UTC: match.fecha_partido viene en ISO UTC ("...Z")
+ * y new Date() compara por instante absoluto, así funciona en cualquier zona.
+ */
+function partidoCerrado(match) {
+  if (!match) return false
+  const est = match.estado
+  if (est === 'en_vivo' || est === 'finalizado' || est === 'cancelado') return true
+  if (!match.fecha_partido) return false
+  return new Date(match.fecha_partido) <= new Date()
+}
+
+/** Formatea la hora de inicio del partido en la zona local del navegador */
+function horaInicioPartido(match) {
+  if (!match?.fecha_partido) return ''
+  const d = new Date(match.fecha_partido)
+  if (isNaN(d.getTime())) return ''
+  return d.toLocaleString('es-AR', {
+    day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
+  })
+}
+
 function useDebounce(callback, delay, deps) {
   useEffect(() => {
     const handler = setTimeout(callback, delay)
@@ -58,47 +82,57 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
   useEffect(() => {
     if (!bet?.partidos) return
 
-    const initialScores = {}
-    const initialClasif = {}
-
-    // Paso 1 — DB es la fuente de verdad
-    bet.partidos.forEach(p => {
-      const dbPred = predictions?.[p.id]
-      initialScores[p.id] = {
-        local:     dbPred?.pred_local     != null ? String(dbPred.pred_local)     : '',
-        visitante: dbPred?.pred_visitante != null ? String(dbPred.pred_visitante) : '',
-      }
-      initialClasif[p.id] = dbPred?.pred_clasificado || ''
-    })
-
-    // Paso 2 — Borrador rellena SOLO los partidos sin predicción en DB
+    // Borrador (recovery anti-cierre accidental)
+    let draftScores = {}
+    let draftClasif = {}
     const userId = user?.id || user?.user_id || 'anon'
     const draftKey = `bet-${bet.id}-${userId}-draft`
     try {
       const raw = localStorage.getItem(draftKey)
       if (raw) {
-        const { scores: dScores, clasificados: dClasif } = JSON.parse(raw)
-        if (dScores) {
-          Object.keys(dScores).forEach(pid => {
-            // Usar borrador únicamente si no hay datos de DB para este partido
-            if (initialScores[pid]?.local === '' && initialScores[pid]?.visitante === '') {
-              initialScores[pid] = dScores[pid]
-            }
-          })
-        }
-        if (dClasif) {
-          Object.keys(dClasif).forEach(pid => {
-            if (!initialClasif[pid]) initialClasif[pid] = dClasif[pid]
-          })
-        }
+        const parsed = JSON.parse(raw)
+        draftScores = parsed.scores || {}
+        draftClasif = parsed.clasificados || {}
       }
     } catch (e) {
       console.warn('Error loading draft:', e)
     }
 
-    setScores(initialScores)
-    setClasificados(initialClasif)
-  }, [bet?.id, user?.id, user?.user_id]) // ← re-init también si cambia el usuario
+    // Prioridad: lo que el usuario YA tipeó > DB > borrador > vacío.
+    // Importante: este efecto también corre cuando llega `predictions` (puede
+    // cargar después de abrir el modal por latencia), por eso fusionamos sin
+    // pisar lo que el usuario esté escribiendo.
+    setScores(prev => {
+      const next = {}
+      bet.partidos.forEach(p => {
+        const dbPred = predictions?.[p.id]
+        const prevSc = prev[p.id]
+        const userTyped = prevSc && (prevSc.local !== '' || prevSc.visitante !== '')
+        if (userTyped) {
+          next[p.id] = prevSc
+        } else if (dbPred?.pred_local != null || dbPred?.pred_visitante != null) {
+          next[p.id] = {
+            local:     dbPred?.pred_local     != null ? String(dbPred.pred_local)     : '',
+            visitante: dbPred?.pred_visitante != null ? String(dbPred.pred_visitante) : '',
+          }
+        } else if (draftScores[p.id]) {
+          next[p.id] = draftScores[p.id]
+        } else {
+          next[p.id] = { local: '', visitante: '' }
+        }
+      })
+      return next
+    })
+
+    setClasificados(prev => {
+      const next = {}
+      bet.partidos.forEach(p => {
+        const dbPred = predictions?.[p.id]
+        next[p.id] = prev[p.id] || dbPred?.pred_clasificado || draftClasif[p.id] || ''
+      })
+      return next
+    })
+  }, [bet?.id, user?.id, user?.user_id, predictions]) // ← re-init al cambiar usuario o al llegar predicciones
 
   // Guarda el borrador 2s después del último cambio (recovery anti-cierre accidental)
   useDebounce(() => {
@@ -432,26 +466,6 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
             </div>
           </header>
 
-          {/* Cartel recordatorio (descripción de la apuesta) */}
-          {bet.descripcion && (
-            <div className="px-4 py-2.5 bg-yellow-50 border-b border-yellow-200 flex items-start gap-2.5 flex-shrink-0">
-              <svg className="w-4 h-4 text-yellow-600 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="13" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
-              <div className="min-w-0">
-                <p className="text-[12.5px] text-slate-700 leading-snug font-medium">{bet.descripcion}</p>
-                {open && (
-                  <p className="text-[12px] text-yellow-800 leading-snug font-bold mt-1.5 flex items-start gap-1.5">
-                    <span>⚠️</span>
-                    <span>Completá TODAS tus predicciones antes del cierre. Las que dejes sin cargar no suman puntos.</span>
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-
           {/* Mobile Nav Pills */}
           <div className="lg:hidden px-4 py-2 bg-white border-b border-slate-200 overflow-x-auto scrollbar-none flex-shrink-0">
             <div className="inline-flex gap-2 min-w-min pb-1">
@@ -515,7 +529,12 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
             {bet.partidos?.map((match, idx) => {
               const isLive = match.estado === 'en_vivo'
               const isFinished = match.estado === 'finalizado'
-              const isDisabled = !open || isLive || isFinished || estaBloqueado
+              const isCancelled = match.estado === 'cancelado'
+              // Cerrado por hora: el partido ya inició aunque su estado siga "programado"
+              const cerradoPorHora = !isLive && !isFinished && !isCancelled && partidoCerrado(match)
+              const cerrado = isLive || isFinished || isCancelled || cerradoPorHora
+              const isDisabled = !open || cerrado || estaBloqueado
+              const horaInicio = horaInicioPartido(match)
               const sc = scores[match.id] || { local: '', visitante: '' }
               const hasScore = sc.local !== '' && sc.visitante !== ''
               const elim = esEliminatoria(match.fase)
@@ -558,7 +577,21 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                           FIN
                         </span>
                       )}
-                      {!isLive && !isFinished && completo && (
+                      {isCancelled && (
+                        <span className="inline-flex items-center bg-slate-500 text-white text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full">
+                          CANC
+                        </span>
+                      )}
+                      {cerradoPorHora && (
+                        <span className="inline-flex items-center gap-1 bg-slate-700 text-slate-200 text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full">
+                          <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                            <rect x="5" y="11" width="14" height="10" rx="2" />
+                            <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                          </svg>
+                          CERRADO
+                        </span>
+                      )}
+                      {!cerrado && completo && (
                         <span className="inline-flex items-center gap-1 bg-yellow-400 text-slate-900 text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full">
                           <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4">
                             <polyline points="20 6 9 17 4 12" />
@@ -626,6 +659,23 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                       )}
                     </div>
                   </div>
+
+                  {!isLive && !isFinished && !isCancelled && (
+                    cerradoPorHora ? (
+                      <div className="px-3 py-1.5 bg-slate-100 border-t border-slate-200 flex items-center gap-1.5 text-[10px] font-bold text-slate-500">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <rect x="5" y="11" width="14" height="10" rx="2" />
+                          <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                        </svg>
+                        Cerrado{horaInicio ? ` · inició ${horaInicio}` : ''}
+                      </div>
+                    ) : (
+                      <div className="px-3 py-1.5 bg-emerald-50 border-t border-emerald-100 flex items-center gap-1.5 text-[10px] font-bold text-emerald-700">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                        Disponible{horaInicio ? ` hasta ${horaInicio}` : ''}
+                      </div>
+                    )
+                  )}
 
                   {elim && empate && (
                     <div className="px-3 py-3 bg-amber-50 border-t border-dashed border-amber-200">

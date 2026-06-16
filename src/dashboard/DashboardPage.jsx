@@ -228,8 +228,9 @@ export default function DashboardPage() {
         localStorage.removeItem(`bet-${betId}-${userId}-draft`)
       } catch (e) { }
 
-      // Recargar predicciones locales
-      await loadMyPredictions(betId)
+      // Recargar TODAS las predicciones (no solo las de esta apuesta) para que
+      // el estado quede completo y el modal las rehidrate al reabrir.
+      await loadMyPredictions()
 
       // Cerrar modal después de guardar exitosamente
       setSelectedBet(null)
@@ -385,6 +386,7 @@ export default function DashboardPage() {
       {selectedBet && (
         <PredictModal
           bet={selectedBet}
+          predictions={predictions}
           onClose={handleCloseModal}
           onSubmit={handleSubmitPredictions}
           loading={isSubmitting}
