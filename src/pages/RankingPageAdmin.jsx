@@ -25,6 +25,7 @@ const CSS = `
 
 /* Panel izquierdo */
 .rk-sidebar { width:380px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;background:#fcfaf6;border-right:1px solid #f0eadb }
+.rk-sidebar-scroll { flex:1;overflow-y:auto;min-height:0 }
 .rk-sidebar-scroll::-webkit-scrollbar { width:2px }
 .rk-sidebar-scroll::-webkit-scrollbar-thumb { background:#e2ddd6;border-radius:99px }
 
@@ -829,12 +830,13 @@ function RankingGlobalAdmin({ tabla, meta, loading, onRefresh, bets, onSelectBet
             <GlobalUserPanel
               user={tabla.find(u => u.user_id === gExp)}
               onClose={() => setGExp(null)}
+              closedBets={closedBets}
             />
           )}
 
           {/* Tabla completa con toggle */}
           {tabla.length > 3 && (
-            <GlobalFullTable tabla={tabla} expandedUser={gExp} onToggle={toggleGlobal} />
+            <GlobalFullTable tabla={tabla} expandedUser={gExp} onToggle={toggleGlobal} closedBets={closedBets} />
           )}
 
           {/* Apuestas cerradas/finalizadas */}
@@ -853,7 +855,7 @@ function RankingGlobalAdmin({ tabla, meta, loading, onRefresh, bets, onSelectBet
   )
 }
 
-function GlobalFullTable({ tabla, expandedUser, onToggle }) {
+function GlobalFullTable({ tabla, expandedUser, onToggle, closedBets }) {
   const [exp, setExp] = useState(true)
   const otros = tabla.slice(3)
 
@@ -929,23 +931,20 @@ function GlobalFullTable({ tabla, expandedUser, onToggle }) {
                 </div>
 
                 {isExpanded && (
-                  <div style={{ borderTop: '1px solid #f0eadb', padding: '10px 14px', background: '#fcfaf6' }}>
-                    <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 6 }}>
+                  <div style={{ borderTop: '1px solid #f0eadb', padding: '12px 14px', background: '#fcfaf6' }}>
+                    <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 12 }}>
                       {[
-                        { label: 'Puntos', value: u.puntos_totales, color: '#0ea5e9' },
+                        { label: 'Pts', value: u.puntos_totales, color: '#0ea5e9' },
                         { label: 'Apuestas', value: u.apuestas_participadas || 0 },
-                        { label: 'Predicciones', value: u.predicciones || 0 },
+                        { label: 'Pred.', value: u.predicciones || 0 },
                         { label: 'Exactos', value: u.aciertos_exactos || 0, color: '#22c55e' },
-                        { label: 'Diferencia', value: u.aciertos_diferencia || 0, color: '#7dd3fc' },
                       ].map(({ label, value, color }) => (
                         <span key={label} style={{ fontSize: 10, color: '#64748b' }}>
                           <span style={{ fontWeight: 700, color: color || '#0c182b' }}>{value}</span> {label}
                         </span>
                       ))}
                     </div>
-                    <p style={{ fontSize: 9, color: '#94a3b8', margin: 0 }}>
-                      Seleccioná una apuesta del panel izquierdo para ver las predicciones de {u.nombre}
-                    </p>
+                    <BetPredLoader userId={u.user_id} userName={u.nombre} closedBets={closedBets} />
                   </div>
                 )}
               </div>
@@ -958,9 +957,85 @@ function GlobalFullTable({ tabla, expandedUser, onToggle }) {
 }
 
 /* ══════════════════════════════════════════
+   LOADER DE PREDICCIONES POR APUESTA (reutilizable)
+══════════════════════════════════════════ */
+function BetPredLoader({ userId, userName, closedBets }) {
+  const [selBet, setSelBet] = useState(null)
+  const [preds, setPreds] = useState(null)
+  const [loadingBet, setLoadingBet] = useState(null)
+
+  async function loadPreds(bet) {
+    if (selBet?.id === bet.id) { setSelBet(null); setPreds(null); return }
+    setSelBet(bet)
+    setLoadingBet(bet.id)
+    try {
+      const r = await sheetsApi.predicciones.deUsuario(bet.id, userId)
+      setPreds(r.mis || r.predicciones || [])
+    } catch { setPreds([]) }
+    finally { setLoadingBet(null) }
+  }
+
+  if (!closedBets?.length) {
+    return <p style={{ fontSize: 10, color: '#94a3b8', margin: 0, textAlign: 'center' }}>Aún no hay apuestas finalizadas con predicciones</p>
+  }
+
+  return (
+    <div>
+      <p style={{ fontSize: 8, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.18em', color: '#94a3b8', margin: '0 0 8px' }}>
+        Ver predicciones por apuesta:
+      </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        {closedBets.map(b => {
+          const isSel = selBet?.id === b.id
+          const isLoading = loadingBet === b.id
+          const fin = b.estado === 'finalizada'
+          const col = fin ? '#7dd3fc' : '#64748b'
+          return (
+            <div key={b.id}>
+              <button
+                onClick={() => loadPreds(b)}
+                disabled={isLoading}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', gap: 8,
+                  padding: '7px 10px', cursor: 'pointer', transition: 'all .15s',
+                  background: isSel ? '#0c182b' : 'rgba(12,24,43,.03)',
+                  border: `1px solid ${isSel ? 'rgba(255,255,255,.1)' : '#e8e3db'}`,
+                  borderRadius: isSel && preds !== null ? '8px 8px 0 0' : 8,
+                }}
+              >
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: col, flexShrink: 0, boxShadow: fin ? `0 0 4px ${col}` : 'none' }} />
+                <span style={{ flex: 1, fontSize: 11, fontWeight: 600, color: isSel ? '#fff' : '#0c182b', textAlign: 'left', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {b.titulo}
+                </span>
+                {isLoading
+                  ? <span className="rk-spinner" style={{ color: '#7dd3fc' }} />
+                  : <span style={{ fontSize: 8, fontWeight: 700, color: isSel ? '#7dd3fc' : col, background: isSel ? 'rgba(125,211,252,.15)' : `${col}18`, border: `1px solid ${isSel ? 'rgba(125,211,252,.3)' : `${col}30`}`, borderRadius: 99, padding: '1px 6px', whiteSpace: 'nowrap' }}>
+                      {fin ? 'FINAL' : 'CERRADA'}
+                    </span>
+                }
+              </button>
+              {isSel && !isLoading && preds !== null && (
+                <div style={{ padding: '10px 12px', background: '#fcfaf6', border: '1px solid #e8e3db', borderTop: 'none', borderRadius: '0 0 8px 8px', marginBottom: 2 }}>
+                  {preds.length > 0
+                    ? <PrediccionesGrid predicciones={preds} apuesta={b} />
+                    : <p style={{ fontSize: 11, color: '#94a3b8', margin: 0, textAlign: 'center' }}>
+                        {userName} no tiene predicciones en esta apuesta
+                      </p>
+                  }
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+/* ══════════════════════════════════════════
    PANEL RESUMEN GLOBAL DE UN USUARIO
 ══════════════════════════════════════════ */
-function GlobalUserPanel({ user, onClose }) {
+function GlobalUserPanel({ user, onClose, closedBets }) {
   if (!user) return null
   return (
     <div style={{
@@ -970,7 +1045,7 @@ function GlobalUserPanel({ user, onClose }) {
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.9rem', paddingBottom: '.7rem', borderBottom: '1px solid #f0eadb' }}>
         <div>
-          <p style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: '#94a3b8', margin: '0 0 3px' }}>Resumen global de</p>
+          <p style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: '#94a3b8', margin: '0 0 3px' }}>Detalle global de</p>
           <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, color: '#0c182b', margin: 0, letterSpacing: '.02em', lineHeight: 1 }}>{user.nombre}</p>
         </div>
         <button
@@ -984,7 +1059,8 @@ function GlobalUserPanel({ user, onClose }) {
           </svg>
         </button>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 10 }}>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 16 }}>
         {[
           { label: 'Puntos totales', value: user.puntos_totales, color: '#0ea5e9' },
           { label: 'Apuestas', value: user.apuestas_participadas || 0 },
@@ -997,9 +1073,8 @@ function GlobalUserPanel({ user, onClose }) {
           </div>
         ))}
       </div>
-      <p style={{ fontSize: 10, color: '#94a3b8', margin: 0, textAlign: 'center' }}>
-        Seleccioná una apuesta del panel izquierdo para ver las predicciones individuales de {user.nombre}
-      </p>
+
+      <BetPredLoader userId={user.user_id} userName={user.nombre} closedBets={closedBets} />
     </div>
   )
 }
