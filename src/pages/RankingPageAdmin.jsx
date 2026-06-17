@@ -265,6 +265,8 @@ export default function RankingPageAdmin() {
                 meta={globalMeta}
                 loading={globalLoading}
                 onRefresh={cargarRankingGlobal}
+                bets={bets}
+                onSelectBet={cargarRanking}
               />
             ) : (
               <div className="rk-in">
@@ -761,7 +763,11 @@ function LeyendaPuntos({ apuesta, total }) {
 /* ══════════════════════════════════════════
    RANKING GLOBAL ADMIN (vista por defecto)
 ══════════════════════════════════════════ */
-function RankingGlobalAdmin({ tabla, meta, loading, onRefresh }) {
+function RankingGlobalAdmin({ tabla, meta, loading, onRefresh, bets, onSelectBet }) {
+  const [gExp, setGExp] = useState(null)
+  const toggleGlobal = (uid) => setGExp(u => u === uid ? null : uid)
+  const closedBets = (bets || []).filter(b => !isOpen(b))
+
   return (
     <div className="rk-in">
       {/* Header */}
@@ -812,15 +818,28 @@ function RankingGlobalAdmin({ tabla, meta, loading, onRefresh }) {
             top={tabla.slice(0, 3)}
             miId={null}
             apuesta={null}
-            expandedUser={null}
+            expandedUser={gExp}
             loadingUser={null}
-            onToggle={() => {}}
-            showDetail={false}
+            onToggle={toggleGlobal}
+            showDetail={true}
           />
 
-          {/* Tabla completa */}
+          {/* Panel resumen para top 3 expandido */}
+          {gExp && tabla.slice(0, 3).some(u => u.user_id === gExp) && (
+            <GlobalUserPanel
+              user={tabla.find(u => u.user_id === gExp)}
+              onClose={() => setGExp(null)}
+            />
+          )}
+
+          {/* Tabla completa con toggle */}
           {tabla.length > 3 && (
-            <GlobalFullTable tabla={tabla} />
+            <GlobalFullTable tabla={tabla} expandedUser={gExp} onToggle={toggleGlobal} />
+          )}
+
+          {/* Apuestas cerradas/finalizadas */}
+          {closedBets.length > 0 && (
+            <ApuestasFinalizadas bets={closedBets} onSelect={onSelectBet} />
           )}
 
           {/* Footer */}
@@ -834,7 +853,7 @@ function RankingGlobalAdmin({ tabla, meta, loading, onRefresh }) {
   )
 }
 
-function GlobalFullTable({ tabla }) {
+function GlobalFullTable({ tabla, expandedUser, onToggle }) {
   const [exp, setExp] = useState(true)
   const otros = tabla.slice(3)
 
@@ -859,38 +878,197 @@ function GlobalFullTable({ tabla }) {
 
       {exp && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingTop: 12 }}>
-          {otros.map((u, idx) => (
-            <div key={u.user_id} style={{
-              display: 'grid',
-              gridTemplateColumns: '32px 1fr 80px 70px 56px',
-              gap: 10,
-              padding: '9px 12px',
-              background: '#fff',
-              border: '1px solid #f5f3ee',
-              borderRadius: 10,
-              alignItems: 'center',
-            }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#fcfaf6'; e.currentTarget.style.borderColor = '#e8e3db' }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#f5f3ee' }}
-            >
-              <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, fontWeight: 700, color: '#94a3b8', textAlign: 'center' }}>#{idx + 4}</span>
-              <div style={{ minWidth: 0 }}>
-                <p style={{ fontWeight: 600, fontSize: 12, color: '#0c182b', margin: '0 0 1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.nombre}</p>
-                <p style={{ fontSize: 9, color: '#c8d0dc', margin: 0 }}>{u.predicciones} pred · {u.apuestas_participadas || '—'} apuestas</p>
+          {otros.map((u, idx) => {
+            const isExpanded = expandedUser === u.user_id
+            return (
+              <div key={u.user_id} style={{ borderRadius: 10, overflow: 'hidden', border: `1px solid ${isExpanded ? '#e8e3db' : '#f5f3ee'}`, transition: 'border-color .15s' }}>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: '32px 1fr 64px 52px 44px',
+                  gap: 10,
+                  padding: '9px 12px',
+                  background: isExpanded ? '#fcfaf6' : '#fff',
+                  alignItems: 'center',
+                  cursor: 'default',
+                  transition: 'background .15s',
+                }}
+                  onMouseEnter={e => { if (!isExpanded) e.currentTarget.style.background = '#fcfaf6' }}
+                  onMouseLeave={e => { if (!isExpanded) e.currentTarget.style.background = '#fff' }}
+                >
+                  <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 11, fontWeight: 700, color: '#94a3b8', textAlign: 'center' }}>#{idx + 4}</span>
+                  <div style={{ minWidth: 0 }}>
+                    <p style={{ fontWeight: 600, fontSize: 12, color: '#0c182b', margin: '0 0 1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.nombre}</p>
+                    <p style={{ fontSize: 9, color: '#c8d0dc', margin: 0 }}>{u.predicciones} pred · {u.apuestas_participadas || '—'} ap.</p>
+                  </div>
+                  <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-start' }}>
+                    {[{ v: u.aciertos_exactos, c: '#22c55e' }, { v: u.aciertos_diferencia || 0, c: '#7dd3fc' }].map((x, i) => (
+                      x.v > 0 && (
+                        <span key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: 5, background: `${x.c}12`, border: `1px solid ${x.c}25`, fontSize: 9, fontWeight: 600, color: x.c }}>{x.v}</span>
+                      )
+                    ))}
+                  </div>
+                  <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 16, fontWeight: 700, color: '#0c182b', textAlign: 'right' }}>{u.puntos_totales}</div>
+                  <button
+                    onClick={() => onToggle(u.user_id)}
+                    className={`rk-detail-btn rk-detail-btn-mini ${isExpanded ? 'active' : ''}`}
+                  >
+                    {isExpanded ? (
+                      <>Ocultar
+                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="18 15 12 9 6 15" />
+                        </svg>
+                      </>
+                    ) : (
+                      <>Ver
+                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {isExpanded && (
+                  <div style={{ borderTop: '1px solid #f0eadb', padding: '10px 14px', background: '#fcfaf6' }}>
+                    <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 6 }}>
+                      {[
+                        { label: 'Puntos', value: u.puntos_totales, color: '#0ea5e9' },
+                        { label: 'Apuestas', value: u.apuestas_participadas || 0 },
+                        { label: 'Predicciones', value: u.predicciones || 0 },
+                        { label: 'Exactos', value: u.aciertos_exactos || 0, color: '#22c55e' },
+                        { label: 'Diferencia', value: u.aciertos_diferencia || 0, color: '#7dd3fc' },
+                      ].map(({ label, value, color }) => (
+                        <span key={label} style={{ fontSize: 10, color: '#64748b' }}>
+                          <span style={{ fontWeight: 700, color: color || '#0c182b' }}>{value}</span> {label}
+                        </span>
+                      ))}
+                    </div>
+                    <p style={{ fontSize: 9, color: '#94a3b8', margin: 0 }}>
+                      Seleccioná una apuesta del panel izquierdo para ver las predicciones de {u.nombre}
+                    </p>
+                  </div>
+                )}
               </div>
-              <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-start' }}>
-                {[{ v: u.aciertos_exactos, c: '#22c55e' }, { v: u.aciertos_diferencia || 0, c: '#7dd3fc' }].map((x, i) => (
-                  x.v > 0 && (
-                    <span key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: 5, background: `${x.c}12`, border: `1px solid ${x.c}25`, fontSize: 9, fontWeight: 600, color: x.c }}>{x.v}</span>
-                  )
-                ))}
-              </div>
-              <span style={{ fontSize: 9, color: '#94a3b8', textAlign: 'center' }}>{u.apuestas_participadas || 0} ap.</span>
-              <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 16, fontWeight: 700, color: '#0c182b', textAlign: 'right' }}>{u.puntos_totales}</div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
+    </div>
+  )
+}
+
+/* ══════════════════════════════════════════
+   PANEL RESUMEN GLOBAL DE UN USUARIO
+══════════════════════════════════════════ */
+function GlobalUserPanel({ user, onClose }) {
+  if (!user) return null
+  return (
+    <div style={{
+      background: '#fff', border: '1px solid #f0eadb', borderRadius: 14,
+      padding: '1rem 1.2rem', marginBottom: 20,
+      boxShadow: '0 4px 20px rgba(12,24,43,.06)',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '.9rem', paddingBottom: '.7rem', borderBottom: '1px solid #f0eadb' }}>
+        <div>
+          <p style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.22em', color: '#94a3b8', margin: '0 0 3px' }}>Resumen global de</p>
+          <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 18, color: '#0c182b', margin: 0, letterSpacing: '.02em', lineHeight: 1 }}>{user.nombre}</p>
+        </div>
+        <button
+          onClick={onClose}
+          style={{ background: 'rgba(12,24,43,.06)', border: 'none', borderRadius: '50%', width: 28, height: 28, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0c182b', transition: 'all .15s' }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(12,24,43,.12)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'rgba(12,24,43,.06)'}
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 10, marginBottom: 10 }}>
+        {[
+          { label: 'Puntos totales', value: user.puntos_totales, color: '#0ea5e9' },
+          { label: 'Apuestas', value: user.apuestas_participadas || 0 },
+          { label: 'Predicciones', value: user.predicciones || 0 },
+          { label: 'Exactos', value: user.aciertos_exactos || 0, color: '#22c55e' },
+        ].map(({ label, value, color }) => (
+          <div key={label} style={{ textAlign: 'center', background: 'rgba(12,24,43,.02)', borderRadius: 10, padding: '10px 6px', border: '1px solid #f5f3ee' }}>
+            <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 24, color: color || '#0c182b', margin: 0, lineHeight: 1 }}>{value}</p>
+            <p style={{ fontSize: 8, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.12em', color: '#94a3b8', margin: '3px 0 0' }}>{label}</p>
+          </div>
+        ))}
+      </div>
+      <p style={{ fontSize: 10, color: '#94a3b8', margin: 0, textAlign: 'center' }}>
+        Seleccioná una apuesta del panel izquierdo para ver las predicciones individuales de {user.nombre}
+      </p>
+    </div>
+  )
+}
+
+/* ══════════════════════════════════════════
+   APUESTAS CERRADAS / FINALIZADAS
+══════════════════════════════════════════ */
+function ApuestasFinalizadas({ bets, onSelect }) {
+  const [exp, setExp] = useState(false)
+  const cerradas = bets.filter(b => b.estado === 'cerrada')
+  const finalizadas = bets.filter(b => b.estado === 'finalizada')
+
+  return (
+    <div style={{ marginTop: 20 }}>
+      <button
+        onClick={() => setExp(!exp)}
+        style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 0', background: 'none', border: 'none', cursor: 'pointer', transition: 'opacity .15s' }}
+        onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
+        onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
+          <span style={{ fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.14em', color: '#94a3b8' }}>Apuestas cerradas</span>
+          <span style={{ fontSize: 8, fontWeight: 700, background: 'rgba(12,24,43,.05)', color: '#c8d0dc', padding: '1px 6px', borderRadius: 4 }}>{bets.length}</span>
+          <div style={{ flex: 1, height: '1px', background: 'linear-gradient(90deg,#e8e3db,transparent)', marginLeft: 8 }} />
+        </div>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+          style={{ transition: 'transform .2s', transform: exp ? 'rotate(180deg)' : 'rotate(0deg)', flexShrink: 0, marginLeft: 8 }}>
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      {exp && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingTop: 12 }}>
+          {finalizadas.length > 0 && (
+            <p style={{ fontSize: 8, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.18em', color: '#7dd3fc', margin: '0 0 4px 2px' }}>Finalizadas</p>
+          )}
+          {finalizadas.map(b => <BetCard key={b.id} bet={b} onSelect={onSelect} />)}
+          {cerradas.length > 0 && (
+            <p style={{ fontSize: 8, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.18em', color: '#94a3b8', margin: `${finalizadas.length > 0 ? '8px' : '0'} 0 4px 2px` }}>Cerradas</p>
+          )}
+          {cerradas.map(b => <BetCard key={b.id} bet={b} onSelect={onSelect} />)}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function BetCard({ bet, onSelect }) {
+  const fin = bet.estado === 'finalizada'
+  const col = fin ? '#7dd3fc' : '#475569'
+  const parts = bet.partidos_ids ? bet.partidos_ids.split(',').filter(Boolean).length : 0
+  return (
+    <div
+      onClick={() => onSelect(bet)}
+      style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', background: '#fff', border: `1px solid ${fin ? 'rgba(125,211,252,.2)' : '#f5f3ee'}`, borderRadius: 10, cursor: 'pointer', transition: 'all .15s' }}
+      onMouseEnter={e => { e.currentTarget.style.background = fin ? 'rgba(125,211,252,.04)' : '#fcfaf6'; e.currentTarget.style.borderColor = fin ? 'rgba(125,211,252,.35)' : '#e8e3db' }}
+      onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = fin ? 'rgba(125,211,252,.2)' : '#f5f3ee' }}
+    >
+      <div style={{ width: 7, height: 7, borderRadius: '50%', background: col, flexShrink: 0, boxShadow: fin ? `0 0 6px ${col}` : 'none' }} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ fontSize: 12, fontWeight: 600, color: '#0c182b', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{bet.titulo}</p>
+        <p style={{ fontSize: 10, color: '#94a3b8', margin: 0 }}>{bet.participantes || 0} participantes · {parts} partidos</p>
+      </div>
+      <span style={{ fontSize: 9, fontWeight: 700, color: col, background: `${col}18`, border: `1px solid ${col}30`, borderRadius: 99, padding: '2px 8px', whiteSpace: 'nowrap', flexShrink: 0 }}>
+        {fin ? 'FINALIZADA' : 'CERRADA'}
+      </span>
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#c8d0dc" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="9 18 15 12 9 6" />
+      </svg>
     </div>
   )
 }
