@@ -2,7 +2,7 @@
 import sheetsApi from '../../services/sheetsApi.js'
 import { useAuth } from '../../hooks/useAuth.jsx'
 import { useToast } from '../../hooks/useToast.jsx'
-import { fmtFecha, inputLocalAIsoUtc } from '../../utils/index.js'
+import { fmtFecha, inputLocalAIsoUtc, isoUtcAInputLocal } from '../../utils/index.js'
 
 /* ── Constantes ─────────────────────────────────────────── */
 const INITIAL = { titulo: '', type: 'libre', premio: '', fecha_cierre: '', partidos_ids: [] }
@@ -117,7 +117,10 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
   const [filtroGrupo, setFiltroGrupo] = useState('todos')
   const [busqueda, setBusqueda] = useState('')
   const [errorFecha, setErrorFecha] = useState('')
-  const [primerPartido, setPrimerPartido] = useState(null)
+  // Modelo per-partido: la fecha de cierre se define por el ÚLTIMO partido
+  // seleccionado (la apuesta queda abierta hasta entonces; cada partido se
+  // cierra individualmente a su hora de inicio).
+  const [ultimoPartido, setUltimoPartido] = useState(null)
   const [partidosBloqueados, setPartidosBloqueados] = useState([])
 
   useEffect(() => {
@@ -185,44 +188,43 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
 
   const seleccionados = form.partidos_ids.length
 
+  // Al cambiar la selección: calcular el último partido y autocompletar la fecha de cierre.
   useEffect(() => {
-    if (form.partidos_ids.length === 0) {
-      setErrorFecha('')
-      setPrimerPartido(null)
-      return
-    }
-
     const partidosSeleccionados = partidosDisponibles.filter(m => form.partidos_ids.includes(m.id))
     if (partidosSeleccionados.length === 0) {
-      setErrorFecha('')
-      setPrimerPartido(null)
+      setUltimoPartido(null)
       return
     }
 
-    const partidoMasTemprano = partidosSeleccionados.reduce((earliest, current) => {
-      const currentDate = new Date(current.fecha_partido)
-      const earliestDate = new Date(earliest.fecha_partido)
-      return currentDate < earliestDate ? current : earliest
+    const partidoMasTardio = partidosSeleccionados.reduce((latest, current) => {
+      const c = new Date(current.fecha_partido)
+      const l = new Date(latest.fecha_partido)
+      return c > l ? current : latest
     }, partidosSeleccionados[0])
 
-    setPrimerPartido(partidoMasTemprano)
+    setUltimoPartido(partidoMasTardio)
 
-    if (!form.fecha_cierre) {
+    // Autocompletar la fecha límite con el último partido seleccionado.
+    const isoInput = isoUtcAInputLocal(partidoMasTardio.fecha_partido)
+    setForm(prev => (prev.fecha_cierre === isoInput ? prev : { ...prev, fecha_cierre: isoInput }))
+  }, [form.partidos_ids, partidosDisponibles])
+
+  // Validación reactiva de la fecha límite (sin acoplarse al autocompletado).
+  useEffect(() => {
+    if (!ultimoPartido || !form.fecha_cierre) {
       setErrorFecha('')
       return
     }
-
-    const fechaLimite = new Date(form.fecha_cierre)
-    const fechaPrimerPartido = new Date(partidoMasTemprano.fecha_partido)
-
-    if (fechaLimite >= fechaPrimerPartido) {
-      setErrorFecha(`La fecha límite debe ser ANTES del ${fmtFecha(partidoMasTemprano.fecha_partido)} (${partidoMasTemprano.equipo_local} vs ${partidoMasTemprano.equipo_visitante})`)
-    } else if (fechaLimite.getTime() <= Date.now()) {
+    const limite = new Date(form.fecha_cierre).getTime()
+    const ultimo = new Date(ultimoPartido.fecha_partido).getTime()
+    if (limite <= Date.now()) {
       setErrorFecha('La fecha límite debe ser futura.')
+    } else if (limite < ultimo) {
+      setErrorFecha(`La fecha límite no puede ser anterior al último partido (${fmtFecha(ultimoPartido.fecha_partido)}).`)
     } else {
       setErrorFecha('')
     }
-  }, [form.fecha_cierre, form.partidos_ids, partidosDisponibles])
+  }, [form.fecha_cierre, ultimoPartido])
 
   function toggleMatch(id) {
     setForm(prev => ({
@@ -244,10 +246,10 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
     }))
   }
 
-  function limpiarSeleccion() { 
-    setForm(prev => ({ ...prev, partidos_ids: [] }))
+  function limpiarSeleccion() {
+    setForm(prev => ({ ...prev, partidos_ids: [], fecha_cierre: '' }))
     setErrorFecha('')
-    setPrimerPartido(null)
+    setUltimoPartido(null)
   }
 
   function handleChangeFase(f) { 
@@ -287,36 +289,20 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
       setFiltroGrupo('todos')
       setBusqueda('')
       setErrorFecha('')
-      setPrimerPartido(null)
-    } catch (err) { 
+      setUltimoPartido(null)
+    } catch (err) {
       toast.error('Error al crear apuesta: ' + err.message) 
     }
   }
 
   const canSubmit = !loading && seleccionados > 0 && !errorFecha && form.fecha_cierre
 
-  const maxFechaCierre = useMemo(() => {
-    if (!primerPartido) return ''
-    const fecha = new Date(primerPartido.fecha_partido)
-    fecha.setMinutes(fecha.getMinutes() - 2)
-    const yyyy = fecha.getFullYear()
-    const mm = String(fecha.getMonth() + 1).padStart(2, '0')
-    const dd = String(fecha.getDate()).padStart(2, '0')
-    const hh = String(fecha.getHours()).padStart(2, '0')
-    const mi = String(fecha.getMinutes()).padStart(2, '0')
-    return `${yyyy}-${mm}-${dd}T${hh}:${mi}`
-  }, [primerPartido])
-
+  // La fecha de cierre no puede ser anterior al último partido seleccionado:
+  // antes de él, esa apuesta debe seguir abierta para poder predecirlo.
   const minFechaCierre = useMemo(() => {
-    const ahora = new Date()
-    ahora.setMinutes(ahora.getMinutes() + 1)
-    const yyyy = ahora.getFullYear()
-    const mm = String(ahora.getMonth() + 1).padStart(2, '0')
-    const dd = String(ahora.getDate()).padStart(2, '0')
-    const hh = String(ahora.getHours()).padStart(2, '0')
-    const mi = String(ahora.getMinutes()).padStart(2, '0')
-    return `${yyyy}-${mm}-${dd}T${hh}:${mi}`
-  }, [primerPartido])
+    if (!ultimoPartido) return ''
+    return isoUtcAInputLocal(ultimoPartido.fecha_partido)
+  }, [ultimoPartido])
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
@@ -624,19 +610,18 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
         />
         <div className="flex flex-col gap-1.5">
           <Field
-            label={primerPartido
-              ? `Fecha límite (antes del ${fmtFecha(primerPartido.fecha_partido)})`
+            label={ultimoPartido
+              ? 'Fecha límite (cierra con el último partido)'
               : 'Fecha límite (seleccioná partidos primero)'}
             type="datetime-local"
             value={form.fecha_cierre}
-            min={minFechaCierre}
-            max={maxFechaCierre || undefined}
+            min={minFechaCierre || undefined}
             onChange={e => setForm(p => ({ ...p, fecha_cierre: e.target.value }))}
             error={errorFecha}
-            disabled={!primerPartido}
+            disabled={!ultimoPartido}
             required
           />
-          {primerPartido && !errorFecha && (
+          {ultimoPartido && !errorFecha && (
             <div className="flex items-start gap-2 px-3 py-2 rounded-lg"
               style={{ background: 'rgba(125,211,252,0.06)', border: '1px solid rgba(125,211,252,0.15)' }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
@@ -645,7 +630,7 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
                 <line x1="12" y1="8" x2="12.01" y2="8"/>
               </svg>
               <span className="font-body text-[11px]" style={{ color: '#5f6e8a' }}>
-                El primer partido es <strong style={{ color: '#0a1226' }}>{primerPartido.equipo_local} vs {primerPartido.equipo_visitante}</strong> el {fmtFecha(primerPartido.fecha_partido)}.
+                Se autocompletó con el último partido: <strong style={{ color: '#0a1226' }}>{ultimoPartido.equipo_local} vs {ultimoPartido.equipo_visitante}</strong> el {fmtFecha(ultimoPartido.fecha_partido)}. Cada partido se cierra a su propia hora de inicio.
               </span>
             </div>
           )}

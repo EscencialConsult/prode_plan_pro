@@ -184,6 +184,54 @@ export function matchStateLabel(estado) {
 }
 
 /* ══════════════════════════════════════════════════════════
+   PARTIDOS — bloqueo individual por inicio
+   ══════════════════════════════════════════════════════════ */
+
+/** Estados de partido que cierran las predicciones por sí mismos. */
+const ESTADOS_PARTIDO_CERRADO = ['en_vivo', 'finalizado', 'cancelado']
+
+/**
+ * Devuelve true si un partido YA NO admite predicciones.
+ *
+ * A diferencia del cierre global de la apuesta (fecha_cierre = fin de fase),
+ * cada partido se bloquea de forma individual. Reglas:
+ *   1. su estado es en_vivo / finalizado / cancelado, o
+ *   2. su hora de inicio ya pasó.
+ *
+ * La comparación se hace por INSTANTE UTC absoluto (Date.parse del ISO con Z
+ * vs epoch ms), de modo que funciona correctamente sin importar la zona
+ * horaria del navegador del usuario.
+ *
+ * @param {object} match - partido con { fecha_partido | fecha_hora, estado }
+ * @param {number} [ahora=Date.now()] - epoch ms de referencia. Pasar un estado
+ *        que "tickea" permite que el partido se bloquee solo al llegar su hora,
+ *        sin recargar la página.
+ * @returns {boolean}
+ */
+export function isMatchLocked(match, ahora = Date.now()) {
+  if (!match) return true
+  if (ESTADOS_PARTIDO_CERRADO.includes(match.estado)) return true
+  const iso = match.fecha_partido || match.fecha_hora
+  if (!iso) return false
+  const inicio = Date.parse(iso)
+  if (Number.isNaN(inicio)) return false
+  return inicio <= ahora
+}
+
+/**
+ * Motivo legible por el que un partido está cerrado, o null si sigue abierto.
+ * Útil para mostrar el badge de estado en la UI.
+ */
+export function matchLockReason(match, ahora = Date.now()) {
+  if (!match) return 'No disponible'
+  if (match.estado === 'finalizado') return 'Final'
+  if (match.estado === 'en_vivo') return 'En vivo'
+  if (match.estado === 'cancelado') return 'Cancelado'
+  if (isMatchLocked(match, ahora)) return 'Cerrado'
+  return null
+}
+
+/* ══════════════════════════════════════════════════════════
    OTROS
    ══════════════════════════════════════════════════════════ */
 
