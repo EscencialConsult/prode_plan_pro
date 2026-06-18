@@ -16,6 +16,7 @@ import { useBets } from '../hooks/useBets.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import PredictModal from '../components/user/PredictModal.jsx'
 import sheetsApi from '../services/sheetsApi.js'
+import { betHasOpenMatches } from '../utils/index.js'
 
 /* ── helpers ── */
 function timeLeft(d){const diff=new Date(d)-Date.now();if(diff<=0)return'Cerrada';const h=Math.floor(diff/3600000);const m=Math.floor((diff%3600000)/60000);if(h>=24)return`${Math.floor(h/24)}d ${h%24}h`;if(h>0)return`${h}h ${m}m`;return`${m}m`}
@@ -65,7 +66,9 @@ function BetCard({bet,predsMap,onPredict}){
   const mc=bet.partidos?.length||0
   const anyPred=bet.partidos?.some(p=>predsMap?.[p.id])
   const {user}=useAuth()
-  const canPredict=(open&&(bet.tipo!=='grupos'||!!user?.area_id))
+  // Editable mientras la apuesta esté abierta y quede ≥1 partido sin iniciar.
+  const hayAbiertos=betHasOpenMatches(bet)
+  const canPredict=(open&&hayAbiertos&&(bet.tipo!=='grupos'||!!user?.area_id))
 
   return(
     <div style={{...CARD_BASE,borderRadius:18,padding:'1.4rem 1.5rem',border:`1px solid ${live?'rgba(224,50,82,.25)':open?'rgba(27,138,90,.18)':'#f0eadb'}`,transition:'transform .2s,box-shadow .2s'}}
