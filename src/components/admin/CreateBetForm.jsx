@@ -118,19 +118,8 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
   const [busqueda, setBusqueda] = useState('')
   const [errorFecha, setErrorFecha] = useState('')
   const [ultimoPartido, setUltimoPartido] = useState(null)
-  const [partidosBloqueados, setPartidosBloqueados] = useState([])
-
   useEffect(() => {
     sheetsApi.areas.listar(true).then(res => setAreas(res.areas || [])).catch(console.error)
-  }, [])
-
-  useEffect(() => {
-    sheetsApi.partidos.bloqueados()
-      .then(res => setPartidosBloqueados(res.partidos || []))
-      .catch(err => {
-        console.warn('No se pudieron cargar partidos bloqueados:', err)
-        setPartidosBloqueados([])
-      })
   }, [])
 
   const partidosDisponibles = useMemo(
@@ -483,34 +472,30 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
                   {gr.partidos.map(m => {
                     const checked = form.partidos_ids.includes(m.id)
                     const yaTermino = partidoYaTerminado(m)
-                    const bloqueoInfo = partidosBloqueados.find(b => b.partido_id === m.id)
-                    const estaBloqueado = !!bloqueoInfo
-                    const noDisponible = yaTermino || estaBloqueado
-                    
+
                     return (
                       <label
                         key={m.id}
-                        title={estaBloqueado ? `Ya en uso en: "${bloqueoInfo.apuesta_titulo}" (${bloqueoInfo.apuesta_tipo})` : ''}
                         className="flex items-center gap-3 px-4 py-3.5 cursor-pointer transition-all border-b border-gray-100"
                         style={{
                           background: checked ? 'rgba(134,200,115,0.05)' : '#fff',
                           boxShadow: checked ? 'inset 3px 0 0 #86C873' : 'none',
-                          opacity: noDisponible ? 0.5 : 1,
-                          cursor: noDisponible ? 'not-allowed' : 'pointer',
+                          opacity: yaTermino ? 0.5 : 1,
+                          cursor: yaTermino ? 'not-allowed' : 'pointer',
                         }}
-                        onMouseEnter={e => { 
-                          if (!checked && !noDisponible) e.currentTarget.style.background = '#f9fbf8' 
+                        onMouseEnter={e => {
+                          if (!checked && !yaTermino) e.currentTarget.style.background = '#f9fbf8'
                         }}
-                        onMouseLeave={e => { 
-                          if (!checked && !noDisponible) e.currentTarget.style.background = '#fff' 
+                        onMouseLeave={e => {
+                          if (!checked && !yaTermino) e.currentTarget.style.background = '#fff'
                         }}
                       >
                         {/* Checkbox */}
                         <input
                           type="checkbox"
                           checked={checked}
-                          onChange={() => !noDisponible && toggleMatch(m.id)}
-                          disabled={noDisponible}
+                          onChange={() => !yaTermino && toggleMatch(m.id)}
+                          disabled={yaTermino}
                           className="hidden"
                         />
                         <span className="flex-shrink-0 w-5 h-5 rounded-md flex items-center justify-center transition-all duration-200"
