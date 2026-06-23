@@ -7,6 +7,14 @@ import { fmtFecha, inputLocalAIsoUtc } from '../../utils/index.js'
 /* ── Constantes ─────────────────────────────────────────── */
 const INITIAL = { titulo: '', type: 'libre', premio: '', fecha_cierre: '', partidos_ids: [], areas_ids: [] }
 
+// Formatea una fecha ISO/UTC al formato del input datetime-local (hora local).
+function toInputLocal(dateLike) {
+  const f = new Date(dateLike)
+  if (isNaN(f.getTime())) return ''
+  const p = n => String(n).padStart(2, '0')
+  return `${f.getFullYear()}-${p(f.getMonth() + 1)}-${p(f.getDate())}T${p(f.getHours())}:${p(f.getMinutes())}`
+}
+
 // ✅ Mundial 2026 tiene 48 equipos: Fase de Grupos → 16avos (32 equipos) → Octavos (16 equipos) → etc.
 const ORDEN_FASES = ['grupos', '16avos', 'octavos', 'cuartos', 'semis', '3er_puesto', 'final']
 const LABEL_FASE = {
@@ -109,6 +117,7 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
   const [filtroGrupo, setFiltroGrupo] = useState('todos')
   const [busqueda, setBusqueda] = useState('')
   const [errorFecha, setErrorFecha] = useState('')
+  const [ultimoPartido, setUltimoPartido] = useState(null)
 
   useEffect(() => {
     sheetsApi.areas.listar(true).then(res => setAreas(res.areas || [])).catch(console.error)
@@ -167,24 +176,32 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
   const seleccionados = form.partidos_ids.length
 
   useEffect(() => {
-    if (!form.fecha_cierre || form.partidos_ids.length === 0) {
+    const partidosSeleccionados = partidosDisponibles.filter(m => form.partidos_ids.includes(m.id))
+    if (partidosSeleccionados.length === 0) {
+      setErrorFecha('')
+      setUltimoPartido(null)
+      return
+    }
+
+    const partidoMasTarde = partidosSeleccionados.reduce((latest, current) =>
+      new Date(current.fecha_partido) > new Date(latest.fecha_partido) ? current : latest,
+      partidosSeleccionados[0])
+    setUltimoPartido(partidoMasTarde)
+
+    // Sugerencia automática: cierre = último partido (queda editable, manual).
+    if (!form.fecha_cierre) {
+      setForm(p => ({ ...p, fecha_cierre: toInputLocal(partidoMasTarde.fecha_partido) }))
       setErrorFecha('')
       return
     }
 
+    // Validación contra el ÚLTIMO partido (cada partido se cierra por su cuenta).
     const fechaLimite = new Date(form.fecha_cierre)
-    const partidosSeleccionados = partidosDisponibles.filter(m => form.partidos_ids.includes(m.id))
-    
-    const partidoMasTemprano = partidosSeleccionados.reduce((earliest, current) => {
-      const currentDate = new Date(current.fecha_partido)
-      const earliestDate = new Date(earliest.fecha_partido)
-      return currentDate < earliestDate ? current : earliest
-    }, partidosSeleccionados[0])
-
-    const fechaPrimerPartido = new Date(partidoMasTemprano.fecha_partido)
-
-    if (fechaLimite >= fechaPrimerPartido) {
-      setErrorFecha(`La fecha límite debe ser ANTES del ${fmtFecha(partidoMasTemprano.fecha_partido)} (${partidoMasTemprano.equipo_local} vs ${partidoMasTemprano.equipo_visitante})`)
+    const fechaUltimoPartido = new Date(partidoMasTarde.fecha_partido)
+    if (fechaLimite.getTime() <= Date.now()) {
+      setErrorFecha('La fecha límite debe ser futura.')
+    } else if (fechaLimite > fechaUltimoPartido) {
+      setErrorFecha(`La fecha límite no puede ser después del último partido (${fmtFecha(partidoMasTarde.fecha_partido)}).`)
     } else {
       setErrorFecha('')
     }
@@ -530,14 +547,33 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
           required
           placeholder="Ej: Gift card $50"
         />
-        <Field
-          label="Fecha límite (debe ser ANTES del primer partido)"
-          type="datetime-local"
-          value={form.fecha_cierre}
-          onChange={e => setForm(p => ({ ...p, fecha_cierre: e.target.value }))}
-          error={errorFecha}
-          required
-        />
+        <div className="flex flex-col gap-1.5">
+          <Field
+            label={ultimoPartido
+              ? `Fecha límite (último partido: ${fmtFecha(ultimoPartido.fecha_partido)})`
+              : 'Fecha límite (seleccioná partidos primero)'}
+            type="datetime-local"
+            value={form.fecha_cierre}
+            max={ultimoPartido ? toInputLocal(ultimoPartido.fecha_partido) : undefined}
+            onChange={e => setForm(p => ({ ...p, fecha_cierre: e.target.value }))}
+            error={errorFecha}
+            disabled={!ultimoPartido}
+            required
+          />
+          {ultimoPartido && !errorFecha && (
+            <div className="flex items-start gap-2 px-3 py-2 rounded-lg"
+              style={{ background: 'rgba(235,195,43,0.06)', border: '1px solid rgba(235,195,43,0.15)' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#c99f16" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="16" x2="12" y2="12"/>
+                <line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+              <span className="font-body text-[11px]" style={{ color: '#5f6e8a' }}>
+                Cada partido se cierra al arrancar. La apuesta queda abierta hasta el <strong style={{ color: '#0a1226' }}>último partido</strong> ({ultimoPartido.equipo_local} vs {ultimoPartido.equipo_visitante}) el {fmtFecha(ultimoPartido.fecha_partido)}.
+              </span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Submit */}
