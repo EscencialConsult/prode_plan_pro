@@ -52,6 +52,10 @@ const CSS = `
 /* Skeleton */
 .rk-sk { background:linear-gradient(90deg,rgba(12,24,43,.06) 25%,rgba(12,24,43,.1) 50%,rgba(12,24,43,.06) 75%);background-size:400px 100%;animation:rk-shimmer 1.4s ease infinite;border-radius:8px }
 
+/* Spinner para modal de carga */
+@keyframes rk-spin { to { transform: rotate(360deg) } }
+.rk-spinner { width:11px;height:11px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:rk-spin .65s linear infinite;display:inline-block;opacity:.6 }
+
 /* Mobile */
 @media(max-width:720px) {
   .rk-shell { flex-direction:column!important;height:auto!important }
@@ -91,6 +95,30 @@ export default function RankingPageUser() {
   // ── Ranking individual top 5 Por región ──
   const [areasIndividual, setAreasIndividual] = useState([])
   const [areasIndividualLoading, setAreasIndividualLoading] = useState(false)
+
+  // ── Modal de Ranking Completo por Área ──
+  const [modalArea, setModalArea] = useState(null) // { area_id, area_nombre }
+  const [modalTabla, setModalTabla] = useState([])
+  const [modalLoading, setModalLoading] = useState(false)
+
+  async function abrirModalArea(area) {
+    setModalArea(area)
+    setModalLoading(true)
+    setModalTabla([])
+    try {
+      const { data, error } = await sheetsApi._supabase
+        .from('ranking_global_cache')
+        .select('user_id, nombre, area_id, puntos_totales, posicion, aciertos_exactos, aciertos_diferencia, aciertos_resultado, predicciones')
+        .eq('area_id', area.area_id)
+        .order('posicion', { ascending: true })
+      if (error) throw error
+      setModalTabla(data || [])
+    } catch (e) {
+      toast.error('Error al cargar ranking completo: ' + e.message)
+    } finally {
+      setModalLoading(false)
+    }
+  }
 
   useEffect(() => {
     cargarRankingGlobal()
@@ -308,6 +336,7 @@ export default function RankingPageUser() {
                 areasIndividual={areasIndividual}
                 areasIndividualLoading={areasIndividualLoading}
                 isPro={isPro}
+                onOpenArea={abrirModalArea}
               />
             ) : (
               <div className="rk-in">
@@ -393,6 +422,178 @@ export default function RankingPageUser() {
           </div>
         </div>
       </div>
+
+      {/* Modal Ranking Completo por Área */}
+      {modalArea && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(12, 24, 43, 0.4)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          animation: 'rk-fade 0.2s ease both',
+        }} onClick={() => setModalArea(null)}>
+          <div style={{
+            background: '#fff',
+            border: '1px solid #f0eadb',
+            borderRadius: 20,
+            width: '90%',
+            maxWidth: 550,
+            maxHeight: '80vh',
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            boxShadow: '0 20px 50px rgba(12,24,43,0.25)',
+            animation: 'rk-in 0.28s ease both',
+          }} onClick={e => e.stopPropagation()}>
+            {/* Header */}
+            <div style={{
+              background: 'linear-gradient(135deg,#0c182b 0%,#1a2540 100%)',
+              padding: '16px 20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: 18 }}>🏢</span>
+                <div>
+                  <p style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.15em', color: 'rgba(255,125,0,0.6)', margin: 0 }}>
+                    Ranking Completo
+                  </p>
+                  <h3 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 20, letterSpacing: '.04em', color: '#fff', margin: 0 }}>
+                    {modalArea.area_nombre || 'Sin nombre'}
+                  </h3>
+                </div>
+              </div>
+              <button
+                onClick={() => setModalArea(null)}
+                style={{
+                  background: 'rgba(255,255,255,0.08)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: 28,
+                  height: 28,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff',
+                  transition: 'all .15s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Body */}
+            <div style={{
+              flex: 1,
+              overflowY: 'auto',
+              padding: 20,
+              background: '#faf7f0',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 8,
+              minHeight: 180,
+            }}>
+              {modalLoading ? (
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 12, padding: '40px 0' }}>
+                  <div className="rk-spinner" style={{ width: 24, height: 24, borderWidth: 3, color: '#FF7D00' }} />
+                  <p style={{ fontSize: 12, color: '#a8b2c4', margin: 0, fontWeight: 500 }}>Cargando participantes...</p>
+                </div>
+              ) : modalTabla.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: '#a8b2c4', margin: 0 }}>No hay participantes registrados en esta región.</p>
+                </div>
+              ) : (
+                modalTabla.map((u, idx) => {
+                  const MEDALS = ['🥇', '🥈', '🥉']
+                  const esYo = u.user_id === user?.id
+                  return (
+                    <div key={u.user_id} style={{
+                      display: 'grid',
+                      gridTemplateColumns: '36px 1fr 64px 56px',
+                      gap: 10,
+                      padding: '9px 12px',
+                      background: esYo ? 'rgba(255,125,0,.05)' : '#fff',
+                      border: esYo ? '1.5px solid #FF7D00' : '1px solid #f0eadb',
+                      borderRadius: 12,
+                      alignItems: 'center',
+                      boxShadow: esYo ? '0 2px 8px rgba(255,125,0,0.1)' : '0 2px 6px rgba(12,24,43,0.02)',
+                    }}>
+                      <span style={{ fontSize: idx < 3 ? 14 : 11, textAlign: 'center', fontWeight: 700, color: '#a8b2c4' }}>
+                        {MEDALS[idx] || `#${idx + 1}`}
+                      </span>
+                      <div style={{ minWidth: 0 }}>
+                        <p style={{ fontWeight: esYo || idx === 0 ? 700 : 500, color: esYo ? '#FF7D00' : '#0c182b', fontSize: 12, margin: '0 0 1px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {u.nombre}{esYo && <span style={{ fontSize: 9, color: '#FF7D00', marginLeft: 4, fontWeight: 800 }}>(vos)</span>}
+                        </p>
+                        <p style={{ fontSize: 9, color: '#a8b2c4', margin: 0 }}>
+                          #{u.posicion} global · {u.predicciones || 0} pred
+                        </p>
+                      </div>
+                      <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-start' }}>
+                        {[{ v: u.aciertos_exactos, c: '#1b8a5a' }, { v: u.aciertos_diferencia || 0, c: '#FF7D00' }].map((x, i) => (
+                          x.v > 0 && (
+                            <span key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 20, height: 20, borderRadius: 5, background: `${x.c}12`, border: `1px solid ${x.c}25`, fontSize: 9, fontWeight: 600, color: x.c }}>{x.v}</span>
+                          )
+                        ))}
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <span style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 17, color: esYo ? '#FF7D00' : idx === 0 ? '#a85f00' : '#0c182b' }}>
+                          {u.puntos_totales}
+                        </span>
+                        <span style={{ fontSize: 8, color: '#a8b2c4', display: 'block', lineHeight: 1 }}>pts</span>
+                      </div>
+                    </div>
+                  )
+                })
+              )}
+            </div>
+
+            {/* Footer */}
+            <div style={{
+              background: '#fff',
+              borderTop: '1px solid #f0eadb',
+              padding: '12px 20px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+              <span style={{ fontSize: 10, color: '#a8b2c4', fontWeight: 500 }}>
+                Total: {modalTabla.length} participante{modalTabla.length !== 1 ? 's' : ''}
+              </span>
+              <button
+                onClick={() => setModalArea(null)}
+                style={{
+                  background: '#0c182b',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: 8,
+                  padding: '6px 14px',
+                  fontSize: 11,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  fontFamily: "'DM Sans', sans-serif",
+                  transition: 'opacity 0.15s',
+                }}
+                onMouseEnter={e => e.currentTarget.style.opacity = '0.9'}
+                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AppShell>
   )
 }
@@ -649,7 +850,7 @@ function LeyendaPuntos({ apuesta, total }) {
 /* ══════════════════════════════════════════
    RANKING GLOBAL (vista por defecto)
 ══════════════════════════════════════════ */
-function RankingGlobal({ tabla, meta, loading, user, onRefresh, areasTabla, areasLoading, areasIndividual = [], areasIndividualLoading = false, isPro }) {
+function RankingGlobal({ tabla, meta, loading, user, onRefresh, areasTabla, areasLoading, areasIndividual = [], areasIndividualLoading = false, isPro, onOpenArea }) {
   const miId = user?.id || user?.user_id
 
   return (
@@ -737,7 +938,7 @@ function RankingGlobal({ tabla, meta, loading, user, onRefresh, areasTabla, area
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 14 }}>
               {areasIndividual.map((area) => (
-                <AreaRankingCardUser key={area.area_id} area={area} miId={miId} />
+                <AreaRankingCardUser key={area.area_id} area={area} miId={miId} onOpenArea={onOpenArea} />
               ))}
             </div>
           )}
@@ -748,7 +949,7 @@ function RankingGlobal({ tabla, meta, loading, user, onRefresh, areasTabla, area
 }
 
 /* ── Tarjeta de ranking de área (versión usuario) ── */
-function AreaRankingCardUser({ area, miId }) {
+function AreaRankingCardUser({ area, miId, onOpenArea }) {
   const MEDALS = ['🥇', '🥈', '🥉']
   return (
     <div style={{
@@ -757,6 +958,8 @@ function AreaRankingCardUser({ area, miId }) {
       borderRadius: 14,
       overflow: 'hidden',
       boxShadow: '0 2px 12px rgba(12,24,43,.06)',
+      display: 'flex',
+      flexDirection: 'column',
     }}>
       {/* Header del área */}
       <div style={{
@@ -775,7 +978,7 @@ function AreaRankingCardUser({ area, miId }) {
         </span>
       </div>
       {/* Lista de usuarios */}
-      <div>
+      <div style={{ flex: 1 }}>
         {area.usuarios.map((u, idx) => {
           const esYo = u.user_id === miId
           return (
@@ -808,6 +1011,36 @@ function AreaRankingCardUser({ area, miId }) {
             </div>
           )
         })}
+      </div>
+      {/* Botón Ver ranking completo */}
+      <div style={{ padding: '8px 12px', borderTop: '1px solid #f0eadb', textAlign: 'center', background: '#faf7f0' }}>
+        <button
+          onClick={() => onOpenArea && onOpenArea({ area_id: area.area_id, area_nombre: area.area_nombre })}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: '#FF7D00',
+            fontSize: 10,
+            fontWeight: 700,
+            cursor: 'pointer',
+            fontFamily: "'DM Sans', sans-serif",
+            textTransform: 'uppercase',
+            letterSpacing: '.05em',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+            padding: '4px 8px',
+            borderRadius: 6,
+            transition: 'background 0.15s',
+          }}
+          onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,125,0,0.06)'}
+          onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+        >
+          Ver ranking completo
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
       </div>
     </div>
   )
