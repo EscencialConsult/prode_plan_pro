@@ -11,6 +11,7 @@
  *        y header con paleta navy + naranja de FixturePage
  */
 import { useState, useMemo, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import AppShell from '../dashboard/AppShell.jsx'
 import { useBets } from '../hooks/useBets.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
@@ -424,7 +425,7 @@ export default function RankingPageUser() {
       </div>
 
       {/* Modal Ranking Completo por Área */}
-      {modalArea && (
+      {modalArea && createPortal(
         <div style={{
           position: 'fixed',
           inset: 0,
@@ -433,7 +434,7 @@ export default function RankingPageUser() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 9999,
+          zIndex: 99999,
           animation: 'rk-fade 0.2s ease both',
         }} onClick={() => setModalArea(null)}>
           <div style={{
@@ -592,7 +593,8 @@ export default function RankingPageUser() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </AppShell>
   )
@@ -1209,9 +1211,9 @@ function SkeletonContent() {
 function OtrosParticipantes({ tabla, user }) {
   const [exp, setExp] = useState(() => {
     try {
-      return JSON.parse(sessionStorage.getItem('otros_participantes_expanded')) ?? true
+      return JSON.parse(sessionStorage.getItem('otros_participantes_expanded')) ?? false
     } catch {
-      return true
+      return false
     }
   })
 

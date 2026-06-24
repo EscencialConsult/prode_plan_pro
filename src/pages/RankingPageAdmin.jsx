@@ -5,6 +5,7 @@
  * CAMBIO: PrediccionRow ahora usa pred.puntos del backend
  */
 import { useState, useMemo, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import AppShell from '../dashboard/AppShell.jsx'
 import { useBets } from '../hooks/useBets.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
@@ -484,7 +485,7 @@ export default function RankingPageAdmin() {
       </div>
 
       {/* Modal Ranking Completo por Área */}
-      {modalArea && (
+      {modalArea && createPortal(
         <div style={{
           position: 'fixed',
           inset: 0,
@@ -493,7 +494,7 @@ export default function RankingPageAdmin() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 9999,
+          zIndex: 99999,
           animation: 'rk-fade 0.2s ease both',
         }} onClick={() => setModalArea(null)}>
           <div style={{
@@ -651,7 +652,8 @@ export default function RankingPageAdmin() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </AppShell>
   )
@@ -1298,7 +1300,7 @@ function AreaRankingCard({ area, onOpenArea }) {
 }
 
 function GlobalFullTable({ tabla }) {
-  const [exp, setExp] = useState(true)
+  const [exp, setExp] = useState(false)
   const otros = tabla.slice(3)
 
   return (
@@ -1383,9 +1385,9 @@ function SkeletonContent() {
 function OtrosParticipantes({ tabla, user, apuesta, expandedUser, loadingUser, predicciones, onToggle }) {
   const [exp, setExp] = useState(() => {
     try {
-      return JSON.parse(sessionStorage.getItem('otros_participantes_expanded')) ?? true
+      return JSON.parse(sessionStorage.getItem('otros_participantes_expanded')) ?? false
     } catch {
-      return true
+      return false
     }
   })
 
