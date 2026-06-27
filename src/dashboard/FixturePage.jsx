@@ -961,13 +961,9 @@
     const [estadoFilter, setEstadoFilter] = useState('')
     const [search, setSearch] = useState('')
 
-  // Para la pestaña Fixture: ocultar partidos sin equipos definidos (TBD),
-  // como las eliminatorias que todavía no tienen rivales. Cuando el Mundial
-  // avance y se definan los cruces, aparecerán automáticamente.
-  const matchesFixture = useMemo(
-    () => (matches || []).filter(m => m.equipo_local && m.equipo_visitante),
-    [matches]
-  )
+  // Pestaña Fixture: se muestran TODOS los partidos (incluidos los que aún
+  // tienen rival en TBD), igual que los demás PRODE.
+  const matchesFixture = useMemo(() => matches || [], [matches])
 
   // ¿Hay al menos un partido de eliminatoria con equipos definidos?
   // Si no, la pestaña Eliminatoria muestra el aviso de "próximamente".
