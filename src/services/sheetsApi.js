@@ -1063,6 +1063,8 @@ const predicciones = {
       aciertos_resultado: r.aciertos_resultado,
       predicciones: r.predicciones,
       apuestas_participadas: r.apuestas_participadas,
+      area_id: r.area_id,
+      area_nombre_cache: r.area_nombre_cache,
     }))
 
     const miPosicion = miRowResult.data || null

@@ -349,7 +349,7 @@ export default function RankingPageAdmin() {
     }
   }
 
-  function exportarA_PDF() {
+  async function exportarA_PDF() {
     try {
       const doc = new jsPDF()
       
@@ -362,9 +362,65 @@ export default function RankingPageAdmin() {
       let dataToExport = []
 
       if (isGlobal) {
+        // En lugar de usar la tabla global truncada, calculamos dinámicamente acumulando todas las apuestas
+        const allBetIds = bets.map(b => b.id)
+        
+        const queries = allBetIds.map(id =>
+          sheetsApi._supabase
+            .from('ranking_cache')
+            .select('user_id, nombre, area_id, area_nombre_cache, puntos_totales, aciertos_exactos, aciertos_diferencia, aciertos_resultado, predicciones')
+            .eq('apuesta_id', id)
+            .eq('es_grupal', false)
+        )
+        const results = await Promise.all(queries)
+
+        const rawData = []
+        for (const r of results) {
+          if (r.error) throw r.error
+          if (r.data) rawData.push(...r.data)
+        }
+
+        const userMap = new Map()
+        rawData.forEach(row => {
+          const uid = row.user_id
+          if (!uid) return
+          if (!userMap.has(uid)) {
+            userMap.set(uid, {
+              user_id: uid,
+              nombre: row.nombre || 'Sin nombre',
+              area_id: row.area_id,
+              area_nombre_cache: row.area_nombre_cache || 'Sin área',
+              puntos_totales: 0,
+              aciertos_exactos: 0,
+              aciertos_diferencia: 0,
+              aciertos_resultado: 0,
+              predicciones: 0,
+            })
+          }
+          const accum = userMap.get(uid)
+          accum.puntos_totales += (parseInt(row.puntos_totales) || 0)
+          accum.aciertos_exactos += (parseInt(row.aciertos_exactos) || 0)
+          accum.aciertos_diferencia += (parseInt(row.aciertos_diferencia) || 0)
+          accum.aciertos_resultado += (parseInt(row.aciertos_resultado) || 0)
+          accum.predicciones += (parseInt(row.predicciones) || 0)
+        })
+
+        const userList = Array.from(userMap.values())
+        userList.sort((a, b) => {
+          if (b.puntos_totales !== a.puntos_totales) return b.puntos_totales - a.puntos_totales
+          if (b.aciertos_exactos !== a.aciertos_exactos) return b.aciertos_exactos - a.aciertos_exactos
+          if (b.aciertos_diferencia !== a.aciertos_diferencia) return b.aciertos_diferencia - a.aciertos_diferencia
+          if (b.aciertos_resultado !== a.aciertos_resultado) return b.aciertos_resultado - a.aciertos_resultado
+          return a.nombre.localeCompare(b.nombre)
+        })
+
+        userList.forEach((u, idx) => {
+          u.posicion = idx + 1
+        })
+
+        dataToExport = userList
         title = 'Reporte de Ranking Global Acumulado'
-        subtitle = `Todas las apuestas · Generado por Administrador el ${new Date().toLocaleDateString()} a las ${new Date().toLocaleTimeString()}`
-        dataToExport = globalTabla
+        subtitle = `Todas las apuestas (${allBetIds.length} incluidas) · Generado por Administrador el ${new Date().toLocaleDateString()} a las ${new Date().toLocaleTimeString()}`
       } else if (isAccum) {
         title = 'Reporte de Ranking Acumulado Personalizado'
         subtitle = `Apuestas seleccionadas (${selectedIds.length}) · Generado el ${new Date().toLocaleDateString()} a las ${new Date().toLocaleTimeString()}`
@@ -373,6 +429,21 @@ export default function RankingPageAdmin() {
         title = `Reporte de Apuesta: ${sel.titulo}`
         subtitle = `Estado: ${sel.estado || '—'} · Generado el ${new Date().toLocaleDateString()} a las ${new Date().toLocaleTimeString()}`
         dataToExport = tabla
+      }
+
+      // Obtener un diccionario de nombres de áreas desde Supabase para garantizar consistencia
+      const areaNamesMap = {}
+      try {
+        const { data: areasData } = await sheetsApi._supabase
+          .from('areas')
+          .select('id, nombre')
+        if (areasData) {
+          areasData.forEach(a => {
+            areaNamesMap[a.id] = a.nombre
+          })
+        }
+      } catch (err) {
+        console.warn('No se pudo cargar el catálogo de áreas:', err)
       }
 
       // Add navy header bar
@@ -444,7 +515,7 @@ export default function RankingPageAdmin() {
       const areaMap = new Map()
       dataToExport.forEach((u, idx) => {
         const areaKey = u.area_id || 'sin_area'
-        const areaNombre = u.area_nombre_cache || u.area_nombre || 'Sin región'
+        const areaNombre = areaNamesMap[u.area_id] || u.area_nombre_cache || u.area_nombre || 'Sin región'
         if (!areaMap.has(areaKey)) {
           areaMap.set(areaKey, { nombre: areaNombre, usuarios: [] })
         }
