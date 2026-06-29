@@ -11,6 +11,8 @@ import { useBets } from '../hooks/useBets.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import sheetsApi from '../services/sheetsApi.js'
 import { useToast } from '../hooks/useToast.jsx'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 
 /* ─── helpers ─── */
 function isOpen(b) { return b.estado === 'abierta' && new Date(b.fecha_cierre) > Date.now() }
@@ -347,6 +349,200 @@ export default function RankingPageAdmin() {
     }
   }
 
+  function exportarA_PDF() {
+    try {
+      const doc = new jsPDF()
+      
+      const isAccum = selectedIds.length > 1 && selectedIds.length < bets.length
+      const isSingle = selectedIds.length === 1
+      const isGlobal = !sel || (bets.length > 0 && selectedIds.length === bets.length)
+
+      let title = 'Reporte de Ranking'
+      let subtitle = ''
+      let dataToExport = []
+
+      if (isGlobal) {
+        title = 'Reporte de Ranking Global Acumulado'
+        subtitle = `Todas las apuestas · Generado por Administrador el ${new Date().toLocaleDateString()} a las ${new Date().toLocaleTimeString()}`
+        dataToExport = globalTabla
+      } else if (isAccum) {
+        title = 'Reporte de Ranking Acumulado Personalizado'
+        subtitle = `Apuestas seleccionadas (${selectedIds.length}) · Generado el ${new Date().toLocaleDateString()} a las ${new Date().toLocaleTimeString()}`
+        dataToExport = customTabla
+      } else if (isSingle && sel) {
+        title = `Reporte de Apuesta: ${sel.titulo}`
+        subtitle = `Estado: ${sel.estado || '—'} · Generado el ${new Date().toLocaleDateString()} a las ${new Date().toLocaleTimeString()}`
+        dataToExport = tabla
+      }
+
+      // Add navy header bar
+      doc.setFillColor(12, 24, 43)
+      doc.rect(0, 0, 210, 32, 'F')
+      
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(16)
+      doc.setTextColor(235, 195, 43) // Gold color
+      doc.text(title.toUpperCase(), 14, 15)
+      
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(8)
+      doc.setTextColor(255, 255, 255)
+      doc.text(subtitle, 14, 24)
+
+      // Columns definition
+      const columns = [
+        { header: '#', dataKey: 'pos' },
+        { header: 'Participante', dataKey: 'nombre' },
+        { header: 'Puntos', dataKey: 'puntos' },
+        { header: 'Exactos', dataKey: 'exactos' },
+        { header: 'Diferencia', dataKey: 'diferencia' },
+        { header: 'Resultado', dataKey: 'resultado' },
+        { header: 'Predicciones', dataKey: 'predicciones' }
+      ]
+
+      // Format rows
+      const rows = dataToExport.map((u, idx) => ({
+        pos: u.posicion || idx + 1,
+        nombre: u.nombre || '—',
+        puntos: u.puntos_totales ?? 0,
+        exactos: u.aciertos_exactos ?? 0,
+        diferencia: u.aciertos_diferencia ?? 0,
+        resultado: u.aciertos_resultado ?? 0,
+        predicciones: u.predicciones ?? 0
+      }))
+
+      // AutoTable call — usando API standalone para compatibilidad con ES modules
+      autoTable(doc, {
+        columns: columns,
+        body: rows,
+        startY: 38,
+        theme: 'striped',
+        headStyles: {
+          fillColor: [26, 48, 96],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          fontSize: 9
+        },
+        bodyStyles: {
+          fontSize: 8,
+          textColor: [40, 40, 40]
+        },
+        alternateRowStyles: {
+          fillColor: [250, 249, 246]
+        },
+        margin: { left: 14, right: 14 },
+        didDrawPage: function() {
+          const str = 'Pagina ' + doc.internal.getNumberOfPages()
+          doc.setFontSize(8)
+          doc.setTextColor(150, 150, 150)
+          doc.text(str, doc.internal.pageSize.width - 25, doc.internal.pageSize.height - 10)
+        }
+      })
+
+      // ── Sección: Ranking por Región ──────────────────────────────────
+      // Agrupar los participantes del reporte actual por área
+      const areaMap = new Map()
+      dataToExport.forEach((u, idx) => {
+        const areaKey = u.area_id || 'sin_area'
+        const areaNombre = u.area_nombre_cache || u.area_nombre || 'Sin región'
+        if (!areaMap.has(areaKey)) {
+          areaMap.set(areaKey, { nombre: areaNombre, usuarios: [] })
+        }
+        areaMap.get(areaKey).usuarios.push({
+          pos: u.posicion || idx + 1,
+          nombre: u.nombre || '—',
+          puntos: u.puntos_totales ?? 0,
+          exactos: u.aciertos_exactos ?? 0,
+          diferencia: u.aciertos_diferencia ?? 0,
+          resultado: u.aciertos_resultado ?? 0,
+          predicciones: u.predicciones ?? 0,
+        })
+      })
+
+      if (areaMap.size > 0) {
+        // Nueva página para la sección regional
+        doc.addPage()
+
+        // Cabecera de sección
+        doc.setFillColor(12, 24, 43)
+        doc.rect(0, 0, 210, 28, 'F')
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(14)
+        doc.setTextColor(235, 195, 43)
+        doc.text('RANKING POR REGIÓN', 14, 13)
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(8)
+        doc.setTextColor(255, 255, 255)
+        doc.text(`${areaMap.size} regiones · ${dataToExport.length} participantes en total`, 14, 22)
+
+        const colsArea = [
+          { header: '#', dataKey: 'pos' },
+          { header: 'Participante', dataKey: 'nombre' },
+          { header: 'Puntos', dataKey: 'puntos' },
+          { header: 'Exactos', dataKey: 'exactos' },
+          { header: 'Diferencia', dataKey: 'diferencia' },
+          { header: 'Resultado', dataKey: 'resultado' },
+          { header: 'Predicciones', dataKey: 'predicciones' },
+        ]
+
+        let startY = 34
+        const areas = Array.from(areaMap.values())
+
+        areas.forEach((area, aIdx) => {
+          // Asignar posición dentro del área (ya están ordenados globalmente)
+          const areaRows = area.usuarios.map((u, i) => ({ ...u, pos: i + 1 }))
+
+          // Encabezado de área
+          const needsPage = startY > doc.internal.pageSize.height - 60
+          if (needsPage) {
+            doc.addPage()
+            startY = 14
+          }
+
+          doc.setFont('helvetica', 'bold')
+          doc.setFontSize(10)
+          doc.setTextColor(26, 48, 96)
+          doc.text(area.nombre.toUpperCase(), 14, startY + 5)
+          doc.setFont('helvetica', 'normal')
+          doc.setFontSize(8)
+          doc.setTextColor(100, 116, 139)
+          doc.text(`${areaRows.length} participantes`, 14, startY + 10)
+
+          autoTable(doc, {
+            columns: colsArea,
+            body: areaRows,
+            startY: startY + 14,
+            theme: 'striped',
+            headStyles: {
+              fillColor: [26, 48, 96],
+              textColor: [255, 255, 255],
+              fontStyle: 'bold',
+              fontSize: 8,
+            },
+            bodyStyles: { fontSize: 8, textColor: [40, 40, 40] },
+            alternateRowStyles: { fillColor: [250, 249, 246] },
+            margin: { left: 14, right: 14 },
+            didDrawPage: function() {
+              const str = 'Pagina ' + doc.internal.getNumberOfPages()
+              doc.setFontSize(8)
+              doc.setTextColor(150, 150, 150)
+              doc.text(str, doc.internal.pageSize.width - 25, doc.internal.pageSize.height - 10)
+            }
+          })
+
+          // Actualizamos startY con espacio entre áreas
+          startY = doc.lastAutoTable.finalY + 16
+        })
+      }
+
+      doc.save(`reporte-ranking-${new Date().toISOString().slice(0,10)}.pdf`)
+      toast.success('Reporte PDF descargado con éxito')
+    } catch (e) {
+      toast.error('Error al generar PDF: ' + e.message)
+      console.error(e)
+    }
+  }
+
   // ── Ranking global (se carga al montar) ──
   const [globalTabla, setGlobalTabla] = useState([])
   const [globalMeta, setGlobalMeta] = useState({})
@@ -663,6 +859,7 @@ export default function RankingPageAdmin() {
                 areasIndividualLoading={selectedIds.length > 1 ? loadingCustom : areasIndividualLoading}
                 isPro={isPro}
                 onOpenArea={abrirModalArea}
+                onExportPDF={exportarA_PDF}
               />
             ) : (() => {
               const isAccum = selectedIds.length > 1
@@ -675,7 +872,7 @@ export default function RankingPageAdmin() {
               return (
                 <div className="rk-in">
 
-                  <Banner apuesta={displaySel} meta={displayMeta} loading={displayLoading} />
+                  <Banner apuesta={displaySel} meta={displayMeta} loading={displayLoading} onExportPDF={exportarA_PDF} />
 
                   {/* Tabs de tipo de ranking (Solo para apuestas libres) */}
                   {displaySel.tipo === 'libre' && (
@@ -1001,7 +1198,7 @@ function BetRow({ bet, sel, checked, onToggleCheck, onPick }) {
 /* ══════════════════════════════════════════
    BANNER
 ══════════════════════════════════════════ */
-function Banner({ apuesta, meta, loading }) {
+function Banner({ apuesta, meta, loading, onExportPDF }) {
   return (
     <div style={{ borderRadius: 14, marginBottom: 24, background: 'linear-gradient(125deg,#0c182b 0%,#1a3060 100%)', padding: '18px 22px', position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: 'rgba(235,195,43,.08)', pointerEvents: 'none' }} />
@@ -1026,8 +1223,34 @@ function Banner({ apuesta, meta, loading }) {
         </div>
 
         {!loading && (
-          <div style={{ display: 'flex', gap: 20, flexShrink: 0 }}>
+          <div style={{ display: 'flex', gap: 20, flexShrink: 0, alignItems: 'center' }}>
             {meta.total > 0 && <BannerStat n={meta.total} label="Part." />}
+            {onExportPDF && (
+              <button
+                onClick={onExportPDF}
+                title="Descargar PDF"
+                style={{
+                  background: 'rgba(255,255,255,.06)',
+                  border: '1px solid rgba(255,255,255,.12)',
+                  borderRadius: 8,
+                  padding: '6px 10px',
+                  cursor: 'pointer',
+                  color: '#ebc32b',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontSize: 11,
+                  fontWeight: 'bold',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.12)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,.06)'}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                PDF
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -1394,7 +1617,7 @@ function LeyendaPuntos({ apuesta, total }) {
 /* ══════════════════════════════════════════
    RANKING GLOBAL ADMIN (vista por defecto)
 ══════════════════════════════════════════ */
-function RankingGlobalAdmin({ tabla, meta, loading, onRefresh, areasTabla = [], areasLoading = false, areasIndividual = [], areasIndividualLoading = false, isPro = false, onOpenArea }) {
+function RankingGlobalAdmin({ tabla, meta, loading, onRefresh, areasTabla = [], areasLoading = false, areasIndividual = [], areasIndividualLoading = false, isPro = false, onOpenArea, onExportPDF }) {
   return (
     <div className="rk-in">
       {/* Header */}
@@ -1407,12 +1630,38 @@ function RankingGlobalAdmin({ tabla, meta, loading, onRefresh, areasTabla = [], 
             <p style={{ fontSize: 11, color: 'rgba(255,255,255,.4)', margin: 0 }}>Suma de puntos de apuestas cerradas y finalizadas · Vista de administrador</p>
           </div>
           {!loading && (
-            <div style={{ display: 'flex', gap: 20, flexShrink: 0, alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', gap: 20, flexShrink: 0, alignItems: 'center' }}>
               {meta.total > 0 && (
                 <div style={{ textAlign: 'center' }}>
                   <p style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, color: 'rgba(255,255,255,.9)', margin: '0 0 1px', lineHeight: 1 }}>{meta.total}</p>
                   <p style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: '.14em', color: 'rgba(255,255,255,.35)', margin: 0 }}>Participantes</p>
                 </div>
+              )}
+              {onExportPDF && (
+                <button
+                  onClick={onExportPDF}
+                  title="Descargar Reporte PDF"
+                  style={{
+                    background: 'rgba(255,255,255,.06)',
+                    border: '1px solid rgba(255,255,255,.12)',
+                    borderRadius: 8,
+                    padding: '6px 10px',
+                    cursor: 'pointer',
+                    color: '#ebc32b',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontSize: 11,
+                    fontWeight: 'bold',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.12)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,.06)'}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  PDF
+                </button>
               )}
               <button
                 onClick={onRefresh}
