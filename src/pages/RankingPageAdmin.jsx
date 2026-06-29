@@ -118,22 +118,232 @@ export default function RankingPageAdmin() {
   const [modalTabla, setModalTabla] = useState([])
   const [modalLoading, setModalLoading] = useState(false)
 
+  // ── Multi-bet accumulated ranking states ──
+  const [selectedIds, setSelectedIds] = useState([])
+  const [loadingCustom, setLoadingCustom] = useState(false)
+  const [customTabla, setCustomTabla] = useState([])
+  const [customMeta, setCustomMeta] = useState({})
+  const [customTablaArea, setCustomTablaArea] = useState([])
+  const [customAreasIndividual, setCustomAreasIndividual] = useState([])
+
+  useEffect(() => {
+    const allSelected = bets.length > 0 && selectedIds.length === bets.length
+    if (selectedIds.length > 1 && !allSelected) {
+      cargarRankingAcumulado(selectedIds)
+    } else if (selectedIds.length === 1) {
+      const bet = bets.find(b => b.id === selectedIds[0])
+      if (bet) {
+        cargarRanking(bet)
+      }
+    } else {
+      // 0 seleccionadas o TODAS seleccionadas → mostrar ranking global precalculado
+      setSel(null)
+      setTabla([])
+      setMeta({})
+      setTabActivo('individual')
+      setTablaArea([])
+    }
+  }, [selectedIds, bets])
+
+  function handleToggleBet(betId) {
+    setSelectedIds(prev => {
+      if (prev.includes(betId)) {
+        return prev.filter(id => id !== betId)
+      } else {
+        return [...prev, betId]
+      }
+    })
+  }
+
+  function handleSelectAll() {
+    setSelectedIds(prev => {
+      if (prev.length === bets.length) {
+        return []
+      } else {
+        return bets.map(b => b.id)
+      }
+    })
+  }
+
+  async function cargarRankingAcumulado(ids) {
+    setLoadingCustom(true)
+    setSel({
+      id: 'accumulated',
+      titulo: ids.length === bets.length ? 'TODAS LAS APUESTAS' : 'APUESTAS SELECCIONADAS',
+      tipo: 'libre',
+      isAccumulated: true,
+    })
+    setTabActivo('individual')
+    setCustomTabla([])
+    setCustomMeta([])
+    setCustomTablaArea([])
+    setCustomAreasIndividual([])
+
+    try {
+      // Consultas en paralelo para evitar el límite de 1000 filas de PostgREST
+      const queries = ids.map(id =>
+        sheetsApi._supabase
+          .from('ranking_cache')
+          .select('user_id, nombre, area_id, area_nombre_cache, puntos_totales, aciertos_exactos, aciertos_diferencia, aciertos_resultado, predicciones')
+          .eq('apuesta_id', id)
+          .eq('es_grupal', false)
+      )
+      const results = await Promise.all(queries)
+
+      const data = []
+      for (const r of results) {
+        if (r.error) throw r.error
+        if (r.data) data.push(...r.data)
+      }
+
+      const userMap = new Map()
+      ;(data || []).forEach(row => {
+        const uid = row.user_id
+        if (!uid) return
+        if (!userMap.has(uid)) {
+          userMap.set(uid, {
+            user_id: uid,
+            nombre: row.nombre || 'Sin nombre',
+            area_id: row.area_id,
+            area_nombre_cache: row.area_nombre_cache || 'Sin área',
+            puntos_totales: 0,
+            aciertos_exactos: 0,
+            aciertos_diferencia: 0,
+            aciertos_resultado: 0,
+            predicciones: 0,
+          })
+        }
+        const accum = userMap.get(uid)
+        accum.puntos_totales += (parseInt(row.puntos_totales) || 0)
+        accum.aciertos_exactos += (parseInt(row.aciertos_exactos) || 0)
+        accum.aciertos_diferencia += (parseInt(row.aciertos_diferencia) || 0)
+        accum.aciertos_resultado += (parseInt(row.aciertos_resultado) || 0)
+        accum.predicciones += (parseInt(row.predicciones) || 0)
+      })
+
+      const userList = Array.from(userMap.values())
+      userList.sort((a, b) => {
+        if (b.puntos_totales !== a.puntos_totales) return b.puntos_totales - a.puntos_totales
+        if (b.aciertos_exactos !== a.aciertos_exactos) return b.aciertos_exactos - a.aciertos_exactos
+        if (b.aciertos_diferencia !== a.aciertos_diferencia) return b.aciertos_diferencia - a.aciertos_diferencia
+        if (b.aciertos_resultado !== a.aciertos_resultado) return b.aciertos_resultado - a.aciertos_resultado
+        return a.nombre.localeCompare(b.nombre)
+      })
+
+      userList.forEach((u, idx) => {
+        u.posicion = idx + 1
+      })
+
+      const miId = user?.id || user?.user_id
+      const miPos = userList.find(u => u.user_id === miId) || null
+
+      setCustomTabla(userList)
+      setCustomMeta({
+        total: userList.length,
+        mi_posicion: miPos,
+        esta_en_top: miPos ? miPos.posicion <= 50 : false
+      })
+
+      const areaGrouped = {}
+      userList.forEach(u => {
+        const areaId = u.area_id || 'sin_area'
+        if (!areaGrouped[areaId]) {
+          areaGrouped[areaId] = []
+        }
+        areaGrouped[areaId].push(u)
+      })
+
+      const listArea = []
+      Object.keys(areaGrouped).forEach(areaId => {
+        const arr = areaGrouped[areaId]
+        arr.forEach((u, localIdx) => {
+          listArea.push({
+            user_id: u.user_id,
+            nombre: u.nombre,
+            area_id: u.area_id,
+            area_nombre_cache: u.area_nombre_cache,
+            puntos_totales: u.puntos_totales,
+            posicion: u.posicion,
+            posicion_en_area: localIdx + 1,
+            aciertos_exactos: u.aciertos_exactos,
+            aciertos_diferencia: u.aciertos_diferencia,
+            aciertos_resultado: u.aciertos_resultado,
+            predicciones: u.predicciones,
+          })
+        })
+      })
+
+      setCustomTablaArea(listArea)
+
+      // Generate customAreasIndividual
+      const porArea = {}
+      userList.forEach(row => {
+        if (!row.area_id) return
+        if (!porArea[row.area_id]) {
+          porArea[row.area_id] = { area_id: row.area_id, area_nombre: row.area_nombre_cache, usuarios: [] }
+        }
+        if (porArea[row.area_id].usuarios.length < 5) {
+          porArea[row.area_id].usuarios.push({
+            user_id: row.user_id,
+            nombre: row.nombre,
+            puntos_totales: row.puntos_totales,
+            posicion_global: row.posicion,
+            aciertos_exactos: row.aciertos_exactos || 0,
+            aciertos_diferencia: row.aciertos_diferencia || 0,
+            aciertos_resultado: row.aciertos_resultado || 0,
+            predicciones: row.predicciones || 0,
+          })
+        }
+      })
+
+      const areasList = Object.values(porArea)
+        .filter(a => a.usuarios.length > 0)
+        .sort((a, b) => (b.usuarios[0]?.puntos_totales || 0) - (a.usuarios[0]?.puntos_totales || 0))
+
+      setCustomAreasIndividual(areasList)
+
+    } catch (err) {
+      toast.error('Error al calcular ranking acumulado: ' + err.message)
+    } finally {
+      setLoadingCustom(false)
+    }
+  }
+
   async function abrirModalArea(area) {
     setModalArea(area)
-    setModalLoading(true)
-    setModalTabla([])
-    try {
-      const { data, error } = await sheetsApi._supabase
-        .from('ranking_global_cache')
-        .select('user_id, nombre, area_id, puntos_totales, posicion, aciertos_exactos, aciertos_diferencia, aciertos_resultado, predicciones')
-        .eq('area_id', area.area_id)
-        .order('posicion', { ascending: true })
-      if (error) throw error
-      setModalTabla(data || [])
-    } catch (e) {
-      toast.error('Error al cargar ranking completo: ' + e.message)
-    } finally {
+    if (selectedIds.length > 1) {
+      const filtered = customTabla
+        .filter(u => u.area_id === area.area_id)
+        .map((u, idx) => ({
+          user_id: u.user_id,
+          nombre: u.nombre,
+          area_id: u.area_id,
+          puntos_totales: u.puntos_totales,
+          posicion: u.posicion,
+          aciertos_exactos: u.aciertos_exactos,
+          aciertos_diferencia: u.aciertos_diferencia,
+          aciertos_resultado: u.aciertos_resultado,
+          predicciones: u.predicciones,
+          posicion_en_area: idx + 1,
+        }))
+      setModalTabla(filtered)
       setModalLoading(false)
+    } else {
+      setModalLoading(true)
+      setModalTabla([])
+      try {
+        const { data, error } = await sheetsApi._supabase
+          .from('ranking_global_cache')
+          .select('user_id, nombre, area_id, puntos_totales, posicion, aciertos_exactos, aciertos_diferencia, aciertos_resultado, predicciones')
+          .eq('area_id', area.area_id)
+          .order('posicion', { ascending: true })
+        if (error) throw error
+        setModalTabla(data || [])
+      } catch (e) {
+        toast.error('Error al cargar ranking completo: ' + e.message)
+      } finally {
+        setModalLoading(false)
+      }
     }
   }
 
@@ -335,15 +545,48 @@ export default function RankingPageAdmin() {
                 <Pill color="#64748b" label={`${sortedBets.filter(b => !isOpen(b)).length} cerradas`} />
               </div>
 
-              {/* Botón persistente Ver Ranking Global */}
+              {/* Botón SELEC. TODAS */}
               <button
-                onClick={() => setSel(null)}
+                onClick={handleSelectAll}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: 7,
                   width: '100%',
                   marginTop: 12,
+                  padding: '7px 12px',
+                  borderRadius: 10,
+                  border: `1.5px solid ${selectedIds.length === bets.length && bets.length > 0 ? '#ebc32b' : '#e8e3db'}`,
+                  background: selectedIds.length === bets.length && bets.length > 0 ? 'rgba(235,195,43,.12)' : 'transparent',
+                  color: selectedIds.length === bets.length && bets.length > 0 ? '#c8960a' : '#5f6e8a',
+                  fontWeight: 700,
+                  fontSize: 10,
+                  cursor: 'pointer',
+                  transition: 'all .18s',
+                  textAlign: 'left',
+                  letterSpacing: '.04em',
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                {selectedIds.length === bets.length && bets.length > 0 ? 'DESELEC. TODAS' : 'SELEC. TODAS'}
+                {selectedIds.length > 0 && selectedIds.length < bets.length && (
+                  <span style={{ marginLeft: 'auto', fontSize: 8, background: 'rgba(235,195,43,.15)', color: '#c8960a', padding: '2px 6px', borderRadius: 4, fontWeight: 800 }}>
+                    {selectedIds.length} sel.
+                  </span>
+                )}
+              </button>
+
+              {/* Botón persistente Ver Ranking Global */}
+              <button
+                onClick={() => { setSel(null); setSelectedIds([]) }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 7,
+                  width: '100%',
+                  marginTop: 8,
                   padding: '8px 12px',
                   borderRadius: 10,
                   border: `1.5px solid ${!sel ? '#0c182b' : '#e8e3db'}`,
@@ -380,13 +623,25 @@ export default function RankingPageAdmin() {
                   {sortedBets.filter(b => isOpen(b)).length > 0 && (
                     <SideSection label="Activas" dot="#22c55e">
                       {sortedBets.filter(b => isOpen(b)).map(b => (
-                        <BetRow key={b.id} bet={b} sel={sel?.id === b.id} onPick={cargarRanking} />
+                        <BetRow key={b.id} bet={b} sel={sel?.id === b.id}
+                          checked={selectedIds.includes(b.id)}
+                          onToggleCheck={handleToggleBet}
+                          onPick={() => {
+                            setSelectedIds([b.id])
+                          }}
+                        />
                       ))}
                     </SideSection>
                   )}
                   <SideSection label="Historial">
                     {sortedBets.filter(b => !isOpen(b)).map(b => (
-                      <BetRow key={b.id} bet={b} sel={sel?.id === b.id} onPick={cargarRanking} />
+                      <BetRow key={b.id} bet={b} sel={sel?.id === b.id}
+                        checked={selectedIds.includes(b.id)}
+                        onToggleCheck={handleToggleBet}
+                        onPick={() => {
+                          setSelectedIds([b.id])
+                        }}
+                      />
                     ))}
                   </SideSection>
                 </>
@@ -398,88 +653,97 @@ export default function RankingPageAdmin() {
 
             {!sel ? (
               <RankingGlobalAdmin
-                tabla={globalTabla}
-                meta={globalMeta}
-                loading={globalLoading}
+                tabla={selectedIds.length > 1 ? customTabla : globalTabla}
+                meta={selectedIds.length > 1 ? customMeta : globalMeta}
+                loading={selectedIds.length > 1 ? loadingCustom : globalLoading}
                 onRefresh={cargarRankingGlobal}
                 areasTabla={areasTabla}
                 areasLoading={areasLoading}
-                areasIndividual={areasIndividual}
-                areasIndividualLoading={areasIndividualLoading}
+                areasIndividual={selectedIds.length > 1 ? customAreasIndividual : areasIndividual}
+                areasIndividualLoading={selectedIds.length > 1 ? loadingCustom : areasIndividualLoading}
                 isPro={isPro}
                 onOpenArea={abrirModalArea}
               />
-            ) : (
-              <div className="rk-in">
- 
-                 <Banner apuesta={sel} meta={meta} loading={loading} />
- 
-                 {/* Tabs de tipo de ranking (Solo para apuestas libres) */}
-                 {sel.tipo === 'libre' && (
-                   <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid #f0eadb', marginBottom: 20 }}>
-                     <button
-                       className={`rk-tab ${tabActivo === 'individual' ? 'active' : ''}`}
-                       onClick={() => setTabActivo('individual')}
-                     >
-                       Individual
-                     </button>
-                     <button
-                       className={`rk-tab ${tabActivo === 'por_area' ? 'active' : ''}`}
-                       onClick={() => setTabActivo('por_area')}
-                     >
-                       Por región
-                     </button>
-                   </div>
-                 )}
+            ) : (() => {
+              const isAccum = selectedIds.length > 1
+              const displayTabla = isAccum ? customTabla : tabla
+              const displayMeta = isAccum ? customMeta : meta
+              const displayLoading = isAccum ? loadingCustom : loading
+              const displayTablaArea = isAccum ? customTablaArea : tablaArea
+              const displaySel = sel
 
-                 {loading ? (
-                   <SkeletonContent />
-                 ) : tabActivo === 'por_area' ? (
-                   <RankingPorArea
-                     tabla={tablaArea}
-                     loading={loadingArea}
-                     miAreaId={user?.area_id}
-                   />
-                 ) : tabla.length === 0 ? (
-                   <SinParticipantes />
-                 ) : (
-                   <>
-                     <Podio
-                       top={tabla.slice(0, 3)}
-                       miId={user?.id}
-                       apuesta={sel}
-                       expandedUser={expandedUser}
-                       loadingUser={loadingUser}
-                       onToggle={toggleUser}
-                     />
- 
-                     {expandedUser && tabla.slice(0, 3).some(u => u.user_id === expandedUser) && (
-                       <PrediccionesPanel
-                         user={tabla.find(u => u.user_id === expandedUser)}
-                         predicciones={predicciones[expandedUser] || []}
-                         apuesta={sel}
-                         onClose={() => setExpandedUser(null)}
-                       />
-                     )}
- 
-                     {tabla.length > 3 && (
-                       <OtrosParticipantes
-                         tabla={tabla}
-                         user={user}
-                         apuesta={sel}
-                         expandedUser={expandedUser}
-                         loadingUser={loadingUser}
-                         predicciones={predicciones}
-                         onToggle={toggleUser}
-                       />
-                     )}
- 
-                     <LeyendaPuntos apuesta={sel} total={meta.total} />
- 
-                   </>
-                 )}
-               </div>
-            )}
+              return (
+                <div className="rk-in">
+
+                  <Banner apuesta={displaySel} meta={displayMeta} loading={displayLoading} />
+
+                  {/* Tabs de tipo de ranking (Solo para apuestas libres) */}
+                  {displaySel.tipo === 'libre' && (
+                    <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid #f0eadb', marginBottom: 20 }}>
+                      <button
+                        className={`rk-tab ${tabActivo === 'individual' ? 'active' : ''}`}
+                        onClick={() => setTabActivo('individual')}
+                      >
+                        Individual
+                      </button>
+                      <button
+                        className={`rk-tab ${tabActivo === 'por_area' ? 'active' : ''}`}
+                        onClick={() => setTabActivo('por_area')}
+                      >
+                        Por región
+                      </button>
+                    </div>
+                  )}
+
+                  {displayLoading ? (
+                    <SkeletonContent />
+                  ) : tabActivo === 'por_area' ? (
+                    <RankingPorArea
+                      tabla={displayTablaArea}
+                      loading={isAccum ? loadingCustom : loadingArea}
+                      miAreaId={user?.area_id}
+                    />
+                  ) : displayTabla.length === 0 ? (
+                    <SinParticipantes />
+                  ) : (
+                    <>
+                      <Podio
+                        top={displayTabla.slice(0, 3)}
+                        miId={user?.id}
+                        apuesta={displaySel}
+                        expandedUser={isAccum ? null : expandedUser}
+                        loadingUser={isAccum ? null : loadingUser}
+                        onToggle={isAccum ? () => {} : toggleUser}
+                      />
+
+                      {!isAccum && expandedUser && displayTabla.slice(0, 3).some(u => u.user_id === expandedUser) && (
+                        <PrediccionesPanel
+                          user={displayTabla.find(u => u.user_id === expandedUser)}
+                          predicciones={predicciones[expandedUser] || []}
+                          apuesta={displaySel}
+                          onClose={() => setExpandedUser(null)}
+                        />
+                      )}
+
+                      {displayTabla.length > 3 && (
+                        <OtrosParticipantes
+                          tabla={displayTabla}
+                          user={user}
+                          apuesta={isAccum ? { ...displaySel, tipo: 'grupos' } : displaySel}
+                          expandedUser={isAccum ? null : expandedUser}
+                          loadingUser={isAccum ? null : loadingUser}
+                          predicciones={predicciones}
+                          onToggle={isAccum ? () => {} : toggleUser}
+                        />
+                      )}
+
+                      <LeyendaPuntos apuesta={displaySel} total={displayMeta.total} />
+
+                    </>
+                  )}
+                </div>
+              )
+            })()}
           </div>
         </div>
       </div>
@@ -682,19 +946,48 @@ function SideSection({ label, dot, children }) {
   )
 }
 
-function BetRow({ bet, sel, onPick }) {
+function BetRow({ bet, sel, checked, onToggleCheck, onPick }) {
   const open = isOpen(bet)
   const fin = bet.estado === 'finalizada'
   const col = fin ? '#ebc32b' : open ? '#22c55e' : '#475569'
   const parts = bet.partidos_ids ? bet.partidos_ids.split(',').filter(Boolean).length : 0
   return (
-    <div className={`rk-row${sel ? ' sel' : ''}`} onClick={() => onPick(bet)}>
+    <div className={`rk-row${sel ? ' sel' : ''}`} onClick={() => onPick(bet)} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      {/* Checkbox custom */}
+      <div
+        onClick={(e) => {
+          e.stopPropagation()
+          onToggleCheck(bet.id)
+        }}
+        style={{
+          width: 16,
+          height: 16,
+          borderRadius: 4,
+          border: '1.5px solid #cbd5e1',
+          background: checked ? '#ebc32b' : '#fff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          flexShrink: 0,
+          transition: 'all 0.12s',
+        }}
+      >
+        {checked && (
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        )}
+      </div>
+
+      {/* Dot estado */}
       <div style={{ width: 7, height: 7, borderRadius: '50%', background: col, flexShrink: 0, boxShadow: open ? `0 0 6px ${col}` : sel ? `0 0 4px ${col}` : 'none' }} />
+      
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{ fontSize: 12, fontWeight: 600, color: sel ? '#fff' : '#0c182b', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {bet.titulo}
         </p>
-        <p style={{ fontSize: 10, color: '#94a3b8', margin: 0 }}>
+        <p style={{ fontSize: 10, color: sel ? 'rgba(255,255,255,0.6)' : '#94a3b8', margin: 0 }}>
           {bet.participantes || 0} part · {parts} partidos
         </p>
       </div>
