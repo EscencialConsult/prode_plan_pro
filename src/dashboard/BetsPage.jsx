@@ -112,18 +112,25 @@ function BetCard({bet,predsMap,onPredict}){
             const fin=m.estado==='finalizado'||m.estado==='en_vivo'
             return(
               <div key={m.id} style={{display:'grid',gridTemplateColumns:'minmax(0,1fr) auto minmax(0,1fr)',alignItems:'center',gap:'.6rem',padding:'.55rem .75rem',borderRadius:9,background:pred?'rgba(134,200,115,.05)':'rgba(17,24,17,.02)',border:pred?'1px solid rgba(134,200,115,.2)':'1px solid #c8dbcc'}}>
-                <span style={{fontWeight:500,fontSize:'.8rem',color:'#111811',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{m.equipo_local}</span>
-                <div style={{textAlign:'center',minWidth:60}}>
-                  {pred?(
-                    <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.05rem',color:'#5A9E4A',letterSpacing:'.04em'}}>{pred.pred_local} - {pred.pred_visitante}</span>
-                  ):(
-                    <span style={{fontSize:'.75rem',color:'#8aaa8e'}}>— vs —</span>
-                  )}
-                  {fin&&m.goles_local!=null&&(
-                    <div style={{fontSize:'.6rem',color:'#4a6b50',marginTop:1}}>Real: {m.goles_local}-{m.goles_visitante}</div>
-                  )}
-                </div>
-                <span style={{fontWeight:500,fontSize:'.8rem',color:'#111811',textAlign:'right',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{m.equipo_visitante}</span>
+                {(()=>{
+                  const nL=(!m.equipo_local||m.equipo_local==='TBD'||m.codigo_local==='TBD')?'Por confirmar':m.equipo_local
+                  const nV=(!m.equipo_visitante||m.equipo_visitante==='TBD'||m.codigo_visitante==='TBD')?'Por confirmar':m.equipo_visitante
+                  const tbd=nL==='Por confirmar'||nV==='Por confirmar'
+                  return(<>
+                    <span style={{fontWeight:500,fontSize:'.8rem',color:tbd?'#b45309':'#111811',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontStyle:tbd?'italic':'normal'}}>{nL}</span>
+                    <div style={{textAlign:'center',minWidth:60}}>
+                      {pred?(
+                        <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.05rem',color:'#5A9E4A',letterSpacing:'.04em'}}>{pred.pred_local} - {pred.pred_visitante}</span>
+                      ):(
+                        <span style={{fontSize:'.75rem',color:'#8aaa8e'}}>{tbd?'⏳':'— vs —'}</span>
+                      )}
+                      {fin&&m.goles_local!=null&&(
+                        <div style={{fontSize:'.6rem',color:'#4a6b50',marginTop:1}}>Real: {m.goles_local}-{m.goles_visitante}</div>
+                      )}
+                    </div>
+                    <span style={{fontWeight:500,fontSize:'.8rem',color:tbd?'#b45309':'#111811',textAlign:'right',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontStyle:tbd?'italic':'normal'}}>{nV}</span>
+                  </>)
+                })()}
               </div>
             )
           })}

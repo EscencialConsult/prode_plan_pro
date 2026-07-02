@@ -505,6 +505,32 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
             )}
 
             {bet.partidos?.map((match, idx) => {
+              const esTBD = !match.equipo_local || !match.equipo_visitante ||
+                match.equipo_local === 'TBD' || match.equipo_visitante === 'TBD' ||
+                match.codigo_local === 'TBD' || match.codigo_visitante === 'TBD'
+
+              if (esTBD) return (
+                <div key={match.id} className="bg-white rounded-xl mb-2.5 overflow-hidden shadow-sm border border-amber-200">
+                  <div className="flex items-center justify-between px-3 py-2 bg-slate-900 text-white">
+                    <div className="flex items-center gap-2">
+                      <span className="bg-slate-800 text-yellow-400 text-[10px] font-black px-2 py-0.5 rounded min-w-[32px] text-center border border-yellow-400/30">
+                        {String(idx + 1).padStart(2, '0')}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-center justify-center gap-2 px-4 py-5 text-center"
+                    style={{ background: 'rgba(251,191,36,.06)' }}>
+                    <span style={{ fontSize: '1.4rem' }}>⏳</span>
+                    <p className="font-bold text-sm" style={{ color: '#92400e', margin: 0 }}>
+                      Partido pendiente de confirmación
+                    </p>
+                    <p className="text-xs" style={{ color: '#b45309', margin: 0, maxWidth: 280 }}>
+                      Los equipos de este partido aún no están confirmados. Se habilitará para votar automáticamente cuando se confirmen.
+                    </p>
+                  </div>
+                </div>
+              )
+
               const isLive = match.estado === 'en_vivo'
               const isFinished = match.estado === 'finalizado'
               const matchOpen = isMatchOpen(match)
@@ -527,9 +553,9 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                   ref={el => { matchRefs.current[match.id] = el }}
                   data-match-id={match.id}
                   className={`bg-white rounded-xl mb-2.5 overflow-hidden shadow-sm border transition-all duration-200 hover:shadow-md ${
-                    completo && !isLive && !isFinished 
-                      ? 'border-yellow-400 shadow-yellow-500/10' 
-                      : isLive 
+                    completo && !isLive && !isFinished
+                      ? 'border-yellow-400 shadow-yellow-500/10'
+                      : isLive
                         ? 'border-red-500 shadow-red-500/10'
                         : 'border-slate-200'
                   }`}
