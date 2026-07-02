@@ -551,6 +551,9 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
               const empate = hasScore && pl === pv
               const clasifElegido = clasificados[match.id] || ''
               const completo = predicionCompleta(match)
+              const esTBD = !match.equipo_local || !match.equipo_visitante ||
+                match.equipo_local === 'TBD' || match.equipo_visitante === 'TBD' ||
+                match.codigo_local === 'TBD' || match.codigo_visitante === 'TBD'
 
               return (
                 <div
@@ -610,7 +613,16 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-[1fr_auto_1fr] items-center">
+                  {esTBD ? (
+                    <div style={{ background: '#fffbeb', border: '1px solid #fbbf24', borderRadius: 8, margin: '10px 12px 12px', padding: '16px 14px', textAlign: 'center' }}>
+                      <div style={{ fontSize: 22, marginBottom: 6 }}>⏳</div>
+                      <p style={{ fontWeight: 700, color: '#92400e', margin: '0 0 5px', fontSize: 13 }}>Partido pendiente de confirmación</p>
+                      <p style={{ fontSize: 11, color: '#78350f', margin: 0, lineHeight: 1.5 }}>
+                        Los equipos de este partido aún no están confirmados oficialmente. Se habilitará para votar automáticamente cuando se confirmen.
+                      </p>
+                    </div>
+                  ) : (
+                  <><div className="grid grid-cols-[1fr_auto_1fr] items-center">
                     <div className="flex items-center gap-2.5 p-3 bg-gradient-to-r from-slate-50 to-white border-r border-slate-200">
                       {match.bandera_local && (
                         <img src={match.bandera_local} alt="" className="w-10 h-7 object-cover rounded shadow-sm flex-shrink-0" />
@@ -747,6 +759,8 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                       </div>
                     </div>
                   )}
+
+                  </>)}
 
                   {(isLive || isFinished) && (match.goles_local != null || match.goles_visitante != null) && (
                     <div className="px-3 py-2.5 bg-slate-100 border-t border-slate-200">
