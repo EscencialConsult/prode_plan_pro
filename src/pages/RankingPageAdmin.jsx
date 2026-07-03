@@ -11,8 +11,6 @@ import { useBets } from '../hooks/useBets.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import sheetsApi from '../services/sheetsApi.js'
 import { useToast } from '../hooks/useToast.jsx'
-import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable'
 
 /* ─── helpers ─── */
 function isOpen(b) { return b.estado === 'abierta' && new Date(b.fecha_cierre) > Date.now() }
@@ -351,6 +349,10 @@ export default function RankingPageAdmin() {
 
   async function exportarA_PDF() {
     try {
+      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        import('jspdf'),
+        import('jspdf-autotable'),
+      ])
       const doc = new jsPDF()
       
       const isAccum = selectedIds.length > 1 && selectedIds.length < bets.length
