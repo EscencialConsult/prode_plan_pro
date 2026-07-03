@@ -143,7 +143,7 @@ export default function CreateBetForm({ onSubmit, loading, matches = [] }) {
   }, [])
 
   const partidosDisponibles = useMemo(
-    () => matches.filter(m => !isTBD(m) && estaDisponible(m)),
+    () => matches.filter(m => estaDisponible(m)),
     [matches]
   )
 
