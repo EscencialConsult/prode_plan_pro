@@ -496,6 +496,10 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
             )}
 
             {bet.partidos?.map((match, idx) => {
+              const esTBD = !match.equipo_local || !match.equipo_visitante ||
+                match.equipo_local === 'TBD' || match.equipo_visitante === 'TBD' ||
+                match.codigo_local === 'TBD' || match.codigo_visitante === 'TBD'
+              
               const isLive = match.estado === 'en_vivo'
               const isFinished = match.estado === 'finalizado'
               // Bloqueo por partido: se cierra a su hora de inicio (aunque la
@@ -585,27 +589,49 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                     </div>
 
                     <div className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-900">
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        maxLength={2}
-                        value={sc.local}
-                        onChange={e => updateScore(match.id, 'local', e.target.value)}
-                        placeholder="—"
-                        disabled={isDisabled}
-                        className="w-11 h-11 text-2xl text-center font-black bg-white text-slate-900 border-2 border-yellow-400 rounded-lg outline-none transition-all focus:border-yellow-300 focus:shadow-lg focus:shadow-yellow-500/30 focus:scale-105 disabled:bg-slate-200 disabled:text-slate-400 disabled:border-slate-300 disabled:cursor-not-allowed tabular-nums"
-                      />
-                      <span className="text-2xl font-black text-yellow-400">:</span>
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        maxLength={2}
-                        value={sc.visitante}
-                        onChange={e => updateScore(match.id, 'visitante', e.target.value)}
-                        placeholder="—"
-                        disabled={isDisabled}
-                        className="w-11 h-11 text-2xl text-center font-black bg-white text-slate-900 border-2 border-yellow-400 rounded-lg outline-none transition-all focus:border-yellow-300 focus:shadow-lg focus:shadow-yellow-500/30 focus:scale-105 disabled:bg-slate-200 disabled:text-slate-400 disabled:border-slate-300 disabled:cursor-not-allowed tabular-nums"
-                      />
+                      {esTBD ? (
+                        <div style={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.75rem',
+                          padding: '1.5rem 1rem',
+                          width: '100%',
+                          background: '#fffbeb',
+                          border: '1px solid #fbbf24',
+                          borderRadius: '0.75rem',
+                          textAlign: 'center'
+                        }}>
+                          <div style={{ fontSize: '1.5rem' }}>⏳</div>
+                          <div style={{ fontWeight: 700, color: '#92400e', fontSize: '0.95rem' }}>Partido pendiente de confirmación</div>
+                          <p style={{ fontSize: '0.85rem', color: '#b45309', margin: '0.25rem 0 0', lineHeight: '1.4' }}>Los equipos de este partido aún no están confirmados oficialmente. Se habilitará para votar automáticamente cuando se confirmen.</p>
+                        </div>
+                      ) : (
+                        <>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={2}
+                            value={sc.local}
+                            onChange={e => updateScore(match.id, 'local', e.target.value)}
+                            placeholder="—"
+                            disabled={isDisabled}
+                            className="w-11 h-11 text-2xl text-center font-black bg-white text-slate-900 border-2 border-yellow-400 rounded-lg outline-none transition-all focus:border-yellow-300 focus:shadow-lg focus:shadow-yellow-500/30 focus:scale-105 disabled:bg-slate-200 disabled:text-slate-400 disabled:border-slate-300 disabled:cursor-not-allowed tabular-nums"
+                          />
+                          <span className="text-2xl font-black text-yellow-400">:</span>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={2}
+                            value={sc.visitante}
+                            onChange={e => updateScore(match.id, 'visitante', e.target.value)}
+                            placeholder="—"
+                            disabled={isDisabled}
+                            className="w-11 h-11 text-2xl text-center font-black bg-white text-slate-900 border-2 border-yellow-400 rounded-lg outline-none transition-all focus:border-yellow-300 focus:shadow-lg focus:shadow-yellow-500/30 focus:scale-105 disabled:bg-slate-200 disabled:text-slate-400 disabled:border-slate-300 disabled:cursor-not-allowed tabular-nums"
+                          />
+                        </>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-2.5 p-3 text-right bg-gradient-to-l from-slate-50 to-white border-l border-slate-200">
