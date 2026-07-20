@@ -164,6 +164,51 @@ export function isBetOpen(bet) {
   return new Date(bet.fecha_cierre) > new Date()
 }
 
+/* ── Bloqueo por PARTIDO individual (modelo sogefi) ──────────
+   Cada partido se cierra solo a su hora de inicio, mientras la
+   apuesta sigue abierta hasta el inicio del último partido.
+
+   Comparación por INSTANTE UTC (no hora local): new Date(iso) parsea
+   el timestamptz como un instante absoluto, así funciona en cualquier
+   zona horaria del navegador. NO usar el parche de timeLeft acá.
+   ──────────────────────────────────────────────────────────── */
+
+/** El campo de fecha del partido viene mapeado como `fecha_partido`
+ *  (= partidos.fecha_hora). Aceptamos ambos por robustez. */
+function fechaInicioPartido(match) {
+  return match?.fecha_partido || match?.fecha_hora || null
+}
+
+/** true si el partido ya está cerrado para predecir:
+ *  estado en_vivo/finalizado/cancelado, o su hora de inicio ya pasó. */
+export function isMatchLocked(match, now = Date.now()) {
+  if (!match) return true
+  if (['en_vivo', 'finalizado', 'cancelado'].includes(match.estado)) return true
+  const iso = fechaInicioPartido(match)
+  if (!iso) return false // sin fecha conocida → no bloqueamos por hora
+  const t = new Date(iso).getTime()
+  if (isNaN(t)) return false
+  return t <= now
+}
+
+/** Etiqueta de estado del partido para la UI (modelo sogefi).
+ *  Devuelve { txt, tone } con tone ∈ 'open' | 'live' | 'done'. */
+export function matchStatusInfo(match, now = Date.now()) {
+  if (!match) return { txt: '—', tone: 'done' }
+  if (match.estado === 'en_vivo')    return { txt: 'EN VIVO',   tone: 'live' }
+  if (match.estado === 'finalizado') return { txt: 'FINAL',     tone: 'done' }
+  if (match.estado === 'cancelado')  return { txt: 'CANCELADO', tone: 'done' }
+  if (isMatchLocked(match, now))     return { txt: 'CERRADO',   tone: 'done' }
+  const iso = fechaInicioPartido(match)
+  return { txt: iso ? `Disponible hasta ${fmtFecha(iso)}` : 'Disponible', tone: 'open' }
+}
+
+/** true si la apuesta tiene al menos un partido todavía abierto. */
+export function betHasOpenMatches(bet, now = Date.now()) {
+  if (!bet?.partidos?.length) return false
+  return bet.partidos.some(m => !isMatchLocked(m, now))
+}
+
 /** Clases CSS para el estado de una apuesta */
 export function betStatusClass(estado) {
   return {

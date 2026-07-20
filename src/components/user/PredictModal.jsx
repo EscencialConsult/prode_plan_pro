@@ -6,7 +6,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useAuth } from '../../hooks/useAuth.jsx'
-import { timeLeft, isBetOpen } from '../../utils/index.js'
+import { timeLeft, isBetOpen, isMatchLocked, matchStatusInfo, betHasOpenMatches } from '../../utils/index.js'
 import { useToast } from '../../hooks/useToast.jsx'
 
 function esEliminatoria(fase) {
@@ -29,6 +29,9 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
   const [scores, setScores] = useState({})
   const [clasificados, setClasificados] = useState({})
   const [activeMatchIdx, setActiveMatchIdx] = useState(0)
+  // Reloj interno: se refresca cada 30s para que un partido se bloquee
+  // solo al llegar su hora de inicio mientras el modal está abierto.
+  const [now, setNow] = useState(() => Date.now())
   const matchRefs = useRef({})
   const listRef = useRef(null)
 
@@ -131,6 +134,13 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
     return () => { document.body.style.overflow = prev }
   }, [bet])
 
+  // Tick cada 30s para re-evaluar el bloqueo por partido en tiempo real.
+  useEffect(() => {
+    if (!bet) return
+    const id = setInterval(() => setNow(Date.now()), 30000)
+    return () => clearInterval(id)
+  }, [bet])
+
   useEffect(() => {
     if (!bet?.partidos || !listRef.current) return
     
@@ -157,6 +167,11 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
   if (!bet) return null
 
   const open = isBetOpen(bet)
+  // Nuevo modelo: la apuesta sigue editable mientras quede ≥1 partido sin iniciar.
+  // Gateamos con `open` (estado abierta + fecha_cierre = inicio del último partido)
+  // para alinear con la RPC y no ofrecer guardados que el servidor rechazaría.
+  const hayAbiertos = betHasOpenMatches(bet, now)
+  const puedeEditar = open && hayAbiertos && !estaBloqueado
   const remaining = timeLeft(bet.fecha_cierre)
   const isClosingSoon = open && remaining !== 'Cerrada' && !remaining.includes('d')
   const totalMatches = bet.partidos?.length || 0
@@ -187,6 +202,9 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
     const empatesSinClasificado = []
 
     for (const match of (bet.partidos || [])) {
+      // El partido se cierra solo a su hora de inicio: no reenviamos
+      // predicciones de partidos ya bloqueados (el servidor también las omite).
+      if (isMatchLocked(match, now)) continue
       const vals = scores[match.id]
       if (!vals) continue
       const pl = parseInt(vals.local, 10)
@@ -493,9 +511,15 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
             )}
 
             {bet.partidos?.map((match, idx) => {
+              const esTBD = !match.equipo_local || !match.equipo_visitante ||
+                match.equipo_local === 'TBD' || match.equipo_visitante === 'TBD' ||
+                match.codigo_local === 'TBD' || match.codigo_visitante === 'TBD'
               const isLive = match.estado === 'en_vivo'
               const isFinished = match.estado === 'finalizado'
-              const isDisabled = !open || isLive || isFinished || estaBloqueado
+              // Bloqueo por partido: cerrado si ya inició o estado live/fin/cancelado.
+              const locked = isMatchLocked(match, now)
+              const status = matchStatusInfo(match, now)
+              const isDisabled = locked || estaBloqueado
               const sc = scores[match.id] || { local: '', visitante: '' }
               const hasScore = sc.local !== '' && sc.visitante !== ''
               const elim = esEliminatoria(match.fase)
@@ -538,7 +562,21 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                           FIN
                         </span>
                       )}
-                      {!isLive && !isFinished && completo && (
+                      {match.estado === 'cancelado' && (
+                        <span className="inline-flex items-center bg-slate-500 text-white text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full">
+                          CANCELADO
+                        </span>
+                      )}
+                      {locked && !isLive && !isFinished && match.estado !== 'cancelado' && (
+                        <span className="inline-flex items-center gap-1 bg-slate-700 text-slate-200 text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full">
+                          <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                            <rect x="3" y="11" width="18" height="11" rx="2" />
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                          </svg>
+                          CERRADO
+                        </span>
+                      )}
+                      {!locked && !isLive && !isFinished && completo && (
                         <span className="inline-flex items-center gap-1 bg-yellow-400 text-slate-900 text-[8px] font-black tracking-wider px-2 py-0.5 rounded-full">
                           <svg width="7" height="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4">
                             <polyline points="20 6 9 17 4 12" />
@@ -549,6 +587,17 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                     </div>
                   </div>
 
+                  {esTBD ? (
+                    <div className="px-4 py-5 bg-amber-50 border-t border-amber-200 text-center">
+                      <div className="text-sm font-black text-amber-900">
+                        ⏳ Partido pendiente de confirmación
+                      </div>
+                      <p className="mt-1.5 mb-0 text-xs leading-relaxed text-amber-800">
+                        Los equipos de este partido aún no están confirmados oficialmente. Se habilitará para votar automáticamente cuando se confirmen.
+                      </p>
+                    </div>
+                  ) : (
+                    <>
                   <div className="grid grid-cols-[1fr_auto_1fr] items-center">
                     <div className="flex items-center gap-2.5 p-3 bg-gradient-to-r from-slate-50 to-white border-r border-slate-200">
                       {match.bandera_local && (
@@ -606,6 +655,15 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                       )}
                     </div>
                   </div>
+
+                  {status.tone === 'open' && (
+                    <div className="px-3 py-2 bg-green-50 border-t border-dashed border-green-200 flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                      <span className="text-[10px] font-bold tracking-wider uppercase text-green-700">
+                        {status.txt}
+                      </span>
+                    </div>
+                  )}
 
                   {elim && empate && (
                     <div className="px-3 py-3 bg-amber-50 border-t border-dashed border-amber-200">
@@ -705,6 +763,8 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                       </div>
                     </div>
                   )}
+                    </>
+                  )}
                 </div>
               )
             })}
@@ -714,7 +774,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
           <form onSubmit={handleSubmit} className="flex-shrink-0">
             <footer className="px-4 sm:px-6 py-3 bg-slate-900 text-white border-t-2 border-yellow-400 grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 items-center">
               <div className="min-w-0">
-                {open && (
+                {puedeEditar && (
                   <>
                     <div className="flex items-baseline justify-between text-[9px] tracking-wider uppercase mb-2">
                       <span className="text-slate-400 font-bold">Progreso</span>
@@ -741,7 +801,7 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                 >
                   Cancelar
                 </button>
-                {open && !estaBloqueado && (
+                {puedeEditar && (
                   <button
                     type="submit"
                     className="flex-1 sm:flex-none px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wide bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 text-slate-900 shadow-lg shadow-yellow-500/50 border border-yellow-400 hover:-translate-y-0.5 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:transform-none transition-all inline-flex items-center justify-center gap-2 active:scale-95"
@@ -766,9 +826,9 @@ export default function PredictModal({ bet, predictions = {}, onSubmit, onClose,
                 )}
               </div>
 
-              {open && !estaBloqueado && (
+              {puedeEditar && (
                 <div className="col-span-full text-[10px] text-slate-400 text-center tracking-wide">
-                  💡 Podés modificar mientras esté abierta
+                  💡 Cada partido se cierra a su hora de inicio. Podés modificar los que aún no empezaron.
                 </div>
               )}
               {open && estaBloqueado && (

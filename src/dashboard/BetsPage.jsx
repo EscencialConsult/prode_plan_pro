@@ -16,6 +16,7 @@ import { useBets } from '../hooks/useBets.jsx'
 import { useAuth } from '../hooks/useAuth.jsx'
 import PredictModal from '../components/user/PredictModal.jsx'
 import sheetsApi from '../services/sheetsApi.js'
+import { betHasOpenMatches } from '../utils/index.js'
 
 /* ── helpers ── */
 function timeLeft(d){const diff=new Date(d)-Date.now();if(diff<=0)return'Cerrada';const h=Math.floor(diff/3600000);const m=Math.floor((diff%3600000)/60000);if(h>=24)return`${Math.floor(h/24)}d ${h%24}h`;if(h>0)return`${h}h ${m}m`;return`${m}m`}
@@ -65,7 +66,9 @@ function BetCard({bet,predsMap,onPredict}){
   const mc=bet.partidos?.length||0
   const anyPred=bet.partidos?.some(p=>predsMap?.[p.id])
   const {user}=useAuth()
-  const canPredict=(open&&(bet.tipo!=='grupos'||!!user?.area_id))
+  // Editable mientras la apuesta esté abierta y quede ≥1 partido sin iniciar.
+  const hayAbiertos=betHasOpenMatches(bet)
+  const canPredict=(open&&hayAbiertos&&(bet.tipo!=='grupos'||!!user?.area_id))
 
   return(
     <div style={{...CARD_BASE,borderRadius:18,padding:'1.4rem 1.5rem',border:`1px solid ${live?'rgba(224,50,82,.25)':open?'rgba(27,138,90,.18)':'#f0eadb'}`,transition:'transform .2s,box-shadow .2s'}}
@@ -94,9 +97,11 @@ function BetCard({bet,predsMap,onPredict}){
           {bet.partidos.slice(0,3).map(m=>{
             const pred=predsMap?.[m.id]
             const fin=m.estado==='finalizado'||m.estado==='en_vivo'
+            const nombreLocal=(!m.equipo_local||m.equipo_local==='TBD'||m.codigo_local==='TBD')?'Por confirmar':m.equipo_local
+            const nombreVisitante=(!m.equipo_visitante||m.equipo_visitante==='TBD'||m.codigo_visitante==='TBD')?'Por confirmar':m.equipo_visitante
             return(
               <div key={m.id} style={{display:'grid',gridTemplateColumns:'1fr auto 1fr',alignItems:'center',gap:'.6rem',padding:'.55rem .75rem',borderRadius:9,background:pred?'rgba(235,195,43,.05)':'rgba(12,24,43,.02)',border:pred?'1px solid rgba(255,255,255,.2)':'1px solid #f0eadb'}}>
-                <span style={{fontWeight:500,fontSize:'.8rem',color:'#0c182b',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{m.equipo_local}</span>
+                <span style={{fontWeight:500,fontSize:'.8rem',color:'#0c182b',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{nombreLocal}</span>
                 <div style={{textAlign:'center',minWidth:60}}>
                   {pred?(
                     <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'1.05rem',color:'#0057B8',letterSpacing:'.04em'}}>{pred.pred_local} - {pred.pred_visitante}</span>
@@ -107,7 +112,7 @@ function BetCard({bet,predsMap,onPredict}){
                     <div style={{fontSize:'.6rem',color:'#5f6e8a',marginTop:1}}>Real: {m.goles_local}-{m.goles_visitante}</div>
                   )}
                 </div>
-                <span style={{fontWeight:500,fontSize:'.8rem',color:'#0c182b',textAlign:'right',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{m.equipo_visitante}</span>
+                <span style={{fontWeight:500,fontSize:'.8rem',color:'#0c182b',textAlign:'right',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{nombreVisitante}</span>
               </div>
             )
           })}
