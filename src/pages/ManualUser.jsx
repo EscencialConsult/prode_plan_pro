@@ -667,7 +667,7 @@ export default function ManualUser() {
               {[
                 { q:'¿Puedo ver las predicciones de otros usuarios?', a:'No podés ver las predicciones de otros participantes mientras la apuesta está abierta. Una vez finalizada, el ranking muestra los puntos de todos, pero el detalle de las predicciones individuales de cada persona es privado.' },
                 { q:'¿Me avisan cuando hay una nueva apuesta?', a:'El admin se encarga de comunicar cuando abre una nueva apuesta. Revisá la sección Apuestas periódicamente, especialmente cuando empieza una nueva fase del torneo.' },
-                { q:'¿Qué pasa si hay un empate en puntos en el ranking?', a:'El sistema ordena por puntos totales. En caso de igualdad, el ranking muestra a ambos participantes con la misma posición.' },
+                { q:'¿Qué pasa si hay un empate en puntos en el ranking?', a:'El ranking se ordena según el puntaje total acumulado. En caso de empate, para definir un ganador en una apuesta específica, si dos o más participantes obtienen el mismo puntaje, se considerará ganador quien haya registrado primero sus predicciones.' },
                 { q:'¿Puedo cargar predicciones desde el celular?', a:'Sí, la plataforma funciona en el navegador del celular. No necesitás instalar nada.' },
                 { q:'¿Qué significa el indicador "Cerrada" en el tiempo restante?', a:'Significa que la fecha límite ya pasó y no se aceptan más predicciones para esa apuesta.' },
                 { q:'¿Puedo cambiar mi predicción después de guardarla?', a:'Sí, podés modificarla cuantas veces quieras mientras la apuesta esté abierta. Solo el último valor guardado cuenta.' },
