@@ -633,10 +633,11 @@ export default function RankingPageAdmin() {
   async function exportarA_Excel() {
     try {
       const XLSX = await import('xlsx')
-      const { dataToExport, areaNamesMap } = await construirDatosReporte()
+      const { title, subtitle, dataToExport, areaNamesMap } = await construirDatosReporte()
 
       const headerRow = ['#', 'Participante', 'Puntos', 'Exactos', 'Diferencia', 'Resultado', 'Predicciones']
       const colWidths = [{ wch: 5 }, { wch: 38 }, { wch: 9 }, { wch: 9 }, { wch: 11 }, { wch: 11 }, { wch: 13 }]
+      const lastCol = headerRow.length - 1
 
       const toRow = (u, pos) => [
         pos,
@@ -647,6 +648,21 @@ export default function RankingPageAdmin() {
         u.aciertos_resultado ?? 0,
         u.predicciones ?? 0,
       ]
+
+      // Cada hoja arranca con un encabezado (título + subtítulo) para que se entienda
+      // de qué reporte y de qué región es sin tener que abrir cada pestaña a ciegas.
+      function armarHoja(tituloHoja, subtituloHoja, rows) {
+        const aoa = [[tituloHoja], [subtituloHoja], [], headerRow, ...rows]
+        const ws = XLSX.utils.aoa_to_sheet(aoa)
+        ws['!cols'] = colWidths
+        ws['!merges'] = [
+          { s: { r: 0, c: 0 }, e: { r: 0, c: lastCol } },
+          { s: { r: 1, c: 0 }, e: { r: 1, c: lastCol } },
+        ]
+        const headerRowIdx = 3
+        ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: headerRowIdx, c: 0 }, e: { r: headerRowIdx, c: lastCol } }) }
+        return ws
+      }
 
       // Los nombres de hoja de Excel no pueden superar 31 caracteres ni
       // contener : \ / ? * [ ], y deben ser únicos dentro del libro.
@@ -663,18 +679,26 @@ export default function RankingPageAdmin() {
         return candidato
       }
 
+      const conteo = n => `${n} participante${n === 1 ? '' : 's'}`
+
       const wb = XLSX.utils.book_new()
 
       const generalRows = dataToExport.map((u, idx) => toRow(u, u.posicion || idx + 1))
-      const wsGeneral = XLSX.utils.aoa_to_sheet([headerRow, ...generalRows])
-      wsGeneral['!cols'] = colWidths
+      const wsGeneral = armarHoja(
+        title.toUpperCase(),
+        `${conteo(dataToExport.length)} · ${subtitle}`,
+        generalRows
+      )
       XLSX.utils.book_append_sheet(wb, wsGeneral, nombreDeHoja('General'))
 
       const areaMap = agruparPorArea(dataToExport, areaNamesMap)
       areaMap.forEach(area => {
         const rows = area.usuarios.map((u, idx) => toRow(u, idx + 1))
-        const ws = XLSX.utils.aoa_to_sheet([headerRow, ...rows])
-        ws['!cols'] = colWidths
+        const ws = armarHoja(
+          `REGIONAL ${area.nombre.toUpperCase()}`,
+          `${conteo(rows.length)} · ${subtitle}`,
+          rows
+        )
         XLSX.utils.book_append_sheet(wb, ws, nombreDeHoja(area.nombre))
       })
 
