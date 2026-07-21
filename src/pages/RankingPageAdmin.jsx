@@ -425,7 +425,20 @@ export default function RankingPageAdmin() {
       } else if (isSingle && sel) {
         title = `Reporte de Apuesta: ${sel.titulo}`
         subtitle = `Estado: ${sel.estado || '—'} · Generado el ${new Date().toLocaleDateString()} a las ${new Date().toLocaleTimeString()}`
-        dataToExport = tabla
+
+        // No reutilizamos el estado `tabla`: viene de sheetsApi.predicciones.tabla(),
+        // que recorta a 200 filas y no trae area_id/area_nombre_cache (por eso el
+        // Excel de una apuesta puntual no separaba por región). Acá traemos el
+        // ranking completo de esta apuesta, con área, sin límite de filas.
+        const esGrupal = sel.tipo === 'grupos'
+        const { data: rankingCompleto, error: rankingError } = await sheetsApi._supabase
+          .from('ranking_cache')
+          .select('user_id, nombre, area_id, area_nombre_cache, puntos_totales, aciertos_exactos, aciertos_diferencia, aciertos_resultado, predicciones, posicion')
+          .eq('apuesta_id', sel.id)
+          .eq('es_grupal', esGrupal)
+          .order('posicion', { ascending: true })
+        if (rankingError) throw rankingError
+        dataToExport = rankingCompleto || []
       }
 
       // Obtener un diccionario de nombres de áreas desde Supabase para garantizar consistencia
