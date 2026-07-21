@@ -347,23 +347,18 @@ export default function RankingPageAdmin() {
     }
   }
 
-  async function exportarA_PDF() {
-    try {
-      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
-        import('jspdf'),
-        import('jspdf-autotable'),
-      ])
-      const doc = new jsPDF()
-      
-      const isAccum = selectedIds.length > 1 && selectedIds.length < bets.length
-      const isSingle = selectedIds.length === 1
-      const isGlobal = !sel || (bets.length > 0 && selectedIds.length === bets.length)
+  // Arma los datos del reporte (título, subtítulo, filas y nombres de área) que
+  // comparten la exportación a PDF y a Excel, para no duplicar las consultas a Supabase.
+  async function construirDatosReporte() {
+    const isAccum = selectedIds.length > 1 && selectedIds.length < bets.length
+    const isSingle = selectedIds.length === 1
+    const isGlobal = !sel || (bets.length > 0 && selectedIds.length === bets.length)
 
-      let title = 'Reporte de Ranking'
-      let subtitle = ''
-      let dataToExport = []
+    let title = 'Reporte de Ranking'
+    let subtitle = ''
+    let dataToExport = []
 
-      if (isGlobal) {
+    if (isGlobal) {
         // En lugar de usar la tabla global truncada, calculamos dinámicamente acumulando todas las apuestas
         const allBetIds = bets.map(b => b.id)
         
@@ -448,6 +443,34 @@ export default function RankingPageAdmin() {
         console.warn('No se pudo cargar el catálogo de áreas:', err)
       }
 
+    return { title, subtitle, dataToExport, areaNamesMap }
+  }
+
+  // Agrupa las filas del reporte por área/región, en el mismo orden que ya
+  // vienen (rankeadas), asignando posición local dentro de cada región.
+  function agruparPorArea(dataToExport, areaNamesMap) {
+    const areaMap = new Map()
+    dataToExport.forEach(u => {
+      const areaKey = u.area_id || 'sin_area'
+      const areaNombre = areaNamesMap[u.area_id] || u.area_nombre_cache || u.area_nombre || 'Sin región'
+      if (!areaMap.has(areaKey)) {
+        areaMap.set(areaKey, { nombre: areaNombre, usuarios: [] })
+      }
+      areaMap.get(areaKey).usuarios.push(u)
+    })
+    return areaMap
+  }
+
+  async function exportarA_PDF() {
+    try {
+      const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+        import('jspdf'),
+        import('jspdf-autotable'),
+      ])
+      const doc = new jsPDF()
+
+      const { title, subtitle, dataToExport, areaNamesMap } = await construirDatosReporte()
+
       // Add navy header bar
       doc.setFillColor(12, 24, 43)
       doc.rect(0, 0, 210, 32, 'F')
@@ -513,24 +536,7 @@ export default function RankingPageAdmin() {
       })
 
       // ── Sección: Ranking por Región ──────────────────────────────────
-      // Agrupar los participantes del reporte actual por área
-      const areaMap = new Map()
-      dataToExport.forEach((u, idx) => {
-        const areaKey = u.area_id || 'sin_area'
-        const areaNombre = areaNamesMap[u.area_id] || u.area_nombre_cache || u.area_nombre || 'Sin región'
-        if (!areaMap.has(areaKey)) {
-          areaMap.set(areaKey, { nombre: areaNombre, usuarios: [] })
-        }
-        areaMap.get(areaKey).usuarios.push({
-          pos: u.posicion || idx + 1,
-          nombre: u.nombre || '—',
-          puntos: u.puntos_totales ?? 0,
-          exactos: u.aciertos_exactos ?? 0,
-          diferencia: u.aciertos_diferencia ?? 0,
-          resultado: u.aciertos_resultado ?? 0,
-          predicciones: u.predicciones ?? 0,
-        })
-      })
+      const areaMap = agruparPorArea(dataToExport, areaNamesMap)
 
       if (areaMap.size > 0) {
         // Nueva página para la sección regional
@@ -563,7 +569,15 @@ export default function RankingPageAdmin() {
 
         areas.forEach((area, aIdx) => {
           // Asignar posición dentro del área (ya están ordenados globalmente)
-          const areaRows = area.usuarios.map((u, i) => ({ ...u, pos: i + 1 }))
+          const areaRows = area.usuarios.map((u, i) => ({
+            pos: i + 1,
+            nombre: u.nombre || '—',
+            puntos: u.puntos_totales ?? 0,
+            exactos: u.aciertos_exactos ?? 0,
+            diferencia: u.aciertos_diferencia ?? 0,
+            resultado: u.aciertos_resultado ?? 0,
+            predicciones: u.predicciones ?? 0,
+          }))
 
           // Encabezado de área
           const needsPage = startY > doc.internal.pageSize.height - 60
@@ -612,6 +626,62 @@ export default function RankingPageAdmin() {
       toast.success('Reporte PDF descargado con éxito')
     } catch (e) {
       toast.error('Error al generar PDF: ' + e.message)
+      console.error(e)
+    }
+  }
+
+  async function exportarA_Excel() {
+    try {
+      const XLSX = await import('xlsx')
+      const { dataToExport, areaNamesMap } = await construirDatosReporte()
+
+      const headerRow = ['#', 'Participante', 'Puntos', 'Exactos', 'Diferencia', 'Resultado', 'Predicciones']
+      const colWidths = [{ wch: 5 }, { wch: 38 }, { wch: 9 }, { wch: 9 }, { wch: 11 }, { wch: 11 }, { wch: 13 }]
+
+      const toRow = (u, pos) => [
+        pos,
+        u.nombre || '—',
+        u.puntos_totales ?? 0,
+        u.aciertos_exactos ?? 0,
+        u.aciertos_diferencia ?? 0,
+        u.aciertos_resultado ?? 0,
+        u.predicciones ?? 0,
+      ]
+
+      // Los nombres de hoja de Excel no pueden superar 31 caracteres ni
+      // contener : \ / ? * [ ], y deben ser únicos dentro del libro.
+      const usedSheetNames = new Set()
+      function nombreDeHoja(nombre) {
+        let base = (nombre || 'Region').replace(/[:\\/?*[\]]/g, ' ').trim().slice(0, 31) || 'Region'
+        let candidato = base
+        let i = 2
+        while (usedSheetNames.has(candidato.toLowerCase())) {
+          const suf = ` (${i++})`
+          candidato = base.slice(0, 31 - suf.length) + suf
+        }
+        usedSheetNames.add(candidato.toLowerCase())
+        return candidato
+      }
+
+      const wb = XLSX.utils.book_new()
+
+      const generalRows = dataToExport.map((u, idx) => toRow(u, u.posicion || idx + 1))
+      const wsGeneral = XLSX.utils.aoa_to_sheet([headerRow, ...generalRows])
+      wsGeneral['!cols'] = colWidths
+      XLSX.utils.book_append_sheet(wb, wsGeneral, nombreDeHoja('General'))
+
+      const areaMap = agruparPorArea(dataToExport, areaNamesMap)
+      areaMap.forEach(area => {
+        const rows = area.usuarios.map((u, idx) => toRow(u, idx + 1))
+        const ws = XLSX.utils.aoa_to_sheet([headerRow, ...rows])
+        ws['!cols'] = colWidths
+        XLSX.utils.book_append_sheet(wb, ws, nombreDeHoja(area.nombre))
+      })
+
+      XLSX.writeFile(wb, `reporte-ranking-${new Date().toISOString().slice(0, 10)}.xlsx`)
+      toast.success('Reporte Excel descargado con éxito')
+    } catch (e) {
+      toast.error('Error al generar Excel: ' + e.message)
       console.error(e)
     }
   }
@@ -933,6 +1003,7 @@ export default function RankingPageAdmin() {
                 isPro={isPro}
                 onOpenArea={abrirModalArea}
                 onExportPDF={exportarA_PDF}
+                onExportExcel={exportarA_Excel}
               />
             ) : (() => {
               const isAccum = selectedIds.length > 1
@@ -945,7 +1016,7 @@ export default function RankingPageAdmin() {
               return (
                 <div className="rk-in">
 
-                  <Banner apuesta={displaySel} meta={displayMeta} loading={displayLoading} onExportPDF={exportarA_PDF} />
+                  <Banner apuesta={displaySel} meta={displayMeta} loading={displayLoading} onExportPDF={exportarA_PDF} onExportExcel={exportarA_Excel} />
 
                   {/* Tabs de tipo de ranking (Solo para apuestas libres) */}
                   {displaySel.tipo === 'libre' && (
@@ -1271,7 +1342,7 @@ function BetRow({ bet, sel, checked, onToggleCheck, onPick }) {
 /* ══════════════════════════════════════════
    BANNER
 ══════════════════════════════════════════ */
-function Banner({ apuesta, meta, loading, onExportPDF }) {
+function Banner({ apuesta, meta, loading, onExportPDF, onExportExcel }) {
   return (
     <div style={{ borderRadius: 14, marginBottom: 24, background: 'linear-gradient(125deg,#0c182b 0%,#1a3060 100%)', padding: '18px 22px', position: 'relative', overflow: 'hidden' }}>
       <div style={{ position: 'absolute', top: -30, right: -30, width: 180, height: 180, borderRadius: '50%', background: 'rgba(235,195,43,.08)', pointerEvents: 'none' }} />
@@ -1322,6 +1393,32 @@ function Banner({ apuesta, meta, loading, onExportPDF }) {
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
                 PDF
+              </button>
+            )}
+            {onExportExcel && (
+              <button
+                onClick={onExportExcel}
+                title="Descargar Excel"
+                style={{
+                  background: 'rgba(255,255,255,.06)',
+                  border: '1px solid rgba(255,255,255,.12)',
+                  borderRadius: 8,
+                  padding: '6px 10px',
+                  cursor: 'pointer',
+                  color: '#ebc32b',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  fontSize: 11,
+                  fontWeight: 'bold',
+                }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.12)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,.06)'}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Excel
               </button>
             )}
           </div>
@@ -1690,7 +1787,7 @@ function LeyendaPuntos({ apuesta, total }) {
 /* ══════════════════════════════════════════
    RANKING GLOBAL ADMIN (vista por defecto)
 ══════════════════════════════════════════ */
-function RankingGlobalAdmin({ tabla, meta, loading, onRefresh, areasTabla = [], areasLoading = false, areasIndividual = [], areasIndividualLoading = false, isPro = false, onOpenArea, onExportPDF }) {
+function RankingGlobalAdmin({ tabla, meta, loading, onRefresh, areasTabla = [], areasLoading = false, areasIndividual = [], areasIndividualLoading = false, isPro = false, onOpenArea, onExportPDF, onExportExcel }) {
   return (
     <div className="rk-in">
       {/* Header */}
@@ -1734,6 +1831,32 @@ function RankingGlobalAdmin({ tabla, meta, loading, onRefresh, areasTabla = [], 
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
                   </svg>
                   PDF
+                </button>
+              )}
+              {onExportExcel && (
+                <button
+                  onClick={onExportExcel}
+                  title="Descargar Reporte Excel"
+                  style={{
+                    background: 'rgba(255,255,255,.06)',
+                    border: '1px solid rgba(255,255,255,.12)',
+                    borderRadius: 8,
+                    padding: '6px 10px',
+                    cursor: 'pointer',
+                    color: '#ebc32b',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontSize: 11,
+                    fontWeight: 'bold',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,.12)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,.06)'}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  Excel
                 </button>
               )}
               <button
