@@ -33,6 +33,15 @@ const FILTERS=[
   {key:'cerradas', label:'Cerradas'},
 ]
 
+// La apuesta por el tercer puesto no forma parte de la experiencia de carga
+// de pronósticos. Se conserva en la base de datos y en el panel administrador.
+function esApuestaTercerCuartoPuesto(bet) {
+  const titulo = String(bet.titulo || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+  const coincideTitulo = /(?:tercer|3er).*cuarto.*puesto|3er\s*puesto/.test(titulo)
+  const coincideFase = bet.partidos?.length > 0 && bet.partidos.every(partido => partido.fase === '3er_puesto')
+  return coincideTitulo || coincideFase
+}
+
 const STATE={
   en_vivo:   {label:'EN VIVO',  color:'#e03252', bg:'rgba(224,50,82,.08)',  border:'rgba(224,50,82,.25)'},
   abierta:   {label:'ABIERTA',  color:'#1b8a5a', bg:'rgba(27,138,90,.08)', border:'rgba(27,138,90,.22)'},
@@ -154,6 +163,7 @@ export default function BetsPage(){
 
   const filtered = useMemo(() => {
     return bets
+      .filter(b => !esApuestaTercerCuartoPuesto(b))
       .filter(b => {
         if (filter === 'todas') return true
         if (filter === 'activas') return isOpen(b)

@@ -21,6 +21,12 @@ import { useToast } from '../hooks/useToast.jsx'
 /* ─── helpers ─── */
 function isOpen(b) { return b.estado === 'abierta' && new Date(b.fecha_cierre) > Date.now() }
 function initials(n) { return (n || '').trim().split(/\s+/).slice(0, 2).map(w => w[0]?.toUpperCase() || '').join('') || '?' }
+function esApuestaTercerCuartoPuesto(bet) {
+  const titulo = String(bet.titulo || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+  const coincideTitulo = /(?:tercer|3er).*cuarto.*puesto|3er\s*puesto/.test(titulo)
+  const coincideFase = bet.partidos?.length > 0 && bet.partidos.every(partido => partido.fase === '3er_puesto')
+  return coincideTitulo || coincideFase
+}
 
 /* ─── estilos globales ─── */
 const CSS = `
@@ -311,7 +317,7 @@ export default function RankingPageUser() {
   }
 
   const sortedBets = useMemo(() => {
-    return [...bets].sort((a, b) => {
+    return bets.filter(bet => !esApuestaTercerCuartoPuesto(bet)).sort((a, b) => {
       const aOpen = isOpen(a)
       const bOpen = isOpen(b)
 
