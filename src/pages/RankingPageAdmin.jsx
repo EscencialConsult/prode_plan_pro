@@ -474,6 +474,70 @@ export default function RankingPageAdmin() {
     return areaMap
   }
 
+  // Esta posición no depende de las apuestas seleccionadas en el reporte.
+  // Se calcula con todas las apuestas para que sea una referencia estable.
+  async function obtenerPosicionesGlobales() {
+    const allBetIds = bets.map(b => b.id)
+    if (!allBetIds.length) return { general: new Map(), porArea: new Map() }
+
+    const results = await Promise.all(allBetIds.map(id =>
+      sheetsApi._supabase
+        .from('ranking_cache')
+        .select('user_id, nombre, area_id, puntos_totales, aciertos_exactos, aciertos_diferencia, aciertos_resultado, predicciones')
+        .eq('apuesta_id', id)
+        .eq('es_grupal', false)
+    ))
+
+    const participantes = new Map()
+    results.forEach(({ data, error }) => {
+      if (error) throw error
+      ;(data || []).forEach(row => {
+        if (!row.user_id) return
+        if (!participantes.has(row.user_id)) {
+          participantes.set(row.user_id, {
+            user_id: row.user_id,
+            nombre: row.nombre || 'Sin nombre',
+            area_id: row.area_id || 'sin_area',
+            puntos_totales: 0,
+            aciertos_exactos: 0,
+            aciertos_diferencia: 0,
+            aciertos_resultado: 0,
+            predicciones: 0,
+          })
+        }
+        const acumulado = participantes.get(row.user_id)
+        acumulado.puntos_totales += parseInt(row.puntos_totales) || 0
+        acumulado.aciertos_exactos += parseInt(row.aciertos_exactos) || 0
+        acumulado.aciertos_diferencia += parseInt(row.aciertos_diferencia) || 0
+        acumulado.aciertos_resultado += parseInt(row.aciertos_resultado) || 0
+        acumulado.predicciones += parseInt(row.predicciones) || 0
+      })
+    })
+
+    const ordenar = (a, b) => {
+      if (b.puntos_totales !== a.puntos_totales) return b.puntos_totales - a.puntos_totales
+      if (b.aciertos_exactos !== a.aciertos_exactos) return b.aciertos_exactos - a.aciertos_exactos
+      if (b.aciertos_diferencia !== a.aciertos_diferencia) return b.aciertos_diferencia - a.aciertos_diferencia
+      if (b.aciertos_resultado !== a.aciertos_resultado) return b.aciertos_resultado - a.aciertos_resultado
+      return a.nombre.localeCompare(b.nombre)
+    }
+
+    const rankingGlobal = Array.from(participantes.values()).sort(ordenar)
+    const general = new Map(rankingGlobal.map((u, index) => [u.user_id, index + 1]))
+    const porArea = new Map()
+
+    rankingGlobal.forEach(u => {
+      if (!porArea.has(u.area_id)) porArea.set(u.area_id, [])
+      porArea.get(u.area_id).push(u)
+    })
+    porArea.forEach((usuarios, areaId) => {
+      usuarios.sort(ordenar)
+      porArea.set(areaId, new Map(usuarios.map((u, index) => [u.user_id, index + 1])))
+    })
+
+    return { general, porArea }
+  }
+
   async function exportarA_PDF() {
     try {
       const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
@@ -646,13 +710,16 @@ export default function RankingPageAdmin() {
   async function exportarA_Excel() {
     try {
       const XLSX = await import('xlsx')
-      const { title, subtitle, dataToExport, areaNamesMap } = await construirDatosReporte()
+      const [{ title, subtitle, dataToExport, areaNamesMap }, posicionesGlobales] = await Promise.all([
+        construirDatosReporte(),
+        obtenerPosicionesGlobales(),
+      ])
 
-      const headerRow = ['#', 'Participante', 'Puntos', 'Exactos', 'Diferencia', 'Resultado', 'Predicciones']
-      const colWidths = [{ wch: 5 }, { wch: 38 }, { wch: 9 }, { wch: 9 }, { wch: 11 }, { wch: 11 }, { wch: 13 }]
+      const headerRow = ['#', 'Participante', 'Puntos', 'Exactos', 'Diferencia', 'Resultado', 'Predicciones', 'Posición global']
+      const colWidths = [{ wch: 5 }, { wch: 38 }, { wch: 9 }, { wch: 9 }, { wch: 11 }, { wch: 11 }, { wch: 13 }, { wch: 17 }]
       const lastCol = headerRow.length - 1
 
-      const toRow = (u, pos) => [
+      const toRow = (u, pos, posicionGlobal) => [
         pos,
         u.nombre || '—',
         u.puntos_totales ?? 0,
@@ -660,6 +727,7 @@ export default function RankingPageAdmin() {
         u.aciertos_diferencia ?? 0,
         u.aciertos_resultado ?? 0,
         u.predicciones ?? 0,
+        posicionGlobal ?? '—',
       ]
 
       // Cada hoja arranca con un encabezado (título + subtítulo) para que se entienda
@@ -696,7 +764,9 @@ export default function RankingPageAdmin() {
 
       const wb = XLSX.utils.book_new()
 
-      const generalRows = dataToExport.map((u, idx) => toRow(u, u.posicion || idx + 1))
+      const generalRows = dataToExport.map((u, idx) =>
+        toRow(u, u.posicion || idx + 1, posicionesGlobales.general.get(u.user_id))
+      )
       const wsGeneral = armarHoja(
         title.toUpperCase(),
         `${conteo(dataToExport.length)} · ${subtitle}`,
@@ -706,7 +776,11 @@ export default function RankingPageAdmin() {
 
       const areaMap = agruparPorArea(dataToExport, areaNamesMap)
       areaMap.forEach(area => {
-        const rows = area.usuarios.map((u, idx) => toRow(u, idx + 1))
+        const rows = area.usuarios.map((u, idx) => {
+          const areaId = u.area_id || 'sin_area'
+          const posicionGlobalRegional = posicionesGlobales.porArea.get(areaId)?.get(u.user_id)
+          return toRow(u, idx + 1, posicionGlobalRegional)
+        })
         const ws = armarHoja(
           `REGIONAL ${area.nombre.toUpperCase()}`,
           `${conteo(rows.length)} · ${subtitle}`,
